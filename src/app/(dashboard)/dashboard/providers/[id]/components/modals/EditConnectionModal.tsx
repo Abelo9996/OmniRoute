@@ -74,6 +74,7 @@ import ProviderTierField from "./ProviderTierField";
 import AgentrouterConsoleFields from "./AgentrouterConsoleFields";
 import { getVertexCredentialCopy } from "./vertexCredentialCopy";
 import QuotaScrapingFields, { EMPTY_QUOTA_SCRAPING_FIELDS } from "./QuotaScrapingFields";
+import { useGitHubCreditLimitDraft } from "./GitHubCreditLimitField";
 import GlmTeamQuotaFields, { EMPTY_GLM_TEAM_QUOTA_FIELDS } from "./GlmTeamQuotaFields";
 import ProviderRegionField, { getProviderRegionConfig } from "./AlibabaProviderRegionField";
 import PeakHourProtectionEditor, {
@@ -194,6 +195,7 @@ export default function EditConnectionModal({
   const [doctorLoading, setDoctorLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const testModel = useConnectionTestModelDraft(isOpen ? connection : null, saving);
+  const credits = useGitHubCreditLimitDraft(isOpen ? connection : null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [extraApiKeys, setExtraApiKeys] = useState<string[]>([]);
   const [newExtraKey, setNewExtraKey] = useState("");
@@ -754,6 +756,7 @@ export default function EditConnectionModal({
         updates.providerSpecificData.importFreeModelsOnly = formData.importFreeModelsOnly === true;
       }
       testModel.applyTo(updates.providerSpecificData);
+      if (!credits.applyTo(updates.providerSpecificData)) return setSaveError(credits.error);
       const error = (await onSave(updates)) as void | unknown;
       if (error) {
         setSaveError(typeof error === "string" ? error : t("failedSaveConnection"));
@@ -839,6 +842,7 @@ export default function EditConnectionModal({
             onChange={(patch) => setFormData({ ...formData, ...patch })}
           />
         )}
+        {credits.field}
         {isClaude && (
           <ClaudeConnectionFields
             values={formData}
