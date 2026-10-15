@@ -83,14 +83,14 @@ export function getHandles(
     : { sourceHandle: "left", targetHandle: "right" };
 }
 
-export interface ModelNodeData {
+export type ModelNodeData = {
   label: string;
   active: boolean;
   color: string;
   providerId: string;
   /** True for the "+N" node that stands in for the models over the cap. */
   overflow?: boolean;
-}
+};
 
 const MODEL_NODE_W = 136;
 const MODEL_NODE_H = 22;
