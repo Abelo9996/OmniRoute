@@ -1,14 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card, Toggle, Select } from "@/shared/components";
 import { useTranslations } from "next-intl";
+import { Card, Toggle, Select } from "@/shared/components";
 import {
   CODEX_FAST_TIER_DEFAULT_SUPPORTED_MODELS,
   resolveCodexGlobalFastServiceTier,
 } from "@/lib/providers/codexFastTier";
 
-type TierValue = "default" | "priority" | "flex";
+import type { CodexServiceTier as TierValue } from "@/lib/providers/requestDefaults";
+import {
+  CODEX_ULTRAFAST_SUPPORTED_MODELS,
+  CODEX_ULTRAFAST_MODEL_LABEL,
+} from "@/lib/providers/codexServiceTierModels";
 
 // Fast-eligible Codex models per OpenAI ~/.codex/models_cache.json (service_tiers: priority).
 // Other future Fast-eligible slugs can be added here without code changes once the user
@@ -58,6 +62,9 @@ export default function CodexFastTierTab() {
     const set = new Set<string>([...CODEX_FAST_TIER_CATALOG, ...supportedModels]);
     return Array.from(set);
   }, [supportedModels]);
+
+  const visibleModels = tier === "ultrafast" ? CODEX_ULTRAFAST_SUPPORTED_MODELS : allCatalogModels;
+  const selectedCount = visibleModels.filter((model) => supportedModels.includes(model)).length;
 
   const save = async (next: {
     enabled?: boolean;
@@ -158,6 +165,7 @@ export default function CodexFastTierTab() {
             options={[
               { value: "priority", label: t("codexFastTierTierPriority") },
               { value: "flex", label: t("codexFastTierTierFlex") },
+              { value: "ultrafast", label: CODEX_ULTRAFAST_MODEL_LABEL },
               { value: "default", label: t("codexFastTierTierDefault") },
             ]}
           />
@@ -173,12 +181,12 @@ export default function CodexFastTierTab() {
                 {modelsOpen ? "expand_less" : "expand_more"}
               </span>
               {t("codexFastTierModelsLabel")}
-              <span className="ml-1 text-xs text-text-muted">({supportedModels.length})</span>
+              <span className="ml-1 text-xs text-text-muted">({selectedCount})</span>
             </button>
             {modelsOpen && (
               <div className="mt-3 pl-6 flex flex-col gap-2">
                 <p className="text-xs text-text-muted/80">{t("codexFastTierModelsHint")}</p>
-                {allCatalogModels.map((slug) => {
+                {visibleModels.map((slug) => {
                   const checked = supportedModels.includes(slug);
                   return (
                     <label key={slug} className="flex items-center gap-2 text-sm cursor-pointer">

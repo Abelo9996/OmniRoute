@@ -1,3 +1,4 @@
+import { CODEX_ULTRAFAST_SUPPORTED_MODELS, isCodexUltrafastModel } from "./codexServiceTierModels";
 import {
   getCodexRequestDefaults,
   normalizeCodexServiceTier,
@@ -60,17 +61,19 @@ export function resolveCodexGlobalFastServiceTier(
 
     if (typeof obj.tier === "string") {
       const t = obj.tier.trim().toLowerCase();
-      if (t === "default" || t === "priority" || t === "flex") {
+      if (t === "default" || t === "priority" || t === "flex" || t === "ultrafast") {
         tier = t;
       }
     }
+
+    if (tier === "ultrafast") supportedModels = CODEX_ULTRAFAST_SUPPORTED_MODELS;
 
     if (Array.isArray(obj.supportedModels)) {
       const list = obj.supportedModels
         .filter((m): m is string => typeof m === "string")
         .map((m) => m.trim())
         .filter((m) => m.length > 0);
-      if (list.length > 0) supportedModels = list;
+      if (list.length > 0 || tier === "ultrafast") supportedModels = list;
     }
   } else if (record.codexFastServiceTier === true) {
     enabled = true;
@@ -117,7 +120,8 @@ export function getCodexEffectiveFastServiceTier(
 
 function modelMatchesSupportedList(
   model: string | null | undefined,
-  supportedModels: readonly string[]
+  supportedModels: readonly string[],
+  exact = false
 ): boolean {
   if (typeof model !== "string" || model.length === 0) return false;
   const normalizedModel = model.trim().toLowerCase().split("/").pop() || "";
@@ -125,7 +129,7 @@ function modelMatchesSupportedList(
   for (const supported of supportedModels) {
     const candidate = supported.trim().toLowerCase();
     if (!candidate) continue;
-    if (normalizedModel === candidate || normalizedModel.startsWith(candidate)) {
+    if (normalizedModel === candidate || (!exact && normalizedModel.startsWith(candidate))) {
       return true;
     }
   }
@@ -157,10 +161,18 @@ export function applyCodexGlobalFastServiceTier<T extends JsonRecord | null | un
   const resolved = resolveCodexGlobalFastServiceTier(settings);
   if (!resolved.enabled) return credentials;
 
+  if (resolved.tier === "ultrafast" && !isCodexUltrafastModel(options.model)) return credentials;
+
   // Per-model gate for paid fast/flex modes. A global "default" mode intentionally
   // disables account-level overrides for every Codex model.
   if (resolved.tier !== "default" && options.model !== undefined) {
-    if (!modelMatchesSupportedList(options.model, resolved.supportedModels)) {
+    if (
+      !modelMatchesSupportedList(
+        options.model,
+        resolved.supportedModels,
+        resolved.tier === "ultrafast"
+      )
+    ) {
       return credentials;
     }
   }

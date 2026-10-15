@@ -7,6 +7,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
+import {
+  CODEX_ULTRAFAST_LABEL,
+  CODEX_ULTRAFAST_MODEL_LABEL,
+} from "@/lib/providers/codexServiceTierModels";
+import type { CodexServiceTier } from "@/lib/providers/requestDefaults";
 import { Badge, Card, Modal, Toggle } from "@/shared/components";
 import ProviderTestSlideOver from "@/shared/components/ProviderTestSlideOver";
 import ProviderIcon from "@/shared/components/ProviderIcon";
@@ -35,7 +40,7 @@ interface ProviderStats {
   errorTime?: string | null;
   allDisabled?: boolean;
   expiryStatus?: "expired" | "expiring_soon" | string | null;
-  codexServiceTier?: "default" | "priority" | "flex" | null;
+  codexServiceTier?: CodexServiceTier | null;
 }
 
 const KIND_LABEL_KEYS: Record<string, { key: string; fallback: string }> = {
@@ -331,9 +336,11 @@ const ProviderCard = forwardRef<ProviderCardHandle, ProviderCardProps>(function 
   const isSponsorPartner = isKimiPartner || isCheaperInferencePartner;
   const openRouterStat = useOpenRouterProviderStat(provider.id || providerId);
   const codexServiceTierLabel =
-    stats.codexServiceTier === "flex"
-      ? providerText(t, "codexTierFlexLabel", "Flex")
-      : providerText(t, "codexTierFastLabel", "Fast");
+    stats.codexServiceTier === "ultrafast"
+      ? CODEX_ULTRAFAST_LABEL
+      : stats.codexServiceTier === "flex"
+        ? providerText(t, "codexTierFlexLabel", "Flex")
+        : providerText(t, "codexTierFastLabel", "Fast");
   const codexServiceTierChip =
     providerId === "codex" && stats.codexServiceTier && stats.codexServiceTier !== "default" ? (
       <span
@@ -343,9 +350,13 @@ const ProviderCard = forwardRef<ProviderCardHandle, ProviderCardProps>(function 
             ? "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
             : "bg-sky-500/10 text-sky-600 dark:text-sky-400"
         }`}
-        title={providerText(t, "codexServiceTierActive", "Codex {tier} service tier is active", {
-          tier: codexServiceTierLabel,
-        })}
+        title={
+          stats.codexServiceTier === "ultrafast"
+            ? CODEX_ULTRAFAST_MODEL_LABEL
+            : providerText(t, "codexServiceTierActive", "Codex {tier} service tier is active", {
+                tier: codexServiceTierLabel,
+              })
+        }
       >
         <span className="material-symbols-outlined text-[10px] leading-none">
           {stats.codexServiceTier === "flex" ? "speed" : "bolt"}
