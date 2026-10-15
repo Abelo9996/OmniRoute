@@ -87306,9 +87306,21 @@
           "updated_at": "2026-10-15T12:48:13.587Z"
         },
         "pt": {
-          "source_hash": "76d87d4b932ff22a644dfcc999023e462258be815f96020c41b034b635e91d29",
-          "target_hash": "107aadcf7200262091478273aa1ad0b9722738a7f99270ebc7fabe49229d24fa",
-          "updated_at": "2026-10-13T13:51:17.767Z"
+          "source_hash": "981b564b85bbef9859f0c75be924acd93c9ef83ae565d9234f3bf64912f8c453",
+          "target_hash": "e2641bececb0e904385fb351cb0c2a40785a6a3a94ad05705ccc271e3b4b8e39",
+          "section_hashes": [
+            "4d23ad7eb5c6",
+            "37f459fbe190",
+            "cf78d8416f0e",
+            "49b62c8eebdf",
+            "11cac6cc4eaa",
+            "7b98d7390efd",
+            "4422e425d260",
+            "1a5190face23",
+            "41864b605a74",
+            "8c17200a15fd"
+          ],
+          "updated_at": "2026-10-15T14:00:02.447Z"
         },
         "pa": {
           "source_hash": "981b564b85bbef9859f0c75be924acd93c9ef83ae565d9234f3bf64912f8c453",
@@ -87481,9 +87493,21 @@
           "updated_at": "2026-10-15T13:08:55.785Z"
         },
         "ta": {
-          "source_hash": "76d87d4b932ff22a644dfcc999023e462258be815f96020c41b034b635e91d29",
-          "target_hash": "2497c2641cff2ff076a2411292b7f7c44f2832f99ec117367b22465c32afcae7",
-          "updated_at": "2026-10-13T13:51:17.767Z"
+          "source_hash": "981b564b85bbef9859f0c75be924acd93c9ef83ae565d9234f3bf64912f8c453",
+          "target_hash": "3039482d3dd52d8b3c428019d9e4319684851b914960f67f28e67cfb37fa9ba1",
+          "section_hashes": [
+            "4d23ad7eb5c6",
+            "37f459fbe190",
+            "cf78d8416f0e",
+            "49b62c8eebdf",
+            "11cac6cc4eaa",
+            "7b98d7390efd",
+            "4422e425d260",
+            "1a5190face23",
+            "41864b605a74",
+            "8c17200a15fd"
+          ],
+          "updated_at": "2026-10-15T14:04:40.393Z"
         },
         "te": {
           "source_hash": "981b564b85bbef9859f0c75be924acd93c9ef83ae565d9234f3bf64912f8c453",
