@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNotificationStore } from "@/store/notificationStore";
 import { formatProviderModelsErrorResponse, providerText } from "../providerPageHelpers";
 
@@ -49,14 +49,16 @@ export function useModelVisionOverrides(
   onModelsChanged?: () => void
 ) {
   const [state, setState] = useState<OverrideState>({ provider, values: {} });
-  const [saving, setSaving] = useState<{ provider: string; modelId: string } | null>(null);
-  const scopeRef = useRef({ provider });
+  const [saving, setSaving] = useState<{ scope: { provider: string }; modelId: string } | null>(
+    null
+  );
+  const providerScope = useMemo(() => ({ provider }), [provider]);
+  const scopeRef = useRef(providerScope);
   const pendingScopeRef = useRef<{ provider: string } | null>(null);
   const readRevisionRef = useRef(0);
   const notify = useNotificationStore();
   useEffect(() => {
-    const scope = { provider };
-    scopeRef.current = scope;
+    scopeRef.current = providerScope;
     const revision = readRevisionRef.current;
     let active = true;
     void readVisionOverrides(provider).then((next) => {
@@ -67,7 +69,7 @@ export function useModelVisionOverrides(
       active = false;
       scopeRef.current = { provider: "" };
     };
-  }, [provider]);
+  }, [provider, providerScope]);
   const save = useCallback(
     async (modelId: string, value: boolean | null): Promise<boolean> => {
       const scope = scopeRef.current;
@@ -75,7 +77,7 @@ export function useModelVisionOverrides(
       if (pendingScopeRef.current === scope) return false;
       pendingScopeRef.current = scope;
       const isCurrent = () => scopeRef.current === scope && scope.provider === provider;
-      const request = { provider, modelId };
+      const request = { scope, modelId };
       setSaving(request);
       try {
         const response = await fetch("/api/provider-models", {
@@ -120,7 +122,7 @@ export function useModelVisionOverrides(
   );
   return {
     overrides: state.provider === provider ? state.values : {},
-    savingModelId: saving?.provider === provider ? saving.modelId : null,
+    savingModelId: saving?.scope === providerScope ? saving.modelId : null,
     save,
   };
 }

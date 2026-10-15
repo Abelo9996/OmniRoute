@@ -212,3 +212,65 @@ it("rejects an overlapping write while the current provider write is pending", a
     await flush();
   }
 });
+
+it("does not resurrect a completed old saving lock after A to B to A navigation", async () => {
+  let releaseOld = () => {};
+  globalThis.fetch = vi.fn(async (_url, init) => {
+    if (init?.method === "PUT") {
+      await new Promise<void>((resolve) => {
+        releaseOld = resolve;
+      });
+      return Response.json({});
+    }
+    return read(false);
+  });
+  const el = document.createElement("div");
+  document.body.appendChild(el);
+  const root = createRoot(el);
+  mounted.push({ root, el });
+  act(() => root.render(<Harness provider="A" />));
+  await flush();
+  act(() => el.querySelector("button")!.click());
+  await flush();
+  act(() => root.render(<Harness provider="B" />));
+  await flush();
+  releaseOld();
+  await flush();
+  act(() => root.render(<Harness provider="A" />));
+  await flush();
+  expect(JSON.parse(el.querySelector("output")!.textContent!).saving).toBeNull();
+});
+
+it("an old A finally cannot unlock a new A scope write after returning from B", async () => {
+  const releases: Array<() => void> = [];
+  globalThis.fetch = vi.fn(async (_url, init) => {
+    if (init?.method === "PUT") {
+      await new Promise<void>((resolve) => {
+        releases.push(resolve);
+      });
+      return Response.json({});
+    }
+    return read(false);
+  });
+  const el = document.createElement("div");
+  document.body.appendChild(el);
+  const root = createRoot(el);
+  mounted.push({ root, el });
+  act(() => root.render(<Harness provider="A" />));
+  await flush();
+  act(() => el.querySelector("button")!.click());
+  await flush();
+  act(() => root.render(<Harness provider="B" />));
+  await flush();
+  act(() => root.render(<Harness provider="A" />));
+  await flush();
+  act(() => el.querySelector("button")!.click());
+  await flush();
+  expect(releases).toHaveLength(2);
+  releases[0]();
+  await flush();
+  expect(JSON.parse(el.querySelector("output")!.textContent!).saving).toBe("same-model");
+  releases[1]();
+  await flush();
+  expect(JSON.parse(el.querySelector("output")!.textContent!).saving).toBeNull();
+});
