@@ -235,19 +235,12 @@ omniroute sync
 omniroute sync push
 ```
 
-### `sync pull`
-
-**Flags:**
-
-- `--source <s>`
-- `--merge`
-- `--replace`
-- `--dry-run`
+### `sync pull [outPath]`
 
 **Example:**
 
 ```bash
-omniroute sync pull
+omniroute sync pull omniroute-export.tar.gz
 ```
 
 ### `sync diff`
