@@ -88477,9 +88477,19 @@
           "updated_at": "2026-10-15T14:20:15.949Z"
         },
         "de": {
-          "source_hash": "0ddd67335f83435009773dfe38eb9f75dd82840714fae2627fc2016a5649f085",
-          "target_hash": "af8c7f8e1182a9d0a17b1e2b68e597cc51221075e2bb1148a172429e19000432",
-          "updated_at": "2026-10-13T13:51:17.767Z"
+          "source_hash": "18becfe80d054921ee9f80c13eef15d5c4eb1ee19f7ad7b635b890f0bf0f36f5",
+          "target_hash": "13449c637f244b0a941e05a8f5d12b634026a5d6c6cc5a3a9c26de8b54c9a1cd",
+          "section_hashes": [
+            "a8a79ea6b80e",
+            "735bbec211b0",
+            "0ef532d66d80",
+            "417eb876c982",
+            "c96e850edead",
+            "bab3aaaa857d",
+            "ba950787cd3a",
+            "b737fdacfb1d"
+          ],
+          "updated_at": "2026-10-15T15:08:19.795Z"
         },
         "es": {
           "source_hash": "18becfe80d054921ee9f80c13eef15d5c4eb1ee19f7ad7b635b890f0bf0f36f5",
