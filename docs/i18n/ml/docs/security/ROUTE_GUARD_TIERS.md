@@ -16,181 +16,143 @@
 ### ടിയർ 1 — LOCAL_ONLY
 
 **നിർബന്ധിതമാക്കുന്നത്:** `isLocalOnlyPath(path)` → ലൂപ്പ്ബാക്ക് ഹോസ്റ്റ് പരിശോധന  
-**ബൈപാസ്:** ഡിഫോൾട്ടായി ഒന്നുമില്ല. അഭ്യർത്ഥനയിൽ `manage` സ്കോപ്പുള്ള സാധുവായ API കീ ഉണ്ടായിരിക്കുമ്പോൾ `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`-ലെ പാത്തുകൾക്ക് പരിമിതമായ ഇളവ് നൽകുന്നു ([മാനേജ്-സ്കോപ്പ് ഇളവ്](#manage-scope-carve-out) കാണുക).
+**ബൈപാസ്:** ഡിഫോൾട്ടായി ഒന്നുമില്ല. അഭ്യർത്ഥനയിൽ `manage` സ്കോപ്പുള്ള സാധുവായ API കീ ഉണ്ടായിരിക്കുമ്പോൾ `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`-ലെ പാതകൾക്ക് പരിമിതമായ ഇളവ് (കാണുക [Manage-സ്കോപ്പ് ഇളവ്](#manage-scope-carve-out)).
 
-ഈ റൂട്ടുകൾ ചൈൽഡ് പ്രോസസ്സുകൾ ആരംഭിക്കുകയോ റൺടൈം കോഡ് പ്രവർത്തിപ്പിക്കുകയോ ചെയ്യുന്നു. ഇവയെ ലൂപ്പ്ബാക്ക് അല്ലാത്ത ട്രാഫിക്കിന് ലഭ്യമാക്കുന്നത്, സാധുവായ JWT നേടിയ ഒരു ആക്രമണകാരിക്ക് (ഉദാ., Cloudflared/Ngrok ടണൽ വഴി) പ്രോസസ്സുകൾ ആരംഭിക്കാൻ അവസരം നൽകും — ഇത് അറിയപ്പെടുന്ന ഒരു CVE വിഭാഗമാണ് ([GHSA-fhh6-4qxv-rpqj](https://github.com/advisories/GHSA-fhh6-4qxv-rpqj)).
+ഈ റൂട്ടുകൾ ചൈൽഡ് പ്രോസസ്സുകൾ ആരംഭിക്കുകയോ റൺടൈം കോഡ് എക്സിക്യൂട്ട് ചെയ്യുകയോ ചെയ്യുന്നു. ഇവയെ നോൺ-ലൂപ്പ്ബാക്ക് ട്രാഫിക്കിന് ലഭ്യമാക്കുന്നത്, സാധുവായ JWT നേടിയ ആക്രമണകാരിക്ക് (ഉദാ., Cloudflared/Ngrok ടണൽ വഴി) പ്രോസസ്സുകൾ ആരംഭിക്കാൻ അവസരമൊരുക്കും — അറിയപ്പെടുന്ന ഒരു CVE വിഭാഗം ([GHSA-fhh6-4qxv-rpqj](https://github.com/advisories/GHSA-fhh6-4qxv-rpqj)).
 
-**GHSA-fhh6-4qxv-rpqj എന്താണ് (ആക്രമണ വിഭാഗം):** ഒരു മാനേജ്മെന്റ്/ഏജന്റ് സെർവർ ഒരു സബ്പ്രോസസ് (`npm install`, `node`, ഒരു ബ്രൗസർ, ഒരു പ്രോക്സി, `git`, `tar`, …) ആരംഭിക്കുന്ന എൻഡ്പോയിന്റ് ലഭ്യമാക്കുന്നു. ആ എൻഡ്പോയിന്റ് ഹോസ്റ്റിന് പുറത്തുനിന്ന് ആക്സസ് ചെയ്യാനാകുന്നുവെങ്കിൽ — ഓപ്പറേറ്റർ OmniRoute-നെ nginx/Cloudflare/Tailscale ടണലിന് പിന്നിൽ സ്ഥാപിക്കുകയും ഒരു JWT ചോർന്നുപോകുകയും ചെയ്തതിനാലോ, അല്ലെങ്കിൽ ഓത്ത് തെറ്റായി കോൺഫിഗർ ചെയ്തതിനാലോ — ആക്രമണകാരി "ഒരു API വിളിക്കുക" എന്നതിനെ "ഹോസ്റ്റിൽ ഒരു കമാൻഡ് പ്രവർത്തിപ്പിക്കുക" എന്നതാക്കി മാറ്റുന്നു (റിമോട്ട് കോഡ് എക്സിക്യൂഷൻ). സ്പോൺ ചെയ്യാൻ കഴിയുന്ന എല്ലാ റൂട്ടുകളിലും **ഏതൊരു ഓത്ത് പരിശോധനയ്ക്കും മുമ്പ്, നിരുപാധികമായി ലൂപ്പ്ബാക്ക് ഹോസ്റ്റ് പരിശോധന നിർബന്ധിതമാക്കി** OmniRoute ഇത് തടയുന്നു: ഒരു ടണലിലൂടെ ചോർന്ന ടോക്കണിനും സ്പോൺ പ്രവർത്തനത്തിലേക്ക് എത്താൻ കഴിയില്ല.
+**GHSA-fhh6-4qxv-rpqj എന്താണ് (ആക്രമണ വിഭാഗം):** ഒരു മാനേജ്മെന്റ്/ഏജന്റ് സെർവർ ഒരു സബ്പ്രോസസ്സ് (`npm install`, `node`, ഒരു ബ്രൗസർ, ഒരു പ്രോക്സി, `git`, `tar`, …) ആരംഭിക്കുന്ന എൻഡ്പോയിന്റ് ലഭ്യമാക്കുന്നു. ആ എൻഡ്പോയിന്റ് ഹോസ്റ്റിന് പുറത്തുനിന്ന് ആക്സസ് ചെയ്യാനാകുന്നുവെങ്കിൽ — ഓപ്പറേറ്റർ OmniRoute-നെ ഒരു nginx/Cloudflare/Tailscale ടണലിന് പിന്നിൽ സ്ഥാപിക്കുകയും ഒരു JWT ചോരുകയും ചെയ്തതിനാലോ, അല്ലെങ്കിൽ ഓത്ത് തെറ്റായി കോൺഫിഗർ ചെയ്തതിനാലോ — ആക്രമണകാരി "ഒരു API വിളിക്കുക" എന്നതിനെ "ഹോസ്റ്റിൽ ഒരു കമാൻഡ് പ്രവർത്തിപ്പിക്കുക" എന്നതാക്കി മാറ്റുന്നു (റിമോട്ട് കോഡ് എക്സിക്യൂഷൻ). പ്രോസസ്സ് ആരംഭിക്കാൻ ശേഷിയുള്ള ഓരോ റൂട്ടിലും, **ഏതൊരു ഓത്ത് പരിശോധനയ്ക്കും മുമ്പ്, നിരുപാധികമായി ലൂപ്പ്ബാക്ക് ഹോസ്റ്റ് പരിശോധന** നിർബന്ധിതമാക്കി OmniRoute ഇത് തടയുന്നു: ഒരു ടണൽ വഴി ചോർന്ന ടോക്കൺ ഉപയോഗിച്ചാലും പ്രോസസ്സ് ആരംഭിക്കുന്ന റൂട്ടിലേക്ക് എത്താൻ കഴിയില്ല.
 
-**പൂർണ്ണമായ LOCAL_ONLY സെറ്റ്.** ആധികാരിക ഉറവിടം `src/server/authz/routeGuard.ts`-ലെ `LOCAL_ONLY_API_PREFIXES` / `LOCAL_ONLY_API_PATTERNS` ആണ്; താഴെയുള്ള പട്ടിക നിലവിലെ സ്ഥിതി അതേപടി പ്രതിഫലിപ്പിക്കുന്നു. `check-route-guard-membership` ഗേറ്റ് സ്പോൺ ചെയ്യാൻ കഴിയുന്ന പ്രിഫിക്സുകൾക്ക് കീഴിലുള്ള ഓരോ `route.ts`-ഉം എണ്ണിപ്പട്ടികപ്പെടുത്തുകയും അവയിൽ ഏതെങ്കിലും ലോക്കൽ-ഒൺലി ആയി വർഗ്ഗീകരിച്ചിട്ടില്ലെങ്കിൽ CI പരാജയപ്പെടുത്തുകയും ചെയ്യുന്നു.
+**പൂർണ്ണമായ LOCAL_ONLY സെറ്റ്.** ആധികാരിക ഉറവിടം `src/server/authz/routeGuard.ts`-ലെ `LOCAL_ONLY_API_PREFIXES` / `LOCAL_ONLY_API_PATTERNS` ആണ്; താഴെയുള്ള പട്ടിക നിലവിലെ സ്ഥിതി അതേപടി പ്രതിഫലിപ്പിക്കുന്നു. പ്രോസസ്സ് ആരംഭിക്കാൻ ശേഷിയുള്ള പ്രിഫിക്സുകൾക്ക് കീഴിലുള്ള എല്ലാ `route.ts`-ഉം `check-route-guard-membership` ഗേറ്റ് എണ്ണിത്തിട്ടപ്പെടുത്തുകയും, അവയിൽ ഏതെങ്കിലും local-only ആയി വർഗ്ഗീകരിച്ചിട്ടില്ലെങ്കിൽ CI പരാജയപ്പെടുത്തുകയും ചെയ്യുന്നു.
 
-| പ്രിഫിക്സ് / പാറ്റേൺ                                                                                     | ഇത് ലോക്കലിൽ മാത്രം പ്രവർത്തിക്കുന്നത് എന്തുകൊണ്ട്                                                                      |
+| പ്രിഫിക്സ് / പാറ്റേൺ                                                                                     | ഇത് ലോക്കൽ-മാത്രമായിരിക്കുന്നത് എന്തുകൊണ്ട്                                                                             |
 | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `/api/mcp/`                                                                                              | MCP സെർവർ — stdio ബ്രിഡ്ജുകളും SSE ഹാൻഡ്ലറുകളും സ്പോൺ ചെയ്യുന്നു                                                        |
-| `/api/cli-tools/runtime/`                                                                                | CLI ടൂൾ റൺടൈം — ഇഷ്ടാനുസൃത പ്ലഗിൻ കോഡ് പ്രവർത്തിപ്പിക്കുന്നു                                                            |
-| `/api/cli-tools/{omp,letta,grok-build,forge,jcode,qwen}-settings`                                        | ഹോസ്റ്റിലെ ടൂൾ ബൈനറികൾ/കോൺഫിഗിൽ മാറ്റം വരുത്താൻ കഴിയുന്ന, ഓരോ ടൂളിനുമുള്ള ക്രമീകരണ റൈറ്ററുകൾ                            |
-| `/api/cli-tools/{claude,cline,codewhale,codex,crush,deepseek-tui,droid,kilo,openclaw,pi,smelt}-settings` | മുകളിലുള്ള ആറ് അനുബന്ധ എൻഡ്പോയിന്റുകളിലെ അതേ `getCliRuntimeStatus()` സ്പോൺ (GHSA-35fw-cv32-2373)                        |
+| `/api/mcp/`                                                                                              | MCP സർവർ — stdio ബ്രിഡ്ജുകളും SSE ഹാൻഡ്ലറുകളും സ്പോൺ ചെയ്യുന്നു                                                         |
+| `/api/cli-tools/runtime/`                                                                                | CLI ടൂൾ റൺടൈം — ഏത് പ്ലഗിൻ കോഡും എക്സിക്യൂട്ട് ചെയ്യുന്നു                                                               |
+| `/api/cli-tools/{omp,letta,grok-build,forge,jcode,qwen}-settings`                                        | ഹോസ്റ്റിലെ ടൂൾ ബൈനറികളിലും കോൺഫിഗിലും മാറ്റം വരുത്താനാകുന്ന, ഓരോ ടൂളിനുമുള്ള ക്രമീകരണ റൈറ്ററുകൾ                         |
+| `/api/cli-tools/{claude,cline,codewhale,codex,crush,deepseek-tui,droid,kilo,openclaw,pi,smelt}-settings` | മുകളിലുള്ള ആറ് സഹോദര എൻഡ്പോയിന്റുകളിലേതിന് സമാനമായ `getCliRuntimeStatus()` സ്പോൺ (GHSA-35fw-cv32-2373)                  |
 | `/api/cli-tools/{all-statuses,status,detect}`                                                            | CLI ഇൻവെന്ററി പ്രോബുകൾ — ഓരോ ടൂളിനും `command -v` / `--version` സ്പോൺ ചെയ്യുന്നു (GHSA-35fw-cv32-2373)                  |
-| `/api/cli-tools/antigravity-mitm`                                                                        | Antigravity MITM പ്രോക്സി നിയന്ത്രണം (സിസ്റ്റം പ്രോക്സി സ്പോൺ ചെയ്യുന്നു/അതിലേക്ക് പോയിന്റ് ചെയ്യുന്നു)                 |
+| `/api/cli-tools/antigravity-mitm`                                                                        | Antigravity MITM പ്രോക്സി നിയന്ത്രണം (സിസ്റ്റം പ്രോക്സിയെ സ്പോൺ ചെയ്യുന്നു/അതിലേക്ക് പോയിന്റ് ചെയ്യുന്നു)               |
 | `/api/modality-bridge/video/`                                                                            | കർശനമായ വിശ്വസനീയ-ലൂപ്പ്ബാക്ക് Video Bridge റൺടൈം പ്രോബും ആന്തരിക എക്സ്ട്രാക്ഷൻ ബ്രിഡ്ജും                               |
-| `/api/services/`                                                                                         | എംബെഡ് ചെയ്ത സേവനങ്ങൾ (9Router / CLIProxy / Bifrost / Mux / Dario) — `npm install` + സ്പോൺ                              |
-| `/dashboard/providers/services/`                                                                         | എംബെഡ് ചെയ്ത സേവന UI-കളിലേക്കുള്ള റിവേഴ്സ് പ്രോക്സി                                                                     |
+| `/api/services/`                                                                                         | എംബെഡഡ് സർവീസുകൾ (9Router / CLIProxy / Bifrost / Mux / Dario) — `npm install` + സ്പോൺ                                   |
+| `/dashboard/providers/services/`                                                                         | എംബെഡഡ്-സർവീസ് UI-കളിലേക്കുള്ള റിവേഴ്സ് പ്രോക്സി                                                                        |
 | `/api/tunnels/cloudflared`                                                                               | cloudflared ബൈനറി ഇൻസ്റ്റാൾ ചെയ്യുകയും സ്പോൺ ചെയ്യുകയും ചെയ്യുന്നു                                                      |
 | `/api/tunnels/tailscale/{install,enable,disable,login,start-daemon}`                                     | ഹോസ്റ്റിൽ tailscaled ഇൻസ്റ്റാൾ ചെയ്യുന്നു/നിയന്ത്രിക്കുന്നു                                                             |
-| `/api/copilot/`                                                                                          | പ്രാമാണീകരിക്കാത്ത LLM ഡ്രൈവർ — ഡിഫോൾട്ടായി CLI-യിൽ മാത്രം                                                              |
-| `/api/tools/agent-bridge/`                                                                               | AgentBridge — MITM സെർവർ സ്പോൺ ചെയ്യുന്നു + DNS എഡിറ്റുകൾ നടത്തുന്നു                                                    |
-| `/api/tools/traffic-inspector/`                                                                          | Traffic Inspector — http-proxy ലിസണർ + സിസ്റ്റം പ്രോക്സി                                                                |
-| `/api/settings/mitm`                                                                                     | MITM ഇന്റർസെപ്ഷൻ പ്രവർത്തനക്ഷമമാക്കുന്നു (സിസ്റ്റം-തല പ്രോക്സി നില)                                                     |
-| `/api/issue-agent/`                                                                                      | ഇഷ്യൂ ഏജന്റ് — റിപ്പോസിറ്ററിക്കെതിരെ ലോക്കൽ ടൂളുകൾ സ്പോൺ ചെയ്യുന്നു                                                     |
-| `/api/plugins/`, `/api/plugins`                                                                          | പ്ലഗിനുകൾ — `worker_threads` + `child_process` വഴി ലോഡ് ചെയ്യുന്നു/പ്രവർത്തിപ്പിക്കുന്നു                                |
-| `/api/middleware/`                                                                                       | ഉപയോക്തൃ മിഡിൽവെയർ — പ്രോസസിനുള്ളിൽ ഓപ്പറേറ്റർ കോഡ് ലോഡ് ചെയ്യുന്നു/പ്രവർത്തിപ്പിക്കുന്നു                               |
+| `/api/copilot/`                                                                                          | ഓതന്റിക്കേഷൻ ഇല്ലാത്ത LLM ഡ്രൈവർ — ഡിഫോൾട്ടായി CLI-യിൽ മാത്രം                                                           |
+| `/api/tools/agent-bridge/`                                                                               | AgentBridge — MITM സർവർ സ്പോൺ ചെയ്യുകയും DNS എഡിറ്റുകൾ നടത്തുകയും ചെയ്യുന്നു                                            |
+| `/api/tools/traffic-inspector/`                                                                          | Traffic Inspector — http-proxy ലിസണറും സിസ്റ്റം പ്രോക്സിയും                                                             |
+| `/api/settings/mitm`                                                                                     | MITM ഇന്റർസെപ്ഷൻ പ്രവർത്തനക്ഷമമാക്കുന്നു (സിസ്റ്റം-ലെവൽ പ്രോക്സി സ്റ്റേറ്റ്)                                            |
+| `/api/issue-agent/`                                                                                      | ഇഷ്യൂ ഏജന്റ് — റിപ്പോയ്ക്കെതിരെ ലോക്കൽ ടൂളിംഗ് സ്പോൺ ചെയ്യുന്നു                                                         |
+| `/api/plugins/`, `/api/plugins`                                                                          | പ്ലഗിനുകൾ — `worker_threads` + `child_process` വഴി ലോഡ്/എക്സിക്യൂട്ട് ചെയ്യുന്നു                                        |
+| `/api/middleware/`                                                                                       | ഉപയോക്തൃ മിഡിൽവെയർ — പ്രോസസിനുള്ളിൽ ഓപ്പറേറ്റർ കോഡ് ലോഡ്/എക്സിക്യൂട്ട് ചെയ്യുന്നു                                       |
 | `/api/system/version`                                                                                    | ഓട്ടോ-അപ്ഡേറ്റ് (POST മാത്രം; GET/HEAD/OPTIONS ഒഴിവാക്കിയിരിക്കുന്നു) — `git checkout` + `npm install` സ്പോൺ ചെയ്യുന്നു |
 | `/api/db-backups/exportAll`                                                                              | എക്സ്പോർട്ട് ആർക്കൈവിനായി `tar` സ്പോൺ ചെയ്യുന്നു                                                                        |
-| `/api/local/`                                                                                            | ഒറ്റ-ക്ലിക്ക് ലോക്കൽ ലോഞ്ചറുകൾ (നിലവിൽ Redis) — podman/docker സ്പോൺ ചെയ്യുന്നു                                          |
+| `/api/local/`                                                                                            | 1-ക്ലിക്ക് ലോക്കൽ ലോഞ്ചറുകൾ (നിലവിൽ Redis) — podman/docker സ്പോൺ ചെയ്യുന്നു                                             |
 | `/api/headroom/start`, `/api/headroom/stop`                                                              | Headroom പ്രോക്സി ലൈഫ്സൈക്കിൾ — python CLI സ്പോൺ ചെയ്യുന്നു / PID-ലേക്ക് സിഗ്നലുകൾ അയയ്ക്കുന്നു                         |
-| `/api/jobs`, `/api/jobs/`                                                                                | ജോബ് റണ്ണർ നിയന്ത്രണം — ഷെഡ്യൂൾ ചെയ്ത ഹോസ്റ്റ്-സൈഡ് ജോലികൾ പ്രവർത്തിപ്പിക്കുന്നു                                        |
+| `/api/jobs`, `/api/jobs/`                                                                                | ജോബ് റണ്ണർ നിയന്ത്രണം — ഷെഡ്യൂൾ ചെയ്ത ഹോസ്റ്റ്-സൈഡ് ജോലികൾ എക്സിക്യൂട്ട് ചെയ്യുന്നു                                     |
 | `/api/oauth/cursor/auto-import`                                                                          | ക്രെഡൻഷ്യലുകൾ ഇമ്പോർട്ട് ചെയ്യുന്നതിന് മുമ്പ് `execFile("which", ["cursor"])` പ്രവർത്തിപ്പിക്കുന്നു                     |
 | `/api/oauth/kiro/auto-import`                                                                            | ഹോസ്റ്റിൽ നിന്ന് Kiro CLI ക്രെഡൻഷ്യൽ ഫയലുകൾ വായിക്കുന്നു                                                                |
-| `/api/skills/collect/`                                                                                   | സ്കിൽ ശേഖരണം — ലോക്കൽ ടൂളുകൾ കണ്ടെത്തുന്നു/ഇൻസ്റ്റാൾ ചെയ്യുന്നു                                                         |
-| `/api/skills/install`, `/api/skills/executions`                                                          | Skill ഹാൻഡ്ലർ രജിസ്ട്രേഷൻ + നിർവഹണം — sandbox കണ്ടെയ്നർ spawn വരെ എത്തുന്നു (GHSA-jx89)                                 |
-| `/api/discovery/`                                                                                        | പ്രാദേശിക നെറ്റ്വർക്ക്/provider കണ്ടെത്തൽ പ്രോബുകൾ                                                                      |
-| `/api/vnc-session` (`VNC_ROUTE_PREFIX`)                                                                  | ഇന്ററാക്ടീവ് ലോഗിനുകൾക്കായി headful browser + VNC സെഷൻ spawn ചെയ്യുന്നു                                                 |
-| `/api/acp/agents`                                                                                        | ACP — പ്രാദേശിക CLI agent ബൈനറികൾ കണ്ടെത്തുകയും spawn ചെയ്യുകയും ചെയ്യുന്നു                                             |
-| `/api/resilience/connections`                                                                            | ഓരോ അക്കൗണ്ടിനുമുള്ള resilience JSON (cooldown, breaker, lockout). ഡാഷ്ബോർഡ് HTML local-only അല്ല.                      |
-| `/api/providers/cursor/agent-availability`                                                               | ഡാഷ്ബോർഡ് ഇൻസ്റ്റാൾ നിർദ്ദേശ പരിശോധന — `cursor-agent status --format json` spawn ചെയ്യുന്നു                             |
-| `/api/providers/{id}/login` (regex)                                                                      | വെബ്-cookie ലോഗിനിനായി headful Playwright Chromium ആരംഭിക്കുന്നു                                                        |
-| `/api/providers/volcengine-plan/connect` (regex)                                                         | മാനുവൽ headful ഫ്ലോ + സെഷൻ അധിഷ്ഠിത ഫോൺ/SMS ഓട്ടോ-ലോഗിൻ (Playwright spawn ചെയ്യുന്നു)                                   |
-| `/api/providers/{id}/refresh-cursor` (regex)                                                             | മാനുവൽ Cursor സെഷൻ പുതുക്കൽ — `cursor-agent`-നെ പ്രേരിപ്പിക്കുന്നു                                                      |
-| `/api/providers/{id}/chatgpt-web-codex-doctor` (regex)                                                   | പ്രാദേശിക Codex CLI ഇൻസ്റ്റാളേഷൻ നിർണ്ണയിക്കുന്നു (ബൈനറി spawn ചെയ്യുന്നു)                                              |
+| `/api/skills/collect/`                                                                                   | സ്കിൽ ശേഖരണം — ലോക്കൽ ടൂളിംഗ് കണ്ടെത്തുന്നു/ഇൻസ്റ്റാൾ ചെയ്യുന്നു                                                        |
+| `/api/skills/install`, `/api/skills/executions`                                                          | സ്കിൽ ഹാൻഡ്ലർ രജിസ്ട്രേഷൻ + നിർവഹണം — സാൻഡ്ബോക്സ് കണ്ടെയ്നർ സ്പോൺ വരെ എത്തുന്നു (GHSA-jx89)                             |
+| `/api/discovery/`                                                                                        | പ്രാദേശിക നെറ്റ്വർക്ക്/പ്രൊവൈഡർ കണ്ടെത്തൽ പ്രോബുകൾ                                                                      |
+| `/api/vnc-session` (`VNC_ROUTE_PREFIX`)                                                                  | ഇന്ററാക്ടീവ് ലോഗിനുകൾക്കായി ഹെഡ്ഫുൾ ബ്രൗസർ + VNC സെഷൻ സ്പോൺ ചെയ്യുന്നു                                                  |
+| `/api/acp/agents`                                                                                        | ACP — പ്രാദേശിക CLI ഏജന്റ് ബൈനറികൾ കണ്ടെത്തുകയും സ്പോൺ ചെയ്യുകയും ചെയ്യുന്നു                                            |
+| `/api/resilience/connections`                                                                            | ഓരോ അക്കൗണ്ടിനുമുള്ള റെസിലിയൻസ് JSON (കൂൾഡൗൺ, ബ്രേക്കർ, ലോക്കൗട്ട്). ഡാഷ്ബോർഡ് HTML ലോക്കൽ-ഒൺലി അല്ല.                   |
+| `/api/providers/cursor/agent-availability`                                                               | ഡാഷ്ബോർഡ് ഇൻസ്റ്റാൾ-നഡ്ജ് പരിശോധന — `cursor-agent status --format json` സ്പോൺ ചെയ്യുന്നു                                |
+| `/api/providers/{id}/login` (റെഗെക്സ്)                                                                   | വെബ്-കുക്കി ലോഗിനായി ഹെഡ്ഫുൾ Playwright Chromium സമാരംഭിക്കുന്നു                                                        |
+| `/api/providers/volcengine-plan/connect` (റെഗെക്സ്)                                                      | മാനുവൽ ഹെഡ്ഫുൾ ഫ്ലോ + സെഷൻ അടിസ്ഥാനമാക്കിയുള്ള ഫോൺ/SMS ഓട്ടോ-ലോഗിൻ (Playwright സ്പോൺ ചെയ്യുന്നു)                        |
+| `/api/providers/{id}/refresh-cursor` (റെഗെക്സ്)                                                          | മാനുവൽ Cursor സെഷൻ പുതുക്കൽ — `cursor-agent`-നെ നഡ്ജ് ചെയ്യുന്നു                                                        |
+| `/api/providers/{id}/chatgpt-web-codex-doctor` (റെഗെക്സ്)                                                | പ്രാദേശിക Codex CLI ഇൻസ്റ്റാളേഷൻ നിർണയിക്കുന്നു (ബൈനറി സ്പോൺ ചെയ്യുന്നു)                                                |
 
-**ലംഘനമുണ്ടാകുമ്പോഴുള്ള പ്രതികരണം:** `403 LOCAL_ONLY`
+**ലംഘനമുണ്ടായാലുള്ള പ്രതികരണം:** `403 LOCAL_ONLY`
 
-#### മാനേജ്മെന്റ് സ്കോപ്പ് ഒഴിവാക്കൽ
+#### മാനേജ്-സ്കോപ്പ് ഒഴിവാക്കൽ
 
-അഭ്യർത്ഥനയിൽ `Authorization: Bearer <api-key>` ഉണ്ടായിരിക്കുകയും അതിന്റെ
-മെറ്റാഡാറ്റയിൽ `manage` സ്കോപ്പ് (അല്ലെങ്കിൽ `admin`) ഉൾപ്പെടുകയും ചെയ്താൽ മാത്രം,
-LOCAL_ONLY പാതകളുടെ ഒരു ഉപഗണം non-loopback-ൽ നിന്നും ആക്സസ് ചെയ്യാവുന്നതാണ്.
-ഈ ഒഴിവാക്കൽ ഓരോ പാതയ്ക്കും `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES` വഴി
-വ്യക്തമായി നിയന്ത്രിക്കപ്പെടുന്നതിനാൽ, ഏതൊരു പുതിയ LOCAL_ONLY പാതയുടെയും
-ഡിഫോൾട്ട് strict-loopback ആയി തുടരും. പ്രാമാണീകരിക്കാത്ത അഭ്യർത്ഥനകളും
-manage സ്കോപ്പ് ഇല്ലാത്ത കീകളുള്ള അഭ്യർത്ഥനകളും ഇപ്പോഴും
+LOCAL_ONLY പാതകളുടെ ഒരു ഉപവിഭാഗം നോൺ-ലൂപ്പ്ബാക്കിൽനിന്നും ആക്സസ് ചെയ്യാൻ കഴിയുക,
+അഭ്യർത്ഥനയിൽ `manage` സ്കോപ്പ് (അല്ലെങ്കിൽ `admin`) ഉൾപ്പെടുന്ന മെറ്റാഡാറ്റയോടുകൂടിയ
+`Authorization: Bearer <api-key>` ഉണ്ടായാൽ മാത്രമാണ്. ഈ ഒഴിവാക്കൽ ഓരോ പാതയ്ക്കും
+`LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES` വഴി വ്യക്തമായി നിയന്ത്രിക്കുന്നതിനാൽ,
+പുതിയ ഏതൊരു LOCAL_ONLY പാതയ്ക്കും ഡിഫോൾട്ട് കർശനമായ ലൂപ്പ്ബാക്കായി തുടരും. പ്രാമാണീകരിക്കാത്ത
+അഭ്യർത്ഥനകളും മാനേജ് ഇതര കീകളുള്ള അഭ്യർത്ഥനകളും ഇപ്പോഴും
 `403 LOCAL_ONLY` ഉപയോഗിച്ച് നിരസിക്കപ്പെടും.
 
-നിലവിൽ bypass ചെയ്യാവുന്ന ഏക prefix `/api/mcp/` ആണ്. `/api/cli-tools/runtime/`-ഉം
-`/api/services/`-ഉം മനഃപൂർവം ഒഴിവാക്കിയിരിക്കുന്നു, കാരണം അവയ്ക്ക് നിയന്ത്രണമില്ലാത്ത
-subprocess-കൾ (`npm install`, `node`) spawn ചെയ്യാനാകും; ഇത് തടയാനാണ്
-LOCAL_ONLY ടയർ നിലവിലുള്ളത് എന്നതിന്റെ കൃത്യമായ CVE വിഭാഗമാണിത്.
+നിലവിൽ ഒഴിവാക്കൽ അനുവദിച്ചിട്ടുള്ള ഒരേയൊരു പ്രിഫിക്സ് `/api/mcp/` ആണ്. `/api/cli-tools/runtime/`-ഉം
+`/api/services/`-ഉം മനഃപൂർവം ഒഴിവാക്കിയിരിക്കുന്നു, കാരണം അവയ്ക്ക് ഇഷ്ടാനുസൃതമായ
+സബ്പ്രോസസുകൾ (`npm install`, `node`) സ്പോൺ ചെയ്യാൻ കഴിയും; LOCAL_ONLY ടിയർ
+തടയുന്നതിനായി നിലനിൽക്കുന്ന കൃത്യമായ CVE ക്ലാസ് ഇതാണ്.
 
-**#7895 — `mcp:connect` പരിമിത സ്കോപ്പ്:** `/api/mcp/` ഒഴിവാക്കൽ,
-പരിമിതമായ `mcp:connect` സ്കോപ്പ് ഉൾക്കൊള്ളുന്ന Bearer കീയും അംഗീകരിക്കുന്നു
-(`src/shared/constants/managementScopes.ts::MCP_CONNECT_SCOPE`); ഇത്
-`src/server/authz/policies/management.ts`-ലെ `hasMcpConnectOrManageScope()`
-വഴിയാണ് പരിശോധിക്കുന്നത്. ഇത് `/api/mcp/`-ക്ക് മാത്രമായി പരിമിതപ്പെടുത്തിയിരിക്കുന്നു —
-`mcp:connect` മറ്റൊരു management route-ലും (ഭാവിയിൽ മറ്റേതെങ്കിലും LOCAL_ONLY
-bypass prefix ചേർത്താലും അതുൾപ്പെടെ) യാതൊരു അനുമതിയും നൽകുന്നില്ല; കൂടാതെ ഇത്
-`MANAGEMENT_API_KEY_SCOPES`-ൽ നിന്ന് മനഃപൂർവം ഒഴിവാക്കിയിരിക്കുന്നു.
-`manage`/`admin` ഉള്ള കീ മുമ്പത്തെപ്പോലെ തന്നെ ഒഴിവാക്കൽ കടന്നുപോകും;
-വിപുലമായ management ആക്സസ് ആവശ്യമില്ലാത്ത remote MCP-only കോളർമാർക്കുള്ള
-കുറഞ്ഞ-പ്രിവിലേജുള്ള ഒരു ബദലാണ് `mcp:connect`.
+**#7895 — `mcp:connect` പരിമിതമായ സ്കോപ്പ്:** `/api/mcp/` ഒഴിവാക്കൽ,
+`src/shared/constants/managementScopes.ts::MCP_CONNECT_SCOPE` എന്ന പരിമിതമായ
+`mcp:connect` സ്കോപ്പ് കൈവശമുള്ള Bearer കീയും സ്വീകരിക്കുന്നു; ഇത്
+`src/server/authz/policies/management.ts`-ലെ `hasMcpConnectOrManageScope()` വഴി പരിശോധിക്കുന്നു.
+ഇത് `/api/mcp/`-ലേക്ക് മാത്രമായി പരിമിതപ്പെടുത്തിയിരിക്കുന്നു — മറ്റേതെങ്കിലും
+മാനേജ്മെന്റ് റൂട്ടിൽ (`LOCAL_ONLY`-ന്റെ മറ്റേതെങ്കിലും ബൈപാസ് പ്രിഫിക്സ് ഭാവിയിൽ
+ചേർത്താലും അതുൾപ്പെടെ) `mcp:connect` യാതൊരു അനുമതിയും നൽകുന്നില്ല; കൂടാതെ ഇത്
+`MANAGEMENT_API_KEY_SCOPES`-ൽനിന്ന് മനഃപൂർവം ഒഴിവാക്കിയിരിക്കുന്നു. `manage`/`admin`
+കൈവശമുള്ള ഒരു കീ മുമ്പത്തെപ്പോലെ തന്നെ ഒഴിവാക്കൽ കടന്നുപോകും; വിപുലമായ മാനേജ്മെന്റ്
+ആക്സസ് ആവശ്യമില്ലാത്ത റിമോട്ട് MCP-ഒൺലി കോളർമാർക്കുള്ള കുറഞ്ഞ-പ്രിവിലേജ് ബദലാണ്
+`mcp:connect`.
 
-| അഭ്യർത്ഥന                                            | പാത                        | ഫലം                           |
-| ---------------------------------------------------- | -------------------------- | ----------------------------- |
-| Non-loopback, Bearer ഇല്ല                            | `/api/mcp/*`               | 403 LOCAL_ONLY                |
-| Non-loopback, `manage` സ്കോപ്പുള്ള Bearer            | `/api/mcp/*`               | അനുവദിക്കുക                   |
-| Non-loopback, `mcp:connect` സ്കോപ്പുള്ള Bearer       | `/api/mcp/*`               | അനുവദിക്കുക                   |
-| Non-loopback, `manage`/`mcp:connect` ഇല്ലാത്ത Bearer | `/api/mcp/*`               | 403 LOCAL_ONLY                |
-| Non-loopback, `mcp:connect` സ്കോപ്പുള്ള Bearer       | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY                |
-| Non-loopback, `manage` സ്കോപ്പുള്ള Bearer            | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY                |
-| Loopback, ഏതെങ്കിലും/Bearer ഇല്ല                     | ഏതെങ്കിലും LOCAL_ONLY      | അനുവദിക്കുക (gate കടക്കുന്നു) |
+| അഭ്യർത്ഥന                                                | പാത                        | ഫലം                             |
+| -------------------------------------------------------- | -------------------------- | ------------------------------- |
+| നോൺ-ലൂപ്പ്ബാക്ക്, Bearer ഇല്ല                            | `/api/mcp/*`               | 403 LOCAL_ONLY                  |
+| നോൺ-ലൂപ്പ്ബാക്ക്, `manage` സ്കോപ്പുള്ള Bearer            | `/api/mcp/*`               | അനുവദിക്കുക                     |
+| നോൺ-ലൂപ്പ്ബാക്ക്, `mcp:connect` സ്കോപ്പുള്ള Bearer       | `/api/mcp/*`               | അനുവദിക്കുക                     |
+| നോൺ-ലൂപ്പ്ബാക്ക്, `manage`/`mcp:connect` ഇല്ലാത്ത Bearer | `/api/mcp/*`               | 403 LOCAL_ONLY                  |
+| നോൺ-ലൂപ്പ്ബാക്ക്, `mcp:connect` സ്കോപ്പുള്ള Bearer       | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY                  |
+| നോൺ-ലൂപ്പ്ബാക്ക്, `manage` സ്കോപ്പുള്ള Bearer            | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY                  |
+| ലൂപ്പ്ബാക്ക്, ഏതെങ്കിലും Bearer/Bearer ഇല്ലാതെ           | ഏതെങ്കിലും LOCAL_ONLY      | അനുവദിക്കുക (ഗേറ്റ് കടക്കുന്നു) |
 
-#### ഓപ്പറേറ്റർ മാർഗനിർദേശവും ഓഡിറ്റിംഗും
+#### ഓപ്പറേറ്റർ മാർഗ്ഗനിർദ്ദേശവും ഓഡിറ്റിങ്ങും
 
-നിങ്ങൾ OmniRoute ഒരു reverse proxy അല്ലെങ്കിൽ tunnel-ന് (nginx, Caddy, Cloudflare
-Tunnel, Tailscale, Ngrok) പിന്നിൽ പ്രവർത്തിപ്പിക്കുകയാണെങ്കിൽ, മുകളിലെ spawn ചെയ്യാൻ
-കഴിവുള്ള route-കളെ loopback പരിശോധന തുടർന്നും സംരക്ഷിക്കും — client address
-non-loopback ആയ ഒരു അഭ്യർത്ഥന **auth പ്രവർത്തിക്കുന്നതിന് മുമ്പ്** `403 LOCAL_ONLY`
-ഉപയോഗിച്ച് നിരസിക്കപ്പെടുന്നതിനാൽ, ചോർന്ന JWT-ക്ക് spawn വരെ എത്താനാകില്ല. രണ്ട്
-ഓപ്പറേറ്റർ ഉത്തരവാദിത്വങ്ങൾ ശേഷിക്കുന്നു:
+നിങ്ങൾ OmniRoute-നെ ഒരു റിവേഴ്സ് പ്രോക്സിയുടെയോ ടണലിന്റെയോ (nginx, Caddy, Cloudflare
+Tunnel, Tailscale, Ngrok) പിന്നിൽ പ്രവർത്തിപ്പിക്കുകയാണെങ്കിൽ, മുകളിലെ സ്പോൺ ശേഷിയുള്ള
+റൂട്ടുകളെ ലൂപ്പ്ബാക്ക് പരിശോധന തുടർന്നും സംരക്ഷിക്കും — ക്ലയന്റ് വിലാസം നോൺ-ലൂപ്പ്ബാക്ക്
+ആയ ഒരു അഭ്യർത്ഥന, **ഓത്ത് പ്രവർത്തിക്കുന്നതിന് മുമ്പുതന്നെ** `403 LOCAL_ONLY` ഉപയോഗിച്ച്
+നിരസിക്കപ്പെടുന്നതിനാൽ, ചോർന്ന JWT-ക്ക് ഒരു സ്പോണിലേക്ക് എത്താൻ കഴിയില്ല. ഓപ്പറേറ്റർമാർക്ക്
+രണ്ട് ഉത്തരവാദിത്തങ്ങൾ ശേഷിക്കുന്നു:
 
-- **ക്ലയന്റ് IP-യെ ലൂപ്പ്ബാക്കായി വ്യാജമാക്കി 403 "പരിഹരിക്കരുത്".** `X-Forwarded-For: 127.0.0.1` സജ്ജീകരിക്കുന്നതോ, ഉറവിട വിലാസത്തെ
-  ലൂപ്പ്ബാക്കായി മാറ്റിയെഴുതുന്ന ഒരു പ്രോക്സിയോ, ഈ ടയർ അടയ്ക്കുന്ന അതേ RCE വിഭാഗം
-  വീണ്ടും തുറക്കുന്നു. പ്രോക്സിയിലൂടെ dashboard/API ലഭ്യമാക്കുക — spawn ചെയ്യാൻ
-  കഴിയുന്ന റൂട്ടുകൾ ഒരിക്കലും ലഭ്യമാക്കരുത്.
-- **manage-scope ബൈപാസ് ഏറ്റവും കുറഞ്ഞതാക്കി നിലനിർത്തുക.** `/api/mcp/` മാത്രമേ ബൈപാസ് ചെയ്യാനാകൂ, അതും
-  `manage`-scope ഉള്ള API കീ ഉപയോഗിച്ച് മാത്രം. `SPAWN_CAPABLE_PREFIXES` ഒരിക്കലും
-  ബൈപാസ് ലിസ്റ്റിലേക്ക് ചേർക്കാനാകില്ല — zod സ്കീമ അവയെ നിരസിക്കുകയും
-  റൺടൈമിൽ `isLocalOnlyBypassableByManageScope` അവയെ നിഷേധിക്കുകയും ചെയ്യുന്നു (defence-in-depth);
-  ഇതാണ് dashboard-ലെ "ബൈപാസ് ചെയ്യാവുന്നതാക്കാൻ കഴിയില്ല" എന്നതിന്റെ അർത്ഥം. സംഭരിച്ച settings വരിയിൽനിന്നും
-  റൺടൈം snapshot loader ഇത്തരം എൻട്രികൾ ഒഴിവാക്കുന്നു, കൂടാതെ പഴയ JSON import
-  (`/api/settings/import-json`) ഒരിക്കലും ബൈപാസ് കീകൾ എഴുതുന്നില്ല.
-  ഓരോ `LOCAL_ONLY_API_PREFIXES` എൻട്രിയും ഒന്നുകിൽ deny-list-ൽ ഉണ്ടായിരിക്കണം, അല്ലെങ്കിൽ
-  ബൈപാസിന് യോഗ്യമാണോ എന്ന് അവലോകനം ചെയ്തിരിക്കണം (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`). `/api/providers/`-ന് കീഴിലുള്ള dynamic-segment,
-  static-path spawn ചെയ്യാൻ കഴിയുന്ന റൂട്ടുകൾ (ഉദാ. `/login`,
-  `/refresh-cursor`) flat `SPAWN_CAPABLE_PREFIXES` array-ലൂടെയല്ല, മറിച്ച്
-  `src/shared/constants/spawnCapablePrefixes.ts`-ലെ regex അടിസ്ഥാനമാക്കിയുള്ള
-  `SPAWN_CAPABLE_PATTERNS` /
-  `SPAWN_CAPABLE_PATTERN_ANCESTORS` companion വഴിയാണ് പരിരക്ഷിക്കപ്പെടുന്നത് — അവയെ കണ്ടെത്താൻ flat array-യിൽ
-  `/api/providers/` prefix മുഴുവനും ഉൾപ്പെടുത്തേണ്ടിവരും; അങ്ങനെ ചെയ്താൽ,
-  provider CRUD-നായി remote dashboards നിയമാനുസൃതമായി ഉപയോഗിക്കുന്ന route tree
-  അനാവശ്യമായി അതിവിപുലമാകും.
+- **ക്ലയന്റ് IP-യെ ലൂപ്പ്ബാക്കായി വ്യാജമാക്കി 403 "പരിഹരിക്കരുത്".** `X-Forwarded-For: 127.0.0.1` സജ്ജീകരിക്കുന്നതോ സോഴ്സ് വിലാസം ലൂപ്പ്ബാക്കായി മാറ്റിയെഴുതുന്ന പ്രോക്സി ഉപയോഗിക്കുന്നതോ, ഈ ടിയർ അടയ്ക്കുന്ന അതേ RCE ക്ലാസ് വീണ്ടും തുറക്കുന്നു. പ്രോക്സിയിലൂടെ dashboard/API ലഭ്യമാക്കുക — spawn ചെയ്യാൻ ശേഷിയുള്ള റൂട്ടുകൾ ഒരിക്കലും ലഭ്യമാക്കരുത്.
+- **manage-scope ബൈപാസ് പരമാവധി പരിമിതമായി നിലനിർത്തുക.** `/api/mcp/` മാത്രമാണ് ബൈപാസ് ചെയ്യാനാകുക, അതും `manage`-സ്കോപ്പുള്ള API കീ ഉപയോഗിച്ച് മാത്രം. `SPAWN_CAPABLE_PREFIXES` ഒരിക്കലും ബൈപാസ് ലിസ്റ്റിലേക്ക് ചേർക്കാനാകില്ല — zod സ്കീമ അവ നിരസിക്കുകയും റൺടൈമിൽ `isLocalOnlyBypassableByManageScope` അവ നിഷേധിക്കുകയും ചെയ്യുന്നു (defence-in-depth); dashboard-ൽ "ബൈപാസ് ചെയ്യാവുന്നതാക്കാൻ കഴിയില്ല" എന്ന് പറയുന്നതിന്റെ അർത്ഥം ഇതാണ്. spawn ചെയ്യാത്തതും എന്നാൽ ഒരിക്കലും റിമോട്ടായി ലഭ്യമാകാൻ പാടില്ലാത്തതുമായ ചില LOCAL_ONLY റൂട്ടുകളും ഇതേ deny-list-ൽ ഉൾപ്പെടുന്നു — `/api/oauth/kiro/auto-import` (ഹോസ്റ്റിലെ ലോക്കൽ Kiro ക്രെഡൻഷ്യൽ ഫയലുകൾ വായിക്കുന്നു), `/api/discovery/`, `/api/issue-agent/`. സംഭരിച്ച settings row-യിൽനിന്ന് ഇത്തരം എൻട്രികൾ റൺടൈം snapshot loader നീക്കം ചെയ്യുകയും legacy JSON import (`/api/settings/import-json`) ബൈപാസ് കീകൾ ഒരിക്കലും എഴുതാതിരിക്കുകയും ചെയ്യുന്നു. ഓരോ `LOCAL_ONLY_API_PREFIXES` എൻട്രിയും ഒന്നുകിൽ deny-list-ൽ ഉണ്ടായിരിക്കണം, അല്ലെങ്കിൽ ബൈപാസ് ചെയ്യാൻ യോഗ്യമാണോ എന്ന് അവലോകനം ചെയ്തിരിക്കണം (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`). `/api/providers/`-ന് കീഴിലുള്ള dynamic-segment, static-path എന്നിവയിലുള്ള spawn ചെയ്യാൻ ശേഷിയുള്ള റൂട്ടുകൾ (ഉദാ. `/login`, `/refresh-cursor`) ഉൾക്കൊള്ളുന്നത് `src/shared/constants/spawnCapablePrefixes.ts`-ലെ regex അടിസ്ഥാനമാക്കിയുള്ള `SPAWN_CAPABLE_PATTERNS` / `SPAWN_CAPABLE_PATTERN_ANCESTORS` അനുബന്ധമാണ്; flat `SPAWN_CAPABLE_PREFIXES` array അല്ല — അവയെ കണ്ടെത്താൻ flat array-യിൽ മുഴുവൻ `/api/providers/` prefix ഉൾപ്പെടുത്തേണ്ടിവരും, ഇത് റിമോട്ട് dashboard-കൾ provider CRUD-നായി നിയമാനുസൃതമായി ഉപയോഗിക്കുന്ന route tree-യെ അനാവശ്യമായി അതിവിപുലമാക്കും.
 
-**ആക്സസ് ഓഡിറ്റ് ചെയ്യൽ** — off-host-ൽ നിന്ന് ഒന്നും ഈ റൂട്ടുകളിൽ എത്തുന്നില്ലെന്ന് പരിശോധിക്കാൻ:
+**ആക്സസ് ഓഡിറ്റ് ചെയ്യൽ** — ഹോസ്റ്റിന് പുറത്തുനിന്ന് ഈ റൂട്ടുകളിലേക്കൊന്നും എത്തുന്നില്ലെന്ന് സ്ഥിരീകരിക്കാൻ:
 
-- `/dashboard/settings/security`-ൽ **Authorization Inventory** തുറക്കുക: അത് തത്സമയ LOCAL_ONLY prefix ലിസ്റ്റും, ഏതൊക്കെ prefix-കൾ ബൈപാസ് ചെയ്യാമെന്നും, compile-time
-  spawn ചെയ്യാൻ കഴിയുന്ന ("ബൈപാസ് ചെയ്യാവുന്നതാക്കാൻ കഴിയില്ല") സെറ്റും പ്രദർശിപ്പിക്കുന്നു.
-- മുകളിൽ പറഞ്ഞ prefix-കൾ non-loopback ക്ലയന്റ് വിലാസവുമായി ജോടിയാക്കിയിട്ടുണ്ടോ എന്ന് കണ്ടെത്താൻ
-  നിങ്ങളുടെ reverse-proxy / access logs-ൽ grep ചെയ്യുക. അത്തരത്തിലുള്ള ഏതെങ്കിലും hit
-  `403 LOCAL_ONLY`-ന് പകരം `200` മടക്കിയെങ്കിൽ, പ്രോക്സി യഥാർത്ഥ ക്ലയന്റ് IP മറയ്ക്കുകയാണ് — പ്രോക്സി ശരിയാക്കുക.
-- ഈ path-കളിൽ ഒന്നിനായി OmniRoute-ന്റെ logs-ൽ കാണുന്ന `403 LOCAL_ONLY`, guard
-  ഉദ്ദേശിച്ച രീതിയിൽ പ്രവർത്തിക്കുന്നതിന്റെ സൂചനയാണ്; മറച്ചുവയ്ക്കേണ്ട പിശകല്ല.
+- `/dashboard/settings/security`-ൽ **Authorization Inventory** തുറക്കുക: അത് തത്സമയ LOCAL_ONLY prefix ലിസ്റ്റ്, ബൈപാസ് ചെയ്യാനാകുന്ന prefix-കൾ, compile-time spawn-capable ("ബൈപാസ് ചെയ്യാവുന്നതാക്കാൻ കഴിയില്ല") സെറ്റ് എന്നിവ പ്രദർശിപ്പിക്കുന്നു.
+- മുകളിലുള്ള prefix-കളും loopback അല്ലാത്ത client address-ഉം ഒരുമിച്ച് വരുന്ന എൻട്രികൾ കണ്ടെത്താൻ നിങ്ങളുടെ reverse-proxy / access log-ുകളിൽ grep ചെയ്യുക. അത്തരത്തിലുള്ള ഏതെങ്കിലും request `403 LOCAL_ONLY`-നു പകരം `200` നൽകിയിട്ടുണ്ടെങ്കിൽ, പ്രോക്സി യഥാർഥ client IP മറയ്ക്കുകയാണ് — പ്രോക്സി ശരിയാക്കുക.
+- ഈ path-കളിലൊന്നിനായി OmniRoute-ന്റെ log-ുകളിൽ കാണുന്ന `403 LOCAL_ONLY`, guard ഉദ്ദേശിച്ചതുപോലെ പ്രവർത്തിക്കുന്നു എന്നതിന്റെ സൂചനയാണ്; അടിച്ചമർത്തേണ്ട error അല്ല.
 
-### ടയർ 2 — ALWAYS_PROTECTED
+### ടിയർ 2 — ALWAYS_PROTECTED
 
-**നടപ്പാക്കുന്നത്:** `isAlwaysProtectedPath(path)` → `requireLogin=false` ബൈപാസ് ഒഴിവാക്കുക
-**ബൈപാസ്:** `requireLogin=false` ആയിരിക്കുമ്പോൾ ഒന്നുമില്ല; JWT എല്ലായ്പ്പോഴും ആവശ്യമാണ്
+**നടപ്പാക്കുന്നത്:** `isAlwaysProtectedPath(path)` → `requireLogin=false` ബൈപാസ് ഒഴിവാക്കുന്നു  
+**ബൈപാസ്:** `requireLogin=false` ആയിരിക്കുമ്പോൾ ഒന്നുമില്ല; JWT എപ്പോഴും ആവശ്യമാണ്
 
-ഈ റൂട്ടുകൾ നാശകരമോ പഴയപടിയാക്കാൻ കഴിയാത്തവയോ ആണ്. "no-password"
-ഇൻസ്റ്റാളിൽ ഇവ അനുവദിക്കുന്നത്, അതേ LAN-ലുള്ള ആർക്കും database മായ്ക്കാനോ
-server process അവസാനിപ്പിക്കാനോ കഴിയുമെന്നർത്ഥമാണ്.
+ഈ റൂട്ടുകൾ വിനാശകരമോ പഴയപടിയാക്കാനാവാത്തതോ ആണ്. "no-password" ഇൻസ്റ്റാളേഷനിൽ അവ അനുവദിച്ചാൽ, അതേ LAN-ലുള്ള ആർക്കും database മായ്ക്കാനോ server process അവസാനിപ്പിക്കാനോ കഴിയും.
 
-| Path                                      | കാരണം                                                              |
-| ----------------------------------------- | ------------------------------------------------------------------ |
-| `/api/shutdown`                           | server process അവസാനിപ്പിക്കുന്നു                                  |
-| `/api/settings/database`                  | Database export, import, wipe                                      |
-| `/api/db-backups`                         | പൂർണ്ണ database backup archive-ലേക്കുള്ള ആക്സസ്                    |
-| `/api/settings/export-json`               | പൂർണ്ണ settings blob export ചെയ്യുന്നു (രഹസ്യങ്ങൾ ഉൾപ്പെടെ)        |
-| `/api/settings/import-json`               | പൂർണ്ണ settings blob മാറ്റിസ്ഥാപിക്കുന്നു                          |
-| `/api/providers/health-autopilot/actions` | autopilot remediation actions നടപ്പാക്കുന്നു                       |
-| `/api/settings/obsidian`                  | ഏത് vault root-നും പുനരുപയോഗിക്കാവുന്ന WebDAV creds സൃഷ്ടിക്കുന്നു |
+| Path                                      | കാരണം                                                                           |
+| ----------------------------------------- | ------------------------------------------------------------------------------- |
+| `/api/shutdown`                           | server process അവസാനിപ്പിക്കുന്നു                                               |
+| `/api/settings/database`                  | database export, import, wipe                                                   |
+| `/api/db-backups`                         | പൂർണ്ണ database backup archive-ലേക്കുള്ള access                                 |
+| `/api/settings/export-json`               | പൂർണ്ണ settings blob export ചെയ്യുന്നു (രഹസ്യങ്ങൾ ഉൾപ്പെടെ)                     |
+| `/api/settings/import-json`               | പൂർണ്ണ settings blob മാറ്റിസ്ഥാപിക്കുന്നു                                       |
+| `/api/providers/health-autopilot/actions` | autopilot remediation action-കൾ നടപ്പാക്കുന്നു                                  |
+| `/api/settings/obsidian`                  | ഏത് vault root-നും വീണ്ടും ഉപയോഗിക്കാവുന്ന WebDAV credential-ുകൾ സൃഷ്ടിക്കുന്നു |
 
-**ലംഘനമുണ്ടാകുമ്പോഴുള്ള പ്രതികരണം:** `401 Authentication required`
+**ലംഘനത്തിനുള്ള പ്രതികരണം:** `401 Authentication required`
 
-`/api/settings/obsidian` അതിന്റെ `/webdav` child-നെയും ഉൾക്കൊള്ളുന്നു: `POST`, ഈ pipeline-ന് പുറത്തായി Next.js-ന് മുമ്പ് custom Node layer നൽകുന്ന WebDAV file service-നെ —
-കോളർ തിരഞ്ഞെടുത്ത root-ലേക്ക് ചൂണ്ടിക്കാണിക്കുകയും പുതുതായി സൃഷ്ടിച്ച Basic credentials
-തിരികെ നൽകുകയും ചെയ്യുന്നു; `DELETE` അവ rotate ചെയ്യുന്നു, parent `POST`
-Obsidian REST API token സംഭരിക്കുന്നു. GHSA-62vw `GET` password വെളിപ്പെടുത്തൽ മാത്രമാണ് മറച്ചത്;
-issuance അപ്പോഴും fail-open ടയറിലായിരുന്നു (GHSA-7pq4-8pvv-rx7r). `enableObsidianVaultSync()`
-data directory തന്നെയായതോ, അതിനുള്ളിൽ സ്ഥിതിചെയ്യുന്നതോ, അതിനെ ഉൾക്കൊള്ളുന്നതോ ആയ vault-നെയും
-നിരസിക്കുന്നു.
+`/api/settings/obsidian` അതിന്റെ `/webdav` child-നെയും ഉൾക്കൊള്ളുന്നു: ഈ pipeline-ന് പുറത്ത്, Next.js-ന് മുമ്പ് custom Node layer നൽകുന്ന WebDAV file service-നെ caller തിരഞ്ഞെടുക്കുന്ന root-ലേക്ക് `POST` ചൂണ്ടുകയും പുതുതായി സൃഷ്ടിച്ച Basic credential-ുകൾ തിരിച്ചുനൽകുകയും ചെയ്യുന്നു; `DELETE` അവ rotate ചെയ്യുന്നു; parent `POST` Obsidian REST API token സംഭരിക്കുന്നു. GHSA-62vw `GET` password വെളിപ്പെടുത്തൽ മാത്രമാണ് മറച്ചത്; issuance അപ്പോഴും fail-open tier-ൽ തന്നെയായിരുന്നു (GHSA-7pq4-8pvv-rx7r). data directory തന്നെയായതോ അതിനകത്ത് സ്ഥിതിചെയ്യുന്നതോ data directory-യെ ഉൾക്കൊള്ളുന്നതോ ആയ vault-നെ `enableObsidianVaultSync()` അധികമായി നിരസിക്കുന്നു.
 
-### പുതിയ ഇൻസ്റ്റാളിന്റെ bootstrap ലൂപ്പ്ബാക്കിൽ മാത്രം — `Host` അല്ല, യഥാർത്ഥ peer അടിസ്ഥാനമാക്കി
+#### ക്രെഡൻഷ്യൽ export-ുകൾ operator-മാർക്ക് മാത്രം
 
-management password ക്രമീകരിച്ചിട്ടില്ലാത്തപ്പോൾ (`INITIAL_PASSWORD`-ഉം ഇല്ലെങ്കിൽ),
-`src/shared/utils/apiAuth.ts`-ലെ `isAuthRequired()` anonymous bootstrap **loopback peers-നായി മാത്രം**
-തുറന്നുവയ്ക്കുന്നു. വിശ്വസനീയമായ peer signals-ൽനിന്ന്, ഈ ക്രമത്തിലാണ് loopback നിർണ്ണയിക്കുന്നത്:
-token stamp ചെയ്ത യഥാർത്ഥ TCP peer (`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, policy കാണുന്നത്),
-pipeline-ന്റെ സ്വന്തം `AUTHZ_HEADER_PEER_LOCALITY` verdict (route handlers കാണുന്നത്,
-`OMNIROUTE_PEER_STAMP_TOKEN` സജ്ജീകരിച്ചിരിക്കുമ്പോൾ മാത്രം വിശ്വസനീയം), അല്ലെങ്കിൽ നേരിട്ടുള്ള callers-നുള്ള
-യഥാർത്ഥ socket peer. `Host` / `nextUrl.hostname` ഒരിക്കലും പരിശോധിക്കില്ല, കൂടാതെ first-password write
-(`POST /api/settings/require-login`) എല്ലാ network peer-കൾക്കും തുറന്നിടുന്നതിനുപകരം
-ഇതേ നിയന്ത്രണത്തിന് കീഴിലാണ് (GHSA-7pq4-8pvv-rx7r). `managementPolicy` അതിന്റെ സ്വന്തം
-`peerContext` verdict വ്യക്തമായി താഴേക്ക് കൈമാറുന്നു, അതിനാൽ ORIGINAL (pre-strip)
-request-ന്റെ headers ഒരിക്കലും അത് തീരുമാനിക്കുന്നില്ല.
+മുകളിലുള്ള tier, _ഏതെങ്കിലും_ credential ആവശ്യമാണോ എന്നു മാത്രമാണ് തീരുമാനിക്കുന്നത്. സംഭരിച്ച credential-ുകൾ download ചെയ്യുന്ന റൂട്ടുകൾ handler-ൽ രണ്ടാമത്തെ പരിശോധന കൂടി ചേർക്കുന്നു: `GET /api/settings/export-json` (decrypt ചെയ്ത provider connection-ുകളും raw API key-കളും), `GET /api/db-backups/export` (SQLite file), `GET /api/db-backups/exportAll` (പൂർണ്ണ archive) എന്നിവ `requireOperatorCredential()` വിളിക്കുന്നു (`src/lib/api/operatorCredential.ts`). ഇത് dashboard session, local CLI subject, അല്ലെങ്കിൽ login disabled ആയ instance എന്നിവ സ്വീകരിക്കുകയും ഏത് scope-ലുമുള്ള API key-കൾക്കും (`manage`, `admin` എന്നിവ ഉൾപ്പെടെ), `oma_` access token-ുകൾക്കും `403` നൽകുകയും ചെയ്യുന്നു. Sync token issuance (`POST /api/sync/tokens`) ഇതേ helper-നൊപ്പം trusted loopback internal-service token-ും ഉപയോഗിക്കുന്നു.
 
-### ടയർ 3 — MANAGEMENT (ഡിഫോൾട്ട്)
+### പുതിയ ഇൻസ്റ്റാളേഷനിലെ bootstrap loopback-ൽ മാത്രം — `Host` അടിസ്ഥാനമാക്കിയല്ല, യഥാർഥ peer അടിസ്ഥാനമാക്കി
 
-മറ്റെല്ലാ management റൂട്ടുകളും. `requireLogin=false`
-ക്രമീകരിച്ചിട്ടില്ലെങ്കിൽ auth ആവശ്യമാണ്. CLI tokens-ന് ഈ റൂട്ടുകളിൽ authenticate ചെയ്യാനാകും (loopback + സാധുവായ HMAC).
+management password configure ചെയ്തിട്ടില്ലെങ്കിൽ (`INITIAL_PASSWORD`-ഉം ഇല്ലെങ്കിൽ), `src/shared/utils/apiAuth.ts`-ലെ `isAuthRequired()` anonymous bootstrap **loopback peer-കൾക്ക് മാത്രം** തുറന്നുവയ്ക്കുന്നു. വിശ്വസനീയമായ peer signal-ുകളിൽനിന്ന്, ഈ ക്രമത്തിലാണ് loopback തീരുമാനിക്കുന്നത്: token-stamped യഥാർഥ TCP peer (`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, policy കാണുന്നത്), pipeline-ന്റെ സ്വന്തം `AUTHZ_HEADER_PEER_LOCALITY` verdict (route handler-കൾ കാണുന്നത്; `OMNIROUTE_PEER_STAMP_TOKEN` സജ്ജമാക്കിയിരിക്കുമ്പോൾ മാത്രം വിശ്വസനീയം), അല്ലെങ്കിൽ direct caller-കൾക്കുള്ള യഥാർഥ socket peer. `Host` / `nextUrl.hostname` ഒരിക്കലും പരിശോധിക്കില്ല; first-password write (`POST /api/settings/require-login`) എല്ലാ network peer-കൾക്കും തുറന്നിടുന്നതിനു പകരം ഇതേ നിയന്ത്രണത്തിന് കീഴിലാണ് (GHSA-7pq4-8pvv-rx7r). `managementPolicy` അതിന്റെ സ്വന്തം `peerContext` verdict വ്യക്തമായി താഴേക്ക് കൈമാറുന്നതിനാൽ, ORIGINAL (strip ചെയ്യുന്നതിനു മുമ്പുള്ള) request-ന്റെ header-ുകൾ ഒരിക്കലും അത് തീരുമാനിക്കുന്നില്ല.
+
+### ടിയർ 3 — MANAGEMENT (സ്ഥിരസ്ഥിതി)
+
+മറ്റെല്ലാ മാനേജ്മെന്റ് റൂട്ടുകളും. `requireLogin=false` ആയി കോൺഫിഗർ ചെയ്തിട്ടില്ലെങ്കിൽ
+ഓതന്റിക്കേഷൻ ആവശ്യമാണ്. CLI ടോക്കണുകൾക്ക് ഈ റൂട്ടുകളിൽ ഓതന്റിക്കേറ്റ് ചെയ്യാനാകും (ലൂപ്പ്ബാക്ക് + സാധുവായ HMAC).
 
 ## മൂല്യനിർണ്ണയ ക്രമം
 

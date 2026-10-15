@@ -15,35 +15,31 @@ dan dievaluasi sebelum cabang autentikasi lainnya dijalankan.
 ### Tingkat 1 — LOCAL_ONLY
 
 **Diberlakukan oleh:** `isLocalOnlyPath(path)` → pemeriksaan host loopback  
-**Bypass:** Tidak ada secara default. Pengecualian terbatas untuk jalur dalam
-`LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES` ketika permintaan membawa kunci API
-yang valid dengan scope `manage` (lihat [Pengecualian scope manage](#manage-scope-carve-out)).
+**Pengecualian:** Secara default tidak ada. Pengecualian terbatas untuk jalur dalam
+`LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES` ketika permintaan membawa kunci
+API yang valid dengan cakupan `manage` (lihat [Pengecualian cakupan manage](#manage-scope-carve-out)).
 
-Rute-rute ini memulai proses anak atau mengeksekusi kode runtime. Mengeksposnya
-ke lalu lintas non-loopback akan memungkinkan penyerang yang memperoleh JWT valid
-(misalnya, melalui tunnel Cloudflared/Ngrok) untuk memicu pembuatan proses — kelas
-CVE yang telah diketahui
-([GHSA-fhh6-4qxv-rpqj](https://github.com/advisories/GHSA-fhh6-4qxv-rpqj)).
+Rute-rute ini menjalankan proses turunan atau mengeksekusi kode runtime. Mengeksposnya ke
+lalu lintas non-loopback akan memungkinkan penyerang yang memperoleh JWT valid (misalnya,
+melalui tunnel Cloudflared/Ngrok) untuk memicu pembuatan proses — suatu kelas CVE yang
+telah dikenal ([GHSA-fhh6-4qxv-rpqj](https://github.com/advisories/GHSA-fhh6-4qxv-rpqj)).
 
 **Apa itu GHSA-fhh6-4qxv-rpqj (kelas serangan):** server manajemen/agen
-mengekspos endpoint yang menjalankan subproses (`npm install`, `node`, browser,
-proxy, `git`, `tar`, …). Jika endpoint tersebut dapat diakses dari luar host —
-karena operator menempatkan OmniRoute di belakang tunnel nginx/Cloudflare/Tailscale
-dan JWT bocor, atau autentikasi salah dikonfigurasi — penyerang mengubah "memanggil
-API" menjadi "menjalankan perintah pada host" (eksekusi kode jarak jauh). OmniRoute
-mencegah hal ini dengan menerapkan **pemeriksaan host loopback tanpa syarat,
-sebelum pemeriksaan autentikasi apa pun**, pada setiap rute yang dapat memulai
-proses: token yang bocor melalui tunnel tetap tidak dapat menjangkau proses
-tersebut.
+mengekspos endpoint yang meluncurkan subproses (`npm install`, `node`, browser,
+proxy, `git`, `tar`, …). Jika endpoint tersebut dapat dijangkau dari luar host — karena
+operator menempatkan OmniRoute di belakang tunnel nginx/Cloudflare/Tailscale dan sebuah JWT
+bocor, atau autentikasi salah dikonfigurasi — penyerang mengubah "memanggil API" menjadi "menjalankan
+perintah pada host" (eksekusi kode jarak jauh). OmniRoute mencegah hal ini dengan memberlakukan
+**pemeriksaan host loopback tanpa syarat, sebelum pemeriksaan autentikasi apa pun**, pada setiap
+rute yang dapat membuat proses: token yang bocor melalui tunnel tetap tidak dapat mengakses fungsi pembuatan proses.
 
-**Kumpulan lengkap LOCAL_ONLY.** Sumber resminya adalah
+**Kumpulan lengkap LOCAL_ONLY.** Sumber otoritatifnya adalah
 `LOCAL_ONLY_API_PREFIXES` / `LOCAL_ONLY_API_PATTERNS` dalam
-`src/server/authz/routeGuard.ts`; tabel di bawah mencerminkan kondisi saat ini.
-Gate `check-route-guard-membership` menginventarisasi setiap `route.ts` di bawah
-prefiks yang dapat memulai proses dan menggagalkan CI jika ada yang tidak
-diklasifikasikan sebagai khusus lokal.
+`src/server/authz/routeGuard.ts`; tabel di bawah mencerminkan kondisi saat ini. Gerbang
+`check-route-guard-membership` mengenumerasi setiap `route.ts` di bawah
+prefiks yang dapat membuat proses dan menggagalkan CI jika ada yang tidak diklasifikasikan sebagai khusus lokal.
 
-| Awalan / pola                                                                                            | Mengapa hanya lokal                                                                                             |
+| Prefiks / pola                                                                                           | Mengapa hanya lokal                                                                                             |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `/api/mcp/`                                                                                              | Server MCP — menjalankan bridge stdio + handler SSE                                                             |
 | `/api/cli-tools/runtime/`                                                                                | Runtime alat CLI — mengeksekusi kode plugin arbitrer                                                            |
@@ -52,65 +48,67 @@ diklasifikasikan sebagai khusus lokal.
 | `/api/cli-tools/{all-statuses,status,detect}`                                                            | Pemeriksaan inventaris CLI — menjalankan `command -v` / `--version` per alat (GHSA-35fw-cv32-2373)              |
 | `/api/cli-tools/antigravity-mitm`                                                                        | Kontrol proksi MITM Antigravity (menjalankan/mengarahkan proksi sistem)                                         |
 | `/api/modality-bridge/video/`                                                                            | Pemeriksaan runtime Video Bridge khusus loopback tepercaya dan bridge ekstraksi internal                        |
-| `/api/services/`                                                                                         | Layanan tersemat (9Router / CLIProxy / Bifrost / Mux / Dario) — `npm install` + menjalankan proses              |
-| `/dashboard/providers/services/`                                                                         | Proksi terbalik ke antarmuka pengguna layanan tersemat                                                          |
+| `/api/services/`                                                                                         | Layanan tertanam (9Router / CLIProxy / Bifrost / Mux / Dario) — `npm install` + menjalankan proses              |
+| `/dashboard/providers/services/`                                                                         | Proksi terbalik ke UI layanan tertanam                                                                          |
 | `/api/tunnels/cloudflared`                                                                               | Menginstal/menjalankan biner cloudflared                                                                        |
 | `/api/tunnels/tailscale/{install,enable,disable,login,start-daemon}`                                     | Menginstal/mengontrol tailscaled pada host                                                                      |
 | `/api/copilot/`                                                                                          | Driver LLM tanpa autentikasi — secara default hanya untuk CLI                                                   |
-| `/api/tools/agent-bridge/`                                                                               | AgentBridge — menjalankan server MITM + mengedit DNS                                                            |
+| `/api/tools/agent-bridge/`                                                                               | AgentBridge — menjalankan server MITM + mengubah DNS                                                            |
 | `/api/tools/traffic-inspector/`                                                                          | Traffic Inspector — listener http-proxy + proksi sistem                                                         |
 | `/api/settings/mitm`                                                                                     | Mengaktifkan intersepsi MITM (status proksi tingkat sistem)                                                     |
-| `/api/issue-agent/`                                                                                      | Agen isu — menjalankan alat lokal terhadap repositori                                                           |
-| `/api/plugins/`, `/api/plugins`                                                                          | Plugin — memuat/mengeksekusi melalui `worker_threads` + `child_process`                                         |
-| `/api/middleware/`                                                                                       | Middleware pengguna — memuat/mengeksekusi kode operator dalam proses                                            |
+| `/api/issue-agent/`                                                                                      | Agen isu — menjalankan peralatan lokal terhadap repo                                                            |
+| `/api/plugins/`, `/api/plugins`                                                                          | Plugin — dimuat/dieksekusi melalui `worker_threads` + `child_process`                                           |
+| `/api/middleware/`                                                                                       | Middleware pengguna — memuat/mengeksekusi kode operator di dalam proses                                         |
 | `/api/system/version`                                                                                    | Pembaruan otomatis (hanya POST; GET/HEAD/OPTIONS dikecualikan) — menjalankan `git checkout` + `npm install`     |
 | `/api/db-backups/exportAll`                                                                              | Menjalankan `tar` untuk arsip ekspor                                                                            |
-| `/api/local/`                                                                                            | Peluncur lokal sekali klik (saat ini Redis) — menjalankan podman/docker                                         |
+| `/api/local/`                                                                                            | Peluncur lokal 1-klik (saat ini Redis) — menjalankan podman/docker                                              |
 | `/api/headroom/start`, `/api/headroom/stop`                                                              | Siklus hidup proksi Headroom — menjalankan CLI python / mengirim sinyal ke PID                                  |
-| `/api/jobs`, `/api/jobs/`                                                                                | Kontrol eksekutor pekerjaan — mengeksekusi pekerjaan terjadwal pada host                                        |
+| `/api/jobs`, `/api/jobs/`                                                                                | Kontrol pelaksana tugas — mengeksekusi pekerjaan terjadwal pada host                                            |
 | `/api/oauth/cursor/auto-import`                                                                          | `execFile("which", ["cursor"])` sebelum mengimpor kredensial                                                    |
-| `/api/oauth/kiro/auto-import`                                                                            | Membaca file kredensial Kiro CLI dari host                                                                      |
-| `/api/skills/collect/`                                                                                   | Pengumpulan skill — mendeteksi/menginstal alat lokal                                                            |
-| `/api/skills/install`, `/api/skills/executions`                                                          | Pendaftaran + eksekusi handler skill — menjangkau pembuatan kontainer sandbox (GHSA-jx89)                       |
+| `/api/oauth/kiro/auto-import`                                                                            | Membaca file kredensial CLI Kiro dari host                                                                      |
+| `/api/skills/collect/`                                                                                   | Pengumpulan skill — mendeteksi/menginstal peralatan lokal                                                       |
+| `/api/skills/install`, `/api/skills/executions`                                                          | Pendaftaran + eksekusi handler skill — menjangkau pembuatan container sandbox (GHSA-jx89)                       |
 | `/api/discovery/`                                                                                        | Probe penemuan jaringan lokal/penyedia                                                                          |
 | `/api/vnc-session` (`VNC_ROUTE_PREFIX`)                                                                  | Membuat browser dengan antarmuka grafis + sesi VNC untuk login interaktif                                       |
 | `/api/acp/agents`                                                                                        | ACP — menemukan dan menjalankan biner agen CLI lokal                                                            |
-| `/api/resilience/connections`                                                                            | JSON ketahanan per akun (cooldown, breaker, lockout). HTML dasbor tidak dibatasi hanya untuk akses lokal.       |
-| `/api/providers/cursor/agent-availability`                                                               | Pemeriksaan pengingat instalasi di dasbor — menjalankan `cursor-agent status --format json`                     |
-| `/api/providers/{id}/login` (regex)                                                                      | Menjalankan Playwright Chromium dengan antarmuka grafis untuk login melalui cookie web                          |
+| `/api/resilience/connections`                                                                            | JSON ketahanan per akun (cooldown, breaker, lockout). HTML dasbor tidak dibatasi hanya untuk lokal.             |
+| `/api/providers/cursor/agent-availability`                                                               | Pemeriksaan saran instalasi dasbor — menjalankan `cursor-agent status --format json`                            |
+| `/api/providers/{id}/login` (regex)                                                                      | Menjalankan Playwright Chromium dengan antarmuka grafis untuk login berbasis cookie web                         |
 | `/api/providers/volcengine-plan/connect` (regex)                                                         | Alur manual dengan antarmuka grafis + login otomatis berbasis sesi melalui telepon/SMS (menjalankan Playwright) |
-| `/api/providers/{id}/refresh-cursor` (regex)                                                             | Perpanjangan sesi Cursor secara manual — memicu `cursor-agent`                                                  |
-| `/api/providers/{id}/chatgpt-web-codex-doctor` (regex)                                                   | Mendiagnosis instalasi Codex CLI lokal (menjalankan biner)                                                      |
+| `/api/providers/{id}/refresh-cursor` (regex)                                                             | Pembaruan sesi Cursor secara manual — memicu `cursor-agent`                                                     |
+| `/api/providers/{id}/chatgpt-web-codex-doctor` (regex)                                                   | Mendiagnosis instalasi Codex CLI lokal (menjalankan binernya)                                                   |
 
 **Respons saat terjadi pelanggaran:** `403 LOCAL_ONLY`
 
-#### Pengecualian cakupan pengelolaan
+#### Pengecualian untuk cakupan pengelolaan
 
-Sebagian jalur LOCAL_ONLY JUGA DAPAT diakses dari non-loopback jika dan hanya
-jika permintaan menyertakan `Authorization: Bearer <api-key>` yang metadatanya
-mencakup cakupan `manage` (atau `admin`). Pengecualian ini dikendalikan
-secara eksplisit per jalur melalui `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES` agar
-standar untuk setiap jalur LOCAL_ONLY baru tetap berupa loopback ketat. Permintaan
-tanpa autentikasi dan permintaan dengan kunci non-pengelolaan tetap ditolak dengan
-`403 LOCAL_ONLY`.
+Sebagian path LOCAL_ONLY JUGA DAPAT diakses dari alamat non-loopback jika dan
+hanya jika permintaan membawa `Authorization: Bearer <api-key>` yang
+metadatanya menyertakan cakupan `manage` (atau `admin`). Pengecualian ini
+diaktifkan secara eksplisit per path melalui `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`
+sehingga perilaku default untuk setiap path LOCAL_ONLY baru tetap mewajibkan
+loopback secara ketat. Permintaan tanpa autentikasi dan permintaan dengan kunci
+yang tidak memiliki cakupan pengelolaan tetap ditolak dengan `403 LOCAL_ONLY`.
 
-Saat ini, satu-satunya prefiks yang dapat dikecualikan adalah `/api/mcp/`. `/api/cli-tools/runtime/` dan
-`/api/services/` sengaja dikecualikan karena keduanya dapat membuat
-subproses arbitrer (`npm install`, `node`), yang merupakan kelas CVE persis
-yang hendak dicegah oleh tingkat LOCAL_ONLY.
+Saat ini, satu-satunya prefiks yang dapat dikecualikan adalah `/api/mcp/`.
+`/api/cli-tools/runtime/` dan `/api/services/` sengaja dikecualikan karena
+keduanya dapat membuat subproses arbitrer (`npm install`, `node`), yang
+merupakan kelas CVE persis yang hendak dicegah oleh tingkat LOCAL_ONLY.
 
-**#7895 — cakupan sempit `mcp:connect`:** pengecualian `/api/mcp/` JUGA menerima
-kunci Bearer yang memiliki cakupan sempit `mcp:connect`
-(`src/shared/constants/managementScopes.ts::MCP_CONNECT_SCOPE`), yang diperiksa melalui
-`hasMcpConnectOrManageScope()` di `src/server/authz/policies/management.ts`.
-Hal ini dibatasi HANYA untuk `/api/mcp/` — `mcp:connect` tidak memberikan izin apa pun pada rute
-pengelolaan lainnya (termasuk setiap prefiks pengecualian LOCAL_ONLY lainnya, jika suatu saat
-ditambahkan), dan sengaja tidak disertakan dalam
-`MANAGEMENT_API_KEY_SCOPES`. Kunci yang memiliki `manage`/`admin` tetap lolos dari
-pengecualian ini persis seperti sebelumnya; `mcp:connect` merupakan alternatif dengan hak istimewa
-lebih rendah bagi pemanggil jarak jauh khusus MCP yang tidak memerlukan akses pengelolaan luas.
+**#7895 — cakupan sempit `mcp:connect`:** pengecualian `/api/mcp/` JUGA
+menerima kunci Bearer yang memiliki cakupan sempit `mcp:connect`
+(`src/shared/constants/managementScopes.ts::MCP_CONNECT_SCOPE`), yang diperiksa
+melalui `hasMcpConnectOrManageScope()` di
+`src/server/authz/policies/management.ts`. Cakupan ini berlaku HANYA untuk
+`/api/mcp/` — `mcp:connect` tidak memberikan akses apa pun pada rute pengelolaan
+lainnya (termasuk setiap prefiks pengecualian LOCAL_ONLY lainnya jika kelak ada
+yang ditambahkan), dan sengaja tidak disertakan dalam
+`MANAGEMENT_API_KEY_SCOPES`. Kunci yang memiliki `manage`/`admin` tetap lolos
+dari pengecualian tersebut sama seperti sebelumnya; `mcp:connect` merupakan
+alternatif dengan hak akses lebih rendah bagi pemanggil jarak jauh khusus MCP
+yang tidak memerlukan akses pengelolaan luas.
 
-| Permintaan                                        | Jalur                      | Hasil                  |
+| Permintaan                                        | Path                       | Hasil                  |
 | ------------------------------------------------- | -------------------------- | ---------------------- |
 | Non-loopback, tanpa Bearer                        | `/api/mcp/*`               | 403 LOCAL_ONLY         |
 | Non-loopback, Bearer dengan cakupan `manage`      | `/api/mcp/*`               | Diizinkan              |
@@ -118,95 +116,107 @@ lebih rendah bagi pemanggil jarak jauh khusus MCP yang tidak memerlukan akses pe
 | Non-loopback, Bearer tanpa `manage`/`mcp:connect` | `/api/mcp/*`               | 403 LOCAL_ONLY         |
 | Non-loopback, Bearer dengan cakupan `mcp:connect` | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY         |
 | Non-loopback, Bearer dengan cakupan `manage`      | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY         |
-| Loopback, dengan/tanpa Bearer                     | semua LOCAL_ONLY           | Diizinkan (gate lolos) |
+| Loopback, dengan/tanpa Bearer                     | LOCAL_ONLY apa pun         | Diizinkan (lolos gate) |
 
 #### Panduan operator & audit
 
-Jika Anda menjalankan OmniRoute di belakang reverse proxy atau tunnel (nginx, Caddy, Cloudflare
-Tunnel, Tailscale, Ngrok), pemeriksaan loopback tetap melindungi rute yang dapat
-membuat proses di atas — permintaan yang alamat kliennya non-loopback akan ditolak dengan
-`403 LOCAL_ONLY` **sebelum autentikasi dijalankan**, sehingga JWT yang bocor tidak dapat memicu pembuatan proses. Masih ada dua
-tanggung jawab operator:
+Jika Anda menjalankan OmniRoute di belakang reverse proxy atau tunnel (nginx,
+Caddy, Cloudflare Tunnel, Tailscale, Ngrok), pemeriksaan loopback tetap
+melindungi rute yang dapat membuat proses di atas — permintaan dengan alamat
+klien non-loopback ditolak dengan `403 LOCAL_ONLY` **sebelum autentikasi
+dijalankan**, sehingga JWT yang bocor tidak dapat memicu pembuatan proses.
+Masih ada dua tanggung jawab operator:
 
 - **Jangan "memperbaiki" 403 dengan memalsukan IP klien sebagai loopback.** Menetapkan
-  `X-Forwarded-For: 127.0.0.1`, atau menggunakan proxy yang menulis ulang alamat sumber menjadi
+  `X-Forwarded-For: 127.0.0.1`, atau menggunakan proksi yang menulis ulang alamat sumber menjadi
   loopback, akan membuka kembali kelas RCE yang ditutup oleh tingkat ini. Ekspos
-  dasbor/API melalui proxy — jangan pernah mengekspos rute yang dapat melakukan spawn.
+  dasbor/API melalui proksi — jangan pernah mengekspos rute yang dapat melakukan spawn.
 - **Pertahankan bypass cakupan manage seminimal mungkin.** Hanya `/api/mcp/` yang dapat di-bypass, dan
   hanya dengan kunci API bercakupan `manage`. `SPAWN_CAPABLE_PREFIXES` tidak pernah dapat
   ditambahkan ke daftar bypass — skema zod menolaknya dan
   `isLocalOnlyBypassableByManageScope` menolaknya saat runtime (pertahanan berlapis),
-  dan inilah yang dimaksud dasbor dengan "tidak dapat dibuat agar bisa di-bypass". Pemuat snapshot
-  runtime juga menghapus entri semacam itu dari baris pengaturan yang disimpan, dan
-  impor JSON lama (`/api/settings/import-json`) tidak pernah menulis kunci bypass.
+  yang dimaksud dasbor dengan "tidak dapat dibuat bisa di-bypass". Daftar
+  penolakan yang sama juga mencakup beberapa rute LOCAL_ONLY yang tidak melakukan spawn tetapi juga tidak boleh
+  dapat diakses dari jarak jauh — `/api/oauth/kiro/auto-import` (membaca file kredensial Kiro
+  lokal host), `/api/discovery/`, dan `/api/issue-agent/`. Pemuat snapshot
+  runtime juga menghapus entri tersebut dari baris pengaturan yang tersimpan, dan impor
+  JSON lama (`/api/settings/import-json`) tidak pernah menulis kunci bypass.
   Setiap entri `LOCAL_ONLY_API_PREFIXES` harus berada dalam daftar penolakan atau
-  telah ditinjau sebagai memenuhi syarat bypass (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`). Rute
-  dengan segmen dinamis dan jalur statis yang dapat melakukan spawn di bawah `/api/providers/` (misalnya `/login`,
+  telah ditinjau sebagai layak untuk bypass (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`). Rute
+  yang dapat melakukan spawn dengan segmen dinamis dan path statis di bawah `/api/providers/` (misalnya `/login`,
   `/refresh-cursor`) dicakup oleh pendamping berbasis regex `SPAWN_CAPABLE_PATTERNS` /
   `SPAWN_CAPABLE_PATTERN_ANCESTORS` dalam
   `src/shared/constants/spawnCapablePrefixes.ts`, bukan oleh array datar
   `SPAWN_CAPABLE_PREFIXES` — array datar tersebut harus mencakup seluruh
-  prefiks `/api/providers/` untuk menangkapnya, sehingga memperluas secara berlebihan pohon rute
+  prefiks `/api/providers/` untuk mendeteksinya, sehingga memperluas cakupan secara berlebihan pada pohon rute
   yang secara sah digunakan dasbor jarak jauh untuk CRUD penyedia.
 
-**Mengaudit akses** — untuk memastikan tidak ada apa pun dari luar host yang menjangkau rute-rute ini:
+**Mengaudit akses** — untuk memverifikasi bahwa tidak ada akses dari luar host yang mencapai rute-rute ini:
 
-- Buka **Inventaris Otorisasi** di `/dashboard/settings/security`: halaman ini menampilkan
+- Buka **Inventaris Otorisasi** di `/dashboard/settings/security`: bagian ini menampilkan
   daftar prefiks LOCAL_ONLY aktif, prefiks mana yang dapat di-bypass, dan kumpulan
-  yang dapat melakukan spawn ("tidak dapat dibuat agar bisa di-bypass") pada waktu kompilasi.
-- Cari prefiks di atas dalam log reverse-proxy / akses Anda yang dipasangkan dengan
-  alamat klien non-loopback. Setiap akses semacam itu yang mengembalikan `200`, bukan
-  `403 LOCAL_ONLY`, berarti proxy menyamarkan IP klien sebenarnya — perbaiki proxy tersebut.
-- `403 LOCAL_ONLY` dalam log OmniRoute untuk salah satu jalur ini menunjukkan bahwa pelindung
-  berfungsi sebagaimana mestinya, bukan kesalahan yang harus disembunyikan.
+  yang dapat melakukan spawn yang ditentukan saat kompilasi ("tidak dapat dibuat bisa di-bypass").
+- Gunakan grep pada log proksi balik / akses Anda untuk prefiks di atas yang dipasangkan dengan
+  alamat klien non-loopback. Setiap akses seperti itu yang menghasilkan `200`, bukan
+  `403 LOCAL_ONLY`, berarti proksi menyamarkan IP klien sebenarnya — perbaiki proksi tersebut.
+- `403 LOCAL_ONLY` dalam log OmniRoute untuk salah satu path ini menunjukkan bahwa pengaman
+  bekerja sebagaimana mestinya, bukan galat yang harus disembunyikan.
 
 ### Tingkat 2 — ALWAYS_PROTECTED
 
-**Diberlakukan oleh:** `isAlwaysProtectedPath(path)` → melewati bypass `requireLogin=false`
+**Diberlakukan oleh:** `isAlwaysProtectedPath(path)` → lewati bypass `requireLogin=false`
 **Bypass:** Tidak ada saat `requireLogin=false`; JWT selalu diperlukan
 
-Rute-rute ini bersifat merusak atau tidak dapat dibatalkan. Mengizinkannya dalam instalasi
-"tanpa kata sandi" akan berarti siapa pun di LAN yang sama dapat menghapus database atau menghentikan
+Rute-rute ini bersifat destruktif atau tidak dapat dibatalkan. Mengizinkannya dalam instalasi
+"tanpa kata sandi" berarti siapa pun di LAN yang sama dapat menghapus database atau menghentikan
 proses server.
 
-| Jalur                                     | Alasan                                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------------------------ |
-| `/api/shutdown`                           | Menghentikan proses server                                                           |
-| `/api/settings/database`                  | Ekspor, impor, dan penghapusan database                                              |
-| `/api/db-backups`                         | Akses ke arsip cadangan database lengkap                                             |
-| `/api/settings/export-json`               | Mengekspor blob pengaturan lengkap (termasuk rahasia)                                |
-| `/api/settings/import-json`               | Mengganti blob pengaturan lengkap                                                    |
-| `/api/providers/health-autopilot/actions` | Menjalankan tindakan remediasi autopilot                                             |
-| `/api/settings/obsidian`                  | Menerbitkan kredensial WebDAV yang dapat digunakan kembali untuk root vault mana pun |
+| Path                                      | Alasan                                                                            |
+| ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `/api/shutdown`                           | Menghentikan proses server                                                        |
+| `/api/settings/database`                  | Ekspor, impor, dan penghapusan database                                           |
+| `/api/db-backups`                         | Akses arsip cadangan database lengkap                                             |
+| `/api/settings/export-json`               | Mengekspor blob pengaturan lengkap (termasuk rahasia)                             |
+| `/api/settings/import-json`               | Mengganti blob pengaturan lengkap                                                 |
+| `/api/providers/health-autopilot/actions` | Menjalankan tindakan remediasi autopilot                                          |
+| `/api/settings/obsidian`                  | Menerbitkan kredensial WebDAV yang dapat digunakan ulang untuk root vault apa pun |
 
 **Respons saat terjadi pelanggaran:** `401 Authentication required`
 
-`/api/settings/obsidian` mencakup anak `/webdav`-nya: `POST` mengarahkan layanan file WebDAV —
+`/api/settings/obsidian` mencakup turunannya, `/webdav`: `POST` mengarahkan layanan file WebDAV —
 yang disajikan oleh lapisan Node kustom sebelum Next.js, di luar pipeline ini — ke root yang dipilih
 pemanggil dan mengembalikan kredensial Basic yang baru diterbitkan, `DELETE` merotasinya, dan `POST`
-pada induk menyimpan token API REST Obsidian. GHSA-62vw hanya menyembunyikan pengungkapan kata sandi
-melalui `GET`; penerbitannya masih berada pada tingkat fail-open (GHSA-7pq4-8pvv-rx7r).
-`enableObsidianVaultSync()` juga menolak vault yang merupakan direktori data, berada di dalamnya,
-atau memuat direktori data tersebut.
+induk menyimpan token API REST Obsidian. GHSA-62vw hanya menyamarkan pengungkapan kata sandi oleh `GET`;
+penerbitannya masih berada pada tingkat fail-open (GHSA-7pq4-8pvv-rx7r). `enableObsidianVaultSync()`
+juga menolak vault yang merupakan direktori data, berada di dalamnya, atau memuatnya.
+
+#### Ekspor kredensial hanya untuk operator
+
+Tingkat di atas hanya menentukan apakah _suatu_ kredensial diperlukan. Rute yang mengunduh
+kredensial tersimpan menambahkan pemeriksaan kedua dalam handler: `GET /api/settings/export-json` (koneksi
+penyedia yang telah didekripsi dan kunci API mentah), `GET /api/db-backups/export` (file SQLite), dan
+`GET /api/db-backups/exportAll` (arsip lengkap) memanggil `requireOperatorCredential()`
+(`src/lib/api/operatorCredential.ts`). Fungsi ini menerima sesi dasbor, subjek CLI lokal, atau
+instans dengan login dinonaktifkan, serta memberikan respons `403` kepada kunci API dari cakupan apa pun (termasuk `manage`
+dan `admin`) dan kepada token akses `oma_`. Penerbitan token sinkronisasi (`POST /api/sync/tokens`) menggunakan
+helper yang sama, ditambah token layanan internal loopback tepercaya.
 
 ### Bootstrap instalasi baru hanya untuk loopback — berdasarkan peer sebenarnya, bukan `Host`
 
-Jika tidak ada kata sandi manajemen yang dikonfigurasi (dan tidak ada `INITIAL_PASSWORD`),
-`isAuthRequired()` dalam `src/shared/utils/apiAuth.ts` mempertahankan bootstrap anonim tetap terbuka
-**hanya untuk peer loopback**. Loopback ditentukan berdasarkan sinyal peer tepercaya, dengan urutan:
-peer TCP sebenarnya yang diberi stempel token (`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, yang dilihat
-oleh kebijakan), keputusan `AUTHZ_HEADER_PEER_LOCALITY` milik pipeline itu sendiri (yang dilihat
-oleh handler rute, hanya dipercaya selama `OMNIROUTE_PEER_STAMP_TOKEN` ditetapkan), atau peer socket
-sebenarnya untuk pemanggil langsung. `Host` / `nextUrl.hostname` tidak pernah diperiksa, dan penulisan
-kata sandi pertama (`POST /api/settings/require-login`) berada di bawah batasan yang sama alih-alih
-terbuka bagi setiap peer jaringan (GHSA-7pq4-8pvv-rx7r). `managementPolicy` meneruskan keputusan
-`peerContext`-nya sendiri secara eksplisit, sehingga header permintaan ORIGINAL (sebelum dihapus)
-tidak pernah menentukannya.
+Jika tidak ada kata sandi manajemen yang dikonfigurasi (dan tidak ada `INITIAL_PASSWORD`), `isAuthRequired()` dalam
+`src/shared/utils/apiAuth.ts` membiarkan bootstrap anonim terbuka **hanya untuk peer loopback**.
+Loopback ditentukan dari sinyal peer tepercaya, dengan urutan: peer TCP sebenarnya yang diberi stempel token
+(`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, yang dilihat oleh kebijakan), keputusan
+`AUTHZ_HEADER_PEER_LOCALITY` milik pipeline itu sendiri (yang dilihat oleh handler rute, hanya dipercaya selama
+`OMNIROUTE_PEER_STAMP_TOKEN` ditetapkan), atau peer soket sebenarnya untuk pemanggil langsung. `Host` /
+`nextUrl.hostname` tidak pernah diperiksa, dan penulisan kata sandi pertama
+(`POST /api/settings/require-login`) berada di bawah batasan yang sama, bukan terbuka bagi setiap
+peer jaringan (GHSA-7pq4-8pvv-rx7r). `managementPolicy` meneruskan keputusan `peerContext`-nya sendiri
+secara eksplisit, sehingga header permintaan ORIGINAL (sebelum penghapusan) tidak pernah menentukannya.
 
 ### Tingkat 3 — MANAGEMENT (bawaan)
 
-Semua rute manajemen lainnya. Autentikasi diperlukan kecuali `requireLogin=false`
-dikonfigurasi. Token CLI dapat mengautentikasi rute-rute ini (loopback + HMAC yang valid).
+Semua rute pengelolaan lainnya. Autentikasi diperlukan kecuali `requireLogin=false` dikonfigurasi. Token CLI dapat mengautentikasi rute-rute ini (loopback + HMAC yang valid).
 
 ## Urutan evaluasi
 
