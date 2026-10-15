@@ -31,6 +31,28 @@ export interface CodexGlobalFastServiceTierResolved {
   supportedModels: readonly string[];
 }
 
+function resolveConfiguredTier(value: unknown): CodexFastTierValue {
+  if (typeof value !== "string") return "priority";
+  const tier = value.trim().toLowerCase();
+  if (tier === "default" || tier === "priority" || tier === "flex" || tier === "ultrafast") {
+    return tier;
+  }
+  return "priority";
+}
+
+function resolveSupportedModels(value: unknown, tier: CodexFastTierValue): readonly string[] {
+  const defaults =
+    tier === "ultrafast"
+      ? CODEX_ULTRAFAST_SUPPORTED_MODELS
+      : CODEX_FAST_TIER_DEFAULT_SUPPORTED_MODELS;
+  if (!Array.isArray(value)) return defaults;
+  const models = value
+    .filter((model): model is string => typeof model === "string")
+    .map((model) => model.trim())
+    .filter((model) => model.length > 0);
+  return models.length > 0 || tier === "ultrafast" ? models : defaults;
+}
+
 /**
  * Resolve the global Codex Fast Tier settings. Handles three legacy shapes:
  *  - { codexServiceTier: true }                      (oldest boolean)
@@ -59,22 +81,8 @@ export function resolveCodexGlobalFastServiceTier(
     const obj = raw as JsonRecord;
     if (obj.enabled === true) enabled = true;
 
-    if (typeof obj.tier === "string") {
-      const t = obj.tier.trim().toLowerCase();
-      if (t === "default" || t === "priority" || t === "flex" || t === "ultrafast") {
-        tier = t;
-      }
-    }
-
-    if (tier === "ultrafast") supportedModels = CODEX_ULTRAFAST_SUPPORTED_MODELS;
-
-    if (Array.isArray(obj.supportedModels)) {
-      const list = obj.supportedModels
-        .filter((m): m is string => typeof m === "string")
-        .map((m) => m.trim())
-        .filter((m) => m.length > 0);
-      if (list.length > 0 || tier === "ultrafast") supportedModels = list;
-    }
+    tier = resolveConfiguredTier(obj.tier);
+    supportedModels = resolveSupportedModels(obj.supportedModels, tier);
   } else if (record.codexFastServiceTier === true) {
     enabled = true;
   }
@@ -136,6 +144,39 @@ function modelMatchesSupportedList(
   return false;
 }
 
+function isGlobalTierEligibleForModel(
+  resolved: CodexGlobalFastServiceTierResolved,
+  model: string | null | undefined
+): boolean {
+  if (resolved.tier === "ultrafast" && !isCodexUltrafastModel(model)) return false;
+  // Default clears account overrides for every model; legacy modes allow an omitted model.
+  if (resolved.tier === "default" || model === undefined) return true;
+  return modelMatchesSupportedList(model, resolved.supportedModels, resolved.tier === "ultrafast");
+}
+
+function preserveExplicitBodyTier(body: Record<string, unknown> | null | undefined): boolean {
+  const rawTier = body && typeof body === "object" ? body.service_tier : null;
+  const tier = typeof rawTier === "string" ? normalizeCodexServiceTier(rawTier) : null;
+  if (!tier) return false;
+  if (body && typeof body === "object" && !Array.isArray(body)) body.service_tier = tier;
+  return true;
+}
+
+function clearConnectionServiceTier(
+  providerSpecificData: JsonRecord,
+  requestDefaults: JsonRecord
+): JsonRecord {
+  const nextRequestDefaults = { ...requestDefaults };
+  delete nextRequestDefaults.serviceTier;
+  const nextProviderSpecificData = { ...providerSpecificData };
+  if (Object.keys(nextRequestDefaults).length > 0) {
+    nextProviderSpecificData.requestDefaults = nextRequestDefaults;
+  } else {
+    delete nextProviderSpecificData.requestDefaults;
+  }
+  return nextProviderSpecificData;
+}
+
 export interface ApplyCodexGlobalFastServiceTierOptions {
   /**
    * Target model for the current request. When provided, the global override is only
@@ -161,21 +202,7 @@ export function applyCodexGlobalFastServiceTier<T extends JsonRecord | null | un
   const resolved = resolveCodexGlobalFastServiceTier(settings);
   if (!resolved.enabled) return credentials;
 
-  if (resolved.tier === "ultrafast" && !isCodexUltrafastModel(options.model)) return credentials;
-
-  // Per-model gate for paid fast/flex modes. A global "default" mode intentionally
-  // disables account-level overrides for every Codex model.
-  if (resolved.tier !== "default" && options.model !== undefined) {
-    if (
-      !modelMatchesSupportedList(
-        options.model,
-        resolved.supportedModels,
-        resolved.tier === "ultrafast"
-      )
-    ) {
-      return credentials;
-    }
-  }
+  if (!isGlobalTierEligibleForModel(resolved, options.model)) return credentials;
 
   if (!credentials || typeof credentials !== "object" || Array.isArray(credentials)) {
     return credentials;
@@ -185,28 +212,12 @@ export function applyCodexGlobalFastServiceTier<T extends JsonRecord | null | un
   const requestDefaults = asRecord(providerSpecificData.requestDefaults);
 
   const body = options.body;
-  const rawBodyTier = body && typeof body === "object" ? (body as JsonRecord).service_tier : null;
-  const normalizedBodyTier =
-    typeof rawBodyTier === "string" ? normalizeCodexServiceTier(rawBodyTier) : null;
-  if (normalizedBodyTier) {
-    if (body && typeof body === "object" && !Array.isArray(body)) {
-      (body as JsonRecord).service_tier = normalizedBodyTier;
-    }
-    return credentials;
-  }
+  if (preserveExplicitBodyTier(body)) return credentials;
 
   if (resolved.tier === "default") {
-    const nextRequestDefaults = { ...requestDefaults };
-    delete nextRequestDefaults.serviceTier;
-    const nextProviderSpecificData = { ...providerSpecificData };
-    if (Object.keys(nextRequestDefaults).length > 0) {
-      nextProviderSpecificData.requestDefaults = nextRequestDefaults;
-    } else {
-      delete nextProviderSpecificData.requestDefaults;
-    }
     return {
       ...credentials,
-      providerSpecificData: nextProviderSpecificData,
+      providerSpecificData: clearConnectionServiceTier(providerSpecificData, requestDefaults),
     } as T;
   }
 

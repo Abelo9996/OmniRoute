@@ -111,7 +111,7 @@ it("offers the connection default, emits its saved value and restores it", async
     reasoningEffort: "medium",
     serviceTier: "default" as const,
     fingerprintMode: "session" as const,
-    promptCacheKeyScope: "session" as const,
+    promptCacheKeyScope: "client" as const,
     openaiStoreEnabled: false,
     allowPaidCredits: false,
     showFingerprintMode: false,
