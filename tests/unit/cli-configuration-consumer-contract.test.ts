@@ -58,7 +58,14 @@ test("configuration examples preserve unrelated bearer and dashboard-session aut
 
 /** Runs `fn` with the base-url env vars forced to `vars`, restoring them afterwards. */
 function withBaseUrlEnv(vars: Record<string, string | undefined>, fn: () => void): void {
-  const keys = ["PORT", "API_PORT", "DASHBOARD_PORT", "BASE_URL", "OMNIROUTE_BASE_URL"];
+  const keys = [
+    "PORT",
+    "API_PORT",
+    "DASHBOARD_PORT",
+    "BASE_URL",
+    "OMNIROUTE_BASE_URL",
+    "NEXT_PUBLIC_BASE_URL",
+  ];
   const saved = new Map(keys.map((key) => [key, process.env[key]]));
   try {
     for (const key of keys) {
@@ -78,15 +85,24 @@ function withBaseUrlEnv(vars: Record<string, string | undefined>, fn: () => void
 // A caller that wants the operator's configured host still gets it (#15778) — but it
 // now has to ask for it, by passing the resolver's result as the baseUrl argument.
 test("configuration examples track the configured loopback port when given one", () => {
-  withBaseUrlEnv({ PORT: "37128" }, () => {
-    const example = buildApiOperationExample(
-      { path: "/api/models", method: "GET" },
-      false,
-      resolveOmniRouteBaseUrl()
-    ).join("\n");
-    assert.ok(example.includes("http://localhost:37128/api/models"), example);
-    assert.ok(!example.includes("20128"), example);
-  });
+  // Exercise isolation even on machines where this higher-priority input is unset.
+  const savedPublicBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  process.env.NEXT_PUBLIC_BASE_URL = "https://ambient.invalid";
+  try {
+    withBaseUrlEnv({ PORT: "37128" }, () => {
+      const example = buildApiOperationExample(
+        { path: "/api/models", method: "GET" },
+        false,
+        resolveOmniRouteBaseUrl()
+      ).join("\n");
+      assert.ok(example.includes("http://localhost:37128/api/models"), example);
+      assert.ok(!example.includes("20128"), example);
+    });
+    assert.equal(process.env.NEXT_PUBLIC_BASE_URL, "https://ambient.invalid");
+  } finally {
+    if (savedPublicBaseUrl === undefined) delete process.env.NEXT_PUBLIC_BASE_URL;
+    else process.env.NEXT_PUBLIC_BASE_URL = savedPublicBaseUrl;
+  }
 });
 
 // The generator commits its output and `check:agent-skills-sync` diff-gates it, so the
@@ -104,6 +120,7 @@ test("generated examples ignore ambient base-url env so committed output is repr
     { DASHBOARD_PORT: "42000" },
     { BASE_URL: "https://ops.internal.example" },
     { OMNIROUTE_BASE_URL: "https://omni.example:8443" },
+    { NEXT_PUBLIC_BASE_URL: "https://public.example" },
   ]) {
     withBaseUrlEnv(vars, () => {
       const actual = buildApiOperationExample({ path: "/api/models", method: "GET" }, false).join(
