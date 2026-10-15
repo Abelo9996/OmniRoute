@@ -32,8 +32,48 @@ let upstream: typeof fetch = async () => {
   throw new Error("unconfigured synthetic upstream");
 };
 globalThis.fetch = (...args) => upstream(...args);
+// Installed Undici and native fetch may use different dispatcher registries.
+// Deny raw sockets before application imports, then allow only the fixture.
+let allowedPort = 0;
+Socket.prototype.connect = function (...args: unknown[]) {
+  const normalized = Array.isArray(args[0]) ? args[0] : args;
+  const first = normalized[0];
+  const options = first && typeof first === "object" ? (first as Record<string, unknown>) : null;
+  const host = options?.host ?? normalized[1];
+  const port = Number(options?.port ?? first);
+  assert(
+    allowedPort > 0 && host === "127.0.0.1" && port === allowedPort,
+    "retention fixture blocks sockets outside its HTTP server"
+  );
+  return Reflect.apply(originalConnect, this, args);
+};
 
 test("retention HTTP route matrix", { timeout: 300_000 }, async (t) => {
+  let cleanupApplication: (() => Promise<void>) | undefined;
+  // Registered before imports so a failed setup cannot leave global hooks behind.
+  t.after(async () => {
+    try {
+      await cleanupApplication?.();
+    } finally {
+      globalThis.fetch = nativeFetch;
+      setGlobalDispatcher(originalDispatcher);
+      Socket.prototype.connect = originalConnect;
+      await networkGuard.close();
+    }
+  });
+  // Import-time application initialization must be isolated too, before the
+  // HTTP fixture has selected its one allowed loopback port.
+  const bootstrapSocket = new Socket();
+  bootstrapSocket.on("error", () => {});
+  try {
+    assert.throws(
+      () => bootstrapSocket.connect(9, "127.0.0.1"),
+      /retention fixture blocks sockets/,
+      "raw sockets must be blocked before application imports"
+    );
+  } finally {
+    bootstrapSocket.destroy();
+  }
   const core = await import("../../src/lib/db/core.ts");
   const providers = await import("../../src/lib/db/providers.ts");
   const keys = await import("../../src/lib/db/apiKeys.ts");
@@ -150,23 +190,7 @@ test("retention HTTP route matrix", { timeout: 300_000 }, async (t) => {
       "/v1/responses": responsesRoute.POST,
     });
     networkGuard.enableNetConnect(new URL(server.url).host);
-    // Node's built-in fetch can use a different dispatcher registry from the
-    // installed Undici. Keep the HTTP client on the same MockAgent, and deny
-    // raw sockets too so an alternate dispatcher cannot escape this fixture.
-    const allowedPort = Number(new URL(server.url).port);
-    Socket.prototype.connect = function (...args: unknown[]) {
-      const normalized = Array.isArray(args[0]) ? args[0] : args;
-      const first = normalized[0];
-      const options =
-        first && typeof first === "object" ? (first as Record<string, unknown>) : null;
-      const host = options?.host ?? normalized[1];
-      const port = Number(options?.port ?? first);
-      assert(
-        host === "127.0.0.1" && port === allowedPort,
-        "retention fixture blocks sockets outside its HTTP server"
-      );
-      return Reflect.apply(originalConnect, this, args);
-    };
+    allowedPort = Number(new URL(server.url).port);
   });
 
   t.beforeEach(async () => {
@@ -176,18 +200,19 @@ test("retention HTTP route matrix", { timeout: 300_000 }, async (t) => {
     reasoning.clearReasoningCacheAll();
   });
 
-  t.after(async () => {
-    globalThis.fetch = nativeFetch;
+  cleanupApplication = async () => {
+    assert.notEqual(
+      Socket.prototype.connect,
+      originalConnect,
+      "network isolation must remain active while application resources are flushed"
+    );
     await logs.closeCallLogSaves(30_000);
     await server?.close();
     await loggerResource.closeSharedLoggerResource();
     const proxyLogs = await import("../../src/lib/proxyLogger.ts");
     proxyLogs.flushProxyLogsSync();
-    pressureFixture.dispose();
+    pressureFixture?.dispose();
     core.closeDbInstance({ checkpointMode: null });
-    setGlobalDispatcher(originalDispatcher);
-    await networkGuard.close();
-    Socket.prototype.connect = originalConnect;
     const finalApplicationLog = fs.readFileSync(path.join(dataDir, "logs", "app.log"), "utf8");
     assert(finalApplicationLog.includes("video-bridge pre-call"), "final debug log must exist");
     assert(
@@ -195,7 +220,7 @@ test("retention HTTP route matrix", { timeout: 300_000 }, async (t) => {
       "flushed application debug log retained a transcript from the matrix"
     );
     fs.rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-  });
+  };
 
   function bodyFor(stream: boolean, padding: number, responses = false) {
     const content = [
