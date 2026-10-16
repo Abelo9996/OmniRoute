@@ -16,6 +16,8 @@ test("versioned admission consumers and shared merge rules are covered by the dr
     "merge-batch/SKILL.md",
     "_shared/merge-gates.md",
     "_shared/validation-gate.md",
+    "_shared/protected-surfaces.md",
+    "_shared/credit-preservation.md",
   ];
   const result = inspectSkillContracts("config/quality/skill-templates");
   assert.deepEqual(result.files.map((file) => file.path).sort(), expected.sort());
@@ -72,3 +74,29 @@ test("the batch-merge consumer cannot be omitted or independently changed", () =
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+for (const relativePath of ["_shared/protected-surfaces.md", "_shared/credit-preservation.md"]) {
+  test(`shared instruction dependency ${relativePath} cannot be missing or drifted`, () => {
+    const dir = mkdtempSync(join(tmpdir(), "omniroute-shared-contract-"));
+    const root = join(dir, "skills");
+    try {
+      cpSync("config/quality/skill-templates", root, { recursive: true });
+      assert.equal(inspectSkillContracts(root).ok, true);
+      const file = join(root, relativePath);
+      const approved = readFileSync(file, "utf8");
+      rmSync(file);
+      const missing = inspectSkillContracts(root);
+      assert.equal(missing.ok, false);
+      assert.equal(missing.files.find((entry) => entry.path === relativePath)?.status, "MISSING");
+      writeFileSync(file, approved + "\nUnreviewed instruction exception.\n");
+      const drifted = inspectSkillContracts(root);
+      assert.equal(drifted.ok, false);
+      assert.deepEqual(
+        drifted.files.filter((entry) => entry.status === "DRIFT").map((entry) => entry.path),
+        [relativePath]
+      );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+}
