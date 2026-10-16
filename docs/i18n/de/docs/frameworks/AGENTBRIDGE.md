@@ -12,18 +12,18 @@ AgentBridge ist der MITM-Proxy (Man-in-the-Middle) von OmniRoute, der HTTPS-Date
 
 ---
 
-## §1 Übersicht
+## §1 Überblick
 
 ### Was ist AgentBridge?
 
-Wenn ein IDE-Agent (z. B. GitHub Copilot, Cursor oder Claude Code) einen API-Aufruf durchführt, verbindet er sich direkt mit dem vorgeschalteten KI-Anbieter (OpenAI, Anthropic usw.). AgentBridge fängt diese Verbindung transparent auf TLS-Ebene ab — ohne dass Änderungen an der Agentenkonfiguration erforderlich sind — und leitet die Anfrage über OmniRoute um.
+Wenn ein IDE-Agent (z. B. GitHub Copilot, Cursor, Claude Code) einen API-Aufruf durchführt, stellt er eine direkte Verbindung zum vorgelagerten KI-Anbieter (OpenAI, Anthropic usw.) her. AgentBridge fängt diese Verbindung transparent auf TLS-Ebene ab — ohne dass Änderungen an der Agentenkonfiguration erforderlich sind — und leitet die Anfrage über OmniRoute um.
 
-Damit können Sie:
+Das bedeutet, Sie können:
 
-- **Jeden Agenten zu jedem Anbieter umleiten**: Copilot kommuniziert mit OpenAI? Leiten Sie ihn zu Anthropic Claude, Gemini oder einem der 352 Anbieter von OmniRoute um.
+- **Jeden Agenten zu jedem Anbieter umleiten**: Copilot kommuniziert mit OpenAI? Leiten Sie ihn stattdessen zu Anthropic Claude, Gemini oder einem der 372 Anbieter von OmniRoute um.
 - **Modellzuordnungen anwenden**: `gemini-3-flash` → `claude-sonnet-4.7` transparent auf Handler-Ebene.
-- **Den gesamten Agentendatenverkehr beobachten**: Jede abgefangene Anfrage wird im [Traffic Inspector](./TRAFFIC_INSPECTOR.md) veröffentlicht.
-- **Die Ausfallsicherheit von OmniRoute nutzen**: Kombinations-Routing, Leistungsschalter, Fallbacks und Kostenverfolgung funktionieren auch für den Datenverkehr von IDE-Agenten.
+- **Den gesamten Agenten-Datenverkehr beobachten**: Jede abgefangene Anfrage wird im [Traffic Inspector](./TRAFFIC_INSPECTOR.md) veröffentlicht.
+- **Die Ausfallsicherheitsfunktionen von OmniRoute anwenden**: Kombinationsrouting, Schutzschalter, Fallbacks und Kostenverfolgung funktionieren auch für den Datenverkehr von IDE-Agenten.
 
 ### Positionierung im Marktvergleich
 
@@ -43,7 +43,7 @@ Damit können Sie:
 | OmniRoute-Routing                        |    ✗    |    ✗     |        ✗        |             ✓             |
 | Benutzeroberfläche für Modellzuordnungen |    ✗    |    ✗     |        ✗        |             ✓             |
 | Umgehungsliste                           |    ✗    |    ✗     |        ✓        |             ✓             |
-| Vorgeschaltetes CA-Zertifikat            |    ✗    |    ✗     |        ✓        |             ✓             |
+| Vorgelagertes CA-Zertifikat              |    ✗    |    ✗     |        ✓        |             ✓             |
 
 ---
 

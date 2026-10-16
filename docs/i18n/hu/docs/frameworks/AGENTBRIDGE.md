@@ -16,34 +16,34 @@ Az AgentBridge az OmniRoute MITM (Man-in-the-Middle, közbeékelődéses) proxyj
 
 ### Mi az AgentBridge?
 
-Amikor egy IDE-ügynök (például GitHub Copilot, Cursor vagy Claude Code) API-hívást indít, közvetlenül kapcsolódik a külső AI-szolgáltatóhoz (OpenAI, Anthropic stb.). Az AgentBridge transzparens módon, TLS-szinten fogja el ezt a kapcsolatot — anélkül, hogy módosítani kellene az ügynök konfigurációját —, és átirányítja a kérést az OmniRoute-on keresztül.
+Amikor egy IDE-ügynök (pl. GitHub Copilot, Cursor, Claude Code) API-hívást indít, közvetlenül kapcsolódik a felsőbb szintű MI-szolgáltatóhoz (OpenAI, Anthropic stb.). Az AgentBridge transzparens módon, TLS-szinten elfogja ezt a kapcsolatot — anélkül, hogy módosítani kellene az ügynök konfigurációját —, és az OmniRoute-on keresztül átírja a kérést.
 
-Ez a következőket teszi lehetővé:
+Ez azt jelenti, hogy:
 
-- **Bármely ügynök átirányítása bármely szolgáltatóhoz**: a Copilot az OpenAI-jal kommunikál? Irányítsa át az Anthropic Claude-hoz, a Geminihez vagy az OmniRoute 352 szolgáltatójának bármelyikéhez.
-- **Modell-hozzárendelések alkalmazása**: `gemini-3-flash` → `claude-sonnet-4.7` transzparens módon, a kezelő szintjén.
-- **Az ügynökök teljes forgalmának megfigyelése**: minden elfogott kérés közzétételre kerül a [Forgalomfigyelőben](./TRAFFIC_INSPECTOR.md).
-- **Az OmniRoute hibatűrésének alkalmazása**: a kombinált útválasztás, a megszakítók, a tartalék útvonalak és a költségkövetés az IDE-ügynökök forgalmára is érvényes.
+- **Bármely ügynököt bármely szolgáltatóhoz átirányíthatja**: A Copilot az OpenAI-jal kommunikál? Irányítsa át az Anthropic Claude-hoz, a Geminihez vagy az OmniRoute 372 szolgáltatójának bármelyikéhez.
+- **Modell-hozzárendeléseket alkalmazhat**: `gemini-3-flash` → `claude-sonnet-4.7` transzparens módon, a kezelő szintjén.
+- **Az ügynökök teljes forgalmát megfigyelheti**: minden elfogott kérés közzétételre kerül a [Forgalomfigyelőben](./TRAFFIC_INSPECTOR.md).
+- **Alkalmazhatja az OmniRoute hibatűrési funkcióit**: a kombinált útválasztás, a megszakítók, a tartalék útvonalak és a költségkövetés az IDE-ügynökök forgalmával is működnek.
 
 ### Piaci pozicionálás
 
-| Funkció                       | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
-| ----------------------------- | :-----: | :------: | :-------------: | :-----------------------: |
-| Antigravity                   |    ✓    |    ✓     |        —        |             ✓             |
-| GitHub Copilot                |    ✓    |    ✓     |        —        |             ✓             |
-| Kiro (AWS)                    |    ✓    |    ✓     |        —        |             ✓             |
-| OpenAI Codex                  |    —    |    ✓     |        —        |             ✓             |
-| Cursor IDE                    |    ✓    |    ✓     |        —        |             ✓             |
-| Zed Industries                |    —    |    ✓     |        —        |             ✓             |
-| Claude Code                   |    —    |    —     |        ✓        |             ✓             |
-| Open Code                     |    —    |    —     |        ✓        |             ✓             |
-| Trae                          |    —    |    —     |        —        |    🔍 Vizsgálat alatt     |
-| Irányítópult felülete         |    ✓    |    ✗     |        ✗        |             ✓             |
-| Forgalomfigyelő               |    ✗    |    ✗     |        ✓        |             ✓             |
-| OmniRoute-útválasztás         |    ✗    |    ✗     |        ✗        |             ✓             |
-| Modell-hozzárendelési felület |    ✗    |    ✗     |        ✗        |             ✓             |
-| Megkerülési lista             |    ✗    |    ✗     |        ✓        |             ✓             |
-| Külső CA-tanúsítvány          |    ✗    |    ✗     |        ✓        |             ✓             |
+| Funkció                            | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
+| ---------------------------------- | :-----: | :------: | :-------------: | :-----------------------: |
+| Antigravity                        |    ✓    |    ✓     |        —        |             ✓             |
+| GitHub Copilot                     |    ✓    |    ✓     |        —        |             ✓             |
+| Kiro (AWS)                         |    ✓    |    ✓     |        —        |             ✓             |
+| OpenAI Codex                       |    —    |    ✓     |        —        |             ✓             |
+| Cursor IDE                         |    ✓    |    ✓     |        —        |             ✓             |
+| Zed Industries                     |    —    |    ✓     |        —        |             ✓             |
+| Claude Code                        |    —    |    —     |        ✓        |             ✓             |
+| Open Code                          |    —    |    —     |        ✓        |             ✓             |
+| Trae                               |    —    |    —     |        —        |    🔍 Vizsgálat alatt     |
+| Irányítópult felhasználói felülete |    ✓    |    ✗     |        ✗        |             ✓             |
+| Forgalomfigyelő                    |    ✗    |    ✗     |        ✓        |             ✓             |
+| OmniRoute-útválasztás              |    ✗    |    ✗     |        ✗        |             ✓             |
+| Modell-hozzárendelési felület      |    ✗    |    ✗     |        ✗        |             ✓             |
+| Megkerülési lista                  |    ✗    |    ✗     |        ✓        |             ✓             |
+| Felsőbb szintű CA-tanúsítvány      |    ✗    |    ✗     |        ✓        |             ✓             |
 
 ---
 

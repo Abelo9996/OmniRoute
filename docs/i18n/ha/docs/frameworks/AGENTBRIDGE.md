@@ -12,18 +12,18 @@ AgentBridge shi ne wakilin MITM (Man-in-the-Middle) na OmniRoute wanda ke katse 
 
 ---
 
-## §1 Bayani na Gabaɗaya
+## §1 Bayani Gabaɗaya
 
 ### Mene ne AgentBridge?
 
-Lokacin da wakilin IDE (misali, GitHub Copilot, Cursor, Claude Code) ya yi kiran API, yana haɗuwa kai tsaye da mai samar da AI na sama (OpenAI, Anthropic, da sauransu). AgentBridge yana katse wannan haɗin a bayyane a matakin TLS — ba tare da buƙatar wani canjin saitin wakili ba — sannan ya sake rubuta buƙatar ta bi ta OmniRoute.
+Lokacin da wakilin IDE (misali, GitHub Copilot, Cursor, Claude Code) ya yi kiran API, yana haɗuwa kai tsaye da mai samar da AI na sama (OpenAI, Anthropic, da sauransu). AgentBridge yana katse wannan haɗin a bayyane a matakin TLS — ba tare da buƙatar wani sauyin saitin wakili ba — sannan ya sake rubuta buƙatar ta hanyar OmniRoute.
 
 Wannan yana nufin za ka iya:
 
-- **Sake tura kowane wakili zuwa kowane mai samarwa**: Copilot yana magana da OpenAI? Sake tura shi zuwa Anthropic Claude, Gemini, ko ɗaya daga cikin masu samarwa guda 352 na OmniRoute.
-- **Aiwatar da taswirar samfura**: `gemini-3-flash` → `claude-sonnet-4.7` a bayyane a matakin handler.
-- **Lura da duk zirga-zirgar wakilai**: ana wallafa kowace buƙatar da aka katse zuwa [Traffic Inspector](./TRAFFIC_INSPECTOR.md).
-- **Aiwatar da juriyar OmniRoute**: haɗaɗɗen sarrafa hanyoyi, circuit breakers, hanyoyin madadin, da bin diddigin kuɗi suna aiki ga zirga-zirgar wakilan IDE ma.
+- **Mayar da kowanne wakili zuwa kowanne mai samarwa**: Copilot yana sadarwa da OpenAI? Mayar da shi zuwa Anthropic Claude, Gemini, ko ɗaya daga cikin masu samarwa 372 na OmniRoute.
+- **Aiwatar da taswirar samfura**: `gemini-3-flash` → `claude-sonnet-4.7` kai tsaye a matakin handler.
+- **Lura da duk zirga-zirgar wakilai**: ana wallafa kowace buƙatar da aka katse zuwa [Mai Binciken Zirga-zirga](./TRAFFIC_INSPECTOR.md).
+- **Aiwatar da juriya ta OmniRoute**: tsarin tura buƙatu na haɗe, circuit breakers, hanyoyin madadin, da bin diddigin kuɗi suna aiki ga zirga-zirgar wakilan IDE su ma.
 
 ### Matsayi idan aka kwatanta da kasuwa
 
@@ -38,10 +38,10 @@ Wannan yana nufin za ka iya:
 | Claude Code                 |    —    |    —     |        ✓        |             ✓             |
 | Open Code                   |    —    |    —     |        ✓        |             ✓             |
 | Trae                        |    —    |    —     |        —        |      🔍 Ana bincike       |
-| Manhajar Dashboard          |    ✓    |    ✗     |        ✗        |             ✓             |
+| Fuskar dashboard            |    ✓    |    ✗     |        ✗        |             ✓             |
 | Mai Binciken Zirga-zirga    |    ✗    |    ✗     |        ✓        |             ✓             |
-| Sarrafa hanyoyin OmniRoute  |    ✗    |    ✗     |        ✗        |             ✓             |
-| Manhajar taswirar samfura   |    ✗    |    ✗     |        ✗        |             ✓             |
+| Tura buƙatun OmniRoute      |    ✗    |    ✗     |        ✗        |             ✓             |
+| Fuskar taswirar samfura     |    ✗    |    ✗     |        ✗        |             ✓             |
 | Jerin tsallakewa            |    ✗    |    ✗     |        ✓        |             ✓             |
 | Takardar shaidar CA ta sama |    ✗    |    ✗     |        ✓        |             ✓             |
 

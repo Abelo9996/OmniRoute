@@ -12,20 +12,20 @@ AgentBridge adalah proxy MITM (Man-in-the-Middle) OmniRoute yang mencegat lalu l
 
 ---
 
-## §1 Gambaran Umum
+## §1 Ikhtisar
 
 ### Apa itu AgentBridge?
 
-Ketika agen IDE (misalnya, GitHub Copilot, Cursor, Claude Code) melakukan panggilan API, agen tersebut terhubung langsung ke penyedia AI upstream (OpenAI, Anthropic, dan sebagainya). AgentBridge mencegat koneksi tersebut secara transparan pada tingkat TLS — tanpa memerlukan perubahan konfigurasi agen apa pun — dan menulis ulang permintaan tersebut melalui OmniRoute.
+Ketika agen IDE (misalnya, GitHub Copilot, Cursor, Claude Code) melakukan panggilan API, agen tersebut terhubung langsung ke penyedia AI upstream (OpenAI, Anthropic, dan sebagainya). AgentBridge mencegat koneksi tersebut secara transparan pada lapisan TLS — tanpa memerlukan perubahan konfigurasi agen apa pun — dan menulis ulang permintaan melalui OmniRoute.
 
 Dengan demikian, Anda dapat:
 
-- **Mengalihkan agen apa pun ke penyedia mana pun**: Copilot berkomunikasi dengan OpenAI? Alihkan ke Anthropic Claude, Gemini, atau salah satu dari 352 penyedia OmniRoute.
+- **Merutekan ulang agen apa pun ke penyedia mana pun**: Copilot terhubung ke OpenAI? Alihkan ke Anthropic Claude, Gemini, atau salah satu dari 372 penyedia OmniRoute.
 - **Menerapkan pemetaan model**: `gemini-3-flash` → `claude-sonnet-4.7` secara transparan pada tingkat handler.
-- **Mengamati seluruh lalu lintas agen**: setiap permintaan yang dicegat dipublikasikan ke [Traffic Inspector](./TRAFFIC_INSPECTOR.md).
-- **Menerapkan ketahanan OmniRoute**: perutean kombo, circuit breaker, fallback, dan pelacakan biaya juga berfungsi untuk lalu lintas agen IDE.
+- **Mengamati semua lalu lintas agen**: setiap permintaan yang dicegat dipublikasikan ke [Inspektur Lalu Lintas](./TRAFFIC_INSPECTOR.md).
+- **Menerapkan ketahanan OmniRoute**: perutean combo, circuit breaker, fallback, dan pelacakan biaya juga berfungsi untuk lalu lintas agen IDE.
 
-### Posisi dibandingkan pasar
+### Posisi dibandingkan dengan pasar
 
 | Fitur                  | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
 | ---------------------- | :-----: | :------: | :-------------: | :-----------------------: |
@@ -38,8 +38,8 @@ Dengan demikian, Anda dapat:
 | Claude Code            |    —    |    —     |        ✓        |             ✓             |
 | Open Code              |    —    |    —     |        ✓        |             ✓             |
 | Trae                   |    —    |    —     |        —        |       🔍 Diselidiki       |
-| UI Dasbor              |    ✓    |    ✗     |        ✗        |             ✓             |
-| Traffic Inspector      |    ✗    |    ✗     |        ✓        |             ✓             |
+| UI dasbor              |    ✓    |    ✗     |        ✗        |             ✓             |
+| Inspektur Lalu Lintas  |    ✗    |    ✗     |        ✓        |             ✓             |
 | Perutean OmniRoute     |    ✗    |    ✗     |        ✗        |             ✓             |
 | UI pemetaan model      |    ✗    |    ✗     |        ✗        |             ✓             |
 | Daftar bypass          |    ✗    |    ✗     |        ✓        |             ✓             |

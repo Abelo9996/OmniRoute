@@ -14,15 +14,15 @@ Is é AgentBridge seachfhreastalaí MITM (Man-in-the-Middle) OmniRoute a idirche
 
 ## §1 Forbhreathnú
 
-### Cad é AgentBridge?
+### Cad is AgentBridge ann?
 
-Nuair a dhéanann gníomhaire IDE (m.sh., GitHub Copilot, Cursor, Claude Code) glao API, nascann sé go díreach leis an soláthraí AI réamhtheachtach (OpenAI, Anthropic, srl.). Idircheapann AgentBridge an nasc sin go trédhearcach ag an leibhéal TLS — gan aon athrú cumraíochta ar an ngníomhaire a éileamh — agus athscríobhann sé an t-iarratas trí OmniRoute.
+Nuair a dhéanann gníomhaire IDE (m.sh., GitHub Copilot, Cursor, Claude Code) glao API, nascann sé go díreach leis an soláthraí AI réamhtheachtach (OpenAI, Anthropic, etc.). Idircheapann AgentBridge an nasc sin go trédhearcach ag an leibhéal TLS — gan aon athrú ar chumraíocht an ghníomhaire a éileamh — agus athscríobhann sé an t-iarratas trí OmniRoute.
 
 Ciallaíonn sé seo gur féidir leat:
 
-- **Aon ghníomhaire a athródú chuig aon soláthraí**: Copilot ag cumarsáid le OpenAI? Atreoraigh é chuig Anthropic Claude, Gemini, nó aon cheann de 352 soláthraí OmniRoute.
+- **Aon ghníomhaire a athródú chuig aon soláthraí**: Copilot ag cumarsáid le OpenAI? Atreoraigh é chuig Anthropic Claude, Gemini, nó aon cheann de 372 soláthraí OmniRoute.
 - **Mapálacha samhlacha a chur i bhfeidhm**: `gemini-3-flash` → `claude-sonnet-4.7` go trédhearcach ag leibhéal an láimhseálaí.
-- **Trácht uile na ngníomhairí a bhreathnú**: foilsítear gach iarratas idircheaptha sa [Chigire Tráchta](./TRAFFIC_INSPECTOR.md).
+- **Trácht uile na ngníomhairí a bhreathnú**: foilsítear gach iarratas idircheaptha san [Iniúchóir Tráchta](./TRAFFIC_INSPECTOR.md).
 - **Athléimneacht OmniRoute a chur i bhfeidhm**: oibríonn ródú teaglama, scoradáin chiorcaid, cúltacaí, agus rianú costas do thrácht gníomhairí IDE freisin.
 
 ### Suíomh sa mhargadh
@@ -37,9 +37,9 @@ Ciallaíonn sé seo gur féidir leat:
 | Zed Industries             |    —    |    ✓     |        —        |             ✓             |
 | Claude Code                |    —    |    —     |        ✓        |             ✓             |
 | Open Code                  |    —    |    —     |        ✓        |             ✓             |
-| Trae                       |    —    |    —     |        —        |      🔍 Faoi fhiosrú      |
-| Comhéadan deaise           |    ✓    |    ✗     |        ✗        |             ✓             |
-| Cigire Tráchta             |    ✗    |    ✗     |        ✓        |             ✓             |
+| Trae                       |    —    |    —     |        —        |       🔍 Á fhiosrú        |
+| Comhéadan na deaise        |    ✓    |    ✗     |        ✗        |             ✓             |
+| Iniúchóir Tráchta          |    ✗    |    ✗     |        ✓        |             ✓             |
 | Ródú OmniRoute             |    ✗    |    ✗     |        ✗        |             ✓             |
 | Comhéadan mapála samhlacha |    ✗    |    ✗     |        ✗        |             ✓             |
 | Liosta seachanta           |    ✗    |    ✗     |        ✓        |             ✓             |

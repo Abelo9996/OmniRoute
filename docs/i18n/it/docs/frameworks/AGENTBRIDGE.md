@@ -16,11 +16,11 @@ AgentBridge è il proxy MITM (Man-in-the-Middle) di OmniRoute che intercetta il 
 
 ### Che cos'è AgentBridge?
 
-Quando un agente IDE (ad es. GitHub Copilot, Cursor, Claude Code) effettua una chiamata API, si connette direttamente al provider IA upstream (OpenAI, Anthropic, ecc.). AgentBridge intercetta la connessione in modo trasparente a livello TLS — senza richiedere alcuna modifica alla configurazione dell'agente — e riscrive la richiesta instradandola attraverso OmniRoute.
+Quando un agente IDE (ad esempio GitHub Copilot, Cursor, Claude Code) effettua una chiamata API, si connette direttamente al provider AI a monte (OpenAI, Anthropic, ecc.). AgentBridge intercetta tale connessione in modo trasparente a livello TLS, senza richiedere alcuna modifica alla configurazione dell'agente, e riscrive la richiesta tramite OmniRoute.
 
-Ciò consente di:
+Questo consente di:
 
-- **Reindirizzare qualsiasi agente verso qualsiasi provider**: Copilot comunica con OpenAI? Reindirizzalo ad Anthropic Claude, Gemini o a uno qualsiasi dei 352 provider di OmniRoute.
+- **Reindirizzare qualsiasi agente verso qualsiasi provider**: Copilot comunica con OpenAI? Reindirizzalo ad Anthropic Claude, Gemini o a uno qualsiasi dei 372 provider di OmniRoute.
 - **Applicare mappature dei modelli**: `gemini-3-flash` → `claude-sonnet-4.7` in modo trasparente a livello di handler.
 - **Osservare tutto il traffico degli agenti**: ogni richiesta intercettata viene pubblicata nel [Traffic Inspector](./TRAFFIC_INSPECTOR.md).
 - **Applicare la resilienza di OmniRoute**: il routing combinato, i circuit breaker, i fallback e il monitoraggio dei costi funzionano anche per il traffico degli agenti IDE.
@@ -37,7 +37,7 @@ Ciò consente di:
 | Zed Industries                       |    —    |    ✓     |        —        |             ✓             |
 | Claude Code                          |    —    |    —     |        ✓        |             ✓             |
 | Open Code                            |    —    |    —     |        ✓        |             ✓             |
-| Trae                                 |    —    |    —     |        —        |     🔍 In valutazione     |
+| Trae                                 |    —    |    —     |        —        |   🔍 In fase di analisi   |
 | Interfaccia dashboard                |    ✓    |    ✗     |        ✗        |             ✓             |
 | Traffic Inspector                    |    ✗    |    ✗     |        ✓        |             ✓             |
 | Routing OmniRoute                    |    ✗    |    ✗     |        ✗        |             ✓             |

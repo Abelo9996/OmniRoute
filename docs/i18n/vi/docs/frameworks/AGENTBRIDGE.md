@@ -16,11 +16,11 @@ AgentBridge là proxy MITM (Man-in-the-Middle — trung gian) của OmniRoute, c
 
 ### AgentBridge là gì?
 
-Khi một tác nhân IDE (ví dụ: GitHub Copilot, Cursor, Claude Code) thực hiện lệnh gọi API, tác nhân đó sẽ kết nối trực tiếp với nhà cung cấp AI thượng nguồn (OpenAI, Anthropic, v.v.). AgentBridge chặn kết nối này một cách trong suốt ở lớp TLS — mà không yêu cầu bất kỳ thay đổi cấu hình nào đối với tác nhân — và ghi lại yêu cầu để chuyển qua OmniRoute.
+Khi một tác nhân IDE (ví dụ: GitHub Copilot, Cursor, Claude Code) thực hiện lệnh gọi API, nó kết nối trực tiếp với nhà cung cấp AI thượng nguồn (OpenAI, Anthropic, v.v.). AgentBridge chặn kết nối đó một cách trong suốt ở tầng TLS — mà không yêu cầu thay đổi bất kỳ cấu hình nào của tác nhân — và ghi lại yêu cầu để định tuyến qua OmniRoute.
 
-Điều này cho phép bạn:
+Điều này có nghĩa là bạn có thể:
 
-- **Định tuyến lại bất kỳ tác nhân nào đến bất kỳ nhà cung cấp nào**: Copilot đang giao tiếp với OpenAI? Hãy chuyển hướng tác nhân đó đến Anthropic Claude, Gemini hoặc bất kỳ nhà cung cấp nào trong số 352 nhà cung cấp của OmniRoute.
+- **Định tuyến lại bất kỳ tác nhân nào đến bất kỳ nhà cung cấp nào**: Copilot đang giao tiếp với OpenAI? Hãy chuyển hướng nó đến Anthropic Claude, Gemini hoặc bất kỳ nhà cung cấp nào trong số 372 nhà cung cấp của OmniRoute.
 - **Áp dụng ánh xạ mô hình**: `gemini-3-flash` → `claude-sonnet-4.7` một cách trong suốt ở cấp trình xử lý.
 - **Quan sát toàn bộ lưu lượng của tác nhân**: mọi yêu cầu bị chặn đều được gửi đến [Trình kiểm tra lưu lượng](./TRAFFIC_INSPECTOR.md).
 - **Áp dụng khả năng phục hồi của OmniRoute**: định tuyến kết hợp, bộ ngắt mạch, phương án dự phòng và theo dõi chi phí cũng hoạt động với lưu lượng của tác nhân IDE.
@@ -37,7 +37,7 @@ Khi một tác nhân IDE (ví dụ: GitHub Copilot, Cursor, Claude Code) thực 
 | Zed Industries            |    —    |    ✓     |        —        |             ✓             |
 | Claude Code               |    —    |    —     |        ✓        |             ✓             |
 | Open Code                 |    —    |    —     |        ✓        |             ✓             |
-| Trae                      |    —    |    —     |        —        |    🔍 Đang nghiên cứu     |
+| Trae                      |    —    |    —     |        —        |     🔍 Đang điều tra      |
 | Giao diện bảng điều khiển |    ✓    |    ✗     |        ✗        |             ✓             |
 | Trình kiểm tra lưu lượng  |    ✗    |    ✗     |        ✓        |             ✓             |
 | Định tuyến OmniRoute      |    ✗    |    ✗     |        ✗        |             ✓             |

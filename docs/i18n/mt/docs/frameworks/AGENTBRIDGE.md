@@ -14,16 +14,16 @@ AgentBridge huwa l-proxy MITM (Man-in-the-Middle) ta' OmniRoute li jinterċetta 
 
 ## §1 Ħarsa ġenerali
 
-### X'inhu AgentBridge?
+### X’inhu AgentBridge?
 
-Meta aġent tal-IDE (eż., GitHub Copilot, Cursor, Claude Code) jagħmel sejħa API, huwa jikkonnettja direttament mal-fornitur upstream tal-IA (OpenAI, Anthropic, eċċ.). AgentBridge jinterċetta dik il-konnessjoni b'mod trasparenti fil-livell TLS — mingħajr ma jeħtieġ ebda bidla fil-konfigurazzjoni tal-aġent — u jerġa' jikteb it-talba permezz ta' OmniRoute.
+Meta aġent ta’ IDE (eż., GitHub Copilot, Cursor, Claude Code) jagħmel sejħa API, huwa jikkonnettja direttament mal-fornitur tal-AI upstream (OpenAI, Anthropic, eċċ.). AgentBridge jinterċetta dik il-konnessjoni b’mod trasparenti fil-livell TLS — mingħajr ma jeħtieġ ebda bidla fil-konfigurazzjoni tal-aġent — u jerġa’ jikteb it-talba permezz ta’ OmniRoute.
 
-Dan ifisser li tista':
+Dan ifisser li tista’:
 
-- **Terġa' tidderieġi kwalunkwe aġent lejn kwalunkwe fornitur**: Copilot qed jikkomunika ma' OpenAI? Irridireġih lejn Anthropic Claude, Gemini, jew kwalunkwe wieħed mit-352 fornitur ta' OmniRoute.
-- **Tapplika mmappjar tal-mudelli**: `gemini-3-flash` → `claude-sonnet-4.7` b'mod trasparenti fil-livell tal-handler.
-- **Tosserva t-traffiku kollu tal-aġenti**: kull talba interċettata tiġi ppubblikata fit-[Traffic Inspector](./TRAFFIC_INSPECTOR.md).
-- **Tapplika r-reżiljenza ta' OmniRoute**: ir-routing ikkombinat, is-circuit breakers, il-fallbacks, u t-traċċar tal-ispejjeż jaħdmu wkoll għat-traffiku tal-aġenti tal-IDE.
+- **Tidderieġi mill-ġdid kwalunkwe aġent lejn kwalunkwe fornitur**: Copilot qed jikkomunika ma’ OpenAI? Idderieġih mill-ġdid lejn Anthropic Claude, Gemini, jew kwalunkwe wieħed mit-372 fornitur ta’ OmniRoute.
+- **Tapplika mmappjar tal-mudelli**: `gemini-3-flash` → `claude-sonnet-4.7` b’mod trasparenti fil-livell tal-handler.
+- **Tissorvelja t-traffiku kollu tal-aġenti**: kull talba interċettata tiġi ppubblikata fit-[Traffic Inspector](./TRAFFIC_INSPECTOR.md).
+- **Tapplika r-reżiljenza ta’ OmniRoute**: ir-routing ikkombinat, circuit breakers, fallbacks, u t-traċċar tal-ispejjeż jaħdmu wkoll għat-traffiku tal-aġenti tal-IDE.
 
 ### Pożizzjonament meta mqabbel mas-suq
 
@@ -37,12 +37,12 @@ Dan ifisser li tista':
 | Zed Industries                         |    —    |    ✓     |        —        |             ✓             |
 | Claude Code                            |    —    |    —     |        ✓        |             ✓             |
 | Open Code                              |    —    |    —     |        ✓        |             ✓             |
-| Trae                                   |    —    |    —     |        —        |  🔍 Taħt investigazzjoni  |
+| Trae                                   |    —    |    —     |        —        |  🔍 Qed jiġi investigat   |
 | Interfaċċa tad-dashboard               |    ✓    |    ✗     |        ✗        |             ✓             |
 | Spettur tat-traffiku                   |    ✗    |    ✗     |        ✓        |             ✓             |
-| Routing ta' OmniRoute                  |    ✗    |    ✗     |        ✗        |             ✓             |
+| Routing ta’ OmniRoute                  |    ✗    |    ✗     |        ✗        |             ✓             |
 | Interfaċċa għall-immappjar tal-mudelli |    ✗    |    ✗     |        ✗        |             ✓             |
-| Lista ta' bypass                       |    ✗    |    ✗     |        ✓        |             ✓             |
+| Lista ta’ bypass                       |    ✗    |    ✗     |        ✓        |             ✓             |
 | Ċertifikat CA upstream                 |    ✗    |    ✗     |        ✓        |             ✓             |
 
 ---

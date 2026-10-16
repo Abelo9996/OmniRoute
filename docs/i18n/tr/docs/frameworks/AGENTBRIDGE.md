@@ -16,16 +16,16 @@ AgentBridge, IDE AI ajanlarından gelen HTTPS trafiğini yakalayan ve OmniRoute'
 
 ### AgentBridge nedir?
 
-Bir IDE ajanı (ör. GitHub Copilot, Cursor, Claude Code) API çağrısı yaptığında doğrudan üst akış AI sağlayıcısına (OpenAI, Anthropic vb.) bağlanır. AgentBridge, herhangi bir ajan yapılandırma değişikliği gerektirmeden bu bağlantıyı TLS düzeyinde şeffaf bir şekilde yakalar ve isteği OmniRoute üzerinden yeniden yazar.
+Bir IDE ajanı (ör. GitHub Copilot, Cursor, Claude Code) bir API çağrısı yaptığında doğrudan üst akış yapay zekâ sağlayıcısına (OpenAI, Anthropic vb.) bağlanır. AgentBridge, ajan yapılandırmasında herhangi bir değişiklik gerektirmeden bu bağlantıyı TLS düzeyinde şeffaf biçimde yakalar ve isteği OmniRoute üzerinden geçecek şekilde yeniden yazar.
 
 Bu sayede şunları yapabilirsiniz:
 
-- **Herhangi bir ajanı herhangi bir sağlayıcıya yeniden yönlendirin**: Copilot, OpenAI ile mi iletişim kuruyor? Onu Anthropic Claude, Gemini veya OmniRoute'un 352 sağlayıcısından herhangi birine yönlendirin.
-- **Model eşlemeleri uygulayın**: `gemini-3-flash` → `claude-sonnet-4.7` eşlemesini işleyici düzeyinde şeffaf olarak uygulayın.
-- **Tüm ajan trafiğini gözlemleyin**: Yakalanan her istek [Trafik Denetleyicisi](./TRAFFIC_INSPECTOR.md) aracına yayımlanır.
-- **OmniRoute dayanıklılığını uygulayın**: Birleşik yönlendirme, devre kesiciler, geri dönüşler ve maliyet takibi IDE ajan trafiği için de çalışır.
+- **Herhangi bir ajanı herhangi bir sağlayıcıya yeniden yönlendirin**: Copilot OpenAI ile mi iletişim kuruyor? İstekleri Anthropic Claude, Gemini veya OmniRoute'un 372 sağlayıcısından herhangi birine yönlendirin.
+- **Model eşlemeleri uygulayın**: `gemini-3-flash` → `claude-sonnet-4.7` eşlemesini işleyici düzeyinde şeffaf biçimde gerçekleştirin.
+- **Tüm ajan trafiğini gözlemleyin**: yakalanan her istek [Trafik İnceleyicisi](./TRAFFIC_INSPECTOR.md) üzerinde yayımlanır.
+- **OmniRoute dayanıklılık özelliklerini uygulayın**: birleşik yönlendirme, devre kesiciler, yedekler ve maliyet takibi IDE ajanı trafiği için de çalışır.
 
-### Pazardaki konumlandırma
+### Pazardaki konumu
 
 | Özellik                 | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
 | ----------------------- | :-----: | :------: | :-------------: | :-----------------------: |
@@ -38,11 +38,11 @@ Bu sayede şunları yapabilirsiniz:
 | Claude Code             |    —    |    —     |        ✓        |             ✓             |
 | Open Code               |    —    |    —     |        ✓        |             ✓             |
 | Trae                    |    —    |    —     |        —        |     🔍 Araştırılıyor      |
-| Pano arayüzü            |    ✓    |    ✗     |        ✗        |             ✓             |
-| Trafik Denetleyicisi    |    ✗    |    ✗     |        ✓        |             ✓             |
+| Kontrol paneli arayüzü  |    ✓    |    ✗     |        ✗        |             ✓             |
+| Trafik İnceleyicisi     |    ✗    |    ✗     |        ✓        |             ✓             |
 | OmniRoute yönlendirmesi |    ✗    |    ✗     |        ✗        |             ✓             |
 | Model eşleme arayüzü    |    ✗    |    ✗     |        ✗        |             ✓             |
-| Atlatma listesi         |    ✗    |    ✗     |        ✓        |             ✓             |
+| Atlama listesi          |    ✗    |    ✗     |        ✓        |             ✓             |
 | Üst akış CA sertifikası |    ✗    |    ✗     |        ✓        |             ✓             |
 
 ---

@@ -16,16 +16,16 @@ AgentBridge, IDE süni intellekt agentlərindən gələn HTTPS trafikini ələ k
 
 ### AgentBridge nədir?
 
-IDE agenti (məsələn, GitHub Copilot, Cursor, Claude Code) API çağırışı etdikdə birbaşa yuxarı axın süni intellekt provayderinə (OpenAI, Anthropic və s.) qoşulur. AgentBridge bu bağlantını TLS səviyyəsində şəffaf şəkildə — agent konfiqurasiyasında heç bir dəyişiklik tələb etmədən — ələ keçirir və sorğunu OmniRoute vasitəsilə yenidən yönləndirir.
+IDE agenti (məsələn, GitHub Copilot, Cursor, Claude Code) API çağırışı etdikdə birbaşa yuxarı axındakı süni intellekt provayderinə (OpenAI, Anthropic və s.) qoşulur. AgentBridge heç bir agent konfiqurasiyası dəyişikliyi tələb etmədən həmin bağlantını TLS səviyyəsində şəffaf şəkildə ələ keçirir və sorğunu OmniRoute vasitəsilə yenidən yönləndirir.
 
 Bu o deməkdir ki, siz:
 
-- **İstənilən agenti istənilən provayderə yenidən yönləndirə bilərsiniz**: Copilot OpenAI ilə əlaqə saxlayır? Onu Anthropic Claude, Gemini və ya OmniRoute-un 352 provayderindən hər hansı birinə yönləndirin.
-- **Model uyğunlaşdırmalarını tətbiq edə bilərsiniz**: `gemini-3-flash` → `claude-sonnet-4.7` emalçı səviyyəsində şəffaf şəkildə.
-- **Bütün agent trafikini müşahidə edə bilərsiniz**: ələ keçirilmiş hər bir sorğu [Traffic Inspector](./TRAFFIC_INSPECTOR.md)-da yayımlanır.
-- **OmniRoute dayanıqlılığını tətbiq edə bilərsiniz**: kombinə edilmiş marşrutlaşdırma, dövrə açarları, ehtiyat keçidlər və xərc izləmə IDE agent trafiki üçün də işləyir.
+- **İstənilən agenti istənilən provayderə yönləndirə bilərsiniz**: Copilot OpenAI ilə əlaqə saxlayır? Onu Anthropic Claude, Gemini və ya OmniRoute-un 372 provayderindən hər hansı birinə yönləndirin.
+- **Model uyğunlaşdırmalarını tətbiq edə bilərsiniz**: `gemini-3-flash` → `claude-sonnet-4.7` işləyici səviyyəsində şəffaf şəkildə.
+- **Bütün agent trafikini müşahidə edə bilərsiniz**: ələ keçirilən hər bir sorğu [Trafik İnspektoruna](./TRAFFIC_INSPECTOR.md) ötürülür.
+- **OmniRoute dayanıqlılıq imkanlarını tətbiq edə bilərsiniz**: kombinə edilmiş marşrutlaşdırma, dövrə açarları, ehtiyat keçidlər və xərc izləmə IDE agent trafiki üçün də işləyir.
 
-### Bazardakı mövqeyi
+### Bazardakı mövqeləndirmə
 
 | Funksiya                       | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
 | ------------------------------ | :-----: | :------: | :-------------: | :-----------------------: |
@@ -38,8 +38,8 @@ Bu o deməkdir ki, siz:
 | Claude Code                    |    —    |    —     |        ✓        |             ✓             |
 | Open Code                      |    —    |    —     |        ✓        |             ✓             |
 | Trae                           |    —    |    —     |        —        |      🔍 Araşdırılır       |
-| İdarə paneli interfeysi        |    ✓    |    ✗     |        ✗        |             ✓             |
-| Traffic Inspector              |    ✗    |    ✗     |        ✓        |             ✓             |
+| İdarəetmə paneli interfeysi    |    ✓    |    ✗     |        ✗        |             ✓             |
+| Trafik İnspektoru              |    ✗    |    ✗     |        ✓        |             ✓             |
 | OmniRoute marşrutlaşdırması    |    ✗    |    ✗     |        ✗        |             ✓             |
 | Model uyğunlaşdırma interfeysi |    ✗    |    ✗     |        ✗        |             ✓             |
 | Yan keçmə siyahısı             |    ✗    |    ✗     |        ✓        |             ✓             |

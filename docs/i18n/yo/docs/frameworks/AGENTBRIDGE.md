@@ -12,38 +12,38 @@ AgentBridge jẹ́ proxy MITM (Man-in-the-Middle) ti OmniRoute, èyí tí ń dá
 
 ---
 
-## §1 Àkótán
+## §1 Àkíyèsí Gbogbogbò
 
 ### Kí ni AgentBridge?
 
-Nígbà tí aṣojú IDE kan (fún àpẹẹrẹ, GitHub Copilot, Cursor, Claude Code) bá ṣe ìpè API, ó máa ń sopọ̀ tààrà sí olùpèsè AI òkè (OpenAI, Anthropic, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ). AgentBridge máa ń dá àsopọ̀ yẹn dúró ní gbangba ní ìpele TLS — láì nílò ìyípadà èyíkéyìí sí ìṣètò aṣojú — ó sì tún ìbéèrè náà kọ láti gba OmniRoute kọjá.
+Nígbà tí aṣojú IDE kan (fún àpẹẹrẹ, GitHub Copilot, Cursor, Claude Code) bá ṣe ìpè API, ó máa ń sopọ̀ tààrà sí olùpèsè AI ìpilẹ̀ṣẹ̀ (OpenAI, Anthropic, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ). AgentBridge máa ń dá ìsopọ̀ náà dúró ní ọ̀nà tí kò hàn ní ìpele TLS — láìjẹ́ pé a nílò àyípadà ètò aṣojú kankan — ó sì máa ń tún ìbéèrè náà kọjá nípasẹ̀ OmniRoute.
 
 Èyí túmọ̀ sí pé o lè:
 
-- **Darí aṣojú èyíkéyìí padà sí olùpèsè èyíkéyìí**: Ṣé Copilot ń bá OpenAI sọ̀rọ̀? Darí rẹ̀ padà sí Anthropic Claude, Gemini, tàbí èyíkéyìí nínú àwọn olùpèsè 352 ti OmniRoute.
-- **Lo àwọn ìbámu awoṣe**: `gemini-3-flash` → `claude-sonnet-4.7` ní gbangba ní ìpele olùṣàkóso.
-- **Ṣàkíyèsí gbogbo ìrìnàjò aṣojú**: gbogbo ìbéèrè tí a dá dúró ni a máa ń tẹ̀jáde sí [Traffic Inspector](./TRAFFIC_INSPECTOR.md).
-- **Lo agbára ìfaradà OmniRoute**: ìdarí ìrìnàjò àkójọpọ̀, àwọn olùdá àyíká dúró, àwọn ọ̀nà àfidípò, àti ìtọ́pasẹ̀ iye owó tún ń ṣiṣẹ́ fún ìrìnàjò aṣojú IDE.
+- **Tún aṣojú èyíkéyìí darí sí olùpèsè èyíkéyìí**: Copilot ń bá OpenAI sọ̀rọ̀ bí? Tún un darí sí Anthropic Claude, Gemini, tàbí èyíkéyìí nínú àwọn olùpèsè 372 ti OmniRoute.
+- **Lo àwọn ìbáramu awoṣe**: `gemini-3-flash` → `claude-sonnet-4.7` ní ọ̀nà tí kò hàn ní ìpele olùṣàkóso.
+- **Ṣàkíyèsí gbogbo ìrìnwọlé aṣojú**: gbogbo ìbéèrè tí a dá dúró ni a máa ń tẹ̀jáde sí [Olùṣàyẹ̀wò Ìrìnwọlé](./TRAFFIC_INSPECTOR.md).
+- **Lo agbára ìfaradà OmniRoute**: ìdarí àkópọ̀, àwọn olùdáwọ́lé iyíká, àwọn ọ̀nà àfirọ́pò, àti ìtọ́pa iye owó tún ń ṣiṣẹ́ fún ìrìnwọlé aṣojú IDE.
 
 ### Ipò rẹ̀ ní ìfiwéra pẹ̀lú ọjà
 
-| Ẹ̀ya ara ẹrọ         | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
-| ------------------- | :-----: | :------: | :-------------: | :-----------------------: |
-| Antigravity         |    ✓    |    ✓     |        —        |             ✓             |
-| GitHub Copilot      |    ✓    |    ✓     |        —        |             ✓             |
-| Kiro (AWS)          |    ✓    |    ✓     |        —        |             ✓             |
-| OpenAI Codex        |    —    |    ✓     |        —        |             ✓             |
-| Cursor IDE          |    ✓    |    ✓     |        —        |             ✓             |
-| Zed Industries      |    —    |    ✓     |        —        |             ✓             |
-| Claude Code         |    —    |    —     |        ✓        |             ✓             |
-| Open Code           |    —    |    —     |        ✓        |             ✓             |
-| Trae                |    —    |    —     |        —        |      🔍 A ń ṣèwádìí       |
-| Ìṣàkóso dasibodu    |    ✓    |    ✗     |        ✗        |             ✓             |
-| Olùṣàyẹ̀wò ìrìnàjò   |    ✗    |    ✗     |        ✓        |             ✓             |
-| Ìdarí OmniRoute     |    ✗    |    ✗     |        ✗        |             ✓             |
-| Ìṣàkóso ìbámu awoṣe |    ✗    |    ✗     |        ✗        |             ✓             |
-| Àkójọ ìforíjìn      |    ✗    |    ✗     |        ✓        |             ✓             |
-| Ìwé-ẹ̀rí CA òkè      |    ✗    |    ✗     |        ✓        |             ✓             |
+| Ẹ̀ya                     | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
+| ----------------------- | :-----: | :------: | :-------------: | :-----------------------: |
+| Antigravity             |    ✓    |    ✓     |        —        |             ✓             |
+| GitHub Copilot          |    ✓    |    ✓     |        —        |             ✓             |
+| Kiro (AWS)              |    ✓    |    ✓     |        —        |             ✓             |
+| OpenAI Codex            |    —    |    ✓     |        —        |             ✓             |
+| Cursor IDE              |    ✓    |    ✓     |        —        |             ✓             |
+| Zed Industries          |    —    |    ✓     |        —        |             ✓             |
+| Claude Code             |    —    |    —     |        ✓        |             ✓             |
+| Open Code               |    —    |    —     |        ✓        |             ✓             |
+| Trae                    |    —    |    —     |        —        |      🔍 A ń ṣèwádìí       |
+| Ìbánisọ̀rọ̀ Dashboard     |    ✓    |    ✗     |        ✗        |             ✓             |
+| Olùṣàyẹ̀wò Ìrìnwọlé      |    ✗    |    ✗     |        ✓        |             ✓             |
+| Ìdarí OmniRoute         |    ✗    |    ✗     |        ✗        |             ✓             |
+| Ìbánisọ̀rọ̀ ìbáramu awoṣe |    ✗    |    ✗     |        ✗        |             ✓             |
+| Àtòjọ àkọjá             |    ✗    |    ✗     |        ✓        |             ✓             |
+| Ìjẹ́rìí CA ìpilẹ̀ṣẹ̀       |    ✗    |    ✗     |        ✓        |             ✓             |
 
 ---
 

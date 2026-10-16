@@ -16,16 +16,16 @@ AgentBridge on OmniRouten MITM (Man-in-the-Middle) -välityspalvelin, joka siepp
 
 ### Mikä AgentBridge on?
 
-Kun IDE-agentti (esim. GitHub Copilot, Cursor tai Claude Code) tekee API-kutsun, se muodostaa yhteyden suoraan ylävirran tekoälypalveluntarjoajaan (OpenAI, Anthropic jne.). AgentBridge sieppaa tämän yhteyden läpinäkyvästi TLS-tasolla — ilman muutoksia agentin määrityksiin — ja ohjaa pyynnön uudelleen OmniRouten kautta.
+Kun IDE-agentti (esim. GitHub Copilot, Cursor tai Claude Code) tekee API-kutsun, se muodostaa yhteyden suoraan ylemmän tason tekoälypalveluntarjoajaan (OpenAI, Anthropic jne.). AgentBridge sieppaa tämän yhteyden läpinäkyvästi TLS-tasolla — ilman muutoksia agentin määrityksiin — ja ohjaa pyynnön uudelleen OmniRouten kautta.
 
 Tämän ansiosta voit:
 
-- **Reitittää minkä tahansa agentin mille tahansa palveluntarjoajalle**: Keskusteleeko Copilot OpenAI:n kanssa? Ohjaa se Anthropic Claudelle, Geminille tai mille tahansa OmniRouten 352 palveluntarjoajasta.
+- **Uudelleenohjata minkä tahansa agentin mille tahansa palveluntarjoajalle**: Keskusteleeko Copilot OpenAI:n kanssa? Ohjaa se sen sijaan Anthropic Claudeen, Geminiin tai mille tahansa OmniRouten 372 palveluntarjoajasta.
 - **Käyttää mallimäärityksiä**: `gemini-3-flash` → `claude-sonnet-4.7` läpinäkyvästi käsittelijätasolla.
-- **Tarkkailla kaikkea agenttiliikennettä**: jokainen siepattu pyyntö julkaistaan [Traffic Inspectorissa](./TRAFFIC_INSPECTOR.md).
-- **Hyödyntää OmniRouten vikasietoisuutta**: yhdistelmäreititys, katkaisijat, varareitit ja kustannusseuranta toimivat myös IDE-agenttien liikenteelle.
+- **Tarkkailla kaikkea agenttiliikennettä**: jokainen siepattu pyyntö julkaistaan [liikenteen tarkastelutyökalussa](./TRAFFIC_INSPECTOR.md).
+- **Hyödyntää OmniRouten vikasietoisuutta**: yhdistelmäreititys, virtakatkaisimet, varareitit ja kustannusten seuranta toimivat myös IDE-agenttiliikenteessä.
 
-### Asemoituminen markkinoilla
+### Asemointi markkinoihin nähden
 
 | Ominaisuus                      | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
 | ------------------------------- | :-----: | :------: | :-------------: | :-----------------------: |
@@ -39,11 +39,11 @@ Tämän ansiosta voit:
 | Open Code                       |    —    |    —     |        ✓        |             ✓             |
 | Trae                            |    —    |    —     |        —        |      🔍 Tutkittavana      |
 | Hallintapaneelin käyttöliittymä |    ✓    |    ✗     |        ✗        |             ✓             |
-| Traffic Inspector               |    ✗    |    ✗     |        ✓        |             ✓             |
+| Liikenteen tarkastelutyökalu    |    ✗    |    ✗     |        ✓        |             ✓             |
 | OmniRoute-reititys              |    ✗    |    ✗     |        ✗        |             ✓             |
 | Mallimääritysten käyttöliittymä |    ✗    |    ✗     |        ✗        |             ✓             |
 | Ohitusluettelo                  |    ✗    |    ✗     |        ✓        |             ✓             |
-| Ylävirran CA-varmenne           |    ✗    |    ✗     |        ✓        |             ✓             |
+| Ylemmän tason CA-varmenne       |    ✗    |    ✗     |        ✓        |             ✓             |
 
 ---
 

@@ -12,20 +12,20 @@ AgentBridge — OmniRoute’ning MITM (Man-in-the-Middle) proksisi bo‘lib, IDE
 
 ---
 
-## §1 Umumiy ma’lumot
+## §1 Umumiy ko‘rinish
 
 ### AgentBridge nima?
 
-IDE agenti (masalan, GitHub Copilot, Cursor, Claude Code) API chaqiruvini amalga oshirganda, u to‘g‘ridan-to‘g‘ri yuqori oqimdagi AI provayderiga (OpenAI, Anthropic va boshqalar) ulanadi. AgentBridge ushbu ulanishni TLS darajasida shaffof tarzda — agent konfiguratsiyasini o‘zgartirishni talab qilmasdan — ushlab qoladi va so‘rovni OmniRoute orqali qayta yo‘naltiradi.
+IDE agenti (masalan, GitHub Copilot, Cursor, Claude Code) API chaqiruvini amalga oshirganda, u bevosita yuqori oqimdagi AI provayderiga (OpenAI, Anthropic va boshqalar) ulanadi. AgentBridge bu ulanishni TLS darajasida shaffof tarzda — agent konfiguratsiyasini hech qanday o‘zgartirishni talab qilmasdan — ushlab qoladi va so‘rovni OmniRoute orqali qayta yo‘naltiradi.
 
 Bu sizga quyidagilarni amalga oshirish imkonini beradi:
 
-- **Istalgan agentni istalgan provayderga qayta yo‘naltirish**: Copilot OpenAI bilan ishlayaptimi? Uni Anthropic Claude, Gemini yoki OmniRoute’dagi 352 ta provayderdan istalgan biriga yo‘naltiring.
+- **Istalgan agentni istalgan provayderga qayta yo‘naltirish**: Copilot OpenAI bilan ishlayaptimi? Uni Anthropic Claude, Gemini yoki OmniRoute’dagi 372 ta provayderdan istalgan biriga yo‘naltiring.
 - **Model mosliklarini qo‘llash**: `gemini-3-flash` → `claude-sonnet-4.7` mosligini ishlov beruvchi darajasida shaffof tarzda qo‘llang.
-- **Barcha agent trafigini kuzatish**: har bir ushlangan so‘rov [Traffic Inspector](./TRAFFIC_INSPECTOR.md) xizmatiga yuboriladi.
-- **OmniRoute barqarorlik imkoniyatlarini qo‘llash**: kombinatsiyalangan marshrutlash, avtomatik uzgichlar, zaxira yo‘nalishlar va xarajatlarni kuzatish IDE agentlari trafigi uchun ham ishlaydi.
+- **Barcha agent trafikini kuzatish**: ushlab qolingan har bir so‘rov [Trafik inspektori](./TRAFFIC_INSPECTOR.md) orqali e’lon qilinadi.
+- **OmniRoute barqarorlik imkoniyatlarini qo‘llash**: kombinatsiyalangan marshrutlash, uzilish to‘xtatgichlari, zaxira variantlari va xarajatlarni kuzatish IDE agentlari trafikida ham ishlaydi.
 
-### Bozordagi muqobillarga nisbatan o‘rni
+### Bozordagi o‘rni
 
 | Xususiyat                   | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
 | --------------------------- | :-----: | :------: | :-------------: | :-----------------------: |
