@@ -1,0 +1,1 @@
+- **feat(sse):** opt-in relevance-based tool disclosure (`settings.toolDisclosure`) keeps the client tools most relevant to the current turn (BM25) before the provider tool cap, never dropping tools already used, forced or pinned ([#16861](https://github.com/diegosouzapw/OmniRoute/pull/16861)) — thanks @nitsuah
