@@ -26,6 +26,7 @@ export const USAGE_SUPPORTED_PROVIDERS: readonly string[] = [
   "github",
   "codex",
   "claude",
+  "anthropic",
   "cursor",
   "qoder",
   "kimi-coding",
@@ -52,6 +53,8 @@ export const USAGE_SUPPORTED_PROVIDERS: readonly string[] = [
   "vertex",
   "vertex-partner",
   "codebuddy-cn",
+  "codebuddy-intl",
+  "cbai",
   // PromptQL playground credits (getCreditSummary → USD micros)
   "promptql",
   "pql",
@@ -103,4 +106,6 @@ export const USAGE_SUPPORTED_PROVIDERS: readonly string[] = [
   // ChatPlayground subscription and daily credits (GET /api/user)
   "chatplayground",
   "cpl",
+  // Cloudflare Workers AI daily neurons vs the 10k/day free allocation (needs Analytics: Read)
+  "cloudflare-ai",
 ];

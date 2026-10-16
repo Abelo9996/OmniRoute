@@ -399,7 +399,12 @@ export class VideoDrilldownLifecycle {
       startSeconds: query.startSeconds,
     });
     if (!stored) {
-      this.dropHandle(handleDigest(handle), entry);
+      // A valid retained artifact can have no frames in the requested window.
+      // Only evict bookkeeping when an unfiltered read confirms the source is gone;
+      // otherwise later reads, explicit deletion and scheduled cleanup still need it.
+      if (!this.cache.get(principalId, entry.sessionId, entry.videoRef)) {
+        this.dropHandle(handleDigest(handle), entry);
+      }
       return null;
     }
     const variant = query.variant ?? "detail";

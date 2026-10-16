@@ -15,6 +15,7 @@ const core = await import("../../src/lib/db/core.ts");
 const keys = await import("../../src/lib/db/apiKeys.ts");
 const { enforceApiKeyPolicy } = await import("../../src/shared/utils/apiKeyPolicy.ts");
 const { VideoBridgeGuardrail } = await import("../../src/lib/guardrails/videoBridge.ts");
+const { BridgeCache } = await import("../../src/lib/guardrails/modalityBridge/bridgeCache.ts");
 const { getSharedVideoDrilldownLifecycle } =
   await import("../../src/lib/guardrails/videoBridgeDrilldownStore.ts");
 const route = await import("../../src/app/api/v1/video-bridge/drilldown/route.ts");
@@ -92,4 +93,72 @@ test("the real producer and authenticated GET/DELETE use the same tenant-bound l
   await route.DELETE(request(handle, owner, "DELETE"));
   assert.equal((await route.GET(request(handle, owner))).status, 404);
   assert.equal(getSharedVideoDrilldownLifecycle().getUsage(policy.apiKeyInfo!.id).bytes, 0);
+});
+
+test("consent after a warm visual result produces fresh owner-bound handles without replaying them", async (t) => {
+  const lifecycle = getSharedVideoDrilldownLifecycle();
+  t.after(() => lifecycle.clearAll());
+  const { key: owner } = await keys.createApiKey("warm-cache-owner", "test", []);
+  const { key: stranger } = await keys.createApiKey("warm-cache-stranger", "test", []);
+  const policy = await enforceApiKeyPolicy(request("0".repeat(64), owner), null);
+  const jpeg = await sharp({ create: { width: 640, height: 360, channels: 3, background: "red" } })
+    .jpeg()
+    .toBuffer();
+  let extractions = 0;
+  const guardrail = new VideoBridgeGuardrail({
+    deps: {
+      resultCache: new BridgeCache({ maxEntries: 8, ttlMs: 60_000 }),
+      getSettings: async () => ({
+        modalityBridgeVideoEnabled: true,
+        modalityBridgeCacheEnabled: true,
+        modalityBridgeVideoDrilldownEnabled: true,
+        modalityBridgeVideoAudioTranscriptionEnabled: false,
+      }),
+      getCapabilities: () => ({ supportsVideo: false }),
+      selectVisionModel: async () => "openai/gpt-4o-mini",
+      extractFrames: async () => {
+        extractions += 1;
+        return {
+          durationSeconds: 5,
+          frames: [
+            { dataUri: `data:image/jpeg;base64,${jpeg.toString("base64")}`, timestampSeconds: 1 },
+          ],
+        };
+      },
+      callVisionModel: async () => "red screen",
+    },
+  });
+  const run = (drilldown: boolean) =>
+    guardrail.preCall(
+      {
+        model: "example/text-only",
+        messages: [
+          {
+            role: "user",
+            content: [{ type: "input_video", video_url: "data:video/mp4;base64,QUJD", drilldown }],
+          },
+        ],
+      },
+      { apiKeyInfo: policy.apiKeyInfo }
+    );
+
+  const cold = await run(false);
+  const warm = await run(false);
+  assert.equal(cold.meta?.videoDrilldownHandles, undefined);
+  assert.equal(warm.meta?.videoDrilldownHandles, undefined);
+  assert.equal(extractions, 1, "the second ordinary request must reuse the visual result");
+
+  const first = await run(true);
+  const second = await run(true);
+  const [firstHandle] = first.meta!.videoDrilldownHandles as Array<{ handle: string }>;
+  const [secondHandle] = second.meta!.videoDrilldownHandles as Array<{ handle: string }>;
+  assert.notEqual(firstHandle.handle, secondHandle.handle);
+  assert.equal(extractions, 3, "each consented request must produce its own retained source");
+  for (const { handle } of [firstHandle, secondHandle]) {
+    assert.equal((await route.GET(request(handle, owner))).status, 200);
+    assert.equal((await route.GET(request(handle, stranger))).status, 404);
+  }
+  const optedOut = await run(false);
+  assert.equal(optedOut.meta?.videoDrilldownHandles, undefined);
+  assert.equal(extractions, 3, "a later opted-out request retains normal visual caching");
 });

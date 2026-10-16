@@ -174,6 +174,43 @@ test("consumer route denies a different API key's handle with the same 404 as a 
   assert.equal(ownerRead.status, 200);
 });
 
+test("consumer applies the video endpoint policy to both aliases and honors changed permissions", async () => {
+  const { key } = await seedKey();
+  const lifecycle = newLifecycle();
+  const { enforceApiKeyPolicy } = await import("../../src/shared/utils/apiKeyPolicy.ts");
+  const policy = await enforceApiKeyPolicy(get("/x", key), null);
+  const principalId = policy.apiKeyInfo!.id;
+  const { handle } = await lifecycle.produce(principalId, {
+    derivation,
+    durationSeconds: 10,
+    frames: [{ dataUri: await jpegDataUri(64, 64), timestampSeconds: 1 }],
+  });
+
+  await apiKeysDb.updateApiKeyPermissions(principalId, { allowedEndpoints: ["embeddings"] });
+  for (const prefix of ["/v1", "/api/v1"]) {
+    for (const makeRequest of [get, del]) {
+      const response = await route.handleVideoBridgeDrilldownConsumerRequest(
+        makeRequest(`${prefix}/video-bridge/drilldown?handle=${handle}`, key),
+        { isRemoteAccessEnabled: () => true, lifecycle }
+      );
+      assert.equal(response.status, 403);
+    }
+  }
+
+  await apiKeysDb.updateApiKeyPermissions(principalId, { allowedEndpoints: ["video"] });
+  const allowed = await route.handleVideoBridgeDrilldownConsumerRequest(
+    get(`/v1/video-bridge/drilldown?handle=${handle}`, key),
+    { isRemoteAccessEnabled: () => true, lifecycle }
+  );
+  assert.equal(allowed.status, 200);
+  const deleted = await route.handleVideoBridgeDrilldownConsumerRequest(
+    del(`/api/v1/video-bridge/drilldown?handle=${handle}`, key),
+    { isRemoteAccessEnabled: () => true, lifecycle }
+  );
+  assert.equal(deleted.status, 200);
+  assert.deepEqual(await deleted.json(), { removed: 1 });
+});
+
 test("consumer route deletes an owner's handle and it becomes unresolvable afterward", async () => {
   const { key } = await seedKey();
   const lifecycle = newLifecycle();

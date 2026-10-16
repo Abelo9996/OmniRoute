@@ -2324,8 +2324,7 @@ paths:
     post:
       tags: [Providers]
       summary: Validate provider credentials
-      description: "Spawns a fixed ACP summarizer binary to validate credentials — loopback-only (Hard Rules #15/#17, audit #15159 S-01)."
-      x-loopback-only: true
+      description: "Validates provider credentials over HTTP. The devin CLI-spawn fallback is call-site gated on the trusted peer-locality header (loopback/LAN only, Hard Rules #15/#17, audit #15159 S-01, #15766 shape); the route itself is management-auth remote-reachable."
       responses:
         "200":
           description: Validation result
@@ -2417,9 +2416,41 @@ paths:
     get:
       tags: [Provider Nodes]
       summary: List provider models
+      description: >-
+        With a provider query parameter, includes modelOutputOverrides for manual
+        output-token caps, including synced models without a custom-model row.
       responses:
         "200":
           description: Provider model list
+    put:
+      tags: [Provider Nodes]
+      summary: Update model metadata or per-model overrides
+      description: >-
+        Requires management authentication. maxOutputTokenOverride sets a manual
+        max_output_tokens capability without creating a custom-model row when it
+        is the only change. A null value clears that override. Existing metadata
+        fields remain available on this operation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [provider, modelId]
+              properties:
+                provider:
+                  type: string
+                modelId:
+                  type: string
+                maxOutputTokenOverride:
+                  type: integer
+                  minimum: 1
+                  nullable: true
+      responses:
+        "200":
+          description: Model settings saved
+        "400":
+          description: Invalid model target or override value
 
   /api/provider-models/validate-and-add:
     post:
@@ -4245,7 +4276,10 @@ paths:
         "200":
           description: Token created (token returned once)
         "403":
-          description: Insufficient scope
+          description: >-
+            Insufficient scope, or an `admin` token was requested by a machine credential
+            (API key or access token). Admin tokens require the dashboard session or the
+            local CLI; machine credentials can mint `write`/`read` only.
 
   /api/cli/tokens/{id}:
     delete:
@@ -7067,7 +7101,7 @@ paths:
     get:
       tags: [System]
       summary: Read authenticated tenant-bound video frame variants
-      description: Requires explicit remote drill-down operator consent and an authenticated API key. Resolves an opaque handle from the x-omniroute-video-drilldown chat response header; never accepts a client principal, raw video or session ID. JSON including Base64 is limited to 32 MiB. Unknown, expired and cross-key handles return indistinguishable 404 responses. Handles are process-local and expire after ten minutes or a restart.
+      description: Requires explicit remote drill-down operator consent and an authenticated API key. A nonempty API-key endpoint allowlist must include video. Resolves an opaque handle from the x-omniroute-video-drilldown chat response header; never accepts a client principal, raw video or session ID. JSON including Base64 is limited to 32 MiB. Unknown, expired and cross-key handles return indistinguishable 404 responses. Handles are process-local and expire after ten minutes or a restart.
       security:
         - BearerAuth: []
       parameters:
@@ -7137,7 +7171,7 @@ paths:
     delete:
       tags: [System]
       summary: Delete an authenticated owner's video drill-down handle
-      description: Idempotent; unknown, expired or cross-key handles remove zero entries. Releases retained frames and accounting for the owner only. Remote operator consent and a valid API key are always required.
+      description: Idempotent; unknown, expired or cross-key handles remove zero entries. Releases retained frames and accounting for the owner only. Remote operator consent and a valid API key are always required. A nonempty API-key endpoint allowlist must include video.
       security:
         - BearerAuth: []
       parameters:
@@ -8226,20 +8260,6 @@ paths:
           description: System proxy updated
         "500":
           description: OS command failed (permission error)
-
-  /api/tools/traffic-inspector/capture-modes/tls-intercept:
-    post:
-      tags: [Traffic Inspector]
-      summary: Toggle TLS body decryption in HTTP_PROXY mode
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/InspectorTlsInterceptToggle"
-      responses:
-        "200":
-          description: TLS intercept mode updated
 
   /api/tools/traffic-inspector/sessions:
     get:
@@ -10019,6 +10039,11 @@ paths:
       responses:
         "200":
           description: OK
+        "403":
+          description: >-
+            Machine credential refused. Exports carry every stored credential, so they require
+            the dashboard session or the local CLI (or login disabled); API keys of any scope
+            and `oma_` access tokens get 403.
   /api/db-backups/exportAll:
     get:
       tags:
@@ -10028,14 +10053,47 @@ paths:
       responses:
         "200":
           description: OK
+        "403":
+          description: >-
+            Machine credential refused. Exports carry every stored credential, so they require
+            the dashboard session or the local CLI (or login disabled); API keys of any scope
+            and `oma_` access tokens get 403.
   /api/db-backups/import:
     post:
       tags:
         - Db backups
       summary: "POST db backups › import"
+      description: >-
+        Replaces the live database with an uploaded `.sqlite` backup (multipart `file` field,
+        or the raw bytes with `?filename=`). The upload is checked for SQLite integrity and the
+        required OmniRoute tables first. Accepts the dashboard session, a `manage`-scoped API
+        key, or the local CLI credential.
+      parameters:
+        - name: dryRun
+          in: query
+          description: >-
+            `true` validates the upload and returns what would be imported (row counts, schema
+            version) without the pre-import backup and without touching the live database. A
+            multipart `dryRun` form field is honoured too.
+          required: false
+          schema:
+            type: string
+            enum: ["true", "false", "1", "0"]
+        - name: filename
+          in: query
+          description: Name of the uploaded file for raw-byte uploads; must end in `.sqlite`.
+          required: false
+          schema:
+            type: string
       responses:
         "200":
-          description: OK
+          description: >-
+            Imported (`imported: true`), or, for a dry run, validated (`dryRun: true,
+            valid: true, imported: false`) with the counts the upload would load.
+        "400":
+          description: Not a valid OmniRoute SQLite backup (type, size, integrity or tables).
+        "401":
+          description: No accepted credential.
   /api/db/health:
     get:
       tags:
@@ -10616,6 +10674,16 @@ paths:
       tags:
         - Logs
       summary: "GET logs › export"
+      description: >-
+        Streams a JSON log export. The initial estimatedCount and the
+        X-OmniRoute-Export-Count header are preflight estimates;
+        X-OmniRoute-Export-Count-Kind is estimate. The final count is the number
+        of rows actually emitted in logs, including on mid-stream failure.
+        Failures also append emitted and a sanitized error. Cap metadata is
+        available before row iteration. This is a live, best-effort export:
+        concurrent changes may remove call-log IDs before hydration, and proxy-log
+        LIMIT/OFFSET pages may repeat or omit rows when inserts/deletes shift pages.
+        Neither the export nor totalAvailable represents a transactional snapshot.
       x-always-protected: true
       responses:
         "200":
@@ -11226,8 +11294,7 @@ paths:
       tags:
         - Providers
       summary: "POST providers › bulk"
-      description: "Reaches the same spawn as /api/providers/validate (webProvidersB.ts) — loopback-only (Hard Rules #15/#17, audit #15159 S-01)."
-      x-loopback-only: true
+      description: "The devin CLI-spawn fallback (webProvidersB.ts) is call-site gated on the trusted peer-locality header — loopback/LAN only (Hard Rules #15/#17, audit #15159 S-01, #15766 shape); the route is management-auth remote-reachable."
       responses:
         "200":
           description: OK
@@ -11379,8 +11446,7 @@ paths:
       tags:
         - Providers
       summary: "POST providers › import"
-      description: "Reaches the same spawn as /api/providers/validate (webProvidersB.ts) — loopback-only (Hard Rules #15/#17, audit #15159 S-01)."
-      x-loopback-only: true
+      description: "The devin CLI-spawn fallback (webProvidersB.ts) is call-site gated on the trusted peer-locality header — loopback/LAN only (Hard Rules #15/#17, audit #15159 S-01, #15766 shape); the route is management-auth remote-reachable."
       responses:
         "200":
           description: OK
@@ -11964,6 +12030,11 @@ paths:
       responses:
         "200":
           description: OK
+        "403":
+          description: >-
+            Machine credential refused. Exports carry every stored credential, so they require
+            the dashboard session or the local CLI (or login disabled); API keys of any scope
+            and `oma_` access tokens get 403.
   /api/settings/favicon:
     get:
       tags:
@@ -12790,10 +12861,55 @@ paths:
       tags:
         - System
       summary: "GET system › version"
+      description: >-
+        Running version, latest published version, auto-update status and npm release channel.
+        `releaseChannel` and `channels` are additive (rail 3.8.54); `channel` keeps meaning the
+        deployment mode used by the dashboard updater.
       x-loopback-only: true
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [current, latest, updateAvailable, channel, releaseChannel, channels]
+                properties:
+                  current: { type: string, description: Running OmniRoute version. }
+                  latest:
+                    type: string
+                    description: Latest published version, or "unavailable" when every lookup failed.
+                  updateAvailable: { type: boolean }
+                  channel:
+                    type: string
+                    enum: [npm, source, docker-compose]
+                    description: Deployment mode the auto-updater uses (not the npm release channel).
+                  autoUpdateSupported: { type: boolean }
+                  autoUpdateError: { type: [string, "null"] }
+                  news: { description: Active release-news payload, or null. }
+                  releaseChannel:
+                    type: string
+                    enum: [latest, next, nightly, lts]
+                    description: >-
+                      npm channel of the running build — `nightly` for `-nightly.*`, `next` for other
+                      pre-releases, `lts` for a stable of an older major than `channels.latest`,
+                      otherwise `latest` (same rules as scripts/release/dist-tag.mjs).
+                  channels:
+                    type: object
+                    description: >-
+                      Published head of each npm dist-tag (`npm view omniroute dist-tags`, cached
+                      10 minutes). `latest` is always present; the others only when the dist-tag
+                      exists.
+                    required: [latest]
+                    properties:
+                      latest: { type: string }
+                      next: { type: string }
+                      nightly: { type: string }
+                      lts: { type: string }
+        "304":
+          description: Not modified (If-None-Match matched the ETag).
+        "401":
+          description: Unauthorized
     post:
       tags:
         - System
@@ -13623,39 +13739,89 @@ paths:
       tags:
         - V1 Registered-keys
       summary: "GET registered keys"
+      description: >
+        Management-only, like `/api/keys`: a dashboard session, the local CLI token, or an
+        API key with `manage`/`admin` scope. Inference-only API keys get 403.
+      security:
+        - BearerAuth: []
+        - ManagementSessionAuth: []
       responses:
         "200":
           description: OK
+        "401":
+          $ref: "#/components/responses/ManagementAuthenticationRequired"
+        "403":
+          $ref: "#/components/responses/ManagementInvalidToken"
     post:
       tags:
         - V1 Registered-keys
       summary: "POST registered keys"
+      description: >
+        Management-only, like `/api/keys`: a dashboard session, the local CLI token, or an
+        API key with `manage`/`admin` scope. Inference-only API keys get 403.
+      security:
+        - BearerAuth: []
+        - ManagementSessionAuth: []
       responses:
         "200":
           description: OK
+        "401":
+          $ref: "#/components/responses/ManagementAuthenticationRequired"
+        "403":
+          $ref: "#/components/responses/ManagementInvalidToken"
   /api/v1/registered-keys/{id}:
     delete:
       tags:
         - V1 Registered-keys
       summary: "DELETE registered keys › <id>"
+      description: >
+        Management-only, like `/api/keys`: a dashboard session, the local CLI token, or an
+        API key with `manage`/`admin` scope. Inference-only API keys get 403.
+      security:
+        - BearerAuth: []
+        - ManagementSessionAuth: []
       responses:
         "200":
           description: OK
+        "401":
+          $ref: "#/components/responses/ManagementAuthenticationRequired"
+        "403":
+          $ref: "#/components/responses/ManagementInvalidToken"
     get:
       tags:
         - V1 Registered-keys
       summary: "GET registered keys › <id>"
+      description: >
+        Management-only, like `/api/keys`: a dashboard session, the local CLI token, or an
+        API key with `manage`/`admin` scope. Inference-only API keys get 403.
+      security:
+        - BearerAuth: []
+        - ManagementSessionAuth: []
       responses:
         "200":
           description: OK
+        "401":
+          $ref: "#/components/responses/ManagementAuthenticationRequired"
+        "403":
+          $ref: "#/components/responses/ManagementInvalidToken"
   /api/v1/registered-keys/{id}/revoke:
     post:
       tags:
         - V1 Registered-keys
       summary: "POST registered keys › <id> › revoke"
+      description: >
+        Management-only, like `/api/keys`: a dashboard session, the local CLI token, or an
+        API key with `manage`/`admin` scope. Inference-only API keys get 403.
+      security:
+        - BearerAuth: []
+        - ManagementSessionAuth: []
       responses:
         "200":
           description: OK
+        "401":
+          $ref: "#/components/responses/ManagementAuthenticationRequired"
+        "403":
+          $ref: "#/components/responses/ManagementInvalidToken"
   /api/v1/relay/chat/completions:
     post:
       tags:
@@ -14908,13 +15074,6 @@ components:
           type: integer
           minimum: 1
           example: 30
-
-    InspectorTlsInterceptToggle:
-      type: object
-      required: [enabled]
-      properties:
-        enabled:
-          type: boolean
 
     InspectorAnnotationPut:
       type: object
