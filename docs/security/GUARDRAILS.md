@@ -640,7 +640,10 @@ access even when the legacy `OMNIROUTE_VIDEO_BRIDGE_DRILLDOWN_REMOTE_ENABLED` en
 fallback is enabled. Production retention has the analogous legacy
 `OMNIROUTE_VIDEO_BRIDGE_DRILLDOWN_ENABLED` fallback. Both fallbacks default off.
 
-The consumer derives ownership from the authenticated key, applies key policy, and
+The consumer derives ownership from the authenticated key and applies key policy:
+both GET and DELETE belong to the `video` endpoint category, including the `/v1`
+and `/api/v1` aliases. Keys with a nonempty endpoint allowlist must include `video`;
+unrestricted keys remain compatible. The consumer
 returns the same 404 for unknown, expired and another key's handles. It accepts
 `variant=preview|standard|detail` (maximum JPEG dimension 320/640/1280, never upscaled),
 `limit=1..8` (or the legacy `frames` alias, never both), zero-based `page`, and optional

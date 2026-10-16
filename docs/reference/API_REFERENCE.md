@@ -1121,6 +1121,8 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 Both reads and `DELETE` always require a valid API key and the operator's independent
 `modalityBridgeVideoDrilldownRemoteEnabled` permission. Production retention additionally
 requires `modalityBridgeVideoDrilldownEnabled` and strict per-part `drilldown: true`.
+If the key has a nonempty endpoint allowlist, it must include `video` for both
+GET and DELETE, whether the caller uses `/v1` or `/api/v1`.
 
 GET query: required `handle`; optional `variant` (`preview`, `standard`, `detail`),
 `limit` (1–8; legacy `frames` is accepted but cannot be combined with `limit`),

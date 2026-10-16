@@ -7101,7 +7101,7 @@ paths:
     get:
       tags: [System]
       summary: Read authenticated tenant-bound video frame variants
-      description: Requires explicit remote drill-down operator consent and an authenticated API key. Resolves an opaque handle from the x-omniroute-video-drilldown chat response header; never accepts a client principal, raw video or session ID. JSON including Base64 is limited to 32 MiB. Unknown, expired and cross-key handles return indistinguishable 404 responses. Handles are process-local and expire after ten minutes or a restart.
+      description: Requires explicit remote drill-down operator consent and an authenticated API key. A nonempty API-key endpoint allowlist must include video. Resolves an opaque handle from the x-omniroute-video-drilldown chat response header; never accepts a client principal, raw video or session ID. JSON including Base64 is limited to 32 MiB. Unknown, expired and cross-key handles return indistinguishable 404 responses. Handles are process-local and expire after ten minutes or a restart.
       security:
         - BearerAuth: []
       parameters:
@@ -7171,7 +7171,7 @@ paths:
     delete:
       tags: [System]
       summary: Delete an authenticated owner's video drill-down handle
-      description: Idempotent; unknown, expired or cross-key handles remove zero entries. Releases retained frames and accounting for the owner only. Remote operator consent and a valid API key are always required.
+      description: Idempotent; unknown, expired or cross-key handles remove zero entries. Releases retained frames and accounting for the owner only. Remote operator consent and a valid API key are always required. A nonempty API-key endpoint allowlist must include video.
       security:
         - BearerAuth: []
       parameters:
