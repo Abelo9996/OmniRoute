@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React, { act } from "react";
-import { createReactRootRegistry } from "../../_helpers/reactRootRegistry";
+import { createRoot, type Root } from "react-dom/client";
 import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "../../../src/i18n/messages/en.json";
@@ -35,12 +35,13 @@ const { CompressionCockpit } =
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-const roots = createReactRootRegistry();
+const mounted: { root: Root; container: HTMLElement }[] = [];
 
 function mount(ui: React.ReactElement): HTMLElement {
   const container = document.createElement("div");
   document.body.appendChild(container);
-  const root = roots.createRoot(container);
+  const root = createRoot(container);
+  mounted.push({ root, container });
   act(() => {
     root.render(
       <NextIntlClientProvider
@@ -67,7 +68,11 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
-  await roots.cleanup();
+  for (const instance of mounted.splice(0)) {
+    await act(async () => instance.root.unmount());
+    instance.container.remove();
+  }
+  document.body.innerHTML = "";
 });
 
 // ── Sample run ────────────────────────────────────────────────────────────
