@@ -24,8 +24,15 @@ test("homologation refuses implicit, relative or missing source databases", () =
   }
 });
 
-test("preparation uses a read-only snapshot and confines all keys/settings to private storage", async () => {
+test("preparation uses a read-only snapshot and confines all keys/settings to private storage", async (t) => {
   const source = fs.mkdtempSync(path.join(os.tmpdir(), "video-live-source-fixture-"));
+  // Preparation and both consumers must agree even when the runner overrides TMPDIR.
+  const previousTmpdir = process.env.TMPDIR;
+  process.env.TMPDIR = source;
+  t.after(() => {
+    if (previousTmpdir === undefined) delete process.env.TMPDIR;
+    else process.env.TMPDIR = previousTmpdir;
+  });
   const databasePath = path.join(source, "storage.sqlite");
   const original = new Database(databasePath);
   original.exec(
@@ -37,6 +44,7 @@ test("preparation uses a read-only snapshot and confines all keys/settings to pr
   try {
     const result = await prepareVideoLiveIsolation(source);
     prepared = result.directory;
+    assert.equal(path.dirname(fs.realpathSync(prepared)), fs.realpathSync("/tmp"));
     assert.notEqual(fs.realpathSync(prepared), fs.realpathSync(source));
     assert.equal(fs.statSync(prepared).mode & 0o777, 0o700);
     for (const name of [".env", "client-context.json", "storage.sqlite"]) {
