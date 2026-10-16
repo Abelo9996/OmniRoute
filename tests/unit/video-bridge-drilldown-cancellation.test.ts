@@ -36,6 +36,51 @@ test("a cancelled read does not derive or return any frame", async () => {
   );
 });
 
+test("cancelling an in-flight preview rejects without corrupting the retained source", async (t) => {
+  const lifecycle = new VideoDrilldownLifecycle({
+    cache: new VideoDrilldownCache({ maxEntries: 4, ttlMs: 60_000 }),
+  });
+  t.after(() => lifecycle.clearAll());
+  const { handle } = await lifecycle.produce("owner", await payload());
+  const controller = new AbortController();
+  // The 640px source must enter asynchronous resizing for a 320px preview.
+  const pending = lifecycle.resolve("owner", handle, {
+    signal: controller.signal,
+    variant: "preview",
+  });
+  controller.abort();
+  await assert.rejects(pending, { name: "AbortError" });
+  const source = await lifecycle.resolve("owner", handle, {});
+  assert.equal(source?.frames[0].width, 640);
+});
+
+test("deleting a handle while preview resizing is in flight revokes the pending response", async (t) => {
+  const lifecycle = new VideoDrilldownLifecycle({
+    cache: new VideoDrilldownCache({ maxEntries: 4, ttlMs: 60_000 }),
+  });
+  t.after(() => lifecycle.clearAll());
+  const { handle } = await lifecycle.produce("owner", await payload());
+  const pending = lifecycle.resolve("owner", handle, { variant: "preview" });
+  assert.equal(lifecycle.deleteHandle("owner", handle), 1);
+  assert.equal(await pending, null);
+  assert.equal(lifecycle.getUsage("owner").totalBytes, 0);
+});
+
+test("an empty focused read still releases idle retained bytes at the handle deadline", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout", "Date"], now: 1_000 });
+  const lifecycle = new VideoDrilldownLifecycle({
+    cache: new VideoDrilldownCache({ maxEntries: 4, ttlMs: 60_000 }),
+    ttlMs: 1_000,
+  });
+  t.after(() => lifecycle.clearAll());
+  const { handle } = await lifecycle.produce("owner", await payload());
+  assert.equal(await lifecycle.resolve("owner", handle, { startSeconds: 3, endSeconds: 4 }), null);
+  assert.ok(lifecycle.getUsage("owner").totalBytes > 0);
+  // No later read, deletion or explicit cleanup drives this expiry.
+  t.mock.timers.tick(1_001);
+  assert.equal(lifecycle.getUsage("owner").totalBytes, 0);
+});
+
 test("handle TTL sweep releases retained bytes even when cache TTL is longer", async () => {
   let now = 1_000;
   const cache = new VideoDrilldownCache({ maxEntries: 4, ttlMs: 60_000, now: () => now });
