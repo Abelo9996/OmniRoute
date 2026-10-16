@@ -265,6 +265,7 @@ import {
   resolveConnectionCacheOverride,
 } from "../utils/cacheControlPolicy.ts";
 import { getCachedSettings } from "@/lib/db/readCache";
+import { resolveToolDisclosureConfig } from "../utils/toolDisclosure.ts";
 import {
   applyApiKeyCodexServiceMode,
   withApiKeyCodexServiceMode,
@@ -3025,6 +3026,7 @@ async function handleChatCoreInner({
     ? computeRequestHash(dedupRequestBody, apiKeyInfo?.id, trustedEffortContext)
     : null;
 
+  const toolDisclosure = resolveToolDisclosureConfig(settings);
   const executeProviderRequestDeps = {
     agentGoalPolicy,
     assertManagedLeaseFence,
@@ -3065,6 +3067,7 @@ async function handleChatCoreInner({
     traceId,
     translatedBody,
     trustedEffortContext,
+    toolDisclosure,
     upstreamStream,
     userAgent,
   };
@@ -3695,6 +3698,7 @@ async function handleChatCoreInner({
       targetFormat,
       triedModels,
       trustedEffortContext,
+      toolDisclosure,
       upstreamStream,
       userAgent,
       claudePromptCacheLogMeta,
