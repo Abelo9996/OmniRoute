@@ -286,7 +286,7 @@ GET /v1/embeddings
 
 ---
 
-## Ustvarjanje slik
+## Generiranje slik
 
 ```bash
 POST /v1/images/generations
@@ -300,29 +300,37 @@ Content-Type: application/json
 }
 ```
 
-Razpoložljivi ponudniki vključujejo OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokalno) in ComfyUI (lokalno).
+Razpoložljivi ponudniki vključujejo OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokalno), ComfyUI (lokalno).
 
-ZenMux znova uporabi obstoječo povezavo s ključem API in sprejema predponi `zenmux/` ali `zm/`:
+`n` vrne `n` slik v `data[]`. Za ponudnike, katerih izvorni API vrne eno sliko na klic
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), se izvede `n` ločenih izvornih klicev, pri čemer so hkrati dejavni največ 4. Fiksna
+vrednost `seed` se poveča za indeks klica (`seed`, `seed + 1`, …), zato se slike razlikujejo, vendar ostanejo
+ponovljive. Vrednost `n` je omejena na 10. Celotna zahteva ne uspe, če ne uspe kateri koli klic. Seznam
+formatov z razpršitvijo klicev je `SINGLE_IMAGE_FANOUT_FORMATS` v
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
-- `zenmux/openai/gpt-image-2` uporablja ZenMuxov API OpenAI Images. Možnosti vključujejo `size`,
+ZenMux ponovno uporabi obstoječo povezavo s ključem API in sprejema predponi `zenmux/` ali `zm/`:
+
+- `zenmux/openai/gpt-image-2` uporablja ZenMuxov OpenAI Images API. Možnosti vključujejo `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` in `response_format`.
 - Drugi izdajatelji, kot je `zm/meta/muse-image-1.0`, uporabljajo ZenMuxovo končno točko Vertex AI `:predict`.
   `n` se preslika v `sampleCount`, `aspect_ratio` v `aspectRatio`, `image_size`
   (`1K`, `2K`, `4K`) pa v `sampleImageSize`. Vrednost `size` v slikovnih pikah določa samo razmerje stranic,
-  ne pa zajamčenih dimenzij v slikovnih pikah. Podprta razmerja, ločljivosti in števila se razlikujejo glede na model.
+  ne pa zagotovljenih dimenzij v slikovnih pikah. Podprta razmerja, ločljivosti in števila se razlikujejo glede na model.
 - `zm/inclusionai/ming-image-0.1-design` sam izbere svoje dimenzije. Izpustite `size`,
-  `aspect_ratio` in `image_size`; izrecne vrednosti vrnejo HTTP 400. PNG, JPEG in WebP
-  lahko zahtevate z možnostjo `output_format`.
+  `aspect_ratio` in `image_size`; izrecne vrednosti vrnejo HTTP 400. Formate PNG, JPEG in WebP
+  lahko zahtevate z `output_format`.
 
-Ta integracija podpira ustvarjanje slik iz besedila, ne pa urejanja na podlagi referenčnih slik. Izhod Vertex
+Ta integracija podpira generiranje slik iz besedila, ne pa urejanja na podlagi referenčnih slik. Izhod Vertex
 se normalizira v `data[].b64_json`; `response_format: "url"` vrne izvorni
 URL HTTPS ali podatkovni URL base64, kadar so na voljo samo bajti slike. Prazni/filtrirani izhodi
-vrnejo napako namesto praznega uspešnega odgovora. Dostop do modelov je odvisen od računa ZenMux.
-Glejte [ZenMuxov API Vertex](https://docs.zenmux.ai/api/vertexai/generate-images) in
-[API OpenAI Images](https://docs.zenmux.ai/api/openai/generate-an-image).
+vrnejo napako namesto praznega uspešnega rezultata. Dostop do modelov je odvisen od računa ZenMux.
+Glejte [Vertex API ponudnika ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) in
+[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Prikaži vse modele za slike
+# Prikaži vse slikovne modele
 GET /v1/images/generations
 ```
 
@@ -1464,7 +1472,7 @@ Naročnine na odhodne spletne kavlje za dogodke OmniRoute (dokončanje zahteve, 
 
 ## Registrirani ključi (samodejno upravljanje)
 
-Podsistem za samodejno upravljanje ključev jih uporablja za izdajanje in rotacijo ključev API pri zalednem ponudniku/računu z dnevnimi/urnimi kvotami.
+Podsistem za samodejno upravljanje ključev ga uporablja za izdajanje in rotacijo ključev API pri zalednem ponudniku/računu z dnevnimi/urnimi kvotami.
 
 | Metoda | Pot                                   | Opis                                                                                                                                                                                                   |
 | ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1474,7 +1482,7 @@ Podsistem za samodejno upravljanje ključev jih uporablja za izdajanje in rotaci
 | DELETE | `/api/v1/registered-keys/[id]`        | Prekliče registrirani ključ                                                                                                                                                                            |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | Izrecna končna točka za preklic (enak učinek kot DELETE)                                                                                                                                               |
 
-**Avtentikacija:** ključ API Bearer (`isAuthenticated`). Glejte tudi `/v1/quotas/check` in `/v1/issues/report`.
+**Preverjanje pristnosti:** upravljavska seja/ključ API (`requireManagementAuth`) — enako varovalo kot pri `/api/keys`: seja nadzorne plošče, lokalni žeton CLI ali ključ API z obsegom `manage`/`admin`; ključi API, namenjeni samo sklepanju, prejmejo `403`. Glejte tudi `/v1/quotas/check` in `/v1/issues/report`.
 
 ---
 

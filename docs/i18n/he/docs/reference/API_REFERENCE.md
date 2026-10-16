@@ -300,29 +300,37 @@ Content-Type: application/json
 }
 ```
 
-הספקים הזמינים כוללים את OpenAI‏ (GPT Image 2),‏ xAI‏ (Grok Image),‏ Together AI‏ (FLUX),‏ Fireworks AI,‏ Nebius‏ (FLUX),‏ Hyperbolic,‏ NanoBanana,‏ **OpenRouter**,‏ **ZenMux**,‏ SD WebUI (מקומי), ComfyUI (מקומי).
+הספקים הזמינים כוללים את OpenAI (GPT Image 2),‏ xAI (Grok Image),‏ Together AI (FLUX),‏ Fireworks AI,‏ Nebius (FLUX),‏ Hyperbolic,‏ NanoBanana,‏ **OpenRouter**,‏ **ZenMux**,‏ SD WebUI (מקומי),‏ ComfyUI (מקומי).
 
-ZenMux עושה שימוש חוזר בחיבור הקיים של מפתח ה-API ומקבל את התחיליות `zenmux/` או `zm/`:
+`n` מחזיר `n` תמונות בתוך `data[]`. עבור ספקים שממשק ה-API שלהם במעלה הזרם מחזיר תמונה אחת בכל קריאה
+(Black Forest Labs,‏ Stability AI,‏ Leonardo,‏ Ideogram,‏ Haiper,‏ Hyperbolic,‏ Magnific/Freepik,
+NVIDIA NIM,‏ Cloudflare Workers AI), מתבצעות `n` קריאות נפרדות במעלה הזרם, עם לכל היותר 4 קריאות מקבילות. לערך
+`seed` קבוע מתווסף אינדקס הקריאה (`seed`,‏ `seed + 1`, …), כך שהתמונות שונות אך נותרות
+ניתנות לשחזור. `n` מוגבל ל-10. הבקשה כולה נכשלת אם אחת מהקריאות נכשלת. רשימת
+הפורמטים המבצעים פיצול לקריאות נמצאת ב-`SINGLE_IMAGE_FANOUT_FORMATS` בתוך
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
-- `zenmux/openai/gpt-image-2` משתמש ב-OpenAI Images API של ZenMux. האפשרויות כוללות את `size`,
+ZenMux עושה שימוש חוזר בחיבור הקיים באמצעות מפתח API ומקבל את התחיליות `zenmux/` או `zm/`:
+
+- `zenmux/openai/gpt-image-2` משתמש ב-OpenAI Images API של ZenMux. האפשרויות כוללות `size`,
   `quality`,‏ `n`,‏ `output_format`,‏ `output_compression`,‏ `background` ו-`response_format`.
-- מפרסמים אחרים, כגון `zm/meta/muse-image-1.0`, משתמשים בנקודת הקצה `:predict`
-  של Vertex AI ב-ZenMux. הפרמטר `n` ממופה ל-`sampleCount`,‏ `aspect_ratio` ל-`aspectRatio`, ו-`image_size`
-  (`1K`,‏ `2K`,‏ `4K`) ל-`sampleImageSize`. ערך `size` בפיקסלים מספק רק יחס רוחב-גובה,
-  ולא מידות מובטחות בפיקסלים. היחסים, הרזולוציות והכמויות הנתמכים משתנים בהתאם למודל.
+- מפרסמים אחרים, כגון `zm/meta/muse-image-1.0`, משתמשים בנקודת הקצה `:predict` של Vertex AI מבית ZenMux.
+  `n` ממופה אל `sampleCount`,‏ `aspect_ratio` אל `aspectRatio`, ו-`image_size`
+  (`1K`,‏ `2K`,‏ `4K`) אל `sampleImageSize`. ערך `size` בפיקסלים מספק יחס גובה-רוחב בלבד,
+  ולא מידות מובטחות בפיקסלים. היחסים, הרזולוציות והכמויות הנתמכים משתנים לפי דגם.
 - `zm/inclusionai/ming-image-0.1-design` בוחר את המידות בעצמו. יש להשמיט את `size`,
   `aspect_ratio` ו-`image_size`; ערכים מפורשים מחזירים HTTP 400. ניתן לבקש PNG,‏ JPEG ו-WebP
   באמצעות `output_format`.
 
-שילוב זה תומך ביצירת תמונה מטקסט, ולא בעריכת תמונת ייחוס. הפלט של Vertex
-מנורמל ל-`data[].b64_json`;‏ `response_format: "url"` מחזיר כתובת URL של HTTPS מהשירות במעלה הזרם,
-או כתובת URL של נתונים בקידוד base64 כאשר זמינים רק בתים של תמונה. פלטים ריקים או מסוננים
-מחזירים שגיאה במקום הצלחה ריקה. הגישה למודלים תלויה בחשבון ZenMux.
+שילוב זה תומך ביצירת תמונות מטקסט, ולא בעריכת תמונות ייחוס. פלט Vertex
+מנורמל אל `data[].b64_json`;‏ `response_format: "url"` מחזיר כתובת HTTPS במעלה הזרם
+או כתובת URL של נתוני base64 כאשר זמינים רק בתים של תמונה. פלטים ריקים או מסוננים
+מחזירים שגיאה במקום הצלחה ריקה. הגישה לדגמים תלויה בחשבון ZenMux.
 ראו [Vertex API של ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) וכן
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# הצגת כל מודלי התמונות
+# הצגת כל דגמי התמונות
 GET /v1/images/generations
 ```
 
@@ -1461,17 +1469,17 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## מפתחות רשומים (ניהול אוטומטי)
 
-משמשים את תת-המערכת לניהול אוטומטי של מפתחות לצורך הנפקה ורוטציה של מפתחות API מול ספק/חשבון מגבה, עם מכסות יומיות/שעתיות.
+משמש את תת-המערכת לניהול אוטומטי של מפתחות לצורך הנפקה ורוטציה של מפתחות API מול ספק/חשבון תומך, עם מכסות יומיות/שעתיות.
 
-| שיטה   | נתיב                                  | תיאור                                                                                                                                                                                               |
+| מתודה  | נתיב                                  | תיאור                                                                                                                                                                                               |
 | ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | הצגת רשימת המפתחות הרשומים (קידומת ממוסכת בלבד)                                                                                                                                                     |
+| GET    | `/api/v1/registered-keys`             | הצגת רשימת המפתחות הרשומים (קידומת מוסווית בלבד)                                                                                                                                                    |
 | POST   | `/api/v1/registered-keys`             | הנפקת מפתח רשום חדש — גוף הבקשה: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. מחזיר את המפתח הגולמי **פעם אחת**. מחזיר `429` במקרה של סירוב עקב מכסה. |
-| GET    | `/api/v1/registered-keys/[id]`        | אחזור המטא-נתונים של מפתח רשום (ללא חומר מפתח גולמי)                                                                                                                                                |
+| GET    | `/api/v1/registered-keys/[id]`        | אחזור המטא-נתונים של מפתח רשום (ללא חומר המפתח הגולמי)                                                                                                                                              |
 | DELETE | `/api/v1/registered-keys/[id]`        | ביטול מפתח רשום                                                                                                                                                                                     |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | נקודת קצה לביטול מפורש (השפעה זהה ל-DELETE)                                                                                                                                                         |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | נקודת קצה מפורשת לביטול (אותה השפעה כמו DELETE)                                                                                                                                                     |
 
-**אימות:** מפתח API מסוג Bearer (`isAuthenticated`). ראו גם `/v1/quotas/check` ו-`/v1/issues/report`.
+**אימות:** סשן ניהול/מפתח API (`requireManagementAuth`) — אותו מנגנון הגנה כמו ב-`/api/keys`: סשן לוח בקרה, אסימון CLI מקומי, או מפתח API עם הרשאת `manage`/`admin`; מפתחות API המיועדים להסקה בלבד מקבלים `403`. ראו גם `/v1/quotas/check` ו-`/v1/issues/report`.
 
 ---
 

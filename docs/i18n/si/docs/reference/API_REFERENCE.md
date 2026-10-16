@@ -295,34 +295,42 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "කඳු මතින් දිස්වන සුන්දර හිරු බැස යෑමක්",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
-ලබා ගත හැකි සපයන්නන් අතර OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (දේශීය), ComfyUI (දේශීය) ඇතුළත් වේ.
+ලබා ගත හැකි සැපයුම්කරුවන් අතර OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (දේශීය), ComfyUI (දේශීය) ඇතුළත් වේ.
+
+`n` මඟින් `data[]` තුළ රූප `n`ක් ආපසු ලබා දෙයි. එක් ඇමතුමකට එක් රූපයක් ආපසු ලබා දෙන upstream API සහිත සැපයුම්කරුවන් සඳහා
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), එකවර ක්රියාත්මක වන ඇමතුම් ගණන උපරිම 4ක් වන පරිදි වෙන වෙනම upstream ඇමතුම් `n`ක් සිදු කරයි. ස්ථාවර
+`seed` එකක් ඇමතුම් දර්ශකය අනුව (`seed`, `seed + 1`, …) වැඩි කරනු ලබන බැවින්, රූප වෙනස් වුවද ඒවා
+නැවත නිපදවිය හැකි ලෙස පවතී. `n` සඳහා උපරිම අගය 10කි. කිසියම් ඇමතුමක් අසාර්ථක වුවහොත් සමස්ත ඉල්ලීමම
+අසාර්ථක වේ. fan-out ආකෘති ලැයිස්තුව
+`open-sse/handlers/imageGeneration/fanOut.ts` තුළ `SINGLE_IMAGE_FANOUT_FORMATS` ලෙස ඇත.
 
 ZenMux දැනට පවතින API-key සම්බන්ධතාව නැවත භාවිත කරන අතර `zenmux/` හෝ `zm/` උපසර්ග පිළිගනී:
 
 - `zenmux/openai/gpt-image-2` ZenMux හි OpenAI Images API භාවිත කරයි. විකල්ප අතර `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, සහ `response_format` ඇතුළත් වේ.
-- `zm/meta/muse-image-1.0` වැනි අනෙකුත් ප්රකාශකයන් ZenMux හි Vertex AI `:predict`
-  අන්ත ලක්ෂ්යය භාවිත කරයි. `n` යන්න `sampleCount` වෙතත්, `aspect_ratio` යන්න `aspectRatio` වෙතත්, `image_size`
-  (`1K`, `2K`, `4K`) යන්න `sampleImageSize` වෙතත් අනුරූප වේ. පික්සල් `size` අගයක් සපයන්නේ දර්ශන අනුපාතයක් පමණක් වන අතර,
-  නිශ්චිත පික්සල් මාන සහතික නොකරයි. සහාය දක්වන අනුපාත, විභේදන සහ සංඛ්යා මාදිලිය අනුව වෙනස් වේ.
+- `zm/meta/muse-image-1.0` වැනි වෙනත් ප්රකාශකයන් ZenMux හි Vertex AI `:predict`
+  endpoint එක භාවිත කරයි. `n` යන්න `sampleCount` වෙතත්, `aspect_ratio` යන්න `aspectRatio` වෙතත්, `image_size`
+  (`1K`, `2K`, `4K`) යන්න `sampleImageSize` වෙතත් සිතියම්ගත වේ. පික්සල් `size` එකක් සපයන්නේ දර්ශන අනුපාතයක් පමණක් වන අතර,
+  නිශ්චිත පික්සල් මාන සහතික නොකෙරේ. සහාය දක්වන අනුපාත, විභේදන සහ ගණන් model එක අනුව වෙනස් වේ.
 - `zm/inclusionai/ming-image-0.1-design` තමන්ගේම මාන තෝරා ගනී. `size`,
-  `aspect_ratio`, සහ `image_size` අත්හරින්න; පැහැදිලිව ලබා දෙන අගයන් HTTP 400 ප්රතිචාරයක් ලබා දෙයි. PNG, JPEG, සහ WebP
-  `output_format` සමඟ ඉල්ලා සිටිය හැක.
+  `aspect_ratio`, සහ `image_size` සඳහන් නොකරන්න; පැහැදිලිව අගයන් ලබා දීමෙන් HTTP 400 ආපසු ලැබේ. `output_format` සමඟ PNG, JPEG, සහ WebP
+  ඉල්ලා සිටිය හැක.
 
-මෙම ඒකාබද්ධතාව යොමු රූප සංස්කරණයට නොව, පෙළෙන් රූප ජනනයට සහාය දක්වයි. Vertex
-ප්රතිදානය `data[].b64_json` වෙත සාමාන්යකරණය කෙරේ; `response_format: "url"` මඟින් ඉහළ ප්රවාහයේ
-HTTPS URL එකක් හෝ රූප බයිට් පමණක් ලබා ගත හැකි විට base64 දත්ත URL එකක් ආපසු ලබා දෙයි. හිස්/පෙරහන් කළ ප්රතිදාන
-හිස් සාර්ථක ප්රතිචාරයක් වෙනුවට දෝෂයක් ලබා දෙයි. මාදිලි ප්රවේශය ZenMux ගිණුම මත රඳා පවතී.
+මෙම ඒකාබද්ධකරණය reference-image සංස්කරණයට නොව, පෙළෙන් රූප ජනනය කිරීමට සහාය දක්වයි. Vertex
+ප්රතිදානය `data[].b64_json` වෙත සාමාන්යකරණය කෙරේ; `response_format: "url"` මඟින් upstream
+HTTPS URL එකක් හෝ රූප බයිට් පමණක් තිබෙන විට base64 data URL එකක් ආපසු ලබා දෙයි. හිස්/පෙරහන් කළ ප්රතිදාන
+හිස් සාර්ථක ප්රතිචාරයක් වෙනුවට දෝෂයක් ආපසු ලබා දෙයි. model ප්රවේශය ZenMux ගිණුම මත රඳා පවතී.
 [ZenMux හි Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) සහ
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) බලන්න.
 
 ```bash
-# සියලුම රූප මාදිලි ලැයිස්තුගත කරන්න
+# සියලුම රූප model ලැයිස්තුගත කරන්න
 GET /v1/images/generations
 ```
 
@@ -1443,17 +1451,17 @@ OmniRoute සිදුවීම් සඳහා පිටතට යැවෙන 
 
 ## ලියාපදිංචි කළ යතුරු (ස්වයංක්රීය කළමනාකරණය)
 
-දෛනික/පැයක quota සමඟ, පසුබිම් සැපයුම්කරුවෙකුට/ගිණුමකට අදාළව API යතුරු නිකුත් කිරීමට සහ මාරු කිරීමට ස්වයංක්රීය යතුරු කළමනාකරණ උපපද්ධතිය විසින් භාවිත කරයි.
+දෛනික/පැයක කෝටා සමඟ පසුබිම් සපයන්නෙකුට/ගිණුමකට එරෙහිව API යතුරු නිකුත් කිරීමට සහ මාරු කිරීමට ස්වයංක්රීය යතුරු කළමනාකරණ උපපද්ධතිය විසින් භාවිත කරයි.
 
-| ක්රමය  | මාර්ගය                                | විස්තරය                                                                                                                                                                                                                               |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | ලියාපදිංචි කළ යතුරු ලැයිස්තුගත කරයි (සඟවා පෙන්වන prefix එක පමණි)                                                                                                                                                                      |
-| POST   | `/api/v1/registered-keys`             | නව ලියාපදිංචි යතුරක් නිකුත් කරයි — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. අමු යතුර ආපසු ලබා දෙන්නේ **එක් වරක්** පමණි. quota හේතුවෙන් ප්රතික්ෂේප කළහොත් `429` ආපසු ලබා දෙයි. |
-| GET    | `/api/v1/registered-keys/[id]`        | ලියාපදිංචි කළ යතුරක metadata ලබා ගනියි (අමු යතුරු දත්ත නොමැතිව)                                                                                                                                                                       |
-| DELETE | `/api/v1/registered-keys/[id]`        | ලියාපදිංචි කළ යතුරක් අවලංගු කරයි                                                                                                                                                                                                      |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | පැහැදිලි අවලංගු කිරීමේ endpoint එක (DELETE හා සමාන ප්රතිඵලයක් ඇත)                                                                                                                                                                     |
+| ක්රමය  | මාර්ගය                                | විස්තරය                                                                                                                                                                                                                                               |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | ලියාපදිංචි කළ යතුරු ලැයිස්තුගත කරයි (ආවරණය කළ උපසර්ගය පමණි)                                                                                                                                                                                           |
+| POST   | `/api/v1/registered-keys`             | නව ලියාපදිංචි කළ යතුරක් නිකුත් කරයි — ඉල්ලීම් අන්තර්ගතය: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. අමු යතුර ආපසු ලබා දෙන්නේ **එක් වරක්** පමණි. කෝටාව හේතුවෙන් ප්රතික්ෂේප කළහොත් `429` ආපසු ලබා දෙයි. |
+| GET    | `/api/v1/registered-keys/[id]`        | ලියාපදිංචි කළ යතුරක පාරදත්ත ලබා ගනී (අමු දත්ත නොමැතිව)                                                                                                                                                                                                |
+| DELETE | `/api/v1/registered-keys/[id]`        | ලියාපදිංචි කළ යතුරක් අවලංගු කරයි                                                                                                                                                                                                                      |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | පැහැදිලි අවලංගු කිරීමේ අන්ත ලක්ෂ්යය (`DELETE` හා සමාන බලපෑමක් ඇත)                                                                                                                                                                                     |
 
-**සත්යාපනය:** Bearer API යතුර (`isAuthenticated`). `/v1/quotas/check` සහ `/v1/issues/report` ද බලන්න.
+**සත්යාපනය:** කළමනාකරණ සැසිය/API යතුර (`requireManagementAuth`) — `/api/keys` සඳහා භාවිත වන ආරක්ෂකයම වේ: උපකරණ පුවරු සැසියක්, දේශීය CLI ටෝකනයක්, හෝ `manage`/`admin` විෂයපථය සහිත API යතුරක්; අනුමාන කිරීමට පමණක් වූ API යතුරුවලට `403` ලැබේ. `/v1/quotas/check` සහ `/v1/issues/report` ද බලන්න.
 
 ---
 

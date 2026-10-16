@@ -295,31 +295,39 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Mandhari nzuri ya machweo juu ya milima",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 Watoa huduma wanaopatikana ni pamoja na OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (ya ndani), ComfyUI (ya ndani).
 
-ZenMux hutumia tena muunganisho uliopo wa ufunguo wa API na hukubali viambishi awali vya `zenmux/` au `zm/`:
+`n` hurejesha picha `n` katika `data[]`. Watoa huduma ambao API yao ya awali hurejesha picha moja kwa kila ombi
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) hupokea miito `n` tofauti ya awali, huku isiyozidi 4 ikiendelea kwa wakati mmoja. Thamani
+maalum ya `seed` huongezwa kulingana na faharasa ya mwito (`seed`, `seed + 1`, …), ili picha zitofautiane lakini ziendelee
+kuweza kutolewa tena kwa matokeo yale yale. `n` ina kikomo cha 10. Ombi lote hushindwa ikiwa mwito wowote utashindwa. Orodha
+ya miundo ya usambazaji wa miito iko katika `SINGLE_IMAGE_FANOUT_FORMATS` ndani ya
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
-- `zenmux/openai/gpt-image-2` hutumia API ya OpenAI Images ya ZenMux. Chaguo ni pamoja na `size`,
+ZenMux hutumia tena muunganisho uliopo wa ufunguo wa API na hukubali viambishi awali `zenmux/` au `zm/`:
+
+- `zenmux/openai/gpt-image-2` hutumia OpenAI Images API ya ZenMux. Chaguo ni pamoja na `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, na `response_format`.
-- Wachapishaji wengine, kama vile `zm/meta/muse-image-1.0`, hutumia endpoint ya ZenMux ya Vertex AI `:predict`.
-  `n` hulingana na `sampleCount`, `aspect_ratio` na `aspectRatio`, na `image_size`
+- Wachapishaji wengine, kama vile `zm/meta/muse-image-1.0`, hutumia endpoint ya Vertex AI `:predict`
+  ya ZenMux. `n` hulingana na `sampleCount`, `aspect_ratio` na `aspectRatio`, na `image_size`
   (`1K`, `2K`, `4K`) na `sampleImageSize`. `size` ya pikseli hutoa uwiano wa vipimo pekee,
   si vipimo vya pikseli vilivyohakikishwa. Uwiano, misongo, na idadi zinazotumika hutofautiana kulingana na modeli.
-- `zm/inclusionai/ming-image-0.1-design` huchagua vipimo vyake yenyewe. Ondoa `size`,
-  `aspect_ratio`, na `image_size`; thamani zilizobainishwa husababisha HTTP 400. PNG, JPEG, na WebP
+- `zm/inclusionai/ming-image-0.1-design` huchagua vipimo vyake yenyewe. Usijumuishe `size`,
+  `aspect_ratio`, wala `image_size`; thamani zilizobainishwa wazi hurejesha HTTP 400. PNG, JPEG, na WebP
   zinaweza kuombwa kwa kutumia `output_format`.
 
-Muunganisho huu unaauni utengenezaji wa picha kutoka kwa maandishi, si uhariri wa picha rejea. Matokeo ya Vertex
-husawazishwa kuwa `data[].b64_json`; `response_format: "url"` hurejesha URL ya HTTPS kutoka kwa huduma ya juu
-au URL ya data ya base64 ikiwa baiti za picha pekee ndizo zinazopatikana. Matokeo matupu/yaliyochujwa
-hurejesha hitilafu badala ya mafanikio matupu. Ufikiaji wa modeli hutegemea akaunti ya ZenMux.
-Angalia [API ya Vertex ya ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) na
-[API ya OpenAI Images](https://docs.zenmux.ai/api/openai/generate-an-image).
+Muunganisho huu unaauni utengenezaji wa picha kutoka kwenye maandishi, si uhariri unaotumia picha ya marejeleo. Matokeo ya Vertex
+husawazishwa kuwa `data[].b64_json`; `response_format: "url"` hurejesha URL ya HTTPS kutoka kwa huduma ya awali
+au URL ya data ya base64 wakati baiti za picha pekee zinapatikana. Matokeo matupu/yaliyochujwa
+hurejesha hitilafu badala ya mafanikio matupu. Ufikiaji wa modeli unategemea akaunti ya ZenMux.
+Tazama [Vertex API ya ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) na
+[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
 # Orodhesha modeli zote za picha
@@ -1452,17 +1460,17 @@ Usajili wa webhook zinazotoka kwa matukio ya OmniRoute (kukamilika kwa ombi, kui
 
 ## Funguo Zilizosajiliwa (Usimamizi Otomatiki)
 
-Hutumiwa na mfumo mdogo wa usimamizi otomatiki wa funguo kutoa na kubadilisha funguo za API kupitia mtoa huduma/akaunti ya msingi, kwa kutumia mgao wa kila siku/kila saa.
+Hutumiwa na mfumo mdogo wa usimamizi otomatiki wa funguo kutoa na kubadilisha funguo za API kupitia mtoa huduma/akaunti ya msingi, ukiwa na viwango vya matumizi vya kila siku/kila saa.
 
 | Mbinu  | Njia                                  | Maelezo                                                                                                                                                                                                                          |
 | ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Orodhesha funguo zilizosajiliwa (kiambishi-awali kilichofichwa pekee)                                                                                                                                                            |
-| POST   | `/api/v1/registered-keys`             | Toa ufunguo mpya uliosajiliwa — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Hurejesha ufunguo halisi **mara moja**. Hurejesha `429` ombi linapokataliwa kwa sababu ya mgao. |
-| GET    | `/api/v1/registered-keys/[id]`        | Pata metadata ya ufunguo uliosajiliwa (bila data halisi ya ufunguo)                                                                                                                                                              |
+| GET    | `/api/v1/registered-keys`             | Orodhesha funguo zilizosajiliwa (kiambishi awali kilichofichwa pekee)                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys`             | Toa ufunguo mpya uliosajiliwa — mwili: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Hurejesha ufunguo halisi **mara moja**. Hurejesha `429` ikiwa kiwango cha matumizi hakiruhusu. |
+| GET    | `/api/v1/registered-keys/[id]`        | Pata metadata ya ufunguo uliosajiliwa (bila ufunguo halisi)                                                                                                                                                                      |
 | DELETE | `/api/v1/registered-keys/[id]`        | Batilisha ufunguo uliosajiliwa                                                                                                                                                                                                   |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint ya kubatilisha moja kwa moja (athari sawa na DELETE)                                                                                                                                                                    |
 
-**Uthibitishaji:** ufunguo wa API wa Bearer (`isAuthenticated`). Tazama pia `/v1/quotas/check` na `/v1/issues/report`.
+**Uthibitishaji:** kipindi cha usimamizi/ufunguo wa API (`requireManagementAuth`) — ulinzi sawa na wa `/api/keys`: kipindi cha dashibodi, tokeni ya CLI ya ndani, au ufunguo wa API wenye wigo wa `manage`/`admin`; funguo za API za uelekezaji pekee hupata `403`. Tazama pia `/v1/quotas/check` na `/v1/issues/report`.
 
 ---
 

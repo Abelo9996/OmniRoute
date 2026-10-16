@@ -302,19 +302,30 @@ Content-Type: application/json
 
 Kabilang sa mga available na provider ang OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokal), ComfyUI (lokal).
 
-Muling ginagamit ng ZenMux ang kasalukuyang koneksyon ng API key at tinatanggap nito ang mga prefix na `zenmux/` o `zm/`:
+Nagbabalik ang `n` ng `n` larawan sa `data[]`. Ang mga provider na ang upstream API ay nagbabalik ng isang larawan sa bawat tawag
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) ay nakatatanggap ng `n` magkakahiwalay na upstream na tawag, na hindi hihigit sa 4 ang sabay-sabay na isinasagawa. Ang
+nakapirming `seed` ay dinaragdagan batay sa index ng tawag (`seed`, `seed + 1`, …), kaya magkakaiba ang mga larawan ngunit nananatiling
+nauulit ang mga resulta. Nililimitahan ang `n` sa 10. Mabibigo ang buong kahilingan kung mabigo ang alinmang tawag. Ang listahan
+ng mga fan-out na format ay `SINGLE_IMAGE_FANOUT_FORMATS` sa
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
+Muling ginagamit ng ZenMux ang kasalukuyang koneksyong gumagamit ng API key at tumatanggap ito ng mga prefix na `zenmux/` o `zm/`:
 
 - Ginagamit ng `zenmux/openai/gpt-image-2` ang OpenAI Images API ng ZenMux. Kabilang sa mga opsyon ang `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, at `response_format`.
-- Ginagamit ng ibang mga publisher, gaya ng `zm/meta/muse-image-1.0`, ang endpoint na `:predict`
-  ng Vertex AI ng ZenMux. Ang `n` ay minamapa sa `sampleCount`, ang `aspect_ratio` sa `aspectRatio`, at ang `image_size`
-  (`1K`, `2K`, `4K`) sa `sampleImageSize`. Ang pixel na `size` ay nagbibigay lamang ng aspect ratio,
-  hindi ng garantisadong mga dimensyon ng pixel. Nag-iiba-iba ayon sa modelo ang mga sinusuportahang ratio, resolusyon, at bilang.
-- Ang `zm/inclusionai/ming-image-0.1-design` ang pumipili ng sarili nitong mga dimensyon. Huwag isama ang `size`,
-  `aspect_ratio`, at `image_size`; nagbabalik ng HTTP 400 ang mga tahasang value. Maaaring humiling ng PNG, JPEG, at WebP
+- Ginagamit ng ibang mga publisher, gaya ng `zm/meta/muse-image-1.0`, ang `:predict`
+  endpoint ng Vertex AI ng ZenMux. Itinatapat ang `n` sa `sampleCount`, ang `aspect_ratio` sa `aspectRatio`, at ang `image_size`
+  (`1K`, `2K`, `4K`) sa `sampleImageSize`. Ang `size` na nasa pixel ay nagbibigay lamang ng aspect ratio,
+  at hindi ng garantisadong mga dimensyon sa pixel. Nag-iiba ayon sa modelo ang mga sinusuportahang ratio, resolusyon, at bilang.
+- Pinipili ng `zm/inclusionai/ming-image-0.1-design` ang sarili nitong mga dimensyon. Huwag isama ang `size`,
+  `aspect_ratio`, at `image_size`; nagbabalik ng HTTP 400 ang mga tahasang halaga. Maaaring humiling ng PNG, JPEG, at WebP
   gamit ang `output_format`.
 
-Sinusuportahan ng integrasyong ito ang pagbuo ng larawan mula sa teksto, hindi ang pag-edit gamit ang sangguniang larawan. Nino-normalize ang output ng Vertex sa `data[].b64_json`; nagbabalik ang `response_format: "url"` ng upstream na HTTPS URL o base64 data URL kapag mga byte lang ng larawan ang available. Nagbabalik ng error ang mga output na walang laman/na-filter sa halip na isang walang-lamang tagumpay. Nakadepende ang access sa modelo sa ZenMux account.
+Sinusuportahan ng integrasyong ito ang pagbuo ng larawan mula sa teksto, hindi ang pag-edit gamit ang sangguniang larawan. Ang output ng Vertex
+ay isinasaayos bilang `data[].b64_json`; nagbabalik ang `response_format: "url"` ng upstream na
+HTTPS URL o base64 data URL kapag mga byte lamang ng larawan ang available. Ang mga walang laman/na-filter na output
+ay nagbabalik ng error sa halip na walang-lamang matagumpay na tugon. Nakadepende sa ZenMux account ang access sa modelo.
 Tingnan ang [Vertex API ng ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) at
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1462,17 +1473,17 @@ Mga outbound na subscription sa webhook para sa mga event ng OmniRoute (pagkumpl
 
 ## Mga Rehistradong Key (Awtomatikong Pamamahala)
 
-Ginagamit ng subsystem para sa awtomatikong pamamahala ng key upang mag-isyu at mag-rotate ng mga API key gamit ang isang backing provider/account, na may mga pang-araw-araw/oras-oras na quota.
+Ginagamit ng subsystem ng awtomatikong pamamahala ng key upang mag-isyu at mag-rotate ng mga API key para sa isang backing provider/account, na may mga pang-araw-araw/pang-oras na quota.
 
-| Paraan | Path                                  | Paglalarawan                                                                                                                                                                                                                              |
-| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Ilista ang mga rehistradong key (naka-mask na prefix lamang)                                                                                                                                                                              |
-| POST   | `/api/v1/registered-keys`             | Mag-isyu ng bagong rehistradong key — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Ibinabalik ang raw key nang **isang beses**. Nagbabalik ng `429` kapag tinanggihan dahil sa quota. |
-| GET    | `/api/v1/registered-keys/[id]`        | Kunin ang metadata ng isang rehistradong key (walang raw na materyal)                                                                                                                                                                     |
-| DELETE | `/api/v1/registered-keys/[id]`        | Bawiin ang isang rehistradong key                                                                                                                                                                                                         |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Tahasang endpoint para sa pagbawi (kapareho ng epekto ng DELETE)                                                                                                                                                                          |
+| Paraan | Path                                  | Paglalarawan                                                                                                                                                                                                                                 |
+| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Ilista ang mga rehistradong key (masked na prefix lamang)                                                                                                                                                                                    |
+| POST   | `/api/v1/registered-keys`             | Mag-isyu ng bagong rehistradong key — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Ibinabalik ang raw na key nang **isang beses**. Nagbabalik ng `429` kapag tinanggihan dahil sa quota. |
+| GET    | `/api/v1/registered-keys/[id]`        | Kunin ang metadata ng isang rehistradong key (walang raw na materyal)                                                                                                                                                                        |
+| DELETE | `/api/v1/registered-keys/[id]`        | Bawiin ang isang rehistradong key                                                                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Tahasang endpoint para sa pagbawi (kaparehong epekto ng DELETE)                                                                                                                                                                              |
 
-**Auth:** Bearer API key (`isAuthenticated`). Tingnan din ang `/v1/quotas/check` at `/v1/issues/report`.
+**Auth:** session/API key sa pamamahala (`requireManagementAuth`) — kaparehong guard ng `/api/keys`: isang dashboard session, ang lokal na CLI token, o isang API key na may `manage`/`admin` scope; makakatanggap ng `403` ang mga API key na para lamang sa inference. Tingnan din ang `/v1/quotas/check` at `/v1/issues/report`.
 
 ---
 

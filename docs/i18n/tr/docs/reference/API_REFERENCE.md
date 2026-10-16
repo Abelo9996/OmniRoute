@@ -301,22 +301,29 @@ Content-Type: application/json
 
 Kullanılabilir sağlayıcılar arasında OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (yerel) ve ComfyUI (yerel) bulunur.
 
+`n`, `data[]` içinde `n` görsel döndürür. Üst API'si çağrı başına tek görsel döndüren sağlayıcılar
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) için en fazla 4'ü eşzamanlı olmak üzere `n` ayrı üst API çağrısı yapılır. Sabit bir `seed`, çağrı dizinine göre artırılır (`seed`, `seed + 1`, …); böylece görseller farklı olurken
+tekrarlanabilirlik korunur. `n` en fazla 10 olabilir. Herhangi bir çağrı başarısız olursa isteğin
+tamamı başarısız olur. Dağıtılan formatların listesi
+`open-sse/handlers/imageGeneration/fanOut.ts` içindeki `SINGLE_IMAGE_FANOUT_FORMATS` sabitinde yer alır.
+
 ZenMux, mevcut API anahtarı bağlantısını yeniden kullanır ve `zenmux/` veya `zm/` öneklerini kabul eder:
 
 - `zenmux/openai/gpt-image-2`, ZenMux'ın OpenAI Images API'sini kullanır. Seçenekler arasında `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` ve `response_format` bulunur.
 - `zm/meta/muse-image-1.0` gibi diğer yayıncılar, ZenMux'ın Vertex AI `:predict`
   uç noktasını kullanır. `n`, `sampleCount` ile; `aspect_ratio`, `aspectRatio` ile; `image_size`
-  (`1K`, `2K`, `4K`) ise `sampleImageSize` ile eşleştirilir. Piksel cinsinden bir `size` yalnızca en-boy oranı sağlar;
-  piksel boyutları garanti edilmez. Desteklenen oranlar, çözünürlükler ve sayılar modele göre değişir.
+  (`1K`, `2K`, `4K`) ise `sampleImageSize` ile eşleştirilir. Piksel cinsinden bir `size`, yalnızca bir en-boy oranı sağlar;
+  piksel boyutları garanti edilmez. Desteklenen oranlar, çözünürlükler ve adetler modele göre değişir.
 - `zm/inclusionai/ming-image-0.1-design` kendi boyutlarını seçer. `size`,
-  `aspect_ratio` ve `image_size` değerlerini belirtmeyin; açıkça belirtilen değerler HTTP 400 döndürür. PNG, JPEG ve WebP
+  `aspect_ratio` ve `image_size` alanlarını atlayın; açıkça belirtilen değerler HTTP 400 döndürür. PNG, JPEG ve WebP
   biçimleri `output_format` ile istenebilir.
 
 Bu entegrasyon, referans görsel düzenlemeyi değil, metinden görsel oluşturmayı destekler. Vertex
-çıktısı `data[].b64_json` biçimine normalize edilir; `response_format: "url"`, yalnızca görsel baytları mevcut olduğunda üst sağlayıcıdan gelen bir
-HTTPS URL'si veya base64 veri URL'si döndürür. Boş/filtrelenmiş çıktılar,
-boş bir başarı yanıtı yerine hata döndürür. Model erişimi ZenMux hesabına bağlıdır.
+çıktısı `data[].b64_json` biçimine normalleştirilir; `response_format: "url"`, yalnızca görsel baytları mevcut olduğunda üst API'den gelen
+bir HTTPS URL'si veya base64 veri URL'si döndürür. Boş/filtrelenmiş çıktılar,
+boş bir başarılı yanıt yerine hata döndürür. Model erişimi ZenMux hesabına bağlıdır.
 Bkz. [ZenMux Vertex API'si](https://docs.zenmux.ai/api/vertexai/generate-images) ve
 [OpenAI Images API'si](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1452,17 +1459,17 @@ OmniRoute olayları (istek tamamlanması, kotanın tükenmesi, anahtar rotasyonu
 
 ## Kayıtlı Anahtarlar (Otomatik Yönetim)
 
-Otomatik anahtar yönetimi alt sistemi tarafından, günlük/saatlik kotalarla bir arka uç sağlayıcısı/hesabı üzerinden API anahtarları oluşturmak ve döndürmek için kullanılır.
+Günlük/saatlik kotalarla, arka plandaki bir sağlayıcı/hesap üzerinde API anahtarları oluşturmak ve döndürmek için otomatik anahtar yönetimi alt sistemi tarafından kullanılır.
 
 | Yöntem | Yol                                   | Açıklama                                                                                                                                                                                              |
 | ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/api/v1/registered-keys`             | Kayıtlı anahtarları listele (yalnızca maskelenmiş ön ek)                                                                                                                                              |
 | POST   | `/api/v1/registered-keys`             | Yeni bir kayıtlı anahtar oluştur — gövde: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Ham anahtarı **bir kez** döndürür. Kota reddinde `429` döndürür. |
-| GET    | `/api/v1/registered-keys/[id]`        | Kayıtlı bir anahtarın meta verilerini getir (ham anahtar materyali olmadan)                                                                                                                           |
+| GET    | `/api/v1/registered-keys/[id]`        | Kayıtlı bir anahtarın meta verilerini al (ham anahtar içeriği olmadan)                                                                                                                                |
 | DELETE | `/api/v1/registered-keys/[id]`        | Kayıtlı bir anahtarı iptal et                                                                                                                                                                         |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | Açık iptal uç noktası (DELETE ile aynı etkiye sahiptir)                                                                                                                                               |
 
-**Kimlik doğrulama:** Bearer API anahtarı (`isAuthenticated`). Ayrıca `/v1/quotas/check` ve `/v1/issues/report` bölümlerine bakın.
+**Kimlik doğrulama:** yönetim oturumu/API anahtarı (`requireManagementAuth`) — `/api/keys` ile aynı koruma mekanizması: bir pano oturumu, yerel CLI belirteci veya `manage`/`admin` kapsamına sahip bir API anahtarı; yalnızca çıkarım amaçlı API anahtarları `403` alır. Ayrıca `/v1/quotas/check` ve `/v1/issues/report` bölümlerine bakın.
 
 ---
 

@@ -300,34 +300,42 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Nádherný západ slnka nad horami",
+  "prompt": "Krásny západ slnka nad horami",
   "size": "1024x1024"
 }
 ```
 
-Medzi dostupných poskytovateľov patria OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokálne), ComfyUI (lokálne).
+Medzi dostupných poskytovateľov patria OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokálny) a ComfyUI (lokálny).
 
-ZenMux opätovne používa existujúce pripojenie pomocou API kľúča a akceptuje prefixy `zenmux/` alebo `zm/`:
+`n` vráti `n` obrázkov v poli `data[]`. Pri poskytovateľoch, ktorých nadradené API vracia jeden obrázok na volanie
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), sa vykoná `n` samostatných volaní nadradeného API, pričom sú súbežne spustené najviac 4. Pevná
+hodnota `seed` sa posúva podľa indexu volania (`seed`, `seed + 1`, …), takže obrázky sa líšia, ale zostávajú
+reprodukovateľné. Maximálna hodnota `n` je 10. Ak zlyhá ktorékoľvek volanie, zlyhá celá požiadavka. Zoznam
+formátov s rozdelením na viacero volaní je `SINGLE_IMAGE_FANOUT_FORMATS` v súbore
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
+ZenMux opätovne používa existujúce pripojenie s kľúčom API a akceptuje predpony `zenmux/` alebo `zm/`:
 
 - `zenmux/openai/gpt-image-2` používa OpenAI Images API služby ZenMux. Medzi možnosti patria `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` a `response_format`.
-- Ostatní vydavatelia, napríklad `zm/meta/muse-image-1.0`, používajú koncový bod `:predict`
-  Vertex AI služby ZenMux. `n` sa mapuje na `sampleCount`, `aspect_ratio` na `aspectRatio` a `image_size`
+- Ostatní vydavatelia, napríklad `zm/meta/muse-image-1.0`, používajú koncový bod Vertex AI `:predict`
+  služby ZenMux. `n` sa mapuje na `sampleCount`, `aspect_ratio` na `aspectRatio` a `image_size`
   (`1K`, `2K`, `4K`) na `sampleImageSize`. Hodnota `size` v pixeloch určuje iba pomer strán,
-  nie garantované rozmery v pixeloch. Podporované pomery strán, rozlíšenia a počty sa líšia podľa modelu.
+  nie zaručené rozmery v pixeloch. Podporované pomery strán, rozlíšenia a počty sa líšia podľa modelu.
 - `zm/inclusionai/ming-image-0.1-design` si volí vlastné rozmery. Vynechajte `size`,
   `aspect_ratio` a `image_size`; explicitné hodnoty vrátia HTTP 400. Formáty PNG, JPEG a WebP
   možno vyžiadať pomocou `output_format`.
 
-Táto integrácia podporuje generovanie obrázkov z textu, nie úpravu referenčných obrázkov. Výstup
-Vertex sa normalizuje na `data[].b64_json`; `response_format: "url"` vráti nadradenú
-HTTPS URL alebo dátovú URL vo formáte base64, ak sú k dispozícii iba obrazové bajty. Prázdne/filtrované výstupy
+Táto integrácia podporuje generovanie obrázkov z textu, nie úpravu referenčných obrázkov. Výstup Vertex
+sa normalizuje na `data[].b64_json`; `response_format: "url"` vráti nadradenú
+HTTPS URL alebo dátovú URL vo formáte base64, ak sú dostupné iba bajty obrázka. Prázdne alebo odfiltrované výstupy
 vrátia chybu namiesto prázdnej úspešnej odpovede. Prístup k modelom závisí od účtu ZenMux.
-Pozrite si [Vertex API služby ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) a
+Pozrite si dokumentáciu [Vertex API služby ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) a
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Zobraziť všetky modely obrázkov
+# Zobraziť všetky obrazové modely
 GET /v1/images/generations
 ```
 
@@ -1472,17 +1480,17 @@ Odber odchádzajúcich webhookov pre udalosti OmniRoute (dokončenie požiadavky
 
 ## Registrované kľúče (automatická správa)
 
-Používa ich subsystém automatickej správy kľúčov na vydávanie a rotáciu API kľúčov u poskytovateľa/podkladového účtu s dennými/hodinovými kvótami.
+Používa ich podsystém automatickej správy kľúčov na vydávanie a rotáciu API kľúčov voči podkladovému poskytovateľovi/účtu s dennými/hodinovými kvótami.
 
-| Metóda | Cesta                                 | Popis                                                                                                                                                                                                                 |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Zoznam registrovaných kľúčov (iba maskovaný prefix)                                                                                                                                                                   |
-| POST   | `/api/v1/registered-keys`             | Vydanie nového registrovaného kľúča — telo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Nespracovaný kľúč sa vráti **raz**. Pri odmietnutí z dôvodu kvóty vráti `429`. |
-| GET    | `/api/v1/registered-keys/[id]`        | Získanie metadát registrovaného kľúča (bez nespracovaného kľúča)                                                                                                                                                      |
-| DELETE | `/api/v1/registered-keys/[id]`        | Zrušenie registrovaného kľúča                                                                                                                                                                                         |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Explicitný koncový bod na zrušenie (rovnaký účinok ako DELETE)                                                                                                                                                        |
+| Metóda | Cesta                                 | Popis                                                                                                                                                                                                          |
+| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Zobrazí zoznam registrovaných kľúčov (iba maskovaný prefix)                                                                                                                                                    |
+| POST   | `/api/v1/registered-keys`             | Vydá nový registrovaný kľúč — telo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Nespracovaný kľúč vráti **iba raz**. Pri odmietnutí z dôvodu kvóty vráti `429`. |
+| GET    | `/api/v1/registered-keys/[id]`        | Načíta metadáta registrovaného kľúča (bez nespracovaného kľúča)                                                                                                                                                |
+| DELETE | `/api/v1/registered-keys/[id]`        | Zneplatní registrovaný kľúč                                                                                                                                                                                    |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Explicitný koncový bod na zneplatnenie (rovnaký účinok ako DELETE)                                                                                                                                             |
 
-**Autentifikácia:** API kľúč typu Bearer (`isAuthenticated`). Pozrite si tiež `/v1/quotas/check` a `/v1/issues/report`.
+**Autentifikácia:** relácia správy/API kľúč (`requireManagementAuth`) — rovnaká ochrana ako pri `/api/keys`: relácia ovládacieho panela, lokálny token CLI alebo API kľúč s rozsahom `manage`/`admin`; API kľúče určené iba na inferenciu dostanú odpoveď `403`. Pozrite si tiež `/v1/quotas/check` a `/v1/issues/report`.
 
 ---
 

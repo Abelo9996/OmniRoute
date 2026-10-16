@@ -266,7 +266,7 @@ GET /v1/embeddings
 
 ---
 
-## ပုံ ဖန်တီးခြင်း
+## ပုံဖန်တီးခြင်း
 
 ```bash
 POST /v1/images/generations
@@ -275,34 +275,42 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "တောင်တန်းများပေါ်မှ လှပသော နေဝင်ချိန်မြင်ကွင်း",
   "size": "1024x1024"
 }
 ```
 
 ရရှိနိုင်သော ပံ့ပိုးသူများတွင် OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (စက်တွင်း), ComfyUI (စက်တွင်း) တို့ ပါဝင်သည်။
 
-ZenMux သည် ရှိပြီးသား API-key ချိတ်ဆက်မှုကို ပြန်လည်အသုံးပြုပြီး `zenmux/` သို့မဟုတ် `zm/` ရှေ့ဆက်စာလုံးများကို လက်ခံသည်-
+`n` သည် `data[]` အတွင်း ပုံ `n` ပုံကို ပြန်ပေးသည်။ အထက်ပိုင်း API က ခေါ်ဆိုမှုတစ်ခုလျှင် ပုံတစ်ပုံ ပြန်ပေးသော ပံ့ပိုးသူများ
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) အတွက် အထက်ပိုင်းသို့ သီးခြားခေါ်ဆိုမှု `n` ကြိမ် ပြုလုပ်ပြီး တစ်ပြိုင်နက် လုပ်ဆောင်မှု အများဆုံး 4 ခု ရှိမည်။ ပုံသေ
+`seed` ကို ခေါ်ဆိုမှုအညွှန်းအလိုက် (`seed`, `seed + 1`, …) တိုးပေးသောကြောင့် ပုံများ ကွဲပြားသော်လည်း
+ပြန်လည်ထုတ်လုပ်နိုင်မှုကို ထိန်းသိမ်းထားသည်။ `n` ကို အများဆုံး 10 အထိ ကန့်သတ်ထားသည်။ ခေါ်ဆိုမှုတစ်ခုခု မအောင်မြင်ပါက တောင်းဆိုမှု
+တစ်ခုလုံး မအောင်မြင်ပါ။ ဖြန့်ခွဲခေါ်ဆိုသည့် ဖော်မတ်စာရင်းမှာ
+`open-sse/handlers/imageGeneration/fanOut.ts` ရှိ `SINGLE_IMAGE_FANOUT_FORMATS` ဖြစ်သည်။
+
+ZenMux သည် ရှိပြီးသား API-key ချိတ်ဆက်မှုကို ပြန်လည်အသုံးပြုပြီး `zenmux/` သို့မဟုတ် `zm/` ရှေ့ဆက်များကို လက်ခံသည်-
 
 - `zenmux/openai/gpt-image-2` သည် ZenMux ၏ OpenAI Images API ကို အသုံးပြုသည်။ ရွေးချယ်စရာများတွင် `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` နှင့် `response_format` တို့ ပါဝင်သည်။
 - `zm/meta/muse-image-1.0` ကဲ့သို့သော အခြားထုတ်ဝေသူများသည် ZenMux ၏ Vertex AI `:predict`
-  endpoint ကို အသုံးပြုသည်။ `n` ကို `sampleCount` သို့၊ `aspect_ratio` ကို `aspectRatio` သို့၊ `image_size`
-  (`1K`, `2K`, `4K`) ကို `sampleImageSize` သို့ အသီးသီး သတ်မှတ်ပေးသည်။ pixel `size` သည် အချိုးအစားကိုသာ ပေးပြီး
-  pixel အတိုင်းအတာများကို အာမခံမပေးပါ။ ပံ့ပိုးထားသော အချိုးအစားများ၊ resolution များနှင့် အရေအတွက်များသည် model အလိုက် ကွဲပြားသည်။
+  အဆုံးမှတ်ကို အသုံးပြုသည်။ `n` ကို `sampleCount`၊ `aspect_ratio` ကို `aspectRatio` နှင့် `image_size`
+  (`1K`, `2K`, `4K`) ကို `sampleImageSize` အဖြစ် ဆက်စပ်သတ်မှတ်သည်။ ပစ်ဇယ် `size` သည် အချိုးအစားကိုသာ သတ်မှတ်ပေးပြီး
+  အာမခံထားသော ပစ်ဇယ်အတိုင်းအတာများ မဟုတ်ပါ။ ပံ့ပိုးထားသော အချိုးများ၊ ကြည်လင်ပြတ်သားမှုများနှင့် အရေအတွက်များသည် မော်ဒယ်အလိုက် ကွဲပြားသည်။
 - `zm/inclusionai/ming-image-0.1-design` သည် ၎င်း၏ အတိုင်းအတာများကို ကိုယ်တိုင်ရွေးချယ်သည်။ `size`,
-  `aspect_ratio` နှင့် `image_size` တို့ကို ချန်လှပ်ထားပါ။ တန်ဖိုးများကို အတိအလင်း သတ်မှတ်ပါက HTTP 400 ပြန်လာမည်။ PNG, JPEG နှင့် WebP
+  `aspect_ratio` နှင့် `image_size` တို့ကို ချန်လှပ်ပါ။ တန်ဖိုးများကို အတိအကျ သတ်မှတ်ပါက HTTP 400 ပြန်ပေးသည်။ PNG, JPEG နှင့် WebP
   တို့ကို `output_format` ဖြင့် တောင်းဆိုနိုင်သည်။
 
-ဤပေါင်းစပ်မှုသည် စာသားမှပုံဖန်တီးခြင်းကို ပံ့ပိုးသော်လည်း ကိုးကားပုံကို တည်းဖြတ်ခြင်းအား မပံ့ပိုးပါ။ Vertex
-output ကို `data[].b64_json` အဖြစ် စံပြုပြောင်းလဲထားသည်။ `response_format: "url"` သည် upstream
-HTTPS URL ကို ပြန်ပေးပြီး ပုံ၏ byte များသာ ရရှိနိုင်ပါက base64 data URL ကို ပြန်ပေးသည်။ ဗလာဖြစ်နေသော သို့မဟုတ် စစ်ထုတ်ခံထားရသော output များသည်
-ဗလာဖြစ်သော အောင်မြင်မှုရလဒ်အစား error တစ်ခုကို ပြန်ပေးသည်။ Model အသုံးပြုခွင့်သည် ZenMux account ပေါ် မူတည်သည်။
+ဤပေါင်းစည်းမှုသည် စာသားမှ ပုံဖန်တီးခြင်းကို ပံ့ပိုးသော်လည်း ကိုးကားပုံကို တည်းဖြတ်ခြင်းအား မပံ့ပိုးပါ။ Vertex
+အထွက်ကို `data[].b64_json` သို့ စံညှိပေးသည်။ `response_format: "url"` သည် အထက်ပိုင်းမှ
+HTTPS URL တစ်ခုကို ပြန်ပေးသည် သို့မဟုတ် ပုံဘိုက်များသာ ရရှိနိုင်ပါက base64 data URL တစ်ခုကို ပြန်ပေးသည်။ အလွတ် သို့မဟုတ် စစ်ထုတ်ခံထားရသော အထွက်များသည်
+အောင်မြင်မှုအလွတ်အစား အမှားတစ်ခုကို ပြန်ပေးသည်။ မော်ဒယ်အသုံးပြုခွင့်သည် ZenMux အကောင့်အပေါ် မူတည်သည်။
 [ZenMux ၏ Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) နှင့်
-[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) တို့ကို ကြည့်ပါ။
+[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) ကို ကြည့်ပါ။
 
 ```bash
-# ပုံ model အားလုံးကို စာရင်းပြုစုရန်
+# ပုံမော်ဒယ်အားလုံးကို စာရင်းပြုစုရန်
 GET /v1/images/generations
 ```
 
@@ -1427,19 +1435,19 @@ OmniRoute ဖြစ်ရပ်များ (တောင်းဆိုမှ�
 
 ---
 
-## စာရင်းသွင်းထားသော Key များ (အလိုအလျောက်စီမံခန့်ခွဲမှု)
+## မှတ်ပုံတင်ထားသော Key များ (အလိုအလျောက် စီမံခန့်ခွဲမှု)
 
-နေ့စဉ်/နာရီအလိုက် quota များဖြင့် နောက်ခံ provider/account တစ်ခုနှင့် ချိတ်ဆက်၍ API key များကို ထုတ်ပေးရန်နှင့် လဲလှယ်ရန် auto-key စီမံခန့်ခွဲမှု subsystem က အသုံးပြုသည်။
+နေ့စဉ်/နာရီအလိုက် quota များဖြင့် နောက်ခံ provider/account အတွက် API key များ ထုတ်ပေးခြင်းနှင့် အလှည့်ကျ ပြောင်းလဲခြင်းတို့ကို ဆောင်ရွက်ရန် auto-key စီမံခန့်ခွဲမှု subsystem က အသုံးပြုသည်။
 
-| Method | Path                                  | ဖော်ပြချက်                                                                                                                                                                                                                              |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | စာရင်းသွင်းထားသော key များကို စာရင်းပြုစုသည် (ဖုံးကွယ်ထားသော prefix သာလျှင်)                                                                                                                                                            |
-| POST   | `/api/v1/registered-keys`             | စာရင်းသွင်းထားသော key အသစ်တစ်ခု ထုတ်ပေးသည် — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`။ မူရင်း key ကို **တစ်ကြိမ်သာ** ပြန်ပေးသည်။ quota ကြောင့် ငြင်းပယ်ပါက `429` ကို ပြန်ပေးသည်။ |
-| GET    | `/api/v1/registered-keys/[id]`        | စာရင်းသွင်းထားသော key ၏ metadata ကို ရယူသည် (မူရင်းအချက်အလက် မပါဝင်ပါ)                                                                                                                                                                  |
-| DELETE | `/api/v1/registered-keys/[id]`        | စာရင်းသွင်းထားသော key ကို ရုပ်သိမ်းသည်                                                                                                                                                                                                  |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | ရုပ်သိမ်းရန် သီးခြားသတ်မှတ်ထားသော endpoint (DELETE နှင့် အကျိုးသက်ရောက်မှု တူညီသည်)                                                                                                                                                     |
+| နည်းလမ်း | Path                                  | ဖော်ပြချက်                                                                                                                                                                                                                         |
+| -------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET      | `/api/v1/registered-keys`             | မှတ်ပုံတင်ထားသော key များကို စာရင်းပြုစုဖော်ပြသည် (ဖုံးကွယ်ထားသော prefix ကိုသာ ဖော်ပြသည်)                                                                                                                                          |
+| POST     | `/api/v1/registered-keys`             | မှတ်ပုံတင်ထားသော key အသစ်တစ်ခု ထုတ်ပေးသည် — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`။ မူရင်း key ကို **တစ်ကြိမ်သာ** ပြန်ပေးသည်။ quota ကြောင့် ငြင်းပယ်ပါက `429` ပြန်ပေးသည်။ |
+| GET      | `/api/v1/registered-keys/[id]`        | မှတ်ပုံတင်ထားသော key ၏ metadata ကို ရယူသည် (မူရင်း key အချက်အလက် မပါဝင်ပါ)                                                                                                                                                         |
+| DELETE   | `/api/v1/registered-keys/[id]`        | မှတ်ပုံတင်ထားသော key ကို ရုပ်သိမ်းသည်                                                                                                                                                                                              |
+| POST     | `/api/v1/registered-keys/[id]/revoke` | သီးခြား ရုပ်သိမ်းမှု endpoint (DELETE နှင့် အကျိုးသက်ရောက်မှု တူညီသည်)                                                                                                                                                             |
 
-**အထောက်အထားစစ်ဆေးခြင်း:** Bearer API key (`isAuthenticated`)။ `/v1/quotas/check` နှင့် `/v1/issues/report` ကိုလည်း ကြည့်ပါ။
+**Auth:** စီမံခန့်ခွဲမှု session/API key (`requireManagementAuth`) — `/api/keys` နှင့် တူညီသော guard ဖြစ်သည်။ dashboard session၊ local CLI token သို့မဟုတ် `manage`/`admin` scope ပါသော API key တစ်ခုဖြင့် အသုံးပြုနိုင်သည်။ inference-only API key များသည် `403` ရရှိမည်။ `/v1/quotas/check` နှင့် `/v1/issues/report` တို့ကိုလည်း ကြည့်ပါ။
 
 ---
 

@@ -307,12 +307,20 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Un hermoso atardecer sobre las montañas",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
-Los proveedores disponibles incluyen OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (local), ComfyUI (local).
+Los proveedores disponibles incluyen OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (local) y ComfyUI (local).
+
+`n` devuelve `n` imágenes en `data[]`. Para los proveedores cuya API ascendente devuelve una imagen por llamada
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), se realizan `n` llamadas ascendentes independientes, con un máximo de 4 simultáneas. Una
+`seed` fija se incrementa según el índice de la llamada (`seed`, `seed + 1`, …), de modo que las imágenes sean diferentes pero sigan
+siendo reproducibles. `n` está limitado a 10. La solicitud falla en su totalidad si falla alguna llamada. La lista
+de formatos con distribución en abanico es `SINGLE_IMAGE_FANOUT_FORMATS` en
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux reutiliza la conexión existente mediante clave de API y acepta los prefijos `zenmux/` o `zm/`:
 
@@ -320,15 +328,15 @@ ZenMux reutiliza la conexión existente mediante clave de API y acepta los prefi
   `quality`, `n`, `output_format`, `output_compression`, `background` y `response_format`.
 - Otros proveedores, como `zm/meta/muse-image-1.0`, utilizan el endpoint `:predict`
   de Vertex AI de ZenMux. `n` se asigna a `sampleCount`, `aspect_ratio` a `aspectRatio` e `image_size`
-  (`1K`, `2K`, `4K`) a `sampleImageSize`. Un valor de `size` en píxeles solo proporciona una relación de aspecto,
+  (`1K`, `2K`, `4K`) a `sampleImageSize`. Un `size` en píxeles solo proporciona una relación de aspecto,
   no dimensiones de píxeles garantizadas. Las relaciones, resoluciones y cantidades admitidas varían según el modelo.
 - `zm/inclusionai/ming-image-0.1-design` elige sus propias dimensiones. Omita `size`,
   `aspect_ratio` e `image_size`; los valores explícitos devuelven HTTP 400. Se pueden solicitar PNG, JPEG y WebP
   mediante `output_format`.
 
-Esta integración admite la generación de imágenes a partir de texto, no la edición basada en imágenes de referencia. La salida de Vertex
-se normaliza a `data[].b64_json`; `response_format: "url"` devuelve una URL HTTPS del proveedor
-o una URL de datos en base64 cuando solo hay disponibles bytes de imagen. Las salidas vacías o filtradas
+Esta integración admite la generación de texto a imagen, no la edición basada en imágenes de referencia. La salida de Vertex
+se normaliza como `data[].b64_json`; `response_format: "url"` devuelve una URL HTTPS
+ascendente o una URL de datos en base64 cuando solo hay disponibles bytes de imagen. Las salidas vacías o filtradas
 devuelven un error en lugar de una respuesta correcta vacía. El acceso a los modelos depende de la cuenta de ZenMux.
 Consulte la [API de Vertex de ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) y la
 [API de imágenes de OpenAI](https://docs.zenmux.ai/api/openai/generate-an-image).
@@ -1460,19 +1468,19 @@ Suscripciones a webhooks salientes para eventos de OmniRoute (finalización de s
 
 ---
 
-## Claves registradas (administración automática)
+## Claves registradas (gestión automática)
 
-Utilizadas por el subsistema de administración automática de claves para emitir y rotar claves de API mediante un proveedor o una cuenta subyacente, con cuotas diarias y por hora.
+Utilizadas por el subsistema de gestión automática de claves para emitir y rotar claves de API con un proveedor o una cuenta subyacentes, con cuotas diarias y horarias.
 
 | Método | Ruta                                  | Descripción                                                                                                                                                                                                                      |
 | ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Enumera las claves registradas (solo el prefijo oculto)                                                                                                                                                                          |
+| GET    | `/api/v1/registered-keys`             | Enumera las claves registradas (solo el prefijo enmascarado)                                                                                                                                                                     |
 | POST   | `/api/v1/registered-keys`             | Emite una nueva clave registrada — cuerpo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Devuelve la clave sin enmascarar **una sola vez**. Devuelve `429` si se rechaza por cuota. |
-| GET    | `/api/v1/registered-keys/[id]`        | Recupera los metadatos de una clave registrada (sin el material de la clave)                                                                                                                                                     |
+| GET    | `/api/v1/registered-keys/[id]`        | Recupera los metadatos de una clave registrada (sin la clave sin enmascarar)                                                                                                                                                     |
 | DELETE | `/api/v1/registered-keys/[id]`        | Revoca una clave registrada                                                                                                                                                                                                      |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint de revocación explícita (mismo efecto que DELETE)                                                                                                                                                                       |
 
-**Autenticación:** clave de API Bearer (`isAuthenticated`). Consulta también `/v1/quotas/check` y `/v1/issues/report`.
+**Autenticación:** sesión de gestión/clave de API (`requireManagementAuth`) — la misma protección que `/api/keys`: una sesión del panel, el token de la CLI local o una clave de API con alcance `manage`/`admin`; las claves de API exclusivas para inferencia reciben un `403`. Véanse también `/v1/quotas/check` y `/v1/issues/report`.
 
 ---
 

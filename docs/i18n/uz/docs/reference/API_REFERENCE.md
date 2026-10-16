@@ -275,31 +275,39 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Togʻlar uzra goʻzal quyosh botishi",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
-Mavjud provayderlar qatoriga OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (mahalliy), ComfyUI (mahalliy) kiradi.
+Mavjud provayderlar qatoriga OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokal), ComfyUI (lokal) kiradi.
+
+`n` parametri `data[]` ichida `n` ta tasvirni qaytaradi. Yuqori oqim APIʼsi har bir chaqiruvda bitta tasvir qaytaradigan provayderlar
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) uchun yuqori oqimga `n` ta alohida chaqiruv yuboriladi, bunda bir vaqtning oʻzida koʻpi bilan 4 tasi bajariladi. Belgilangan
+`seed` qiymati chaqiruv indeksiga qarab oshiriladi (`seed`, `seed + 1`, …), shu sababli tasvirlar bir-biridan farq qiladi, ammo
+ularni qayta yaratish mumkin boʻlib qoladi. `n` qiymati koʻpi bilan 10 boʻlishi mumkin. Agar chaqiruvlardan biri muvaffaqiyatsiz tugasa, butun soʻrov
+muvaffaqiyatsiz hisoblanadi. Kengaytirib yuborish formatlari roʻyxati
+`open-sse/handlers/imageGeneration/fanOut.ts` faylidagi `SINGLE_IMAGE_FANOUT_FORMATS` ichida joylashgan.
 
 ZenMux mavjud API kaliti ulanishidan qayta foydalanadi va `zenmux/` yoki `zm/` prefikslarini qabul qiladi:
 
-- `zenmux/openai/gpt-image-2` ZenMux’ning OpenAI Images API interfeysidan foydalanadi. Mavjud parametrlar: `size`,
-  `quality`, `n`, `output_format`, `output_compression`, `background` va `response_format`.
-- `zm/meta/muse-image-1.0` kabi boshqa nashriyotchilar ZenMux’ning Vertex AI `:predict`
-  yakuniy nuqtasidan foydalanadi. `n` parametri `sampleCount` bilan, `aspect_ratio` parametri `aspectRatio` bilan va `image_size`
-  (`1K`, `2K`, `4K`) parametri `sampleImageSize` bilan moslashtiriladi. Piksellarda berilgan `size` faqat tomonlar nisbatini belgilaydi,
-  kafolatlangan piksel oʻlchamlarini emas. Qoʻllab-quvvatlanadigan nisbatlar, aniqliklar va miqdorlar modelga qarab farq qiladi.
-- `zm/inclusionai/ming-image-0.1-design` oʻz oʻlchamlarini mustaqil tanlaydi. `size`,
-  `aspect_ratio` va `image_size` parametrlarini kiritmang; aniq qiymatlar HTTP 400 xatosini qaytaradi. PNG, JPEG va WebP
+- `zenmux/openai/gpt-image-2` ZenMuxʼning OpenAI Images APIʼsidan foydalanadi. Parametrlar qatoriga `size`,
+  `quality`, `n`, `output_format`, `output_compression`, `background` va `response_format` kiradi.
+- `zm/meta/muse-image-1.0` kabi boshqa nashriyotchilar ZenMuxʼning Vertex AI `:predict`
+  soʻnggi nuqtasidan foydalanadi. `n` parametri `sampleCount`ga, `aspect_ratio` parametri `aspectRatio`ga va `image_size`
+  (`1K`, `2K`, `4K`) parametri `sampleImageSize`ga moslanadi. Piksellarda koʻrsatilgan `size` faqat tomonlar nisbatini belgilaydi,
+  piksel oʻlchamlari kafolatlanmaydi. Qoʻllab-quvvatlanadigan nisbatlar, aniqliklar va sonlar modelga qarab farq qiladi.
+- `zm/inclusionai/ming-image-0.1-design` oʻz oʻlchamlarini oʻzi tanlaydi. `size`,
+  `aspect_ratio` va `image_size` parametrlarini koʻrsatmang; ularni aniq koʻrsatish HTTP 400 javobiga olib keladi. PNG, JPEG va WebP
   formatlarini `output_format` orqali soʻrash mumkin.
 
-Bu integratsiya matndan tasvir yaratishni qoʻllab-quvvatlaydi, namunaviy tasvirni tahrirlashni emas. Vertex
-chiqishi `data[].b64_json` formatiga me’yorlashtiriladi; `response_format: "url"` yuqori oqimdagi
-HTTPS URL manzilini yoki faqat tasvir baytlari mavjud boʻlganda base64 maʼlumot URL manzilini qaytaradi. Boʻsh/filtrlangan natijalar
-boʻsh muvaffaqiyatli javob oʻrniga xato qaytaradi. Modeldan foydalanish imkoniyati ZenMux hisobiga bogʻliq.
-[ZenMux’ning Vertex API hujjatlari](https://docs.zenmux.ai/api/vertexai/generate-images) va
-[OpenAI Images API hujjatlari](https://docs.zenmux.ai/api/openai/generate-an-image) bilan tanishing.
+Bu integratsiya matndan tasvir yaratishni qoʻllab-quvvatlaydi, lekin namunaviy tasvirni tahrirlashni qoʻllab-quvvatlamaydi. Vertex
+chiqishi `data[].b64_json` koʻrinishiga keltiriladi; `response_format: "url"` yuqori oqimdagi
+HTTPS URL manzilini yoki faqat tasvir baytlari mavjud boʻlsa, base64 maʼlumotlar URL manzilini qaytaradi. Boʻsh/filtrlangan natijalar
+boʻsh muvaffaqiyatli javob oʻrniga xatoni qaytaradi. Modellarga kirish ZenMux hisobiga bogʻliq.
+[ZenMuxʼning Vertex APIʼsi](https://docs.zenmux.ai/api/vertexai/generate-images) va
+[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) sahifalariga qarang.
 
 ```bash
 # Barcha tasvir modellarini roʻyxatlash
@@ -1413,17 +1421,17 @@ OmniRoute hodisalari (soʻrov yakunlanishi, kvota tugashi, kalit rotatsiyasi va 
 
 ## Roʻyxatdan oʻtkazilgan kalitlar (avtomatik boshqaruv)
 
-Avtomatik kalit boshqaruvi quyi tizimi tomonidan asosiy provayder/hisob orqali kunlik/soatlik kvotalarga ega API kalitlarini chiqarish va rotatsiya qilish uchun ishlatiladi.
+Avtomatik kalit boshqaruvi quyi tizimi tomonidan asosiy provayder/hisob qaydnomasi orqali kunlik/soatlik kvotalarga muvofiq API kalitlarini chiqarish va almashtirish uchun ishlatiladi.
 
-| Metod  | Yoʻl                                  | Tavsif                                                                                                                                                                                                                            |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Roʻyxatdan oʻtkazilgan kalitlar roʻyxatini olish (faqat niqoblangan prefiks)                                                                                                                                                      |
-| POST   | `/api/v1/registered-keys`             | Yangi roʻyxatdan oʻtkazilgan kalitni chiqarish — tana: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Xom kalitni faqat **bir marta** qaytaradi. Kvota rad etilganda `429` qaytaradi. |
-| GET    | `/api/v1/registered-keys/[id]`        | Roʻyxatdan oʻtkazilgan kalit metamaʼlumotlarini olish (xom maʼlumotlarsiz)                                                                                                                                                        |
-| DELETE | `/api/v1/registered-keys/[id]`        | Roʻyxatdan oʻtkazilgan kalitni bekor qilish                                                                                                                                                                                       |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Bevosita bekor qilish endpointi (DELETE bilan bir xil taʼsirga ega)                                                                                                                                                               |
+| Metod  | Yoʻl                                  | Tavsif                                                                                                                                                                                                                                           |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/v1/registered-keys`             | Roʻyxatdan oʻtkazilgan kalitlar roʻyxatini olish (faqat niqoblangan prefiks)                                                                                                                                                                     |
+| POST   | `/api/v1/registered-keys`             | Yangi roʻyxatdan oʻtkazilgan kalitni chiqarish — soʻrov tanasi: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Xom kalitni faqat **bir marta** qaytaradi. Kvota sababli rad etilsa, `429` qaytaradi. |
+| GET    | `/api/v1/registered-keys/[id]`        | Roʻyxatdan oʻtkazilgan kalit metamaʼlumotlarini olish (xom kalit maʼlumotlarisiz)                                                                                                                                                                |
+| DELETE | `/api/v1/registered-keys/[id]`        | Roʻyxatdan oʻtkazilgan kalitni bekor qilish                                                                                                                                                                                                      |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Aniq bekor qilish endpointi (DELETE bilan bir xil taʼsirga ega)                                                                                                                                                                                  |
 
-**Autentifikatsiya:** Bearer API kaliti (`isAuthenticated`). Shuningdek, `/v1/quotas/check` va `/v1/issues/report`ga qarang.
+**Autentifikatsiya:** boshqaruv sessiyasi/API kaliti (`requireManagementAuth`) — `/api/keys` bilan bir xil himoya mexanizmi: boshqaruv paneli sessiyasi, mahalliy CLI tokeni yoki `manage`/`admin` qamroviga ega API kaliti; faqat inferensiya uchun moʻljallangan API kalitlari `403` oladi. Shuningdek, `/v1/quotas/check` va `/v1/issues/report`ga qarang.
 
 ---
 

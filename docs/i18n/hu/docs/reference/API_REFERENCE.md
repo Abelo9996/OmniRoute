@@ -294,29 +294,37 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Gyönyörű naplemente a hegyek felett",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 Az elérhető szolgáltatók közé tartozik az OpenAI (GPT Image 2), az xAI (Grok Image), a Together AI (FLUX), a Fireworks AI, a Nebius (FLUX), a Hyperbolic, a NanoBanana, az **OpenRouter**, a **ZenMux**, az SD WebUI (helyi) és a ComfyUI (helyi).
 
+Az `n` darab képet ad vissza a `data[]` tömbben. Azoknál a szolgáltatóknál, amelyek upstream API-ja hívásonként egy képet ad vissza
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), `n` különálló upstream hívás történik, amelyek közül legfeljebb 4 futhat párhuzamosan. A
+rögzített `seed` értékét a hívás indexe módosítja (`seed`, `seed + 1`, …), így a képek eltérnek, de
+reprodukálhatók maradnak. Az `n` legfeljebb 10 lehet. Ha bármelyik hívás sikertelen, a teljes kérés
+meghiúsul. A fan-out formátumok listája a `SINGLE_IMAGE_FANOUT_FORMATS` változóban található az
+`open-sse/handlers/imageGeneration/fanOut.ts` fájlban.
+
 A ZenMux újra felhasználja a meglévő API-kulcsos kapcsolatot, és elfogadja a `zenmux/` vagy `zm/` előtagokat:
 
-- A `zenmux/openai/gpt-image-2` a ZenMux OpenAI Images API-ját használja. A lehetőségek közé tartozik a `size`,
+- A `zenmux/openai/gpt-image-2` a ZenMux OpenAI Images API-ját használja. A beállítások közé tartozik a `size`,
   a `quality`, az `n`, az `output_format`, az `output_compression`, a `background` és a `response_format`.
 - Más közzétevők, például a `zm/meta/muse-image-1.0`, a ZenMux Vertex AI `:predict`
   végpontját használják. Az `n` a `sampleCount`, az `aspect_ratio` az `aspectRatio`, az `image_size`
-  (`1K`, `2K`, `4K`) pedig a `sampleImageSize` értékre képeződik le. A képpontban megadott `size` csak képarányt határoz meg,
-  a képpontméreteket nem garantálja. A támogatott képarányok, felbontások és darabszámok modellenként eltérőek.
-- A `zm/inclusionai/ming-image-0.1-design` saját maga választja ki a méreteit. Hagyja ki a `size`,
-  az `aspect_ratio` és az `image_size` mezőket; explicit értékek megadása HTTP 400 választ eredményez. PNG, JPEG és WebP
-  az `output_format` használatával kérhető.
+  (`1K`, `2K`, `4K`) pedig a `sampleImageSize` értékének felel meg. A képpontokban megadott `size` csak a képarányt határozza meg,
+  a képpontméreteket nem garantálja. A támogatott képarányok, felbontások és darabszámok modellenként eltérnek.
+- A `zm/inclusionai/ming-image-0.1-design` saját maga választja ki a méreteit. Hagyja el a `size`,
+  az `aspect_ratio` és az `image_size` mezőket; a kifejezetten megadott értékek HTTP 400 választ eredményeznek. PNG, JPEG és WebP
+  formátum az `output_format` használatával kérhető.
 
-Ez az integráció támogatja a szövegből történő képgenerálást, de a referenciaképek szerkesztését nem. A Vertex
-kimenete `data[].b64_json` formátumra normalizálódik; a `response_format: "url"` egy felsőbb szintű
-HTTPS URL-t ad vissza, vagy base64-adat-URL-t, ha csak a kép bájtjai érhetők el. Az üres/szűrt kimenetek
-üres sikeres válasz helyett hibát adnak vissza. A modellekhez való hozzáférés a ZenMux-fióktól függ.
+Ez az integráció szövegből történő képgenerálást támogat, referenciakép szerkesztését nem. A Vertex
+kimenete `data[].b64_json` formára normalizálódik; a `response_format: "url"` egy upstream
+HTTPS URL-t ad vissza, vagy egy base64-adat-URL-t, ha csak a kép bájtjai érhetők el. Az üres vagy kiszűrt kimenetek
+üres sikeres válasz helyett hibát eredményeznek. A modellekhez való hozzáférés a ZenMux-fióktól függ.
 Lásd a [ZenMux Vertex API-ját](https://docs.zenmux.ai/api/vertexai/generate-images) és az
 [OpenAI Images API-t](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1442,17 +1450,17 @@ Kimenő webhook-előfizetések az OmniRoute eseményeihez (kérések teljesíté
 
 ## Regisztrált kulcsok (automatikus kezelés)
 
-Az automatikus kulcskezelési alrendszer használja API-kulcsok kiadására és rotálására egy háttérszolgáltatónál/-fióknál, napi/óránkénti kvótákkal.
+Az automatikus kulcskezelő alrendszer használja API-kulcsok kiadására és rotálására egy háttérszolgáltatónál/-fióknál, napi/óránkénti kvótákkal.
 
-| Metódus | Útvonal                               | Leírás                                                                                                                                                                                                                        |
-| ------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET     | `/api/v1/registered-keys`             | Regisztrált kulcsok listázása (csak a maszkolt előtag)                                                                                                                                                                        |
-| POST    | `/api/v1/registered-keys`             | Új regisztrált kulcs kiadása — törzs: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. A nyers kulcsot **egyszer** adja vissza. A kvóta elutasítása esetén `429` értéket ad vissza. |
-| GET     | `/api/v1/registered-keys/[id]`        | Egy regisztrált kulcs metaadatainak lekérése (a nyers kulcsanyag nélkül)                                                                                                                                                      |
-| DELETE  | `/api/v1/registered-keys/[id]`        | Regisztrált kulcs visszavonása                                                                                                                                                                                                |
-| POST    | `/api/v1/registered-keys/[id]/revoke` | Explicit visszavonási végpont (ugyanaz a hatás, mint a DELETE esetén)                                                                                                                                                         |
+| Metódus | Útvonal                               | Leírás                                                                                                                                                                                                                   |
+| ------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET     | `/api/v1/registered-keys`             | A regisztrált kulcsok listázása (csak a maszkolt előtag)                                                                                                                                                                 |
+| POST    | `/api/v1/registered-keys`             | Új regisztrált kulcs kiadása — törzs: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. A nyers kulcsot **egyszer** adja vissza. A kvóta miatti elutasításkor `429` választ ad. |
+| GET     | `/api/v1/registered-keys/[id]`        | Egy regisztrált kulcs metaadatainak lekérése (a nyers kulcsadatok nélkül)                                                                                                                                                |
+| DELETE  | `/api/v1/registered-keys/[id]`        | Egy regisztrált kulcs visszavonása                                                                                                                                                                                       |
+| POST    | `/api/v1/registered-keys/[id]/revoke` | Explicit visszavonási végpont (ugyanaz a hatása, mint a DELETE metódusnak)                                                                                                                                               |
 
-**Hitelesítés:** Bearer API-kulcs (`isAuthenticated`). Lásd még: `/v1/quotas/check` és `/v1/issues/report`.
+**Hitelesítés:** kezelési munkamenet/API-kulcs (`requireManagementAuth`) — ugyanaz a védelem, mint az `/api/keys` esetében: irányítópult-munkamenet, helyi CLI-token vagy `manage`/`admin` hatókörrel rendelkező API-kulcs; a kizárólag következtetésre szolgáló API-kulcsok `403` választ kapnak. Lásd még: `/v1/quotas/check` és `/v1/issues/report`.
 
 ---
 

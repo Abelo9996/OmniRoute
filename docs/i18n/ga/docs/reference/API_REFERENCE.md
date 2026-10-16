@@ -302,22 +302,30 @@ Content-Type: application/json
 
 I measc na soláthraithe atá ar fáil tá OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (áitiúil), ComfyUI (áitiúil).
 
+Filleann `n` líon `n` íomhánna in `data[]`. I gcás soláthraithe a bhfilleann a n-API réamhtheachtach íomhá amháin in aghaidh an ghlao
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), déantar `n` glao réamhtheachtach ar leith, agus 4 cinn ar a mhéad ar siúl ag an am céanna. Déantar
+`seed` seasta a fhritháireamh de réir innéacs an ghlao (`seed`, `seed + 1`, …), ionas go mbíonn na híomhánna éagsúil ach gur féidir
+iad a atáirgeadh. Tá uasteorainn 10 ar `n`. Teipeann ar an iarratas ina iomláine má theipeann ar aon ghlao. Tá liosta
+na bhformáidí scaipthe in `SINGLE_IMAGE_FANOUT_FORMATS` in
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
 Athúsáideann ZenMux an nasc API-eochrach atá ann cheana agus glacann sé le réimíreanna `zenmux/` nó `zm/`:
 
-- Úsáideann `zenmux/openai/gpt-image-2` API Íomhánna OpenAI de chuid ZenMux. I measc na roghanna tá `size`,
+- Úsáideann `zenmux/openai/gpt-image-2` API Íomhánna OpenAI ZenMux. I measc na roghanna tá `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, agus `response_format`.
-- Úsáideann foilsitheoirí eile, amhail `zm/meta/muse-image-1.0`, críochphointe `:predict`
-  Vertex AI de chuid ZenMux. Comhfhreagraíonn `n` do `sampleCount`, `aspect_ratio` do `aspectRatio`, agus `image_size`
-  (`1K`, `2K`, `4K`) do `sampleImageSize`. Ní sholáthraíonn `size` i bpicteilíní ach cóimheas treoíochta,
-  ní toisí picteilíní ráthaithe. Athraíonn na cóimheasa, na taifigh agus na comhairimh a dtacaítear leo de réir samhla.
+- Úsáideann foilsitheoirí eile, amhail `zm/meta/muse-image-1.0`, críochphointe `:predict` Vertex AI ZenMux.
+  Comhfhreagraíonn `n` do `sampleCount`, `aspect_ratio` do `aspectRatio`, agus `image_size`
+  (`1K`, `2K`, `4K`) do `sampleImageSize`. Ní sholáthraíonn `size` picteilín ach cóimheas treoíochta,
+  ní toisí ráthaithe picteilín. Athraíonn na cóimheasa, taifigh agus líonmhaireachtaí a dtacaítear leo de réir samhla.
 - Roghnaíonn `zm/inclusionai/ming-image-0.1-design` a thoisí féin. Fág `size`,
-  `aspect_ratio`, agus `image_size` ar lár; seolann luachanna sainráite HTTP 400 ar ais. Is féidir PNG, JPEG, agus WebP
+  `aspect_ratio`, agus `image_size` ar lár; filleann luachanna sainráite HTTP 400. Is féidir PNG, JPEG, agus WebP
   a iarraidh le `output_format`.
 
-Tacaíonn an comhtháthú seo le giniúint téacs-go-híomhá, ní le heagarthóireacht íomhánna tagartha. Déantar aschur Vertex
-a normalú go `data[].b64_json`; seolann `response_format: "url"` URL HTTPS réamhtheachtach
-nó URL sonraí base64 ar ais nuair nach bhfuil ar fáil ach bearta íomhá. Seolann aschuir fholmha/scagtha
-earráid ar ais seachas freagra folamh rathúil. Braitheann rochtain ar shamhlacha ar an gcuntas ZenMux.
+Tacaíonn an comhtháthú seo le giniúint téacs-go-híomhá, ní le heagarthóireacht íomhánna tagartha. Déantar
+aschur Vertex a normalú go `data[].b64_json`; filleann `response_format: "url"` URL HTTPS réamhtheachtach
+nó URL sonraí base64 nuair nach bhfuil ar fáil ach bearta íomhá. I gcás aschuir fholmha/scagtha,
+filleann sé earráid seachas rath folamh. Braitheann rochtain ar shamhlacha ar an gcuntas ZenMux.
 Féach [API Vertex ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) agus
 [API Íomhánna OpenAI](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1456,19 +1464,19 @@ Síntiúis crúca gréasáin amach do theagmhais OmniRoute (cur i gcrích iarrat
 
 ---
 
-## Eochracha Cláraithe (Uathbhainistíocht)
+## Eochracha Cláraithe (Uathbhainistiú)
 
-Úsáideann an fochóras uathbhainistíochta eochracha iad chun eochracha API a eisiúint agus a rothlú i leith soláthraí/cuntais tacaíochta, le cuótaí laethúla/uairiúla.
+Úsáideann an fochóras uathbhainistithe eochracha iad chun eochracha API a eisiúint agus a rothlú i gcoinne soláthraí/cuntais taca, le cuótaí laethúla/in aghaidh na huaire.
 
-| Modh   | Conair                                | Cur síos                                                                                                                                                                                                                           |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Liostaigh eochracha cláraithe (réimír mascaithe amháin)                                                                                                                                                                            |
-| POST   | `/api/v1/registered-keys`             | Eisigh eochair chláraithe nua — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Tugtar an eochair amh ar ais **uair amháin**. Tugtar `429` ar ais má dhiúltaítear de bharr cuóta. |
-| GET    | `/api/v1/registered-keys/[id]`        | Aisghabh meiteashonraí eochrach cláraithe (gan ábhar amh)                                                                                                                                                                          |
-| DELETE | `/api/v1/registered-keys/[id]`        | Cúlghair eochair chláraithe                                                                                                                                                                                                        |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Críochphointe sainráite cúlghairme (an éifeacht chéanna le DELETE)                                                                                                                                                                 |
+| Modh   | Conair                                | Cur síos                                                                                                                                                                                                                                |
+| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Liostaigh eochracha cláraithe (réimír folaithe amháin)                                                                                                                                                                                  |
+| POST   | `/api/v1/registered-keys`             | Eisigh eochair chláraithe nua — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Seoltar an eochair amh ar ais **uair amháin**. Seoltar `429` ar ais má dhiúltaítear di de bharr cuóta. |
+| GET    | `/api/v1/registered-keys/[id]`        | Aisghabh meiteashonraí eochrach cláraithe (gan aon ábhar amh)                                                                                                                                                                           |
+| DELETE | `/api/v1/registered-keys/[id]`        | Cúlghair eochair chláraithe                                                                                                                                                                                                             |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Críochphointe cúlghairthe sainráite (an éifeacht chéanna le DELETE)                                                                                                                                                                     |
 
-**Fíordheimhniú:** Eochair API Bearer (`isAuthenticated`). Féach freisin `/v1/quotas/check` agus `/v1/issues/report`.
+**Fíordheimhniú:** seisiún bainistíochta/eochair API (`requireManagementAuth`) — an chosaint chéanna agus atá ag `/api/keys`: seisiún deais, an comhartha CLI áitiúil, nó eochair API le scóip `manage`/`admin`; faigheann eochracha API atá teoranta do thátal amháin `403`. Féach freisin `/v1/quotas/check` agus `/v1/issues/report`.
 
 ---
 

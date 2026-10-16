@@ -312,17 +312,24 @@ GET /v1/embeddings
 
 ```bash
 POST /v1/images/generations
-Authorization: Bearer vaš-api-ključ
+Authorization: Bearer your-api-key
 Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Prekrasan zalazak sunca iznad planina",
+  "prompt": "Predivan zalazak sunca iznad planina",
   "size": "1024x1024"
 }
 ```
 
-Dostupni pružaoci usluga uključuju OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokalno), ComfyUI (lokalno).
+Dostupni pružaoci uključuju OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokalno), ComfyUI (lokalno).
+
+`n` vraća `n` slika u `data[]`. Za pružaoce čiji upstream API vraća jednu sliku po pozivu
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) izvršava se `n` zasebnih upstream poziva, od kojih su najviše 4 istovremena. Fiksna vrijednost `seed` uvećava se za indeks poziva (`seed`, `seed + 1`, …), tako da se slike razlikuju, ali ostaju
+ponovljive. `n` je ograničen na 10. Cijeli zahtjev ne uspijeva ako bilo koji poziv ne uspije. Lista
+formata za raspodjelu poziva nalazi se u `SINGLE_IMAGE_FANOUT_FORMATS` u
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux ponovo koristi postojeću vezu s API ključem i prihvata prefikse `zenmux/` ili `zm/`:
 
@@ -336,15 +343,15 @@ ZenMux ponovo koristi postojeću vezu s API ključem i prihvata prefikse `zenmux
   `aspect_ratio` i `image_size`; eksplicitne vrijednosti vraćaju HTTP 400. PNG, JPEG i WebP
   mogu se zatražiti pomoću `output_format`.
 
-Ova integracija podržava generisanje slika iz teksta, ali ne i uređivanje referentnih slika. Vertexov
-izlaz normalizira se u `data[].b64_json`; `response_format: "url"` vraća uzvodni
-HTTPS URL ili podatkovni URL u formatu base64 kada su dostupni samo bajtovi slike. Prazni/filtrirani izlazi
-vraćaju grešku umjesto praznog uspješnog odgovora. Pristup modelima zavisi od ZenMux računa.
+Ova integracija podržava generisanje slika iz teksta, a ne uređivanje referentnih slika. Vertexov
+izlaz normalizira se u `data[].b64_json`; `response_format: "url"` vraća upstream
+HTTPS URL ili URL s base64 podacima kada su dostupni samo bajtovi slike. Prazni/filtrirani izlazi
+vraćaju grešku umjesto praznog uspješnog odgovora. Pristup modelu zavisi od ZenMux računa.
 Pogledajte [ZenMuxov Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) i
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Izlistaj sve modele za slike
+# Izlistaj sve modele slika
 GET /v1/images/generations
 ```
 
@@ -1423,19 +1430,19 @@ Pretplatbe na odlazne webhook-ove za OmniRoute događaje (završetak zahtjeva, i
 
 ---
 
-## Registrovani ključevi (Auto-upravljanje)
+## Registrirani ključevi (automatsko upravljanje)
 
-Koristi ih podsistem za automatsko upravljanje ključevima za izdavanje i rotaciju API ključeva prema osnovnom provajderu/računu, sa dnevnim/satnim kvotama.
+Podsistem za automatsko upravljanje ključevima koristi se za izdavanje i rotiranje API ključeva kod pozadinskog pružaoca usluga/računa, uz dnevne/satne kvote.
 
-| Metoda | Putanja                               | Opis                                                                                                                                                                                               |
-| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Lista registrovanih ključeva (samo maskirani prefiks)                                                                                                                                              |
-| POST   | `/api/v1/registered-keys`             | Izdaj novi registrovani ključ — tijelo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Vraća sirovi ključ **jednom**. Vraća `429` pri odbijanju kvote. |
-| GET    | `/api/v1/registered-keys/[id]`        | Preuzmi metapodatke registrovanog ključa (bez sirovog materijala)                                                                                                                                  |
-| DELETE | `/api/v1/registered-keys/[id]`        | Opozovi registrovani ključ                                                                                                                                                                         |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint za eksplicitno opozivanje (isti efekat kao DELETE)                                                                                                                                        |
+| Metoda | Putanja                               | Opis                                                                                                                                                                                                                  |
+| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Prikazuje registrirane ključeve (samo maskirani prefiks)                                                                                                                                                              |
+| POST   | `/api/v1/registered-keys`             | Izdaje novi registrirani ključ — tijelo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Vraća neobrađeni ključ **jednom**. Vraća `429` ako je zahtjev odbijen zbog kvote. |
+| GET    | `/api/v1/registered-keys/[id]`        | Dohvaća metapodatke registriranog ključa (bez neobrađenog ključa)                                                                                                                                                     |
+| DELETE | `/api/v1/registered-keys/[id]`        | Opoziva registrirani ključ                                                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Eksplicitna krajnja tačka za opoziv (isti učinak kao DELETE)                                                                                                                                                          |
 
-**Auth:** Bearer API ključ (`isAuthenticated`). Pogledajte također `/v1/quotas/check` i `/v1/issues/report`.
+**Autentifikacija:** sesija za upravljanje/API ključ (`requireManagementAuth`) — ista zaštita kao za `/api/keys`: sesija kontrolne ploče, lokalni CLI token ili API ključ s opsegom `manage`/`admin`; API ključevi namijenjeni samo za inferenciju dobijaju `403`. Pogledajte i `/v1/quotas/check` i `/v1/issues/report`.
 
 ---
 

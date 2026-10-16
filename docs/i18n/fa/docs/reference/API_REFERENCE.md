@@ -320,31 +320,39 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "غروب زیبای خورشید بر فراز کوهها",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
-ارائهدهندگان موجود شامل OpenAI (GPT Image 2)، xAI (Grok Image)، Together AI (FLUX)، Fireworks AI، Nebius (FLUX)، Hyperbolic، NanoBanana، **OpenRouter**، **ZenMux**، SD WebUI (محلی) و ComfyUI (محلی) هستند.
+ارائهدهندگان موجود شامل OpenAI (GPT Image 2)،‏ xAI (Grok Image)،‏ Together AI (FLUX)،‏ Fireworks AI،‏ Nebius (FLUX)،‏ Hyperbolic،‏ NanoBanana،‏ **OpenRouter**،‏ **ZenMux**،‏ SD WebUI (محلی) و ComfyUI (محلی) هستند.
 
-ZenMux از اتصال موجودِ کلید API دوباره استفاده میکند و پیشوندهای `zenmux/` یا `zm/` را میپذیرد:
+`n` تعداد `n` تصویر را در `data[]` برمیگرداند. برای ارائهدهندگانی که API بالادستی آنها در هر فراخوانی یک تصویر برمیگرداند
+(Black Forest Labs،‏ Stability AI،‏ Leonardo،‏ Ideogram،‏ Haiper،‏ Hyperbolic،‏ Magnific/Freepik،
+NVIDIA NIM و Cloudflare Workers AI)، تعداد `n` فراخوانی جداگانه به سرویس بالادستی انجام میشود که حداکثر ۴ مورد از آنها همزمان در حال اجرا خواهند بود. یک
+`seed` ثابت بر اساس اندیس فراخوانی افزایش مییابد (`seed`،‏ `seed + 1`، …)، بنابراین تصاویر متفاوتاند اما
+همچنان بازتولیدپذیر باقی میمانند. حداکثر مقدار `n` برابر با ۱۰ است. اگر هر یک از فراخوانیها ناموفق باشد، کل درخواست
+ناموفق خواهد شد. فهرست قالبهای fan-out در `SINGLE_IMAGE_FANOUT_FORMATS` در فایل
+`open-sse/handlers/imageGeneration/fanOut.ts` قرار دارد.
 
-- `zenmux/openai/gpt-image-2` از API تصاویر OpenAI در ZenMux استفاده میکند. گزینهها شامل `size`،
-  `quality`، `n`، `output_format`، `output_compression`، `background` و `response_format` هستند.
-- ناشران دیگر، مانند `zm/meta/muse-image-1.0`، از نقطه پایانی `:predict` در Vertex AI متعلق به ZenMux
-  استفاده میکنند. `n` به `sampleCount`، `aspect_ratio` به `aspectRatio` و `image_size`
-  (`1K`، `2K`، `4K`) به `sampleImageSize` نگاشت میشود. یک `size` پیکسلی فقط نسبت ابعاد را تعیین میکند،
+ZenMux از اتصال موجودِ کلید API مجدداً استفاده میکند و پیشوندهای `zenmux/` یا `zm/` را میپذیرد:
+
+- `zenmux/openai/gpt-image-2` از OpenAI Images API متعلق به ZenMux استفاده میکند. گزینهها شامل `size`،
+  `quality`،‏ `n`،‏ `output_format`،‏ `output_compression`،‏ `background` و `response_format` هستند.
+- سایر ناشران، مانند `zm/meta/muse-image-1.0`، از نقطه پایانی `:predict` مربوط به Vertex AI در ZenMux
+  استفاده میکنند. `n` به `sampleCount`،‏ `aspect_ratio` به `aspectRatio` و `image_size`
+  (`1K`،‏ `2K`،‏ `4K`) به `sampleImageSize` نگاشت میشود. مقدار پیکسلی `size` فقط نسبت ابعاد را تعیین میکند،
   نه ابعاد پیکسلی تضمینشده را. نسبتها، وضوحها و تعدادهای پشتیبانیشده بسته به مدل متفاوتاند.
-- `zm/inclusionai/ming-image-0.1-design` ابعاد خود را انتخاب میکند. `size`،
-  `aspect_ratio` و `image_size` را حذف کنید؛ مقادیر صریح خطای HTTP 400 برمیگردانند. میتوان PNG، JPEG و WebP
-  را با `output_format` درخواست کرد.
+- `zm/inclusionai/ming-image-0.1-design` ابعاد خود را بهصورت خودکار انتخاب میکند. `size`،
+  `aspect_ratio` و `image_size` را حذف کنید؛ مقادیر صریح باعث بازگشت HTTP 400 میشوند. با استفاده از `output_format`
+  میتوان PNG،‏ JPEG و WebP را درخواست کرد.
 
-این یکپارچهسازی از تولید تصویر از متن پشتیبانی میکند، نه ویرایش تصویر مرجع. خروجی Vertex
+این یکپارچهسازی از تولید متنبهتصویر پشتیبانی میکند، نه ویرایش تصویر مرجع. خروجی Vertex
 به `data[].b64_json` نرمالسازی میشود؛ `response_format: "url"` یک URL بالادستی
-HTTPS یا، هنگامی که فقط بایتهای تصویر در دسترس باشند، یک URL دادهٔ base64 برمیگرداند. خروجیهای خالی/فیلترشده
-بهجای موفقیت خالی، خطا برمیگردانند. دسترسی به مدل به حساب ZenMux بستگی دارد.
-به [API مربوط به Vertex در ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) و
-[API تصاویر OpenAI](https://docs.zenmux.ai/api/openai/generate-an-image) مراجعه کنید.
+HTTPS یا، درصورتیکه فقط بایتهای تصویر در دسترس باشند، یک URL دادهٔ base64 برمیگرداند. خروجیهای خالی یا فیلترشده
+بهجای یک پاسخ موفق خالی، خطا برمیگردانند. دسترسی به مدل به حساب ZenMux بستگی دارد.
+به [Vertex API متعلق به ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) و
+[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) مراجعه کنید.
 
 ```bash
 # فهرستکردن همه مدلهای تصویر
@@ -1457,17 +1465,17 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## کلیدهای ثبتشده (مدیریت خودکار)
 
-توسط زیرسیستم مدیریت خودکار کلید برای صدور و چرخش کلیدهای API در برابر یک ارائهدهنده/حساب پشتیبان، با سهمیههای روزانه/ساعتی استفاده میشود.
+زیرسامانهٔ مدیریت خودکار کلید از این موارد برای صدور و چرخش کلیدهای API در یک ارائهدهنده/حساب پشتیبان، با سهمیههای روزانه/ساعتی استفاده میکند.
 
-| Method | Path                                  | Description                                                                                                                                                                                               |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | فهرست کلیدهای ثبتشده (فقط پیشوند پوشانده شده)                                                                                                                                                             |
-| POST   | `/api/v1/registered-keys`             | صدور یک کلید ثبتشده جدید — بدنه: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. کلید خام را **فقط یک بار** برمیگرداند. در صورت رد سهمیه، `429` را برمیگرداند. |
-| GET    | `/api/v1/registered-keys/[id]`        | بازیابی فراداده یک کلید ثبتشده (بدون محتوای خام)                                                                                                                                                          |
-| DELETE | `/api/v1/registered-keys/[id]`        | لغو یک کلید ثبتشده                                                                                                                                                                                        |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | نقطه پایانی لغو صریح (همان اثر DELETE را دارد)                                                                                                                                                            |
+| متد    | مسیر                                  | توضیحات                                                                                                                                                                                                |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/v1/registered-keys`             | فهرستکردن کلیدهای ثبتشده (فقط پیشوند پوشاندهشده)                                                                                                                                                       |
+| POST   | `/api/v1/registered-keys`             | صدور یک کلید ثبتشدهٔ جدید — بدنه: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. کلید خام را فقط **یکبار** برمیگرداند. در صورت رد سهمیه، `429` برمیگرداند. |
+| GET    | `/api/v1/registered-keys/[id]`        | دریافت فرادادهٔ یک کلید ثبتشده (بدون دادهٔ خام کلید)                                                                                                                                                   |
+| DELETE | `/api/v1/registered-keys/[id]`        | لغو یک کلید ثبتشده                                                                                                                                                                                     |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | نقطهٔ پایانی لغو صریح (با اثری مشابه DELETE)                                                                                                                                                           |
 
-**احراز هویت:** کلید API Bearer (`isAuthenticated`). همچنین به `/v1/quotas/check` و `/v1/issues/report` مراجعه کنید.
+**احراز هویت:** نشست مدیریتی/کلید API (`requireManagementAuth`) — همان محافظ مورداستفاده در `/api/keys`: یک نشست داشبورد، توکن محلی CLI، یا یک کلید API با دامنهٔ `manage`/`admin`؛ کلیدهای API مختص استنتاج، پاسخ `403` دریافت میکنند. همچنین `/v1/quotas/check` و `/v1/issues/report` را ببینید.
 
 ---
 

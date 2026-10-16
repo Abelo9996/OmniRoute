@@ -295,34 +295,42 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "पर्वतांवरील एक सुंदर सूर्यास्त",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 उपलब्ध प्रदात्यांमध्ये OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (स्थानिक), ComfyUI (स्थानिक) यांचा समावेश आहे.
 
-ZenMux विद्यमान API-की कनेक्शनचा पुनर्वापर करते आणि `zenmux/` किंवा `zm/` उपसर्ग स्वीकारते:
+`n`, `data[]` मध्ये `n` प्रतिमा परत करते. ज्या प्रदात्यांची upstream API प्रत्येक कॉलमागे एक प्रतिमा परत करते
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), त्यांच्यासाठी `n` स्वतंत्र upstream कॉल केले जातात आणि एका वेळी जास्तीत जास्त 4 कॉल सुरू असतात. निश्चित
+`seed` मध्ये कॉल निर्देशांकानुसार वाढ केली जाते (`seed`, `seed + 1`, …), त्यामुळे प्रतिमा वेगवेगळ्या असतात, पण त्यांची
+पुनरुत्पादकता कायम राहते. `n` ची कमाल मर्यादा 10 आहे. कोणताही कॉल अयशस्वी झाल्यास संपूर्ण विनंती
+अयशस्वी होते. fan-out स्वरूपांची यादी
+`open-sse/handlers/imageGeneration/fanOut.ts` मधील `SINGLE_IMAGE_FANOUT_FORMATS` मध्ये आहे.
 
-- `zenmux/openai/gpt-image-2` ZenMux चे OpenAI Images API वापरते. पर्यायांमध्ये `size`,
+ZenMux विद्यमान API-key कनेक्शनचा पुनर्वापर करते आणि `zenmux/` किंवा `zm/` उपसर्ग स्वीकारते:
+
+- `zenmux/openai/gpt-image-2`, ZenMux ची OpenAI Images API वापरते. पर्यायांमध्ये `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, आणि `response_format` यांचा समावेश आहे.
-- `zm/meta/muse-image-1.0` सारखे इतर प्रकाशक ZenMux चा Vertex AI `:predict`
-  एंडपॉइंट वापरतात. `n` हे `sampleCount` शी, `aspect_ratio` हे `aspectRatio` शी, आणि `image_size`
-  (`1K`, `2K`, `4K`) हे `sampleImageSize` शी मॅप होते. पिक्सेल `size` फक्त गुणोत्तर प्रदान करते,
-  हमीशीर पिक्सेल परिमाणे नाही. समर्थित गुणोत्तरे, रिझोल्यूशन्स आणि संख्या मॉडेलनुसार बदलतात.
+- `zm/meta/muse-image-1.0` सारखे इतर प्रकाशक ZenMux चे Vertex AI `:predict`
+  endpoint वापरतात. `n` चे मॅपिंग `sampleCount` शी, `aspect_ratio` चे `aspectRatio` शी आणि `image_size`
+  (`1K`, `2K`, `4K`) चे `sampleImageSize` शी केले जाते. पिक्सेलमधील `size` फक्त aspect ratio पुरवते;
+  अचूक पिक्सेल परिमाणांची हमी दिली जात नाही. समर्थित गुणोत्तरे, resolutions आणि संख्या मॉडेलनुसार बदलतात.
 - `zm/inclusionai/ming-image-0.1-design` स्वतःची परिमाणे निवडते. `size`,
   `aspect_ratio`, आणि `image_size` वगळा; स्पष्ट मूल्ये दिल्यास HTTP 400 परत येते. `output_format` वापरून
   PNG, JPEG, आणि WebP ची विनंती करता येते.
 
-हे एकत्रीकरण मजकुरापासून प्रतिमा निर्मितीस समर्थन देते, संदर्भ-प्रतिमा संपादनास नाही. Vertex
-आउटपुट `data[].b64_json` मध्ये सामान्यीकृत केले जाते; `response_format: "url"` अपस्ट्रीम
-HTTPS URL परत करते किंवा फक्त प्रतिमा बाइट्स उपलब्ध असतील तेव्हा base64 डेटा URL परत करते. रिक्त/फिल्टर केलेले आउटपुट
+हे integration मजकुरापासून प्रतिमा निर्मितीला समर्थन देते, संदर्भ-प्रतिमा संपादनाला नाही. Vertex चे
+output `data[].b64_json` मध्ये सामान्यीकृत केले जाते; `response_format: "url"` upstream
+HTTPS URL परत करते किंवा फक्त प्रतिमा bytes उपलब्ध असल्यास base64 data URL परत करते. रिक्त/फिल्टर केलेले outputs
 रिक्त यशस्वी प्रतिसादाऐवजी त्रुटी परत करतात. मॉडेलचा प्रवेश ZenMux खात्यावर अवलंबून असतो.
 [ZenMux चे Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) आणि
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) पहा.
 
 ```bash
-# सर्व प्रतिमा मॉडेल्सची सूची दाखवा
+# सर्व प्रतिमा मॉडेल्सची यादी करा
 GET /v1/images/generations
 ```
 
@@ -1443,19 +1451,19 @@ OmniRoute इव्हेंट्ससाठी आउटबाउंड व�
 
 ---
 
-## नोंदणीकृत कीज (स्वयं-व्यवस्थापन)
+## नोंदणीकृत की (स्वयं-व्यवस्थापन)
 
-दैनंदिन/ताशी कोट्यांसह, बॅकिंग प्रदाता/खात्याच्या माध्यमातून API कीज जारी करण्यासाठी आणि रोटेट करण्यासाठी स्वयं-की व्यवस्थापन उपप्रणालीद्वारे वापरले जाते.
+बॅकिंग प्रदाता/खात्यासाठी दैनंदिन/तासिका कोट्यांसह API की जारी करण्यासाठी आणि रोटेट करण्यासाठी स्वयं-की व्यवस्थापन उपप्रणालीद्वारे वापरले जाते.
 
-| पद्धत  | पाथ                                   | वर्णन                                                                                                                                                                                         |
+| पद्धत  | पथ                                    | वर्णन                                                                                                                                                                                         |
 | ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | नोंदणीकृत कीजची सूची दाखवा (केवळ मास्क केलेला प्रिफिक्स)                                                                                                                                      |
+| GET    | `/api/v1/registered-keys`             | नोंदणीकृत कींची यादी (केवळ मास्क केलेला उपसर्ग)                                                                                                                                               |
 | POST   | `/api/v1/registered-keys`             | नवीन नोंदणीकृत की जारी करा — बॉडी: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. मूळ की **फक्त एकदाच** परत करते. कोटा नाकारल्यास `429` परत करते. |
-| GET    | `/api/v1/registered-keys/[id]`        | नोंदणीकृत कीचा मेटाडेटा मिळवा (मूळ की सामग्री नाही)                                                                                                                                           |
+| GET    | `/api/v1/registered-keys/[id]`        | नोंदणीकृत कीचा मेटाडेटा प्राप्त करा (मूळ की सामग्री नाही)                                                                                                                                     |
 | DELETE | `/api/v1/registered-keys/[id]`        | नोंदणीकृत की रद्द करा                                                                                                                                                                         |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | स्पष्ट रद्दीकरण एंडपॉइंट (DELETE प्रमाणेच परिणाम)                                                                                                                                             |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | स्पष्ट रद्दीकरण एंडपॉइंट (DELETE सारखाच परिणाम)                                                                                                                                               |
 
-**प्रमाणीकरण:** Bearer API की (`isAuthenticated`). `/v1/quotas/check` आणि `/v1/issues/report` हे देखील पहा.
+**प्रमाणीकरण:** व्यवस्थापन सत्र/API की (`requireManagementAuth`) — `/api/keys` प्रमाणेच गार्ड: डॅशबोर्ड सत्र, स्थानिक CLI टोकन किंवा `manage`/`admin` स्कोप असलेली API की; केवळ इन्फरन्ससाठी असलेल्या API कींना `403` मिळतो. `/v1/quotas/check` आणि `/v1/issues/report` हेही पहा.
 
 ---
 

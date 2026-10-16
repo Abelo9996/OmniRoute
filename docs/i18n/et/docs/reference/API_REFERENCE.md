@@ -302,27 +302,35 @@ Content-Type: application/json
 
 Saadaolevate pakkujate hulka kuuluvad OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (kohalik), ComfyUI (kohalik).
 
-ZenMux kasutab olemasolevat API-võtme ühendust ja aktsepteerib prefikseid `zenmux/` või `zm/`:
+`n` tagastab `data[]` massiivis `n` pilti. Pakkujate puhul, kelle ülesvoolu API tagastab ühe pildi kutse kohta
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), tehakse `n` eraldi ülesvoolukutset, millest korraga on töös kuni 4. Fikseeritud
+`seed` väärtusele lisatakse kutse indeks (`seed`, `seed + 1`, …), nii et pildid erinevad, kuid jäävad
+reprodutseeritavaks. `n` ülempiir on 10. Kui mõni kutse nurjub, nurjub kogu päring. Hargnevate
+vormingute loend on `SINGLE_IMAGE_FANOUT_FORMATS` failis
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
+ZenMux kasutab uuesti olemasolevat API-võtme ühendust ja aktsepteerib prefikseid `zenmux/` või `zm/`:
 
 - `zenmux/openai/gpt-image-2` kasutab ZenMuxi OpenAI Images API-t. Valikute hulka kuuluvad `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` ja `response_format`.
 - Teised avaldajad, näiteks `zm/meta/muse-image-1.0`, kasutavad ZenMuxi Vertex AI `:predict`
-  lõpp-punkti. `n` vastab väljale `sampleCount`, `aspect_ratio` väljale `aspectRatio` ja `image_size`
-  (`1K`, `2K`, `4K`) väljale `sampleImageSize`. Pikslites määratud `size` annab ainult kuvasuhte,
+  lõpp-punkti. `n` vastab parameetrile `sampleCount`, `aspect_ratio` parameetrile `aspectRatio` ja `image_size`
+  (`1K`, `2K`, `4K`) parameetrile `sampleImageSize`. Pikslites määratud `size` annab ainult kuvasuhte,
   mitte garanteeritud pikslimõõtmed. Toetatud kuvasuhted, eraldusvõimed ja kogused erinevad mudeliti.
 - `zm/inclusionai/ming-image-0.1-design` valib mõõtmed ise. Jätke `size`,
-  `aspect_ratio` ja `image_size` välja; eksplitsiitsed väärtused tagastavad HTTP 400. PNG-, JPEG- ja WebP-vormingut
+  `aspect_ratio` ja `image_size` määramata; selgesõnaliselt antud väärtused tagastavad HTTP 400. PNG-, JPEG- ja WebP-vormingut
   saab taotleda parameetriga `output_format`.
 
-See integratsioon toetab tekstist pildi genereerimist, mitte võrdluspildi redigeerimist. Vertexi
+See integratsioon toetab teksti põhjal piltide genereerimist, mitte etalonpiltide redigeerimist. Vertexi
 väljund normaliseeritakse kujule `data[].b64_json`; `response_format: "url"` tagastab ülesvoolu
-HTTPS-i URL-i või base64-andme-URL-i, kui saadaval on ainult pildibaidid. Tühi või filtreeritud väljund
-tagastab tühja õnnestunud vastuse asemel vea. Juurdepääs mudelitele sõltub ZenMuxi kontost.
+HTTPS URL-i või base64-andme-URL-i, kui saadaval on ainult pildi baidid. Tühjad või filtreeritud väljundid
+tagastavad tühja eduka vastuse asemel vea. Juurdepääs mudelitele sõltub ZenMuxi kontost.
 Vaadake [ZenMuxi Vertex API-t](https://docs.zenmux.ai/api/vertexai/generate-images) ja
 [OpenAI Images API-t](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Kõigi pildimudelite loetlemine
+# Loetle kõik pildimudelid
 GET /v1/images/generations
 ```
 
@@ -1443,17 +1451,17 @@ Väljuvad veebihaagi tellimused OmniRoute sündmuste jaoks (päringu lõpetamine
 
 ## Registreeritud võtmed (automaatne haldus)
 
-Kasutatakse automaatse võtmehalduse alamsüsteemi poolt, et väljastada ja rotaatida API võtmeid vastu teenusepakkuja/konto, koos päevaste/tunniste kvootidega.
+Automaatse võtmehalduse alamsüsteem kasutab neid API-võtmete väljastamiseks ja roteerimiseks taustteenuse pakkuja/konto kaudu, järgides päeva- ja tunnikvoote.
 
-| Meetod | Tee                                   | Kirjeldus                                                                                                                                                                                                                        |
-| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Loetleb registreeritud võtmed (näidatakse ainult maskeeritud eesliidet)                                                                                                                                                          |
-| POST   | `/api/v1/registered-keys`             | Väljastab uue registreeritud võtme — keha: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Tagastab tooreid andmeid sisaldava võtme **ühe korra**. Tagastab `429` kvoodi keeldumisel. |
-| GET    | `/api/v1/registered-keys/[id]`        | Toob registreeritud võtme metaandmed (toorandmeid ei näidata)                                                                                                                                                                    |
-| DELETE | `/api/v1/registered-keys/[id]`        | Tühistab registreeritud võtme                                                                                                                                                                                                    |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Selgesõnaline tühistamise otspunkt (samaväärne DELETE-ga)                                                                                                                                                                        |
+| Meetod | Tee                                   | Kirjeldus                                                                                                                                                                                                             |
+| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Registreeritud võtmete loend (ainult maskitud prefiks)                                                                                                                                                                |
+| POST   | `/api/v1/registered-keys`             | Väljasta uus registreeritud võti — keha: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Tagastab töötlemata võtme **ühe korra**. Kvoodi tõttu keeldumisel tagastab `429`. |
+| GET    | `/api/v1/registered-keys/[id]`        | Hangi registreeritud võtme metaandmed (ilma töötlemata võtmematerjalita)                                                                                                                                              |
+| DELETE | `/api/v1/registered-keys/[id]`        | Tühista registreeritud võti                                                                                                                                                                                           |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Võtme selgesõnalise tühistamise lõpp-punkt (sama toime nagu DELETE-il)                                                                                                                                                |
 
-**Autentimine:** Bearer API võti (`isAuthenticated`). Vaata ka `/v1/quotas/check` ja `/v1/issues/report`.
+**Autentimine:** haldusseanss/API-võti (`requireManagementAuth`) — sama kontroll nagu `/api/keys` puhul: töölaua seanss, kohalik CLI-luba või API-võti ulatusega `manage`/`admin`; ainult inferentsiks mõeldud API-võtmed saavad vastuseks `403`. Vaata ka `/v1/quotas/check` ja `/v1/issues/report`.
 
 ---
 
