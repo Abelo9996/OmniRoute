@@ -1,1 +1,1 @@
-- Preserve retained Video Bridge drill-down artifacts after a focused read selects no frames, so later reads, explicit deletion and lifecycle cleanup remain available; keep private drill-down handles out of guardrail diagnostic logs (#16074).
+- Preserve retained Video Bridge drill-down artifacts after a focused read selects no frames, keep private handles out of guardrail diagnostic logs, and enforce the API key's video endpoint permission on both reads and deletion (#16074).
