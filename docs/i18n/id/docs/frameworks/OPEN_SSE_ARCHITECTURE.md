@@ -481,15 +481,15 @@ Ini menangani:
 
 ## Konfigurasi
 
-`open-sse/config/` berisi lapisan konfigurasi:
+`open-sse/config/` menyimpan lapisan konfigurasi:
 
-| File                          | Tujuan                                           |
-| ----------------------------- | ------------------------------------------------ |
-| `providerRegistry.ts`         | Registri model obrolan pada katalog 352 penyedia |
-| `providerModels.ts`           | Alias model, pemetaan format                     |
-| `constants.ts`                | Batas waktu, batasan, kode status                |
-| `defaultThinkingSignature.ts` | Tanda tangan penalaran Claude bawaan             |
-| `modelStrip.ts` (di services) | Penghapusan kolom per penyedia                   |
+| File                          | Tujuan                                                |
+| ----------------------------- | ----------------------------------------------------- |
+| `providerRegistry.ts`         | Registri model chat untuk katalog dengan 372 penyedia |
+| `providerModels.ts`           | Alias model, pemetaan format                          |
+| `constants.ts`                | Batas waktu, batasan, kode status                     |
+| `defaultThinkingSignature.ts` | Tanda tangan pemikiran Claude bawaan                  |
+| `modelStrip.ts` (di services) | Penghapusan bidang untuk setiap penyedia              |
 
 ### Skema Registri Penyedia
 

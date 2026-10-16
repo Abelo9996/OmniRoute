@@ -485,11 +485,11 @@ Dabei werden folgende Elemente verarbeitet:
 
 | Datei                         | Zweck                                                 |
 | ----------------------------- | ----------------------------------------------------- |
-| `providerRegistry.ts`         | Chatmodell-Registry für den Katalog mit 352 Anbietern |
+| `providerRegistry.ts`         | Chatmodell-Registry für den Katalog mit 372 Anbietern |
 | `providerModels.ts`           | Modellaliase, Formatzuordnung                         |
 | `constants.ts`                | Zeitüberschreitungen, Grenzwerte, Statuscodes         |
-| `defaultThinkingSignature.ts` | Standardmäßige Thinking-Signatur von Claude           |
-| `modelStrip.ts` (in services) | Anbieterspezifisches Entfernen von Feldern            |
+| `defaultThinkingSignature.ts` | Standardmäßige Claude-Denksignatur                    |
+| `modelStrip.ts` (in Diensten) | Anbieterspezifisches Entfernen von Feldern            |
 
 ### Schema der Anbieter-Registry
 

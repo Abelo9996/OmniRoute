@@ -485,13 +485,13 @@ createResponsesApiTransformStream(): TransformStream
 
 | 文件                                | 用途                                  |
 | ----------------------------------- | ------------------------------------- |
-| `providerRegistry.ts`               | 基于 352 个提供者目录的聊天模型注册表 |
+| `providerRegistry.ts`               | 基于 372 个提供者目录的聊天模型注册表 |
 | `providerModels.ts`                 | 模型别名、格式映射                    |
-| `constants.ts`                      | 超时时间、限制、状态码                |
+| `constants.ts`                      | 超时、限制、状态码                    |
 | `defaultThinkingSignature.ts`       | 默认 Claude 思考签名                  |
 | `modelStrip.ts`（位于 services 中） | 按提供者移除字段                      |
 
-### 提供者注册表 Schema
+### 提供者注册表模式
 
 ```ts
 interface ProviderConfig {

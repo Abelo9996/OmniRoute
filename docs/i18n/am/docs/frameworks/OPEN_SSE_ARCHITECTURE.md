@@ -483,15 +483,15 @@ createResponsesApiTransformStream(): TransformStream
 
 `open-sse/config/` የውቅር ንብርብሩን ይይዛል፦
 
-| ፋይል                             | ዓላማ                                 |
-| ------------------------------- | ----------------------------------- |
-| `providerRegistry.ts`           | በ352-አቅራቢ ካታሎግ ላይ ያለ የውይይት-ሞዴል መዝገብ |
-| `providerModels.ts`             | የሞዴል ተለዋጭ ስሞች፣ የቅርጸት ማዛመድ           |
-| `constants.ts`                  | የጊዜ ገደቦች፣ ገደቦች፣ የሁኔታ ኮዶች            |
-| `defaultThinkingSignature.ts`   | ነባሪ የClaude ማሰብ ፊርማ                 |
-| `modelStrip.ts` (በservices ውስጥ) | ለእያንዳንዱ አቅራቢ የመስክ ማስወገድ             |
+| ፋይል                             | ዓላማ                              |
+| ------------------------------- | -------------------------------- |
+| `providerRegistry.ts`           | በ372-አቅራቢዎች ካታሎግ ላይ የቻት ሞዴል መዝገብ |
+| `providerModels.ts`             | የሞዴል ተለዋጭ ስሞች፣ የቅርጸት ማዛመድ        |
+| `constants.ts`                  | የጊዜ ማብቂያዎች፣ ገደቦች፣ የሁኔታ ኮዶች       |
+| `defaultThinkingSignature.ts`   | ነባሪ የClaude የአስተሳሰብ ፊርማ          |
+| `modelStrip.ts` (በservices ውስጥ) | በየአቅራቢው የመስክ ማስወገድ               |
 
-### የአቅራቢ መዝገብ መርሐግብር
+### የአቅራቢ መዝገብ ንድፍ
 
 ```ts
 interface ProviderConfig {

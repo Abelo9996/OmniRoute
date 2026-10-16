@@ -483,13 +483,13 @@ Pinangangasiwaan nito ang:
 
 Nasa `open-sse/config/` ang layer ng configuration:
 
-| File                          | Layunin                                            |
-| ----------------------------- | -------------------------------------------------- |
-| `providerRegistry.ts`         | Registry ng chat model sa katalogo ng 352 provider |
-| `providerModels.ts`           | Mga alias ng model, pagmamapa ng format            |
-| `constants.ts`                | Mga timeout, limitasyon, at status code            |
-| `defaultThinkingSignature.ts` | Default na signature ng pag-iisip ng Claude        |
-| `modelStrip.ts` (sa services) | Pag-aalis ng field para sa bawat provider          |
+| File                            | Layunin                                                    |
+| ------------------------------- | ---------------------------------------------------------- |
+| `providerRegistry.ts`           | Registry ng chat model para sa catalog na may 372 provider |
+| `providerModels.ts`             | Mga alias ng model, pagmamapa ng format                    |
+| `constants.ts`                  | Mga timeout, limit, at status code                         |
+| `defaultThinkingSignature.ts`   | Default na thinking signature ng Claude                    |
+| `modelStrip.ts` (nasa services) | Pag-aalis ng mga field ayon sa provider                    |
 
 ### Schema ng Provider Registry
 

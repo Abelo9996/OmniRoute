@@ -487,15 +487,15 @@ Ez a következőket kezeli:
 
 Az `open-sse/config/` tartalmazza a konfigurációs réteget:
 
-| Fájl                                     | Rendeltetés                                                         |
-| ---------------------------------------- | ------------------------------------------------------------------- |
-| `providerRegistry.ts`                    | Chatmodell-nyilvántartás a 352 szolgáltatót tartalmazó katalógushoz |
-| `providerModels.ts`                      | Modellaliasok, formátumleképezés                                    |
-| `constants.ts`                           | Időtúllépések, korlátok, állapotkódok                               |
-| `defaultThinkingSignature.ts`            | Alapértelmezett Claude-gondolkodási aláírás                         |
-| `modelStrip.ts` (a services könyvtárban) | Szolgáltatónkénti mezőeltávolítás                                   |
+| Fájl                                  | Rendeltetés                                                     |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `providerRegistry.ts`                 | Chatmodell-regiszter a 372 szolgáltatót tartalmazó katalógushoz |
+| `providerModels.ts`                   | Modellálnevek, formátumleképezés                                |
+| `constants.ts`                        | Időtúllépések, korlátok, állapotkódok                           |
+| `defaultThinkingSignature.ts`         | Alapértelmezett Claude-gondolkodási aláírás                     |
+| `modelStrip.ts` (a services mappában) | Szolgáltatónkénti mezőeltávolítás                               |
 
-### A szolgáltatói nyilvántartás sémája
+### A szolgáltatói regiszter sémája
 
 ```ts
 interface ProviderConfig {

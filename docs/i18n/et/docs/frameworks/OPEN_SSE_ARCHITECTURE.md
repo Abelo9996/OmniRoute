@@ -485,11 +485,11 @@ See käsitleb järgmist:
 
 | Fail                          | Otstarve                                                    |
 | ----------------------------- | ----------------------------------------------------------- |
-| `providerRegistry.ts`         | Vestlusmudelite register 352 teenusepakkuja kataloogi jaoks |
+| `providerRegistry.ts`         | Vestlusmudelite register 372 teenusepakkuja kataloogi jaoks |
 | `providerModels.ts`           | Mudelite aliased, vormingute vastendus                      |
 | `constants.ts`                | Ajalõpud, piirangud, olekukoodid                            |
 | `defaultThinkingSignature.ts` | Claude'i vaikimisi mõtlemissignatuur                        |
-| `modelStrip.ts` (teenustes)   | Väljade teenusepakkujapõhine eemaldamine                    |
+| `modelStrip.ts` (teenustes)   | Väljade eemaldamine teenusepakkujate kaupa                  |
 
 ### Teenusepakkuja registri skeem
 

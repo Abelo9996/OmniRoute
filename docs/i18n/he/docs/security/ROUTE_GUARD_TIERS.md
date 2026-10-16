@@ -14,117 +14,190 @@
 
 ### רמה 1 — LOCAL_ONLY
 
-**נאכף על ידי:** `isLocalOnlyPath(path)` ← בדיקת מארח לולאת-חזור (loopback host)
-**עקיפה:** אין כברירת מחדל. חריגה צרה עבור נתיבים ב-`LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES` כאשר הבקשה נושאת מפתח API חוקי עם היקף `manage` (ראה [חריגת היקף ניהול](#manage-scope-carve-out)).
+**נאכף על ידי:** `isLocalOnlyPath(path)` ← בדיקת מארח loopback  
+**עקיפה:** אין כברירת מחדל. חריג מצומצם עבור נתיבים המופיעים ב-`LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`, כאשר הבקשה כוללת מפתח API תקף עם ההרשאה `manage` (ראו [חריג להרשאת manage](#manage-scope-carve-out)).
 
-נתיבים אלו מפעילים תהליכי צאצא או מבצעים קוד זמן ריצה. חשיפתם לתעבורה שאינה לולאת-חזור תאפשר לתוקף שהשיג JWT חוקי (לדוגמה, דרך מנהרת Cloudflared/Ngrok) להפעיל יצירת תהליכים — סוג CVE ידוע ([GHSA-fhh6-4qxv-rpqj](https://github.com/advisories/GHSA-fhh6-4qxv-rpqj)).
+נתיבים אלה יוצרים תהליכי־בת או מריצים קוד בזמן ריצה. חשיפתם לתעבורה שאינה מ-loopback תאפשר לתוקף שהשיג JWT תקף (לדוגמה, דרך מנהרת Cloudflared/Ngrok) להפעיל יצירת תהליכים — קטגוריה מוכרת של CVE ([GHSA-fhh6-4qxv-rpqj](https://github.com/advisories/GHSA-fhh6-4qxv-rpqj)).
 
-**מהו GHSA-fhh6-4qxv-rpqj (סוג ההתקפה):** שרת ניהול/סוכן חושף נקודת קצה שמפעילה תהליך משנה (`npm install`, `node`, דפדפן, פרוקסי, `git`, `tar`, …). אם נקודת קצה זו נגישה מחוץ למארח – מכיוון שהמפעיל שם את OmniRoute מאחורי מנהרת nginx/Cloudflare/Tailscale ו-JWT דלף, או שהאימות הוגדר באופן שגוי – התוקף הופך "קריאה ל-API" ל"הפעלת פקודה על המארח" (ביצוע קוד מרחוק). OmniRoute סוגר זאת על ידי אכיפת **בדיקת מארח לולאת-חזור ללא תנאי, לפני כל בדיקת אימות**, על כל נתיב המסוגל להפעיל תהליכים: אסימון שדלף דרך מנהרה עדיין לא יכול להגיע להפעלה.
+**מהו GHSA-fhh6-4qxv-rpqj (קטגוריית התקיפה):** שרת ניהול/סוכן חושף נקודת קצה שמפעילה תהליך משנה (`npm install`,‏ `node`, דפדפן, שרת proxy,‏ `git`,‏ `tar`, …). אם ניתן לגשת לנקודת קצה זו ממחשב חיצוני — משום שהמפעיל הציב את OmniRoute מאחורי מנהרת nginx/Cloudflare/Tailscale ו-JWT דלף, או שהאימות הוגדר באופן שגוי — התוקף הופך את האפשרות „לקרוא ל-API” לאפשרות „להריץ פקודה במארח” (הרצת קוד מרחוק). OmniRoute מונע זאת באמצעות אכיפה של **בדיקת מארח loopback ללא תנאי, לפני כל בדיקת אימות**, בכל נתיב שמסוגל ליצור תהליכים: אסימון שדלף דרך מנהרה עדיין אינו יכול להגיע לפעולת יצירת התהליך.
 
-**הסט המלא של LOCAL_ONLY.** המקור הסמכותי הוא `LOCAL_ONLY_API_PREFIXES` / `LOCAL_ONLY_API_PATTERNS` ב-`src/server/authz/routeGuard.ts`; הטבלה שלהלן משקפת את המצב הנוכחי. שער ה-`check-route-guard-membership` מונה כל `route.ts` תחת הקידומות המסוגלות להפעיל תהליכים ונכשל ב-CI אם אחד מהם אינו מסווג כ-local-only.
+**הקבוצה המלאה של LOCAL_ONLY.** המקור המוסמך הוא `LOCAL_ONLY_API_PREFIXES` / `LOCAL_ONLY_API_PATTERNS` בקובץ `src/server/authz/routeGuard.ts`; הטבלה שלהלן משקפת את המצב הנוכחי. שער `check-route-guard-membership` סורק כל `route.ts` תחת התחיליות המסוגלות ליצור תהליכים, ומכשיל את ה-CI אם אחד מהם אינו מסווג כמקומי בלבד.
 
-| קידומת / תבנית                                                                                           | מדוע זה מקומי בלבד                                                                                     |
-| :------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| קידומת / תבנית                                                                                           | מדוע היא מקומית בלבד                                                                                   |
+| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `/api/mcp/`                                                                                              | שרת MCP — מפעיל גשרי stdio + מטפלי SSE                                                                 |
-| `/api/cli-tools/runtime/`                                                                                | סביבת ריצה של כלי CLI — מבצע קוד פלאגין שרירותי                                                        |
-| `/api/cli-tools/{omp,letta,grok-build,forge,jcode,qwen}-settings`                                        | כותבי הגדרות לכל כלי שיכולים לגעת בקבצים בינאריים/תצורה של כלי על המארח                                |
-| `/api/cli-tools/{claude,cline,codewhale,codex,crush,deepseek-tui,droid,kilo,openclaw,pi,smelt}-settings` | אותה הפעלת `getCliRuntimeStatus()` כמו ששת האחים שלמעלה (GHSA-35fw-cv32-2373)                          |
-| `/api/cli-tools/{all-statuses,status,detect}`                                                            | בדיקות מלאי CLI — מפעיל `command -v` / `--version` לכל כלי (GHSA-35fw-cv32-2373)                       |
-| `/api/cli-tools/antigravity-mitm`                                                                        | בקרת פרוקסי MITM של Antigravity (מפעיל/מצביע פרוקסי מערכת)                                             |
-| `/api/modality-bridge/video/`                                                                            | בדיקת זמן ריצה קפדנית של גשר וידאו בלולאה מהימנה וגשר חילוץ פנימי                                      |
+| `/api/cli-tools/runtime/`                                                                                | סביבת הרצה לכלי CLI — מריצה קוד שרירותי של תוספים                                                      |
+| `/api/cli-tools/{omp,letta,grok-build,forge,jcode,qwen}-settings`                                        | כותבי הגדרות לכל כלי, שיכולים לשנות קבצים בינאריים/תצורה של הכלי במארח                                 |
+| `/api/cli-tools/{claude,cline,codewhale,codex,crush,deepseek-tui,droid,kilo,openclaw,pi,smelt}-settings` | אותה הפעלה של `getCliRuntimeStatus()` כמו ששת הנתיבים המקבילים לעיל (GHSA-35fw-cv32-2373)              |
+| `/api/cli-tools/{all-statuses,status,detect}`                                                            | בדיקות מלאי של כלי CLI — מפעילות `command -v` / `--version` לכל כלי (GHSA-35fw-cv32-2373)              |
+| `/api/cli-tools/antigravity-mitm`                                                                        | שליטה בשרת ה-proxy מסוג MITM של Antigravity (מפעילה/מגדירה את שרת ה-proxy של המערכת)                   |
+| `/api/modality-bridge/video/`                                                                            | בדיקת סביבת הריצה של Video Bridge בלולאת loopback מהימנה בלבד וגשר חילוץ פנימי                         |
 | `/api/services/`                                                                                         | שירותים מוטמעים (9Router / CLIProxy / Bifrost / Mux / Dario) — `npm install` + הפעלה                   |
-| `/dashboard/providers/services/`                                                                         | פרוקסי הפוך לממשקי משתמש של שירותים מוטמעים                                                            |
-| `/api/tunnels/cloudflared`                                                                               | מתקין/מפעיל את הקובץ הבינארי של cloudflared                                                            |
-| `/api/tunnels/tailscale/{install,enable,disable,login,start-daemon}`                                     | מתקין/שולט ב-tailscaled על המארח                                                                       |
-| `/api/copilot/`                                                                                          | מנהל התקן LLM לא מאומת — CLI-בלבד כברירת מחדל                                                          |
-| `/api/tools/agent-bridge/`                                                                               | AgentBridge — מפעיל שרת MITM + עריכות DNS                                                              |
-| `/api/tools/traffic-inspector/`                                                                          | בודק תעבורה (Traffic Inspector) — מאזין http-proxy + פרוקסי מערכת                                      |
-| `/api/settings/mitm`                                                                                     | מאפשר יירוט MITM (מצב פרוקסי ברמת המערכת)                                                              |
-| `/api/issue-agent/`                                                                                      | סוכן בעיות — מפעיל כלים מקומיים מול המאגר                                                              |
-| `/api/plugins/`, `/api/plugins`                                                                          | פלאגינים — טוען/מבצע באמצעות `worker_threads` + `child_process`                                        |
-| `/api/middleware/`                                                                                       | תווכה של משתמש — טוען/מבצע קוד מפעיל בתוך התהליך                                                       |
+| `/dashboard/providers/services/`                                                                         | שרת proxy הפוך לממשקי המשתמש של השירותים המוטמעים                                                      |
+| `/api/tunnels/cloudflared`                                                                               | מתקין/מפעיל את הקובץ הבינארי cloudflared                                                               |
+| `/api/tunnels/tailscale/{install,enable,disable,login,start-daemon}`                                     | מתקין/שולט ב-tailscaled במארח                                                                          |
+| `/api/copilot/`                                                                                          | מנהל התקן LLM ללא אימות — כברירת מחדל, CLI בלבד                                                        |
+| `/api/tools/agent-bridge/`                                                                               | AgentBridge — מפעיל שרת MITM + מבצע שינויי DNS                                                         |
+| `/api/tools/traffic-inspector/`                                                                          | Traffic Inspector — מאזין http-proxy + שרת proxy של המערכת                                             |
+| `/api/settings/mitm`                                                                                     | מפעיל יירוט MITM (מצב שרת proxy ברמת המערכת)                                                           |
+| `/api/issue-agent/`                                                                                      | סוכן טיפול בבעיות — מפעיל כלים מקומיים כנגד המאגר                                                      |
+| `/api/plugins/`, `/api/plugins`                                                                          | תוספים — נטענים/מורצים באמצעות `worker_threads` + `child_process`                                      |
+| `/api/middleware/`                                                                                       | תווכה של המשתמש — טוענת/מריצה קוד מפעיל בתוך התהליך                                                    |
 | `/api/system/version`                                                                                    | עדכון אוטומטי (POST בלבד; GET/HEAD/OPTIONS פטורים) — מפעיל `git checkout` + `npm install`              |
 | `/api/db-backups/exportAll`                                                                              | מפעיל `tar` עבור ארכיון הייצוא                                                                         |
-| `/api/local/`                                                                                            | מפעילים מקומיים בלחיצה אחת (Redis כיום) — מפעיל podman/docker                                          |
-| `/api/headroom/start`, `/api/headroom/stop`                                                              | מחזור חיים של פרוקסי Headroom — מפעיל CLI של פייתון / מאותת PID                                        |
-| `/api/jobs`, `/api/jobs/`                                                                                | בקרת מריץ משימות — מבצע עבודה מתוזמנת בצד המארח                                                        |
-| `/api/oauth/cursor/auto-import`                                                                          | `execFile("which", ["cursor"])` לפני ייבוא אישורים                                                     |
-| `/api/oauth/kiro/auto-import`                                                                            | קורא קבצי אישורים של Kiro CLI מהמארח                                                                   |
+| `/api/local/`                                                                                            | מפעילים מקומיים בלחיצה אחת (כיום Redis) — מפעילים podman/docker                                        |
+| `/api/headroom/start`, `/api/headroom/stop`                                                              | מחזור החיים של שרת ה-proxy של Headroom — מפעיל CLI של python / שולח אותות ל-PID                        |
+| `/api/jobs`, `/api/jobs/`                                                                                | שליטה במריץ המשימות — מבצעת עבודה מתוזמנת בצד המארח                                                    |
+| `/api/oauth/cursor/auto-import`                                                                          | `execFile("which", ["cursor"])` לפני ייבוא פרטי ההזדהות                                                |
+| `/api/oauth/kiro/auto-import`                                                                            | קורא קובצי פרטי הזדהות של Kiro CLI מהמארח                                                              |
 | `/api/skills/collect/`                                                                                   | איסוף מיומנויות — מזהה/מתקין כלים מקומיים                                                              |
-| `/api/skills/install`, `/api/skills/executions`                                                          | רישום + ביצוע מטפל מיומנויות — מגיע להפעלת קונטיינר הסנדבוקס (GHSA-jx89)                               |
-| `/api/discovery/`                                                                                        | בדיקות גילוי רשת/ספק מקומיות                                                                           |
-| `/api/vnc-session` (`VNC_ROUTE_PREFIX`)                                                                  | מפעיל דפדפן עם ממשק משתמש (headful) + סשן VNC לכניסות אינטראקטיביות                                    |
-| `/api/acp/agents`                                                                                        | ACP — מגלה ומפעיל קבצים בינאריים של סוכני CLI מקומיים                                                  |
-| `/api/resilience/connections`                                                                            | JSON עמידות לכל חשבון (cooldown, breaker, lockout). קוד ה-HTML של לוח המחוונים אינו מוגבל למקומי בלבד. |
-| `/api/providers/cursor/agent-availability`                                                               | בדיקת דחיפה להתקנה בלוח המחוונים — מפעילה את `cursor-agent status --format json`                       |
-| `/api/providers/{id}/login` (regex)                                                                      | מפעיל Playwright Chromium עם ממשק משתמש (headful) לכניסה באמצעות עוגיות אינטרנט                        |
-| `/api/providers/volcengine-plan/connect` (regex)                                                         | זרימה ידנית עם ממשק משתמש (headful) + כניסה אוטומטית מבוססת סשן בטלפון/SMS (מפעילה את Playwright)      |
-| `/api/providers/{id}/refresh-cursor` (regex)                                                             | חידוש סשן Cursor ידני — דוחף את `cursor-agent`                                                         |
-| `/api/providers/{id}/chatgpt-web-codex-doctor` (regex)                                                   | מאבחן את התקנת Codex CLI המקומית (מפעיל את הקובץ הבינארי)                                              |
+| `/api/skills/install`, `/api/skills/executions`                                                          | רישום + הפעלה של מטפל מיומנויות — מאפשר להגיע ליצירת קונטיינר ארגז החול (GHSA-jx89)                    |
+| `/api/discovery/`                                                                                        | בדיקות גילוי של הרשת המקומית/ספקים                                                                     |
+| `/api/vnc-session` (`VNC_ROUTE_PREFIX`)                                                                  | יוצר דפדפן עם ממשק גרפי + הפעלת VNC לצורך התחברויות אינטראקטיביות                                      |
+| `/api/acp/agents`                                                                                        | ACP — מגלה ומפעיל קובצי הרצה מקומיים של סוכני CLI                                                      |
+| `/api/resilience/connections`                                                                            | JSON של עמידות לפי חשבון (תקופת צינון, מפסק, נעילה). ה-HTML של לוח הבקרה אינו מוגבל לגישה מקומית בלבד. |
+| `/api/providers/cursor/agent-availability`                                                               | בדיקת לוח בקרה להצעת התקנה — מפעילה `cursor-agent status --format json`                                |
+| `/api/providers/{id}/login` (regex)                                                                      | מפעיל Chromium של Playwright עם ממשק גרפי לצורך התחברות באמצעות קובצי Cookie מהאינטרנט                 |
+| `/api/providers/volcengine-plan/connect` (regex)                                                         | תהליך ידני עם ממשק גרפי + התחברות אוטומטית באמצעות טלפון/SMS המבוססת על הפעלה (מפעיל את Playwright)    |
+| `/api/providers/{id}/refresh-cursor` (regex)                                                             | חידוש ידני של הפעלת Cursor — מדרבן את `cursor-agent`                                                   |
+| `/api/providers/{id}/chatgpt-web-codex-doctor` (regex)                                                   | מאבחן את ההתקנה המקומית של Codex CLI (מפעיל את קובץ ההרצה)                                             |
 
 **תגובה במקרה של הפרה:** `403 LOCAL_ONLY`
 
-#### חריגה בהיקף ניהול
+#### חריג לתחום הניהול
 
-תת-קבוצה של נתיבי LOCAL_ONLY עשויה להיות נגישה גם מחוץ ל-loopback אם ורק אם הבקשה נושאת `Authorization: Bearer <api-key>` שהמטא-דאטה שלה כולל את היקף ה-`manage` (או `admin`). החריגה מוגבלת במפורש לכל נתיב באמצעות `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`, כך שהברירת מחדל לכל נתיב LOCAL_ONLY חדש נשארת strict-loopback. בקשות לא מאומתות ובקשות עם מפתחות שאינם `manage` עדיין נדחות עם `403 LOCAL_ONLY`.
+ניתן לגשת לקבוצת משנה של נתיבי LOCAL_ONLY גם מכתובות שאינן loopback אם ורק אם
+הבקשה כוללת `Authorization: Bearer <api-key>` שהמטא-נתונים שלו
+כוללים את התחום `manage` (או `admin`). החריג מוגבל
+במפורש לכל נתיב באמצעות `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`, כך שברירת
+המחדל עבור כל נתיב LOCAL_ONLY חדש נותרת loopback בלבד. בקשות ללא אימות
+ובקשות עם מפתחות שאינם בעלי הרשאת ניהול עדיין נדחות עם
+`403 LOCAL_ONLY`.
 
-כיום, הקידומת היחידה שניתן לעקוף היא `/api/mcp/`. `/api/cli-tools/runtime/` ו-`/api/services/` נכללים במכוון מכיוון שהם יכולים להפעיל תהליכי משנה שרירותיים (`npm install`, `node`), וזו בדיוק קטגוריית ה-CVE ששכבת ה-LOCAL_ONLY קיימת כדי למנוע.
+נכון להיום, הקידומת היחידה שמאפשרת עקיפה היא `/api/mcp/`. הנתיבים `/api/cli-tools/runtime/`
+ו-`/api/services/` אינם נכללים בכוונה, משום שהם יכולים ליצור
+תהליכי משנה שרירותיים (`npm install`, `node`), שזו בדיוק מחלקת ה-CVE
+ששכבת LOCAL_ONLY נועדה למנוע.
 
-**#7895 — היקף צר של `mcp:connect`:** החריגה של `/api/mcp/` מקבלת גם מפתח Bearer שמחזיק בהיקף הצר `mcp:connect` (`src/shared/constants/managementScopes.ts::MCP_CONNECT_SCOPE`), הנבדק באמצעות `hasMcpConnectOrManageScope()` ב-`src/server/authz/policies/management.ts`. זה מוגבל ל-`/api/mcp/` בלבד — `mcp:connect` אינו מעניק דבר באף נתיב ניהול אחר (כולל כל קידומת עקיפה אחרת של LOCAL_ONLY, אם אי פעם תתווסף כזו), והוא נכלל במכוון מ-`MANAGEMENT_API_KEY_SCOPES`. מפתח שמחזיק ב-`manage`/`admin` עדיין עובר את החריגה בדיוק כמו קודם; `mcp:connect` הוא חלופה עם הרשאות נמוכות יותר עבור קוראים מרוחקים של MCP בלבד שאינם זקוקים לגישת ניהול רחבה.
+**#7895 — התחום המצומצם `mcp:connect`:** החריג עבור `/api/mcp/` מקבל גם
+מפתח Bearer שמכיל את התחום המצומצם `mcp:connect`
+(`src/shared/constants/managementScopes.ts::MCP_CONNECT_SCOPE`), שנבדק באמצעות
+`hasMcpConnectOrManageScope()` ב-`src/server/authz/policies/management.ts`.
+תחום זה מוגבל ל-`/api/mcp/` בלבד — `mcp:connect` אינו מעניק דבר באף נתיב
+ניהול אחר (כולל כל קידומת עקיפה אחרת של LOCAL_ONLY, אם תתווסף אי פעם), והוא
+אינו נכלל בכוונה ב-`MANAGEMENT_API_KEY_SCOPES`. מפתח שמכיל `manage`/`admin`
+עדיין עובר את החריג בדיוק כמו קודם; `mcp:connect` הוא חלופה בעלת הרשאות
+נמוכות יותר עבור לקוחות מרוחקים המשתמשים ב-MCP בלבד ושאינם אמורים להזדקק לגישת ניהול רחבה.
 
-| Request                                             | Path                       | Result           |
-| --------------------------------------------------- | -------------------------- | ---------------- |
-| Non-loopback, no Bearer                             | `/api/mcp/*`               | 403 LOCAL_ONLY   |
-| Non-loopback, Bearer with `manage` scope            | `/api/mcp/*`               | אפשר             |
-| Non-loopback, Bearer with `mcp:connect` scope       | `/api/mcp/*`               | אפשר             |
-| Non-loopback, Bearer without `manage`/`mcp:connect` | `/api/mcp/*`               | 403 LOCAL_ONLY   |
-| Non-loopback, Bearer with `mcp:connect` scope       | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY   |
-| Non-loopback, Bearer with `manage` scope            | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY   |
-| Loopback, any/no Bearer                             | any LOCAL_ONLY             | אפשר (השער עובר) |
+| בקשה                                           | נתיב                       | תוצאה            |
+| ---------------------------------------------- | -------------------------- | ---------------- |
+| לא-loopback, ללא Bearer                        | `/api/mcp/*`               | 403 LOCAL_ONLY   |
+| לא-loopback, Bearer עם התחום `manage`          | `/api/mcp/*`               | מותר             |
+| לא-loopback, Bearer עם התחום `mcp:connect`     | `/api/mcp/*`               | מותר             |
+| לא-loopback, Bearer ללא `manage`/`mcp:connect` | `/api/mcp/*`               | 403 LOCAL_ONLY   |
+| לא-loopback, Bearer עם התחום `mcp:connect`     | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY   |
+| לא-loopback, Bearer עם התחום `manage`          | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY   |
+| loopback, עם כל Bearer או בלעדיו               | כל נתיב LOCAL_ONLY         | מותר (השער מאשר) |
 
 #### הנחיות למפעיל וביקורת
 
-אם אתה מפעיל את OmniRoute מאחורי פרוקסי הפוך או מנהרה (nginx, Caddy, Cloudflare Tunnel, Tailscale, Ngrok), בדיקת ה-loopback עדיין מגנה על הנתיבים בעלי יכולת ההפעלה שהוזכרו לעיל — בקשה שכתובת הלקוח שלה אינה loopback נדחית עם `403 LOCAL_ONLY` **לפני הפעלת האימות**, כך ש-JWT שדלף לא יכול להגיע להפעלה. נותרו שתי אחריויות למפעיל:
+אם אתם מפעילים את OmniRoute מאחורי פרוקסי הפוך או מנהרה (nginx, Caddy, Cloudflare
+Tunnel, Tailscale, Ngrok), בדיקת ה-loopback עדיין מגינה על הנתיבים לעיל
+המסוגלים ליצור תהליכים — בקשה שכתובת הלקוח שלה אינה loopback נדחית עם
+`403 LOCAL_ONLY` **לפני שהאימות מופעל**, כך ש-JWT שדלף אינו יכול להגיע ליצירת תהליך. עדיין
+נותרות שתי אחריויות למפעיל:
 
-- **אל "תתקן" שגיאת 403 על ידי זיוף כתובת ה-IP של הלקוח כ-loopback.** הגדרת `X-Forwarded-For: 127.0.0.1`, או פרוקסי שמשכתב את כתובת המקור ל-loopback, פותחת מחדש בדיוק את סוג ה-RCE ששכבה זו סוגרת. חשוף את לוח המחוונים/API דרך הפרוקסי — לעולם לא את הנתיבים בעלי יכולת ההפעלה.
-- **שמור על עקיפת היקף הניהול מינימלית.** רק `/api/mcp/` ניתן לעקיפה, ורק עם מפתח API בהיקף `manage`. לא ניתן להוסיף את `SPAWN_CAPABLE_PREFIXES` לרשימת העקיפה — סכמת ה-zod דוחה אותם ו-`isLocalOnlyBypassableByManageScope` מונעת אותם בזמן ריצה (הגנה לעומק), וזה מה שלוח המחוונים מתכוון כשהוא אומר "לא ניתן לעקוף". נתיבים בעלי יכולת הפעלה עם מקטעים דינמיים ונתיבים סטטיים תחת `/api/providers/` (לדוגמה, `/login`, `/refresh-cursor`) מכוסים על ידי ה-`SPAWN_CAPABLE_PATTERNS` / `SPAWN_CAPABLE_PATTERN_ANCESTORS` המבוססים על ביטויים רגולריים ב-`src/shared/constants/spawnCapablePrefixes.ts`, ולא על ידי מערך ה-`SPAWN_CAPABLE_PREFIXES` השטוח — המערך השטוח יצטרך לכסות את כל קידומת `/api/providers/` כדי לתפוס אותם, מה שיגרום להרחבת יתר של עץ נתיבים שלוחות מחוונים מרוחקים משתמשים בהם באופן לגיטימי עבור CRUD של ספקים.
+- **אין "לתקן" שגיאת 403 באמצעות זיוף כתובת ה-IP של הלקוח ככתובת לולאה חוזרת.** הגדרת
+  `X-Forwarded-For: 127.0.0.1`, או שימוש בפרוקסי שכותב מחדש את כתובת המקור
+  ככתובת לולאה חוזרת, פותחים מחדש בדיוק את קטגוריית ה-RCE שרובד זה חוסם. חשפו את
+  לוח הבקרה/API דרך הפרוקסי — ולעולם לא את הנתיבים שמסוגלים להפעיל תהליכים.
+- **שמרו על מעקף היקף הניהול מזערי.** ניתן לעקוף רק את `/api/mcp/`, ורק
+  באמצעות מפתח API בהיקף `manage`. לעולם לא ניתן להוסיף את `SPAWN_CAPABLE_PREFIXES`
+  לרשימת המעקף — סכמת zod דוחה אותם ו-
+  `isLocalOnlyBypassableByManageScope` מונעת אותם בזמן ריצה (הגנה לעומק),
+  וזו משמעות הכיתוב "לא ניתן להפוך לניתן לעקיפה" בלוח הבקרה. אותה
+  רשימת חסימה כוללת גם כמה נתיבי LOCAL_ONLY שאינם מפעילים תהליכים, אך גם הם לעולם
+  אינם אמורים להיות נגישים מרחוק — `/api/oauth/kiro/auto-import` (קורא קובצי
+  אישורים מקומיים של Kiro מהמארח), `/api/discovery/` ו-`/api/issue-agent/`. טוען
+  תמונת המצב בזמן ריצה גם מסיר רשומות כאלה משורת הגדרות שמורה, וייבוא ה-JSON
+  הישן (`/api/settings/import-json`) לעולם אינו כותב את מפתחות המעקף.
+  כל רשומה ב-`LOCAL_ONLY_API_PREFIXES` חייבת להיכלל ברשימת החסימה או
+  לעבור בדיקה כמתאימה למעקף (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`). נתיבים
+  בעלי מקטעים דינמיים ונתיבים סטטיים שמסוגלים להפעיל תהליכים תחת `/api/providers/` (למשל `/login`,
+  `/refresh-cursor`) מכוסים בידי המנגנון המשלים מבוסס הביטויים הרגולריים
+  `SPAWN_CAPABLE_PATTERNS` / `SPAWN_CAPABLE_PATTERN_ANCESTORS` שב-
+  `src/shared/constants/spawnCapablePrefixes.ts`, ולא בידי המערך השטוח
+  `SPAWN_CAPABLE_PREFIXES` — כדי ללכוד אותם, המערך השטוח היה צריך לכסות את
+  כל הקידומת `/api/providers/`, דבר שהיה מרחיב יתר על המידה עץ נתיבים
+  שלוחות בקרה מרוחקים משתמשים בו באופן לגיטימי לפעולות CRUD על ספקים.
 
-  טוען תמונת המצב בזמן ריצה מסיר רשומות כאלה גם משורת הגדרות שמורה, וייבוא ה-JSON הישן (`/api/settings/import-json`) לעולם אינו כותב את מפתחות העקיפה. כל רשומה ב-`LOCAL_ONLY_API_PREFIXES` חייבת להופיע ברשימת החסימה או להיבדק ולהיות מאושרת לעקיפה. (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`)
+**ביקורת גישה** — כדי לוודא ששום גורם מחוץ למארח אינו מגיע לנתיבים האלה:
 
-**ביקורת גישה** — כדי לוודא ששום דבר מחוץ למארח אינו מגיע לנתיבים אלה:
+- פתחו את **מלאי ההרשאות** ב-`/dashboard/settings/security`: הוא מציג את
+  רשימת הקידומות החיה של LOCAL_ONLY, אילו קידומות ניתנות לעקיפה ואת קבוצת
+  הנתיבים שמסוגלים להפעיל תהליכים ושנקבעת בזמן הידור ("לא ניתן להפוך לניתנים לעקיפה").
+- חפשו ביומני הפרוקסי ההפוך / הגישה שלכם את הקידומות שלעיל בצירוף כתובת לקוח
+  שאינה כתובת לולאה חוזרת. כל פגיעה כזו שהחזירה `200` במקום
+  `403 LOCAL_ONLY` פירושה שהפרוקסי מסתיר את כתובת ה-IP האמיתית של הלקוח — תקנו את הפרוקסי.
+- רשומת `403 LOCAL_ONLY` ביומני OmniRoute עבור אחד מהנתיבים האלה מעידה שההגנה
+  פועלת כמתוכנן, ולא על שגיאה שיש להסתיר.
 
-- פתח את **מלאי ההרשאות** ב-`/dashboard/settings/security`: הוא מציג את רשימת הקידומות LOCAL_ONLY החיות, אילו קידומות ניתנות לעקיפה, ואת קבוצת ה-spawn-capable ("לא ניתן לעקיפה") בזמן קומפילציה.
-- חפש ביומני ה-reverse-proxy / גישה שלך את הקידומות הנ"ל בשילוב עם כתובת לקוח שאינה loopback. כל התאמה כזו שהחזירה `200` במקום `403 LOCAL_ONLY` פירושה שהפרוקסי מסווה את כתובת ה-IP האמיתית של הלקוח – תקן את הפרוקסי.
-- קבלת `403 LOCAL_ONLY` ביומני OmniRoute עבור אחד מהנתיבים הללו מעידה שההגנה פועלת כמתוכנן, ואינה שגיאה שיש לדכא.
+### רובד 2 — ALWAYS_PROTECTED
 
-### שכבה 2 — ALWAYS_PROTECTED
+**נאכף על ידי:** `isAlwaysProtectedPath(path)` ← דילוג על מעקף `requireLogin=false`
+**מעקף:** אין כאשר `requireLogin=false`; נדרש תמיד JWT
 
-**נאכף על ידי:** `isAlwaysProtectedPath(path)` ← עוקף את `requireLogin=false`
-**עקיפה:** אין כאשר `requireLogin=false`; JWT נדרש תמיד
+נתיבים אלה מבצעים פעולות הרסניות או בלתי הפיכות. התרתם בהתקנה "ללא סיסמה"
+תאפשר לכל אדם באותה רשת LAN למחוק את מסד הנתונים או לעצור את תהליך
+השרת.
 
-נתיבים אלו הרסניים או בלתי הפיכים. אפשרות גישה אליהם בהתקנה ללא סיסמה תאפשר לכל אחד באותה רשת מקומית (LAN) למחוק את מסד הנתונים או להרוג את תהליך השרת.
+| נתיב                                      | סיבה                                            |
+| ----------------------------------------- | ----------------------------------------------- |
+| `/api/shutdown`                           | מסיים את תהליך השרת                             |
+| `/api/settings/database`                  | ייצוא, ייבוא ומחיקה של מסד הנתונים              |
+| `/api/db-backups`                         | גישה לארכיון גיבוי מלא של מסד הנתונים           |
+| `/api/settings/export-json`               | מייצא את אובייקט ההגדרות המלא (כולל סודות)      |
+| `/api/settings/import-json`               | מחליף את אובייקט ההגדרות המלא                   |
+| `/api/providers/health-autopilot/actions` | מבצע פעולות תיקון אוטומטיות                     |
+| `/api/settings/obsidian`                  | מנפיק פרטי WebDAV לשימוש חוזר עבור כל שורש כספת |
 
-| נתיב                                      | סיבה                                             |
-| :---------------------------------------- | :----------------------------------------------- |
-| `/api/shutdown`                           | מסיים את תהליך השרת                              |
-| `/api/settings/database`                  | ייצוא, ייבוא ומחיקת מסד נתונים                   |
-| `/api/db-backups`                         | גישה לארכיון גיבוי מלא של מסד הנתונים            |
-| `/api/settings/export-json`               | מייצא את כל בלוק ההגדרות (כולל סודות)            |
-| `/api/settings/import-json`               | מחליף את כל בלוק ההגדרות                         |
-| `/api/providers/health-autopilot/actions` | מבצע פעולות תיקון אוטומטיות                      |
-| `/api/settings/obsidian`                  | יוצר אישורי WebDAV לשימוש חוזר עבור כל שורש כספת |
+**תגובה במקרה של הפרה:** `401 Authentication required`
 
-**תגובה על הפרה:** `401 Authentication required`
+`/api/settings/obsidian` מכסה את נתיב הבן `/webdav` שלו: בקשת `POST` מפנה את שירות הקבצים של WebDAV —
+שמוגש בידי שכבת Node המותאמת אישית לפני Next.js, מחוץ לצינור עיבוד זה — לשורש שנבחר בידי הקורא
+ומחזירה פרטי Basic שהונפקו זה עתה, `DELETE` מחליפה אותם, ובקשת ה-`POST` לנתיב האב שומרת
+את אסימון ה-REST API של Obsidian. התיקון של GHSA-62vw הסתיר רק את חשיפת הסיסמה באמצעות `GET`;
+ההנפקה עדיין הייתה ברובד הפתוח במקרה כשל (GHSA-7pq4-8pvv-rx7r). בנוסף,
+`enableObsidianVaultSync()` מסרבת לכספת שהיא ספריית הנתונים, נמצאת בתוכה או מכילה אותה.
 
-`/api/settings/obsidian` מכסה את נתיב הצאצא שלו `/webdav`: `POST` מפנה את שירות קבצי ה-WebDAV – המוגש על ידי שכבת ה-Node המותאמת אישית לפני Next.js, מחוץ לצינור עיבוד זה – לשורש שנבחר על ידי הקורא ומחזיר אישורי Basic חדשים שנוצרו, `DELETE` מסובב אותם, וה-`POST` ההורה שומר את אסימון ה-Obsidian REST API. GHSA-62vw רק מיסך את חשיפת הסיסמה ב-`GET`; ההנפקה עדיין הייתה בשכבת ה-fail-open (GHSA-7pq4-8pvv-rx7r). `enableObsidianVaultSync()` בנוסף מסרב לכספת שהיא, נמצאת בתוך, או מכילה את ספריית הנתונים.
+#### ייצוא פרטי גישה מיועד למפעילים בלבד
 
-### אתחול התקנה חדשה הוא loopback-only — על ידי עמית אמיתי, לא `Host`
+הרובד שלעיל קובע רק אם נדרש אישור _כלשהו_. הנתיבים שמורידים
+פרטי גישה שמורים מוסיפים בדיקה שנייה במטפל: `GET /api/settings/export-json` (חיבורי
+ספקים מפוענחים ומפתחות API גולמיים), `GET /api/db-backups/export` (קובץ SQLite) ו-
+`GET /api/db-backups/exportAll` (הארכיון המלא) קוראים ל-`requireOperatorCredential()`
+(`src/lib/api/operatorCredential.ts`). היא מקבלת הפעלת לוח בקרה, את נושא ה-CLI המקומי או
+מופע שהכניסה בו מושבתת, ומחזירה `403` למפתחות API מכל היקף שהוא (כולל `manage`
+ו-`admin`) ולאסימוני גישה מסוג `oma_`. הנפקת אסימוני סנכרון (`POST /api/sync/tokens`) משתמשת
+באותו מסייע, וכן באסימון השירות הפנימי המהימן דרך לולאה חוזרת.
 
-ללא סיסמת ניהול מוגדרת (וללא `INITIAL_PASSWORD`), `isAuthRequired()` ב-`src/shared/utils/apiAuth.ts` משאיר את האתחול האנונימי פתוח **רק עבור עמיתי loopback**. Loopback נקבע מאותות העמיתים המהימנים, לפי הסדר: עמית ה-TCP האמיתי עם חותמת אסימון (`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, מה שהמדיניות רואה), פסיקת `AUTHZ_HEADER_PEER_LOCALITY` של ה-pipeline עצמו (מה שמטפלי הנתיבים רואים, מהימן רק כאשר `OMNIROUTE_PEER_STAMP_TOKEN` מוגדר), או עמית socket אמיתי עבור קוראים ישירים. `Host` / `nextUrl.hostname` לעולם אינם נבדקים, וכתיבת הסיסמה הראשונה (`POST /api/settings/require-login`) כפופה לאותה מגבלה במקום להיות פתוחה לכל עמית רשת (GHSA-7pq4-8pvv-rx7r). `managementPolicy` מעביר את פסיקת `peerContext` שלו במפורש, כך שכותרות הבקשה המקורית (לפני הסרה) לעולם אינן קובעות זאת.
+### אתחול של התקנה חדשה מוגבל ללולאה חוזרת — לפי העמית האמיתי, לא לפי `Host`
 
-### שכבה 3 — MANAGEMENT (ברירת מחדל)
+כאשר לא מוגדרת סיסמת ניהול (וגם אין `INITIAL_PASSWORD`), הפונקציה `isAuthRequired()` שב-
+`src/shared/utils/apiAuth.ts` משאירה את האתחול האנונימי פתוח **לעמיתי לולאה חוזרת בלבד**.
+לולאה חוזרת נקבעת לפי אותות העמית המהימנים, בסדר הבא: עמית ה-TCP האמיתי שסומן באסימון
+(`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, זה שהמדיניות רואה), פסק הדין של הצינור עצמו לגבי
+`AUTHZ_HEADER_PEER_LOCALITY` (זה שמטפלי הנתיבים רואים, ומהימן רק כל עוד
+`OMNIROUTE_PEER_STAMP_TOKEN` מוגדר), או עמית socket אמיתי עבור קוראים ישירים. לעולם אין
+התייחסות ל-`Host` / `nextUrl.hostname`, וכתיבת הסיסמה הראשונה
+(`POST /api/settings/require-login`) כפופה לאותה מגבלה במקום להיות פתוחה לכל
+עמית ברשת (GHSA-7pq4-8pvv-rx7r). `managementPolicy` מעבירה מטה במפורש את פסק הדין
+`peerContext` שלה, כך שכותרות הבקשה המקורית (לפני ההסרה) לעולם אינן קובעות אותו.
 
-כל נתיבי הניהול האחרים. אימות נדרש אלא אם `requireLogin=false` מוגדר. אסימוני CLI יכולים לאמת נתיבים אלו (loopback + HMAC תקף).
+### רובד 3 — MANAGEMENT (ברירת מחדל)
+
+כל שאר נתיבי הניהול. נדרש אימות, אלא אם מוגדר `requireLogin=false`.
+אסימוני CLI יכולים לבצע אימות מול נתיבים אלה (loopback + ‏HMAC תקף).
 
 ## סדר ההערכה
 

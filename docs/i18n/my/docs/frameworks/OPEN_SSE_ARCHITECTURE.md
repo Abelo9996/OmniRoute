@@ -481,17 +481,17 @@ createResponsesApiTransformStream(): TransformStream
 
 ## ဖွဲ့စည်းသတ်မှတ်မှု
 
-`open-sse/config/` တွင် ဖွဲ့စည်းသတ်မှတ်မှု layer ကို ထည့်သွင်းထားသည်-
+`open-sse/config/` တွင် ဖွဲ့စည်းသတ်မှတ်မှုအလွှာ ပါရှိသည်-
 
-| File                                 | ရည်ရွယ်ချက်                                            |
-| ------------------------------------ | ------------------------------------------------------ |
-| `providerRegistry.ts`                | Provider 352 ခုပါ catalog အပေါ်ရှိ chat-model registry |
-| `providerModels.ts`                  | Model alias များ၊ ဖော်မတ် mapping                      |
-| `constants.ts`                       | Timeout များ၊ ကန့်သတ်ချက်များ၊ status code များ        |
-| `defaultThinkingSignature.ts`        | မူလသတ်မှတ်ထားသော Claude thinking signature             |
-| `modelStrip.ts` (service များထဲတွင်) | Provider အလိုက် field များကို ဖယ်ရှားခြင်း             |
+| ဖိုင်                                 | ရည်ရွယ်ချက်                                                            |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| `providerRegistry.ts`                 | ဝန်ဆောင်မှုပေးသူ 372 ခုပါ ကတ်တလောက်ပေါ်ရှိ Chat မော်ဒယ် မှတ်ပုံတင်စနစ် |
+| `providerModels.ts`                   | မော်ဒယ် အမည်ပွားများ၊ ဖော်မတ် မက်ပ်ပြုလုပ်ခြင်း                        |
+| `constants.ts`                        | အချိန်ကုန်ဆုံးမှုများ၊ ကန့်သတ်ချက်များ၊ အခြေအနေကုဒ်များ                |
+| `defaultThinkingSignature.ts`         | မူလသတ်မှတ်ထားသော Claude စဉ်းစားမှု လက်မှတ်                             |
+| `modelStrip.ts` (ဝန်ဆောင်မှုများတွင်) | ဝန်ဆောင်မှုပေးသူတစ်ခုချင်းအလိုက် ဖီးလ်များကို ဖယ်ရှားခြင်း             |
 
-### Provider Registry Schema
+### ဝန်ဆောင်မှုပေးသူ မှတ်ပုံတင်စနစ် Schema
 
 ```ts
 interface ProviderConfig {
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Module load ပြုလုပ်ချိန်တွင် Zod validation က provider config အားလုံး မှန်ကန်ကြောင်း သေချာစေသည်။
+မော်ဂျူး တင်ချိန်တွင် Zod ဖြင့် စစ်ဆေးအတည်ပြုခြင်းသည် ဝန်ဆောင်မှုပေးသူ ဖွဲ့စည်းသတ်မှတ်ချက်အားလုံး မှန်ကန်ကြောင်း သေချာစေသည်။
 
 ---
 

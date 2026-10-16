@@ -485,11 +485,11 @@ Deze verwerkt:
 
 | Bestand                       | Doel                                                          |
 | ----------------------------- | ------------------------------------------------------------- |
-| `providerRegistry.ts`         | Register voor chatmodellen uit de catalogus met 352 providers |
-| `providerModels.ts`           | Modelaliassen, indelingstoewijzing                            |
+| `providerRegistry.ts`         | Register van chatmodellen voor de catalogus met 372 providers |
+| `providerModels.ts`           | Modelaliassen, formaattoewijzing                              |
 | `constants.ts`                | Time-outs, limieten, statuscodes                              |
 | `defaultThinkingSignature.ts` | Standaarddenksignatuur van Claude                             |
-| `modelStrip.ts` (in services) | Veldverwijdering per provider                                 |
+| `modelStrip.ts` (in services) | Verwijdering van velden per provider                          |
 
 ### Schema van het providerregister
 
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Zod-validatie tijdens het laden van de module waarborgt dat alle providerconfiguraties geldig zijn.
+Zod-validatie bij het laden van de module zorgt ervoor dat alle providerconfiguraties geldig zijn.
 
 ---
 

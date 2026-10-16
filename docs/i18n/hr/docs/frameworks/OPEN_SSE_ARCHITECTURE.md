@@ -483,13 +483,13 @@ Time se obrađuju:
 
 `open-sse/config/` sadrži konfiguracijski sloj:
 
-| Datoteka                      | Namjena                                                |
-| ----------------------------- | ------------------------------------------------------ |
-| `providerRegistry.ts`         | Registar modela za razgovor iz kataloga 352 pružatelja |
-| `providerModels.ts`           | Aliasi modela, mapiranje formata                       |
-| `constants.ts`                | Vremenska ograničenja, limiti, statusni kodovi         |
-| `defaultThinkingSignature.ts` | Zadani Claudeov potpis razmišljanja                    |
-| `modelStrip.ts` (u servisima) | Uklanjanje polja za pojedinog pružatelja               |
+| Datoteka                      | Namjena                                             |
+| ----------------------------- | --------------------------------------------------- |
+| `providerRegistry.ts`         | Registar chat-modela za katalog s 372 pružatelja    |
+| `providerModels.ts`           | Aliasi modela, mapiranje formata                    |
+| `constants.ts`                | Vremenska ograničenja, limiti, statusni kodovi      |
+| `defaultThinkingSignature.ts` | Zadani Claudeov potpis razmišljanja                 |
+| `modelStrip.ts` (u servisima) | Uklanjanje polja specifično za pojedinog pružatelja |
 
 ### Shema registra pružatelja
 

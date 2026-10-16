@@ -481,17 +481,17 @@ createResponsesApiTransformStream(): TransformStream
 
 ## ការកំណត់រចនាសម្ព័ន្ធ
 
-`open-sse/config/` ផ្ទុក layer សម្រាប់ការកំណត់រចនាសម្ព័ន្ធ៖
+`open-sse/config/` ផ្ទុកស្រទាប់កំណត់រចនាសម្ព័ន្ធ៖
 
-| ឯកសារ                            | គោលបំណង                                               |
-| -------------------------------- | ----------------------------------------------------- |
-| `providerRegistry.ts`            | បញ្ជីចុះឈ្មោះ chat-model លើកាតាឡុក provider ចំនួន 352 |
-| `providerModels.ts`              | ឈ្មោះក្លែងក្លាយរបស់ model និងការផ្គូផ្គងទម្រង់        |
-| `constants.ts`                   | ពេលផុតកំណត់ ដែនកំណត់ និង status code                  |
-| `defaultThinkingSignature.ts`    | thinking signature លំនាំដើមរបស់ Claude                |
-| `modelStrip.ts` (ក្នុង services) | ការដកវាលចេញតាម provider                               |
+| ឯកសារ                            | គោលបំណង                                           |
+| -------------------------------- | ------------------------------------------------- |
+| `providerRegistry.ts`            | បញ្ជីចុះឈ្មោះម៉ូដែលជជែកលើកាតាឡុកអ្នកផ្តល់សេវា 372 |
+| `providerModels.ts`              | ឈ្មោះក្លែងក្លាយរបស់ម៉ូដែល និងការផ្គូផ្គងទម្រង់    |
+| `constants.ts`                   | ពេលវេលាអស់កំណត់ ដែនកំណត់ និងកូដស្ថានភាព           |
+| `defaultThinkingSignature.ts`    | ហត្ថលេខាគិតលំនាំដើមរបស់ Claude                    |
+| `modelStrip.ts` (ក្នុង services) | ការដកវាលតាមអ្នកផ្តល់សេវានីមួយៗ                    |
 
-### Schema នៃបញ្ជីចុះឈ្មោះ Provider
+### គ្រោងការណ៍បញ្ជីចុះឈ្មោះអ្នកផ្តល់សេវា
 
 ```ts
 interface ProviderConfig {
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-ការផ្ទៀងផ្ទាត់ Zod នៅពេល module ត្រូវបាន load ធានាថា config ទាំងអស់របស់ provider មានសុពលភាព។
+ការផ្ទៀងផ្ទាត់ដោយ Zod នៅពេលផ្ទុកម៉ូឌុល ធានាថាការកំណត់រចនាសម្ព័ន្ធអ្នកផ្តល់សេវាទាំងអស់មានសុពលភាព។
 
 ---
 

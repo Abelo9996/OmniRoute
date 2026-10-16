@@ -434,7 +434,7 @@ Podijeljeno u fokusirane poddirektorije:
 
 ---
 
-## 4. `open-sse/` — Radni prostor mehanizma za streaming
+## 4. `open-sse/` — Radni prostor streaming mehanizma
 
 Zaseban npm radni prostor objavljen kao `@omniroute/open-sse`. Obuhvata obradu
 zahtjeva, izvršioce, prevodioce, servise, transformator i MCP server.
@@ -446,52 +446,52 @@ open-sse/
 ├── tsconfig.json
 ├── types.d.ts
 ├── config/                 Registri pružalaca, profili zaglavlja, identitet, …
-├── handlers/               Obrađivači zahtjeva (razgovor, ugrađivanja, zvuk, slika, …)
+├── handlers/               Rukovaoci zahtjevima (chat, ugrađivanja, zvuk, slika, …)
 ├── executors/              108 HTTP izvršilaca specifičnih za pružaoce
 ├── translator/             Konverzija formata (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
-├── transformer/            Transformator streama Responses API ↔ Chat Completions
+├── transformer/            Transformator toka Responses API ↔ Chat Completions
 ├── services/               Više od 80 servisnih modula (kombinacije, rezervne opcije, kvote, identitet, …)
-├── utils/                  Pomoćni alati za streaming, TLS klijent, AWS SigV4, proxy fetch, …
+├── utils/                  Pomagala za streaming, TLS klijent, AWS SigV4, proxy dohvaćanje, …
 └── mcp-server/             MCP server (3 transporta, 33 opsega, 110 alata)
 ```
 
 ### 4.1 `open-sse/handlers/`
 
-| Obrađivač               | Namjena                                                                                             |
-| ----------------------- | --------------------------------------------------------------------------------------------------- |
-| `chatCore.ts`           | Glavni tok razgovora (keširanje, ograničenje brzine, usmjeravanje kombinacija, pozivanje izvršioca) |
-| `responsesHandler.ts`   | Ulazna tačka za OpenAI Responses API                                                                |
-| `embeddings.ts`         | Ugrađivanja                                                                                         |
-| `imageGeneration.ts`    | Generisanje slika                                                                                   |
-| `audioSpeech.ts`        | Pretvaranje teksta u govor                                                                          |
-| `audioTranscription.ts` | Pretvaranje govora u tekst                                                                          |
-| `videoGeneration.ts`    | Generisanje videozapisa                                                                             |
-| `musicGeneration.ts`    | Generisanje muzike                                                                                  |
-| `rerank.ts`             | Ponovno rangiranje                                                                                  |
-| `moderations.ts`        | Moderiranje                                                                                         |
-| `search.ts`             | Pretraživanje weba                                                                                  |
-| `sseParser.ts`          | Parser SSE događaja                                                                                 |
-| `usageExtractor.ts`     | Izdvajanje broja tokena iz uzvodnih streamova                                                       |
-| `responseSanitizer.ts`  | Uklanjanje šuma specifičnog za pružaoce                                                             |
-| `responseTranslator.ts` | Poveznica između odgovora pružaoca i prevodilačkog sloja                                            |
+| Rukovalac               | Namjena                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| `chatCore.ts`           | Glavni chat proces (keš, ograničenje brzine, usmjeravanje kombinacija, prosljeđivanje izvršiocu) |
+| `responsesHandler.ts`   | Ulazna tačka za OpenAI Responses API                                                             |
+| `embeddings.ts`         | Ugrađivanja                                                                                      |
+| `imageGeneration.ts`    | Generisanje slika                                                                                |
+| `audioSpeech.ts`        | Pretvaranje teksta u govor                                                                       |
+| `audioTranscription.ts` | Pretvaranje govora u tekst                                                                       |
+| `videoGeneration.ts`    | Generisanje videozapisa                                                                          |
+| `musicGeneration.ts`    | Generisanje muzike                                                                               |
+| `rerank.ts`             | Ponovno rangiranje                                                                               |
+| `moderations.ts`        | Moderiranje                                                                                      |
+| `search.ts`             | Pretraživanje weba                                                                               |
+| `sseParser.ts`          | Parser SSE događaja                                                                              |
+| `usageExtractor.ts`     | Izdvajanje broja tokena iz uzvodnih tokova                                                       |
+| `responseSanitizer.ts`  | Uklanjanje šuma specifičnog za pružaoce                                                          |
+| `responseTranslator.ts` | Spojni sloj između odgovora pružaoca i prevodilačkog sloja                                       |
 
 ### 4.2 `open-sse/executors/`
 
-148 izvršilaca za pružaoce, od kojih svaki proširuje `BaseExecutor` (`base.ts`):
+148 izvršilaca pružalaca, od kojih svaki proširuje `BaseExecutor` (`base.ts`):
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
 `muse-spark-web`, `nlpcloud`, `opencode`, `perplexity-web`, `petals`,
 `pollinations`, `qoder`, `vertex`, `devin-desktop`, kao i `claudeIdentity.ts`
-(dijeljeni pomoćni alat za identitet) i `index.ts` (registar).
+(zajedničko pomagalo za identitet) i `index.ts` (registar).
 
 > Napomena: pružaoce koji ovdje nisu navedeni opslužuje `default.ts` pomoću generičkog
-> izvršioca kompatibilnog s OpenAI-jem. Potpuni katalog pružalaca (355 pružalaca) nalazi se u
+> izvršioca kompatibilnog s OpenAI-jem. Potpuni katalog pružalaca (372 pružaoca) nalazi se u
 > `src/shared/constants/providers.ts`.
 
 ### 4.3 `open-sse/translator/`
 
-Prevođenje prema modelu čvorišta i krakova (OpenAI je čvorište).
+Prevođenje po modelu centralnog čvorišta i krakova (OpenAI je čvorište).
 
 - **9 prevodilaca zahtjeva** (`translator/request/`):
   `antigravity-to-openai`, `claude-to-gemini`, `claude-to-openai`,
@@ -501,51 +501,51 @@ Prevođenje prema modelu čvorišta i krakova (OpenAI je čvorište).
   `claude-to-openai`, `cursor-to-openai`, `gemini-to-claude`, `gemini-to-openai`,
   `kiro-to-openai`, `openai-responses`, `openai-to-antigravity`,
   `openai-to-claude`.
-- **9 pomoćnih alata** (`translator/helpers/`):
+- **9 pomagala** (`translator/helpers/`):
   `claudeHelper`, `geminiHelper`, `geminiToolsSanitizer`, `maxTokensHelper`,
   `openaiHelper`, `responsesApiHelper`, `schemaCoercion`, `toolCallHelper`, kao i
-  testovi pomoćnih alata.
-- **Pomoćni alati za slike** (`translator/image/sizeMapper.ts`).
+  testovi pomagala.
+- **Pomagala za slike** (`translator/image/sizeMapper.ts`).
 - Na najvišem nivou: `bootstrap.ts`, `formats.ts`, `registry.ts`, `index.ts`.
 
 ### 4.4 `open-sse/transformer/`
 
-- `responsesTransformer.ts` — konverter Responses API ↔ Chat
-  Completions zasnovan na `TransformStream` (koristi ga sveobuhvatna ruta `responses/`).
+- `responsesTransformer.ts` — konverter Responses API ↔ Chat Completions zasnovan
+  na `TransformStream` (koristi ga ruta `responses/` koja obuhvata sve ostale slučajeve).
 
 ### 4.5 `open-sse/services/`
 
-Najvažnije stavke (potpuna lista u `open-sse/services/`):
+Najvažnije stavke (potpuna lista nalazi se u `open-sse/services/`):
 
-| Oblast                     | Datoteke                                                                                                                                                                                                                                                 |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Combo usmjeravanje         | `combo.ts` (19 strategija), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                    |
-| Auto Combo pogon           | `autoCombo/` — `engine.ts`, `scoring.ts`, `taskFitness.ts`, `virtualFactory.ts`, `modePacks.ts`, `autoPrefix.ts`, `persistence.ts`, `providerDiversity.ts`, `providerRegistryAccessor.ts`, `routerStrategy.ts`, `selfHealing.ts`, `index.ts`             |
-| Otpornost                  | `accountFallback.ts` (period mirovanja + blokada), `errorClassifier.ts`, `requestRejectedStreak.ts`, `emergencyFallback.ts`, `rateLimitManager.ts`, `rateLimitSemaphore.ts`, `accountSemaphore.ts`, `accountSelector.ts`                                 |
-| Kvote                      | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
-| Keširanje                  | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
-| Inteligencija usmjeravanja | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
-| Obrada modela              | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
-| Kompresija                 | `compression/` — kompletno povezivanje pogona za kompresiju                                                                                                                                                                                              |
-| Token + sesija             | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
-| Nivo / manifest            | `tierResolver.ts`, `tierConfig.ts`, `tierDefaults.json`, `tierTypes.ts`, `manifestAdapter.ts`                                                                                                                                                            |
-| IP / mreža                 | `ipFilter.ts`, `webSearchFallback.ts`                                                                                                                                                                                                                    |
-| Serije                     | `batchProcessor.ts`                                                                                                                                                                                                                                      |
-| Upotreba                   | `usage.ts`                                                                                                                                                                                                                                               |
+| Oblast                    | Datoteke                                                                                                                                                                                                                                                 |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Combo usmjeravanje        | `combo.ts` (19 strategija), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                    |
+| Auto Combo mehanizam      | `autoCombo/` — `engine.ts`, `scoring.ts`, `taskFitness.ts`, `virtualFactory.ts`, `modePacks.ts`, `autoPrefix.ts`, `persistence.ts`, `providerDiversity.ts`, `providerRegistryAccessor.ts`, `routerStrategy.ts`, `selfHealing.ts`, `index.ts`             |
+| Otpornost                 | `accountFallback.ts` (period čekanja + zaključavanje), `errorClassifier.ts`, `requestRejectedStreak.ts`, `emergencyFallback.ts`, `rateLimitManager.ts`, `rateLimitSemaphore.ts`, `accountSemaphore.ts`, `accountSelector.ts`                             |
+| Kvote                     | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
+| Keširanje                 | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
+| Inteligentno usmjeravanje | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
+| Obrada modela             | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
+| Kompresija                | `compression/` — kompletno povezivanje mehanizma za kompresiju                                                                                                                                                                                           |
+| Token + sesija            | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
+| Nivo / manifest           | `tierResolver.ts`, `tierConfig.ts`, `tierDefaults.json`, `tierTypes.ts`, `manifestAdapter.ts`                                                                                                                                                            |
+| IP / mreža                | `ipFilter.ts`, `webSearchFallback.ts`                                                                                                                                                                                                                    |
+| Paketi                    | `batchProcessor.ts`                                                                                                                                                                                                                                      |
+| Korištenje                | `usage.ts`                                                                                                                                                                                                                                               |
 
 ### 4.6 `open-sse/mcp-server/`
 
-- **110 jedinstvenih alata** povezanih u `server.ts` (45 kanonskih u `schemas/tools.ts` +
-  moduli za memoriju, vještine, GitHub vještine, skup resursa, gamifikaciju, dodatke, Notion, Obsidian,
+- **110 jedinstvenih alata** povezano je u `server.ts` (45 kanonskih u `schemas/tools.ts` +
+  moduli za memoriju, vještine, GitHub vještine, skupove, gejmifikaciju, dodatke, Notion, Obsidian,
   lokalni korpus i kompresiju — unija izbrojana pomoću `countUniqueMcpTools`).
 - **3 transporta**: stdio, HTTP Streamable, SSE.
-- **33 opsega** primijenjena tokom izvršavanja — osnovna lista nalazi se u `src/shared/constants/mcpScopes.ts`, a potpuni skup predstavlja uniju opsega koje deklarira svaki modul alata.
+- **33 opsega** primjenjuju se tokom izvršavanja — osnovna lista nalazi se u `src/shared/constants/mcpScopes.ts`, a kompletan skup predstavlja uniju opsega koje je deklarisao svaki modul alata.
 - Tabela revizije: `mcp_tool_audit` (popunjava je `audit.ts`).
 - Datoteke: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
   `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`,
-  kao i testovi u `__tests__/`.
-- Pogledajte [MCP-SERVER.md](../frameworks/MCP-SERVER.md) za potpuni katalog alata.
+  kao i testovi u direktoriju `__tests__/`.
+- Pogledajte [MCP-SERVER.md](../frameworks/MCP-SERVER.md) za kompletan katalog alata.
 
 ### 4.7 `open-sse/config/`
 
@@ -563,7 +563,7 @@ za oblak (`azureAi.ts`, `bedrock.ts`, `datarobot.ts`, `glmProvider.ts`,
 
 ### 4.8 `open-sse/utils/`
 
-Primitivi za streaming i pomoćne funkcije provajdera: `stream.ts`, `streamHandler.ts`,
+Primitivi za streaming i pomoćne funkcije pružatelja usluga: `stream.ts`, `streamHandler.ts`,
 `streamHelpers.ts`, `streamPayloadCollector.ts`, `streamReadiness.ts`,
 `sseHeartbeat.ts`, `proxyFetch.ts`, `proxyDispatcher.ts`, `tlsClient.ts`,
 `networkProxy.ts`, `awsSigV4.ts`, `cacheControlPolicy.ts`,
@@ -656,7 +656,7 @@ Uobičajene naredbe:
 
 ## 8. `scripts/`
 
-Organizirano u 6 poddirektorija prema namjeni.
+Organizirano u 6 podfoldera prema namjeni.
 
 - **`scripts/build/`** — `build-next-isolated.mjs`, `prepublish.ts`,
   `prepare-electron-standalone.mjs`, `pack-artifact-policy.ts`,

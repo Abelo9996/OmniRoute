@@ -485,13 +485,13 @@ createResponsesApiTransformStream(): TransformStream
 
 | קובץ                          | מטרה                                       |
 | ----------------------------- | ------------------------------------------ |
-| `providerRegistry.ts`         | מרשם מודלי צ'אט מעל קטלוג הכולל 352 ספקים  |
+| `providerRegistry.ts`         | מאגר מודלי צ'אט עבור קטלוג הכולל 372 ספקים |
 | `providerModels.ts`           | כינויים למודלים, מיפוי פורמטים             |
-| `constants.ts`                | זמני קצוב, מגבלות, קודי מצב                |
+| `constants.ts`                | זמני קצוב, מגבלות, קודי סטטוס              |
 | `defaultThinkingSignature.ts` | חתימת החשיבה המוגדרת כברירת מחדל של Claude |
 | `modelStrip.ts` (בשירותים)    | הסרת שדות לפי ספק                          |
 
-### סכימת מרשם הספקים
+### סכמת מאגר הספקים
 
 ```ts
 interface ProviderConfig {

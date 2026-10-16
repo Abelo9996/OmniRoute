@@ -479,17 +479,17 @@ Se käsittelee seuraavat:
 
 ---
 
-## Määritykset
+## Konfiguraatio
 
-`open-sse/config/` sisältää määrityskerroksen:
+`open-sse/config/` sisältää konfiguraatiokerroksen:
 
-| Tiedosto                      | Tarkoitus                                                       |
-| ----------------------------- | --------------------------------------------------------------- |
-| `providerRegistry.ts`         | Keskustelumallirekisteri 352 palveluntarjoajan luettelon päällä |
-| `providerModels.ts`           | Mallien aliakset ja muotojen vastaavuudet                       |
-| `constants.ts`                | Aikakatkaisut, rajat ja tilakoodit                              |
-| `defaultThinkingSignature.ts` | Clauden oletusarvoinen päättelyallekirjoitus                    |
-| `modelStrip.ts` (palveluissa) | Palveluntarjoajakohtainen kenttien poistaminen                  |
+| Tiedosto                      | Tarkoitus                                                     |
+| ----------------------------- | ------------------------------------------------------------- |
+| `providerRegistry.ts`         | Keskustelumallien rekisteri 372 palveluntarjoajan luettelolle |
+| `providerModels.ts`           | Mallien aliakset ja muotomuunnokset                           |
+| `constants.ts`                | Aikakatkaisut, rajoitukset ja tilakoodit                      |
+| `defaultThinkingSignature.ts` | Clauden oletusarvoinen ajatteluallekirjoitus                  |
+| `modelStrip.ts` (palveluissa) | Palveluntarjoajakohtainen kenttien poistaminen                |
 
 ### Palveluntarjoajarekisterin skeema
 
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Moduulin latauksen yhteydessä suoritettava Zod-validointi varmistaa, että kaikki palveluntarjoajien määritykset ovat kelvollisia.
+Moduulin latauksen yhteydessä suoritettava Zod-validointi varmistaa, että kaikki palveluntarjoajien konfiguraatiot ovat kelvollisia.
 
 ---
 

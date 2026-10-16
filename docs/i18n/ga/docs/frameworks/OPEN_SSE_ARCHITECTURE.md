@@ -483,13 +483,13 @@ Láimhseálann sé seo:
 
 Coinníonn `open-sse/config/` an tsraith chumraíochta:
 
-| Comhad                        | Cuspóir                                                  |
-| ----------------------------- | -------------------------------------------------------- |
-| `providerRegistry.ts`         | Clárlann samhlacha comhrá thar an gcatalóg 352 soláthraí |
-| `providerModels.ts`           | Ailiasanna samhlacha, mapáil formáide                    |
-| `constants.ts`                | Teorainneacha ama, teorainneacha, cóid stádais           |
-| `defaultThinkingSignature.ts` | Síniú smaointeoireachta réamhshocraithe Claude           |
-| `modelStrip.ts` (i seirbhísí) | Baint réimsí de réir soláthraí                           |
+| Comhad                        | Cuspóir                                               |
+| ----------------------------- | ----------------------------------------------------- |
+| `providerRegistry.ts`         | Clárlann samhlacha comhrá thar chatalóg 372 soláthraí |
+| `providerModels.ts`           | Ailiasanna samhlacha, mapáil formáide                 |
+| `constants.ts`                | Teorainneacha ama, teorainneacha, cóid stádais        |
+| `defaultThinkingSignature.ts` | Síniú réamhshocraithe smaointeoireachta Claude        |
+| `modelStrip.ts` (i seirbhísí) | Baint réimsí de réir soláthraí                        |
 
 ### Scéimre Chlárlann na Soláthraithe
 
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Cinntíonn bailíochtú Zod agus an modúl á luchtú go bhfuil gach cumraíocht soláthraí bailí.
+Cinntíonn bailíochtú Zod tráth lódála an mhodúil go bhfuil gach cumraíocht soláthraí bailí.
 
 ---
 

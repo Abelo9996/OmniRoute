@@ -483,15 +483,15 @@ createResponsesApiTransformStream(): TransformStream
 
 `open-sse/config/` ni ipele ìṣètò wà:
 
-| Fáìlì                           | Ète                                            |
-| ------------------------------- | ---------------------------------------------- |
-| `providerRegistry.ts`           | Àkọsílẹ̀ chat-model lórí àkójọ àwọn olùpèsè 352 |
-| `providerModels.ts`             | Àwọn orúkọ àropò model, ìbámu ọ̀nà kika         |
-| `constants.ts`                  | Àwọn àkókò ìdádúró, ààlà, àwọn kóòdù ipò       |
-| `defaultThinkingSignature.ts`   | Ibuwọlu ìrònú Claude àiyipada                  |
-| `modelStrip.ts` (nínú services) | Yíyọ pápá kúrò gẹ́gẹ́ bí olùpèsè                 |
+| Fáìlì                           | Ìdí                                                |
+| ------------------------------- | -------------------------------------------------- |
+| `providerRegistry.ts`           | Ìforúkọsílẹ̀ àwòṣe ìfọ̀rọ̀wérọ̀ lórí àkójọ olùpèsè 372 |
+| `providerModels.ts`             | Àwọn orúkọ mìíràn fún àwòṣe, ìbáramu ìgúnrégé      |
+| `constants.ts`                  | Àkókò ìdádúró, àwọn ààlà, àwọn kóòdù ipò           |
+| `defaultThinkingSignature.ts`   | Ìfọwọ́sí ìrònú Claude àìyípadà                      |
+| `modelStrip.ts` (nínú services) | Yíyọ àwọn pápá kúrò fún olùpèsè kọ̀ọ̀kan             |
 
-### Schema Àkọsílẹ̀ Olùpèsè
+### Àwòrán Ìforúkọsílẹ̀ Olùpèsè
 
 ```ts
 interface ProviderConfig {
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Ìfọwọ́sí Zod nígbà tí module bá ń kojọpọ̀ ń rí i dájú pé gbogbo àwọn ìṣètò olùpèsè péye.
+Ìfọwọ́sí Zod nígbà tí module bá ń kojọpọ̀ ń rí i dájú pé gbogbo àwọn ìṣètò olùpèsè wúlò.
 
 ---
 
