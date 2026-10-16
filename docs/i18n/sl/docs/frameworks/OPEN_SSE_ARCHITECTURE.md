@@ -481,15 +481,15 @@ Ta obravnava:
 
 ## Konfiguracija
 
-`open-sse/config/` vsebuje konfiguracijsko plast:
+`open-sse/config/` vsebuje konfiguracijski sloj:
 
-| Datoteka                      | Namen                                                 |
-| ----------------------------- | ----------------------------------------------------- |
-| `providerRegistry.ts`         | Register modelov za klepet iz kataloga 352 ponudnikov |
-| `providerModels.ts`           | Vzdevki modelov, preslikava formatov                  |
-| `constants.ts`                | Časovne omejitve, omejitve, kode stanja               |
-| `defaultThinkingSignature.ts` | Privzeti podpis razmišljanja Claude                   |
-| `modelStrip.ts` (v storitvah) | Odstranjevanje polj glede na ponudnika                |
+| Datoteka                      | Namen                                                |
+| ----------------------------- | ---------------------------------------------------- |
+| `providerRegistry.ts`         | Register modelov za klepet v katalogu 372 ponudnikov |
+| `providerModels.ts`           | Vzdevki modelov, preslikava formatov                 |
+| `constants.ts`                | Časovne omejitve, omejitve, statusne kode            |
+| `defaultThinkingSignature.ts` | Privzeti podpis razmišljanja Claude                  |
+| `modelStrip.ts` (v storitvah) | Odstranjevanje polj glede na ponudnika               |
 
 ### Shema registra ponudnikov
 
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Preverjanje z Zodom ob nalaganju modula zagotavlja veljavnost vseh konfiguracij ponudnikov.
+Preverjanje veljavnosti z Zod ob nalaganju modula zagotavlja, da so vse konfiguracije ponudnikov veljavne.
 
 ---
 

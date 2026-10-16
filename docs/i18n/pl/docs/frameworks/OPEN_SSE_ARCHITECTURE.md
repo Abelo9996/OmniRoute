@@ -488,17 +488,17 @@ Obsługuje:
 
 ## Konfiguracja
 
-`open-sse/config/` to warstwa konfiguracji:
+`open-sse/config/` zawiera warstwę konfiguracji:
 
-| Plik                          | Przeznaczenie                            |
-| ----------------------------- | ---------------------------------------- |
-| `providerRegistry.ts`         | Wspólna konfiguracja rejestru providerów |
-| `providerModels.ts`           | Aliasy modeli, mapowanie formatów        |
-| `constants.ts`                | Timeouty, limity, kody statusu           |
-| `defaultThinkingSignature.ts` | Domyślna sygnatura thinking Claude       |
-| `modelStrip.ts` (w services)  | Stripowanie pól per-provider             |
+| Plik                          | Przeznaczenie                                         |
+| ----------------------------- | ----------------------------------------------------- |
+| `providerRegistry.ts`         | Rejestr modeli czatu obejmujący katalog 372 dostawców |
+| `providerModels.ts`           | Aliasy modeli, mapowanie formatów                     |
+| `constants.ts`                | Limity czasu, ograniczenia, kody stanu                |
+| `defaultThinkingSignature.ts` | Domyślny podpis procesu rozumowania Claude            |
+| `modelStrip.ts` (w services)  | Usuwanie pól zależnie od dostawcy                     |
 
-### Schemat Provider Registry
+### Schemat rejestru dostawców
 
 ```ts
 interface ProviderConfig {
@@ -513,7 +513,7 @@ interface ProviderConfig {
 }
 ```
 
-Walidacja Zod przy ładowaniu modułu zapewnia, że wszystkie konfiguracje providerów są poprawne.
+Walidacja Zod podczas ładowania modułu zapewnia poprawność wszystkich konfiguracji dostawców.
 
 ---
 

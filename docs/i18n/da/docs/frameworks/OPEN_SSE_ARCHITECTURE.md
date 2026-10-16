@@ -485,11 +485,11 @@ Dette håndterer:
 
 | Fil                           | Formål                                            |
 | ----------------------------- | ------------------------------------------------- |
-| `providerRegistry.ts`         | Chatmodelregister over kataloget med 352 udbydere |
-| `providerModels.ts`           | Modelaliasser, formatmapping                      |
+| `providerRegistry.ts`         | Chatmodelregister over kataloget med 372 udbydere |
+| `providerModels.ts`           | Modelaliasser, formattilknytning                  |
 | `constants.ts`                | Timeouts, grænser, statuskoder                    |
-| `defaultThinkingSignature.ts` | Claudes standard-thinking-signatur                |
-| `modelStrip.ts` (i services)  | Udbyderspecifik fjernelse af felter               |
+| `defaultThinkingSignature.ts` | Standard-thinking-signatur for Claude             |
+| `modelStrip.ts` (i services)  | Fjernelse af felter pr. udbyder                   |
 
 ### Skema for udbyderregister
 

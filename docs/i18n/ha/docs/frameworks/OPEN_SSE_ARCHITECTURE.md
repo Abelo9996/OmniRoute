@@ -485,13 +485,13 @@ Wannan yana sarrafa:
 
 | Fayil                         | Manufa                                              |
 | ----------------------------- | --------------------------------------------------- |
-| `providerRegistry.ts`         | Rijistar samfurin hira bisa kundin masu samarwa 352 |
-| `providerModels.ts`           | Laƙaban samfura, daidaita tsari                     |
-| `constants.ts`                | Iyakokin lokaci, iyakoki, lambobin matsayi          |
-| `defaultThinkingSignature.ts` | Sa hannun tunani na Claude na asali                 |
-| `modelStrip.ts` (a services)  | Cire filaye na musamman ga kowane mai samarwa       |
+| `providerRegistry.ts`         | Rijistar samfurin-taɗi bisa kundin masu samarwa 372 |
+| `providerModels.ts`           | Laƙaban samfura, taswirar tsari                     |
+| `constants.ts`                | Wa'adin ƙarewa, iyakoki, lambobin matsayi           |
+| `defaultThinkingSignature.ts` | Tsohuwar sa hannun tunani ta Claude                 |
+| `modelStrip.ts` (a services)  | Cire filaye na kowane mai samarwa                   |
 
-### Schema na Rijistar Masu Samarwa
+### Tsarin Rijistar Mai Samarwa
 
 ```ts
 interface ProviderConfig {
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Tabbatarwar Zod a lokacin loda module tana tabbatar da cewa duk saitunan masu samarwa suna da inganci.
+Tabbatarwar Zod yayin loda module tana tabbatar da cewa duk saitunan masu samarwa suna da inganci.
 
 ---
 

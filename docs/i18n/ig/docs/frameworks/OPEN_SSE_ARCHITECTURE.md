@@ -483,15 +483,15 @@ Nke a na-ahụ maka:
 
 `open-sse/config/` nwere oyi akwa nhazi:
 
-| Faịlụ                            | Ebumnuche                                              |
-| -------------------------------- | ------------------------------------------------------ |
-| `providerRegistry.ts`            | Ndebanye ụdịdị Chat n'elu katalọgụ ndị na-enye ọrụ 352 |
-| `providerModels.ts`              | Aha ọzọ nke ụdịdị, nhazi usoro                         |
-| `constants.ts`                   | Oge nkwụsị, oke, koodu ọnọdụ                           |
-| `defaultThinkingSignature.ts`    | Mbinye aka echiche Claude nke ndabara                  |
-| `modelStrip.ts` (n'ime services) | Iwepụ ubi dịka onye na-enye ọrụ si dị                  |
+| Faịlụ                            | Ebumnuche                                           |
+| -------------------------------- | --------------------------------------------------- |
+| `providerRegistry.ts`            | Ndekọ ụdị nkata n'elu katalọgụ ndị na-eweta ọrụ 372 |
+| `providerModels.ts`              | Aha nnọchi ụdị, nhazi usoro                         |
+| `constants.ts`                   | Oge nkwụsị, oke, koodu ọnọdụ                        |
+| `defaultThinkingSignature.ts`    | Mbinye aka ndabara nke echiche Claude               |
+| `modelStrip.ts` (n'ime services) | Mwepụ oghere data dịka onye na-eweta ọrụ si dị      |
 
-### Schema Ndebanye Ndị Na-enye Ọrụ
+### Atụmatụ Ndekọ Ndị Na-eweta Ọrụ
 
 ```ts
 interface ProviderConfig {
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Nkwado Zod n'oge modulu na-eburu na-eme ka o doo anya na nhazi ndị na-enye ọrụ niile ziri ezi.
+Nnyocha Zod mgbe modul na-ebido na-ahụ na nhazi niile nke ndị na-eweta ọrụ ziri ezi.
 
 ---
 

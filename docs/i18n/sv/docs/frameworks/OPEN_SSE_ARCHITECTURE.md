@@ -483,13 +483,13 @@ Detta hanterar:
 
 `open-sse/config/` innehåller konfigurationslagret:
 
-| Fil                           | Syfte                                                        |
-| ----------------------------- | ------------------------------------------------------------ |
-| `providerRegistry.ts`         | Register över chattmodeller i katalogen med 352 leverantörer |
-| `providerModels.ts`           | Modellalias och formatmappning                               |
-| `constants.ts`                | Tidsgränser, begränsningar och statuskoder                   |
-| `defaultThinkingSignature.ts` | Claudes standardsignatur för resonemang                      |
-| `modelStrip.ts` (i services)  | Leverantörsspecifik borttagning av fält                      |
+| Fil                           | Syfte                                                          |
+| ----------------------------- | -------------------------------------------------------------- |
+| `providerRegistry.ts`         | Register över chattmodeller för katalogen med 372 leverantörer |
+| `providerModels.ts`           | Modellalias och formatmappning                                 |
+| `constants.ts`                | Tidsgränser, begränsningar och statuskoder                     |
+| `defaultThinkingSignature.ts` | Standardsignatur för Claudes tänkande                          |
+| `modelStrip.ts` (i tjänster)  | Leverantörsspecifik borttagning av fält                        |
 
 ### Schema för leverantörsregistret
 

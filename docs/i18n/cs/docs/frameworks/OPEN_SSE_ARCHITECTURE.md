@@ -485,10 +485,10 @@ Zpracovává:
 
 | Soubor                        | Účel                                                       |
 | ----------------------------- | ---------------------------------------------------------- |
-| `providerRegistry.ts`         | Registr chatovacích modelů nad katalogem 352 poskytovatelů |
+| `providerRegistry.ts`         | Registr chatovacích modelů nad katalogem 372 poskytovatelů |
 | `providerModels.ts`           | Aliasy modelů, mapování formátů                            |
 | `constants.ts`                | Časové limity, omezení, stavové kódy                       |
-| `defaultThinkingSignature.ts` | Výchozí signatura uvažování Claude                         |
+| `defaultThinkingSignature.ts` | Výchozí signatura přemýšlení modelu Claude                 |
 | `modelStrip.ts` (ve službách) | Odstraňování polí podle poskytovatele                      |
 
 ### Schéma registru poskytovatelů
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Validace pomocí Zod při načtení modulu zajišťuje platnost všech konfigurací poskytovatelů.
+Validace pomocí Zod při načtení modulu zajišťuje, že všechny konfigurace poskytovatelů jsou platné.
 
 ---
 

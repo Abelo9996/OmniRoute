@@ -485,11 +485,11 @@ Tas apstrādā:
 
 | Fails                          | Nolūks                                                         |
 | ------------------------------ | -------------------------------------------------------------- |
-| `providerRegistry.ts`          | Tērzēšanas modeļu reģistrs 352 pakalpojumu sniedzēju katalogam |
+| `providerRegistry.ts`          | Tērzēšanas modeļu reģistrs 372 pakalpojumu sniedzēju katalogam |
 | `providerModels.ts`            | Modeļu aizstājvārdi, formātu kartēšana                         |
 | `constants.ts`                 | Taimauti, ierobežojumi, statusa kodi                           |
 | `defaultThinkingSignature.ts`  | Noklusējuma Claude domāšanas paraksts                          |
-| `modelStrip.ts` (pakalpojumos) | Katram pakalpojumu sniedzējam specifiska lauku noņemšana       |
+| `modelStrip.ts` (pakalpojumos) | Katram pakalpojumu sniedzējam specifisku lauku noņemšana       |
 
 ### Pakalpojumu sniedzēju reģistra shēma
 

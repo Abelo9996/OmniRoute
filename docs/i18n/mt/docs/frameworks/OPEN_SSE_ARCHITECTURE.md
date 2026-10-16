@@ -483,15 +483,15 @@ Dan jittratta:
 
 `open-sse/config/` fih is-saff tal-konfigurazzjoni:
 
-| File                           | Għan                                                          |
+| Fajl                           | Għan                                                          |
 | ------------------------------ | ------------------------------------------------------------- |
-| `providerRegistry.ts`          | Reġistru tal-mudelli taċ-chat fuq il-katalgu ta' 352 fornitur |
-| `providerModels.ts`            | Aliases tal-mudelli, immappjar tal-formats                    |
-| `constants.ts`                 | Timeouts, limiti, kodiċijiet tal-istatus                      |
-| `defaultThinkingSignature.ts`  | Firma predefinita tal-ħsieb ta' Claude                        |
-| `modelStrip.ts` (fis-services) | Tneħħija ta' fields għal kull fornitur                        |
+| `providerRegistry.ts`          | Reġistru tal-mudelli taċ-chat fuq il-katalgu ta’ 372 fornitur |
+| `providerModels.ts`            | Psewdonimi tal-mudelli, immappjar tal-format                  |
+| `constants.ts`                 | Ħinijiet ta’ stennija, limiti, kodiċijiet tal-istatus         |
+| `defaultThinkingSignature.ts`  | Firma predefinita tal-ħsieb ta’ Claude                        |
+| `modelStrip.ts` (fis-servizzi) | Tneħħija ta’ oqsma skont il-fornitur                          |
 
-### Schema tar-Reġistru tal-Fornituri
+### Skema tar-Reġistru tal-Fornituri
 
 ```ts
 interface ProviderConfig {
@@ -506,7 +506,7 @@ interface ProviderConfig {
 }
 ```
 
-Il-validazzjoni b'Zod waqt it-tagħbija tal-module tiżgura li l-konfigurazzjonijiet kollha tal-fornituri jkunu validi.
+Il-validazzjoni permezz ta’ Zod waqt it-tagħbija tal-modulu tiżgura li l-konfigurazzjonijiet kollha tal-fornituri huma validi.
 
 ---
 

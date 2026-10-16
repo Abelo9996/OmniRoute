@@ -483,15 +483,15 @@ Isso processa:
 
 `open-sse/config/` contém a camada de configuração:
 
-| Arquivo                       | Finalidade                                                |
-| ----------------------------- | --------------------------------------------------------- |
-| `providerRegistry.ts`         | Registro de modelos de chat no catálogo de 352 provedores |
-| `providerModels.ts`           | Aliases de modelos, mapeamento de formatos                |
-| `constants.ts`                | Tempos limite, limites, códigos de status                 |
-| `defaultThinkingSignature.ts` | Assinatura de raciocínio padrão do Claude                 |
-| `modelStrip.ts` (em services) | Remoção de campos por provedor                            |
+| Arquivo                       | Finalidade                                                     |
+| ----------------------------- | -------------------------------------------------------------- |
+| `providerRegistry.ts`         | Registro de modelos de chat sobre o catálogo de 372 provedores |
+| `providerModels.ts`           | Aliases de modelos, mapeamento de formatos                     |
+| `constants.ts`                | Tempos limite, limites, códigos de status                      |
+| `defaultThinkingSignature.ts` | Assinatura de raciocínio padrão do Claude                      |
+| `modelStrip.ts` (em services) | Remoção de campos por provedor                                 |
 
-### Esquema do registro de provedores
+### Esquema do Registro de Provedores
 
 ```ts
 interface ProviderConfig {
