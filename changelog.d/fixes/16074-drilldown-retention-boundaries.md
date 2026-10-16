@@ -1,0 +1,1 @@
+- Preserve retained Video Bridge drill-down artifacts after a focused read selects no frames, so later reads, explicit deletion and lifecycle cleanup remain available (#16074).
