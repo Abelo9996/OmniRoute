@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "പ്രാമാണീകരിച്ച ഫ്രെയിം ഡ്രിൽ-ഡൗൺ അനുവദിക്കുക",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API കീകൾക്ക് അവയുടേതായ അതാര്യ ഹാൻഡിലുകൾ മാത്രം വായിക്കാനും ഇല്ലാതാക്കാനും അനുവദിക്കുക. അജ്ഞാത ആക്സസോ വ്യത്യസ്ത കീകൾക്കിടയിലെ ആക്സസോ അനുവദനീയമല്ല.",
     "modalityBridgeVideoDrilldownUsage": "നിലനിർത്തിയ JPEG-കൾ / ബൈറ്റുകൾ",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "വിപുലമായ നയ സന്നദ്ധത",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "പരീക്ഷണാത്മകം",
+    "modalityBridgeVideoPromotionEligible": "യോഗ്യം",
+    "modalityBridgeVideoPromotionContextRequired": "കൃത്യമായ മോഡൽ റിവിഷൻ, നയം, കോർപ്പസ്, ബിൽഡ് എന്നിവയ്ക്കായി സ്വതന്ത്രമായി യോഗ്യത നേടുന്ന രണ്ട് റണ്ണുകൾ പ്രമോഷന് ആവശ്യമാണ്. സ്ഥിരീകരിക്കാത്ത കോൺടെക്സ്റ്റ് HOLD ആയി തുടരും; ഒരു പരീക്ഷണാത്മക നയം തിരഞ്ഞെടുക്കുന്നത് അംഗീകാരമല്ല."
   },
   "contextRtk": {
     "title": "RTK എഞ്ചിൻ",

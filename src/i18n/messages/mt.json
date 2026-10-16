@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Ippermetti analiżi dettaljata awtentikata tal-frejms",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Ippermetti liċ-ċwievet tal-API jaqraw u jħassru biss l-identifikaturi opaki tagħhom stess. Ebda aċċess anonimu jew bejn ċwievet differenti.",
     "modalityBridgeVideoDrilldownUsage": "JPEGs miżmuma / bytes",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Prontezza tal-politika avvanzata",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Sperimentali",
+    "modalityBridgeVideoPromotionEligible": "Eliġibbli",
+    "modalityBridgeVideoPromotionContextRequired": "Il-promozzjoni teħtieġ żewġ eżekuzzjonijiet indipendenti li jikkwalifikaw għall-istess reviżjoni eżatta tal-mudell, politika, korpus u build. Kuntest mhux ivverifikat jibqa’ HOLD; l-għażla ta’ politika sperimentali ma tikkostitwixxix approvazzjoni."
   },
   "contextRtk": {
     "title": "Magna RTK",

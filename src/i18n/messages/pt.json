@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Permitir a análise detalhada de fotogramas autenticada",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Permitir que as chaves de API leiam e eliminem apenas os seus próprios identificadores opacos. Sem acesso anónimo ou entre chaves.",
     "modalityBridgeVideoDrilldownUsage": "JPEG retidos / bytes",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Preparação para políticas avançadas",
     "modalityBridgeVideoPromotionHold": "HOLD",
     "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionEligible": "Elegível",
+    "modalityBridgeVideoPromotionContextRequired": "A promoção requer duas execuções de qualificação independentes para a revisão exata do modelo, a política, o corpus e a compilação. Um contexto não verificado permanece em HOLD; selecionar uma política experimental não constitui uma aprovação."
   },
   "contextRtk": {
     "title": "Motor RTK",

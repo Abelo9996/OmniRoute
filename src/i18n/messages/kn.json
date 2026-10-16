@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "ದೃಢೀಕೃತ ಫ್ರೇಮ್ ಡ್ರಿಲ್-ಡೌನ್ ಅನ್ನು ಅನುಮತಿಸಿ",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API ಕೀಗಳಿಗೆ ತಮ್ಮದೇ ಅಪಾರದರ್ಶಕ ಹ್ಯಾಂಡಲ್ಗಳನ್ನು ಮಾತ್ರ ಓದಲು ಮತ್ತು ಅಳಿಸಲು ಅನುಮತಿಸಿ. ಅನಾಮಧೇಯ ಅಥವಾ ಬೇರೆ ಕೀಗಳ ನಡುವಿನ ಪ್ರವೇಶವಿಲ್ಲ.",
     "modalityBridgeVideoDrilldownUsage": "ಉಳಿಸಿಕೊಂಡ JPEGಗಳು / ಬೈಟ್ಗಳು",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "ಸುಧಾರಿತ ನೀತಿ ಸಿದ್ಧತೆ",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "ಪ್ರಾಯೋಗಿಕ",
+    "modalityBridgeVideoPromotionEligible": "ಅರ್ಹ",
+    "modalityBridgeVideoPromotionContextRequired": "ನಿಖರವಾದ ಮಾದರಿ ಪರಿಷ್ಕರಣೆ, ನೀತಿ, ಕಾರ್ಪಸ್ ಮತ್ತು ಬಿಲ್ಡ್ಗಾಗಿ ಎರಡು ಸ್ವತಂತ್ರ ಅರ್ಹತಾ ರನ್ಗಳು ಅಗತ್ಯವಿವೆ. ಪರಿಶೀಲಿಸದ ಸಂದರ್ಭವು HOLD ಆಗಿಯೇ ಉಳಿಯುತ್ತದೆ; ಪ್ರಾಯೋಗಿಕ ನೀತಿಯನ್ನು ಆಯ್ಕೆ ಮಾಡುವುದು ಅನುಮೋದನೆಯಲ್ಲ."
   },
   "contextRtk": {
     "title": "RTK ಎಂಜಿನ್",

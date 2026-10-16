@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Ceadaigh druileáil síos ar fhrámaí fíordheimhnithe",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Ná ceadaigh d'eochracha API ach a hanlaí teimhneacha féin a léamh agus a scriosadh. Ní cheadaítear rochtain gan ainm ná rochtain tras-eochrach.",
     "modalityBridgeVideoDrilldownUsage": "JPEGanna coinnithe / bearta",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Ullmhacht do bheartas ardleibhéil",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Turgnamhach",
+    "modalityBridgeVideoPromotionEligible": "Incháilithe",
+    "modalityBridgeVideoPromotionContextRequired": "Éilíonn ardú céime dhá rith cháilitheacha neamhspleácha don athbhreithniú samhla, don bheartas, don chorpas agus don tógáil bheacht chéanna. Fanann comhthéacs neamhfhíoraithe ar HOLD; ní hionann beartas turgnamhach a roghnú agus faomhadh."
   },
   "contextRtk": {
     "title": "Inneall RTK",

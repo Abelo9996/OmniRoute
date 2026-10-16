@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "מתן אפשרות לתחקור פריימים למשתמשים מאומתים",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "יש לאפשר למפתחות API לקרוא ולמחוק רק את המזהים האטומים שלהם. אין לאפשר גישה אנונימית או גישה בין מפתחות.",
     "modalityBridgeVideoDrilldownUsage": "קובצי JPEG שמורים / בתים",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "מוכנות למדיניות מתקדמת",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "ניסיוני",
+    "modalityBridgeVideoPromotionEligible": "כשיר",
+    "modalityBridgeVideoPromotionContextRequired": "קידום דורש שתי הרצות מזכות ובלתי תלויות עבור אותה גרסה מדויקת של המודל, המדיניות, הקורפוס והבנייה. הקשר שלא אומת נשאר במצב HOLD; בחירה במדיניות ניסיונית אינה מהווה אישור."
   },
   "contextRtk": {
     "title": "מנוע RTK",

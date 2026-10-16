@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Kimliği doğrulanmış kare ayrıntı incelemesine izin ver",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API anahtarlarının yalnızca kendi opak tanıtıcılarını okumasına ve silmesine izin ver. Anonim veya farklı anahtarlar arası erişime izin verilmez.",
     "modalityBridgeVideoDrilldownUsage": "Saklanan JPEG'ler / baytlar",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Gelişmiş politika hazırlığı",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Deneysel",
+    "modalityBridgeVideoPromotionEligible": "Uygun",
+    "modalityBridgeVideoPromotionContextRequired": "Terfi, tam olarak aynı model revizyonu, politika, derlem ve yapı için birbirinden bağımsız iki uygun çalıştırma gerektirir. Doğrulanmamış bir bağlam HOLD durumunda kalır; deneysel bir politikanın seçilmesi onay anlamına gelmez."
   },
   "contextRtk": {
     "title": "RTK Motoru",

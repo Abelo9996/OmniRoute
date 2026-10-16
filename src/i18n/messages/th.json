@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "อนุญาตการเจาะดูรายละเอียดเฟรมสำหรับผู้ใช้ที่ผ่านการยืนยันตัวตน",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "อนุญาตให้คีย์ API อ่านและลบได้เฉพาะแฮนเดิลแบบทึบของตนเองเท่านั้น ไม่อนุญาตการเข้าถึงแบบไม่ระบุตัวตนหรือข้ามคีย์",
     "modalityBridgeVideoDrilldownUsage": "ไฟล์ JPEG ที่เก็บไว้ / ไบต์",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "ความพร้อมของนโยบายขั้นสูง",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "ทดลอง",
+    "modalityBridgeVideoPromotionEligible": "มีสิทธิ์",
+    "modalityBridgeVideoPromotionContextRequired": "การเลื่อนระดับต้องมีการรันที่ผ่านเกณฑ์อย่างเป็นอิสระต่อกันสองครั้งสำหรับรุ่นแก้ไขโมเดล นโยบาย ชุดข้อมูล และบิลด์ที่ตรงกันทุกประการ บริบทที่ยังไม่ได้รับการตรวจสอบจะยังคงมีสถานะ HOLD การเลือกนโยบายทดลองไม่ถือเป็นการอนุมัติ"
   },
   "contextRtk": {
     "title": "RTK Engine",

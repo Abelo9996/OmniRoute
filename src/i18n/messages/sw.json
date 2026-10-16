@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Ruhusu uchunguzi wa kina wa fremu uliothibitishwa",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Ruhusu funguo za API kusoma na kufuta vishikio vyao fiche pekee. Hakuna ufikiaji bila uthibitishaji au kwa kutumia ufunguo mwingine.",
     "modalityBridgeVideoDrilldownUsage": "JPEG zilizohifadhiwa / baiti",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Utayari wa sera ya hali ya juu",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Ya majaribio",
+    "modalityBridgeVideoPromotionEligible": "Inastahiki",
+    "modalityBridgeVideoPromotionContextRequired": "Upandishaji unahitaji majaribio mawili huru yanayokidhi vigezo kwa toleo mahususi la modeli, sera, korpasi na muundo wa programu. Muktadha ambao haujathibitishwa hubaki HOLD; kuchagua sera ya majaribio si idhini."
   },
   "contextRtk": {
     "title": "Injini ya RTK",

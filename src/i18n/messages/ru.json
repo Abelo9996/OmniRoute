@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Разрешить аутентифицированный детальный просмотр кадров",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Разрешить API-ключам читать и удалять только собственные непрозрачные дескрипторы. Анонимный доступ и доступ между ключами запрещены.",
     "modalityBridgeVideoDrilldownUsage": "Сохранённые JPEG / байты",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Готовность расширенной политики",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Экспериментальная",
+    "modalityBridgeVideoPromotionEligible": "Соответствует требованиям",
+    "modalityBridgeVideoPromotionContextRequired": "Для продвижения необходимы два независимых успешных запуска с точно совпадающими ревизией модели, политикой, корпусом и сборкой. Непроверенный контекст сохраняет статус HOLD; выбор экспериментальной политики не означает одобрения."
   },
   "contextRtk": {
     "title": "RTK Engine",
