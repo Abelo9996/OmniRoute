@@ -444,48 +444,48 @@ open-sse/
 ├── package.json            వర్క్స్పేస్ మానిఫెస్ట్
 ├── tsconfig.json
 ├── types.d.ts
-├── config/                 ప్రొవైడర్ రిజిస్ట్రీలు, హెడర్ ప్రొఫైల్లు, గుర్తింపు, …
+├── config/                 ప్రొవైడర్ రిజిస్ట్రీలు, హెడర్ ప్రొఫైల్లు, ఐడెంటిటీ, …
 ├── handlers/               అభ్యర్థన హ్యాండ్లర్లు (చాట్, ఎంబెడ్డింగ్లు, ఆడియో, చిత్రం, …)
 ├── executors/              108 ప్రొవైడర్-నిర్దిష్ట HTTP ఎగ్జిక్యూటర్లు
 ├── translator/             ఫార్మాట్ మార్పిడి (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
 ├── transformer/            Responses API ↔ Chat Completions స్ట్రీమ్ ట్రాన్స్ఫార్మర్
-├── services/               80+ సర్వీస్ మాడ్యూళ్లు (కాంబోలు, ఫాల్బ్యాక్, కోటాలు, గుర్తింపు, …)
+├── services/               80+ సేవా మాడ్యూల్లు (కాంబోలు, ఫాల్బ్యాక్, కోటాలు, ఐడెంటిటీ, …)
 ├── utils/                  స్ట్రీమింగ్ సహాయకాలు, TLS క్లయింట్, AWS SigV4, ప్రాక్సీ ఫెచ్, …
 └── mcp-server/             MCP సర్వర్ (3 ట్రాన్స్పోర్ట్లు, 33 స్కోప్లు, 110 టూల్స్)
 ```
 
 ### 4.1 `open-sse/handlers/`
 
-| హ్యాండ్లర్              | ప్రయోజనం                                                                          |
-| ----------------------- | --------------------------------------------------------------------------------- |
-| `chatCore.ts`           | ప్రధాన చాట్ పైప్లైన్ (క్యాష్, రేట్ పరిమితి, కాంబో రూటింగ్, ఎగ్జిక్యూటర్ డిస్పాచ్) |
-| `responsesHandler.ts`   | OpenAI Responses API ప్రవేశ బిందువు                                               |
-| `embeddings.ts`         | ఎంబెడ్డింగ్లు                                                                     |
-| `imageGeneration.ts`    | చిత్ర ఉత్పత్తి                                                                    |
-| `audioSpeech.ts`        | టెక్స్ట్-టు-స్పీచ్                                                                |
-| `audioTranscription.ts` | స్పీచ్-టు-టెక్స్ట్                                                                |
-| `videoGeneration.ts`    | వీడియో ఉత్పత్తి                                                                   |
-| `musicGeneration.ts`    | సంగీత ఉత్పత్తి                                                                    |
-| `rerank.ts`             | పునఃర్యాంకింగ్                                                                    |
-| `moderations.ts`        | మోడరేషన్                                                                          |
-| `search.ts`             | వెబ్ శోధన                                                                         |
-| `sseParser.ts`          | SSE ఈవెంట్ పార్సర్                                                                |
-| `usageExtractor.ts`     | అప్స్ట్రీమ్ స్ట్రీమ్ల నుండి టోకెన్ గణనలను వెలికితీయడం                             |
-| `responseSanitizer.ts`  | ప్రొవైడర్-నిర్దిష్ట అనవసర సమాచారాన్ని తొలగించడం                                   |
-| `responseTranslator.ts` | ప్రొవైడర్ ప్రతిస్పందన మరియు ట్రాన్స్లేటర్ లేయర్ మధ్య అనుసంధానం                    |
+| హ్యాండ్లర్              | ప్రయోజనం                                                                         |
+| ----------------------- | -------------------------------------------------------------------------------- |
+| `chatCore.ts`           | ప్రధాన చాట్ పైప్లైన్ (క్యాష్, రేట్ లిమిట్, కాంబో రూటింగ్, ఎగ్జిక్యూటర్ డిస్పాచ్) |
+| `responsesHandler.ts`   | OpenAI Responses API ఎంట్రీ పాయింట్                                              |
+| `embeddings.ts`         | ఎంబెడ్డింగ్లు                                                                    |
+| `imageGeneration.ts`    | చిత్ర ఉత్పాదన                                                                    |
+| `audioSpeech.ts`        | టెక్స్ట్-టు-స్పీచ్                                                               |
+| `audioTranscription.ts` | స్పీచ్-టు-టెక్స్ట్                                                               |
+| `videoGeneration.ts`    | వీడియో ఉత్పాదన                                                                   |
+| `musicGeneration.ts`    | సంగీత ఉత్పాదన                                                                    |
+| `rerank.ts`             | పునఃర్యాంకింగ్                                                                   |
+| `moderations.ts`        | మోడరేషన్                                                                         |
+| `search.ts`             | వెబ్ శోధన                                                                        |
+| `sseParser.ts`          | SSE ఈవెంట్ పార్సర్                                                               |
+| `usageExtractor.ts`     | అప్స్ట్రీమ్ స్ట్రీమ్ల నుంచి టోకెన్ గణనలను వెలికితీయడం                            |
+| `responseSanitizer.ts`  | ప్రొవైడర్-నిర్దిష్ట అనవసర సమాచారాన్ని తొలగించడం                                  |
+| `responseTranslator.ts` | ప్రొవైడర్ ప్రతిస్పందన మరియు అనువాద లేయర్ మధ్య అనుసంధానం                          |
 
 ### 4.2 `open-sse/executors/`
 
-148 ప్రొవైడర్ ఎగ్జిక్యూటర్లు, ప్రతి ఒక్కటీ `BaseExecutor` (`base.ts`)ను విస్తరిస్తుంది:
+148 ప్రొవైడర్ ఎగ్జిక్యూటర్లు, ప్రతి ఒక్కటి `BaseExecutor` (`base.ts`)ను విస్తరిస్తుంది:
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
 `muse-spark-web`, `nlpcloud`, `opencode`, `perplexity-web`, `petals`,
 `pollinations`, `qoder`, `vertex`, `devin-desktop`, అలాగే `claudeIdentity.ts`
-(భాగస్వామ్య గుర్తింపు సహాయకం) మరియు `index.ts` (రిజిస్ట్రీ).
+(షేర్డ్ ఐడెంటిటీ సహాయకం) మరియు `index.ts` (రిజిస్ట్రీ).
 
-> గమనిక: ఇక్కడ జాబితా చేయని ప్రొవైడర్లకు జెనరిక్
-> OpenAI-అనుకూల ఎగ్జిక్యూటర్ను ఉపయోగించే `default.ts` ద్వారా సేవలు అందించబడతాయి. పూర్తి ప్రొవైడర్ కేటలాగ్ (355 ప్రొవైడర్లు)
+> గమనిక: ఇక్కడ జాబితా చేయని ప్రొవైడర్లకు సాధారణ
+> OpenAI-అనుకూల ఎగ్జిక్యూటర్ను ఉపయోగించే `default.ts` ద్వారా సేవ అందించబడుతుంది. పూర్తి ప్రొవైడర్ కేటలాగ్ (372 ప్రొవైడర్లు)
 > `src/shared/constants/providers.ts`లో ఉంది.
 
 ### 4.3 `open-sse/translator/`
@@ -505,7 +505,7 @@ open-sse/
   `openaiHelper`, `responsesApiHelper`, `schemaCoercion`, `toolCallHelper`, అలాగే
   సహాయక పరీక్షలు.
 - **చిత్ర సహాయకాలు** (`translator/image/sizeMapper.ts`).
-- ఉన్నత స్థాయి: `bootstrap.ts`, `formats.ts`, `registry.ts`, `index.ts`.
+- అగ్ర-స్థాయి: `bootstrap.ts`, `formats.ts`, `registry.ts`, `index.ts`.
 
 ### 4.4 `open-sse/transformer/`
 
@@ -514,7 +514,7 @@ open-sse/
 
 ### 4.5 `open-sse/services/`
 
-ముఖ్యాంశాలు (పూర్తి జాబితా `open-sse/services/` కింద ఉంది):
+ముఖ్యాంశాలు (పూర్తి జాబితా `open-sse/services/` క్రింద ఉంది):
 
 | అంశం              | ఫైళ్లు                                                                                                                                                                                                                                                   |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -525,7 +525,7 @@ open-sse/
 | క్యాషింగ్         | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
 | రూటింగ్ మేధస్సు   | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
 | మోడల్ నిర్వహణ     | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
-| కంప్రెషన్         | `compression/` — పూర్తి కంప్రెషన్ ఇంజిన్ వైరింగ్                                                                                                                                                                                                         |
+| కుదింపు           | `compression/` — సంపూర్ణ కుదింపు ఇంజిన్ అనుసంధానం                                                                                                                                                                                                        |
 | టోకెన్ + సెషన్    | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
 | టైర్ / మానిఫెస్ట్ | `tierResolver.ts`, `tierConfig.ts`, `tierDefaults.json`, `tierTypes.ts`, `manifestAdapter.ts`                                                                                                                                                            |
 | IP / నెట్వర్క్    | `ipFilter.ts`, `webSearchFallback.ts`                                                                                                                                                                                                                    |
@@ -535,21 +535,21 @@ open-sse/
 ### 4.6 `open-sse/mcp-server/`
 
 - `server.ts`లో అనుసంధానించబడిన **110 ప్రత్యేక టూల్స్** (`schemas/tools.ts`లో 45 ప్రామాణిక టూల్స్ +
-  మెమరీ, స్కిల్స్, GitHub-స్కిల్స్, పూల్, గేమిఫికేషన్, ప్లగిన్, Notion, Obsidian,
-  లోకల్-కార్పస్ మరియు కంప్రెషన్ మాడ్యూల్స్ — యూనియన్ను `countUniqueMcpTools` ద్వారా లెక్కించారు).
+  మెమరీ, నైపుణ్యాలు, GitHub-నైపుణ్యాలు, పూల్, గేమిఫికేషన్, ప్లగిన్, Notion, Obsidian,
+  స్థానిక-కార్పస్ మరియు కుదింపు మాడ్యూల్స్ — `countUniqueMcpTools` ద్వారా యూనియన్ లెక్కించబడింది).
 - **3 ట్రాన్స్పోర్ట్లు**: stdio, HTTP Streamable, SSE.
-- రన్టైమ్లో అమలు చేయబడే **33 స్కోప్లు** — ప్రాథమిక జాబితా `src/shared/constants/mcpScopes.ts`లో ఉంది; పూర్తి సెట్ అనేది ప్రతి టూల్ మాడ్యూల్ ప్రకటించిన స్కోప్ల యూనియన్.
-- ఆడిట్ పట్టిక: `mcp_tool_audit` (`audit.ts` ద్వారా పూరించబడుతుంది).
+- రన్టైమ్లో అమలు చేయబడే **33 స్కోప్లు** — ప్రాథమిక జాబితా `src/shared/constants/mcpScopes.ts`లో ఉంది; పూర్తి సమితి అనేది ప్రతి టూల్ మాడ్యూల్ ప్రకటించిన స్కోప్ల యూనియన్.
+- ఆడిట్ పట్టిక: `mcp_tool_audit` (`audit.ts` ద్వారా డేటాతో నింపబడుతుంది).
 - ఫైళ్లు: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
   `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`,
-  అలాగే `__tests__/` కింద ఉన్న పరీక్షలు.
+  అలాగే `__tests__/` కింద టెస్ట్లు.
 - పూర్తి టూల్ కేటలాగ్ కోసం [MCP-SERVER.md](../frameworks/MCP-SERVER.md) చూడండి.
 
 ### 4.7 `open-sse/config/`
 
 ప్రొవైడర్ రిజిస్ట్రీలు (`providerRegistry.ts`, `providerModels.ts`,
-`providerHeaderProfiles.ts`), ప్రతి ఫార్మాట్కు ప్రత్యేకమైన మోడల్ రిజిస్ట్రీలు (`audioRegistry.ts`,
+`providerHeaderProfiles.ts`), ఒక్కో ఫార్మాట్కు సంబంధించిన మోడల్ రిజిస్ట్రీలు (`audioRegistry.ts`,
 `embeddingRegistry.ts`, `imageRegistry.ts`, `moderationRegistry.ts`,
 `musicRegistry.ts`, `rerankRegistry.ts`, `searchRegistry.ts`, `videoRegistry.ts`),
 గుర్తింపు సహాయకాలు (`codexIdentity.ts`, `codexInstructions.ts`,

@@ -434,9 +434,9 @@ server/
 
 ---
 
-## 4. `open-sse/` — Работно пространство на двигателя за стрийминг
+## 4. `open-sse/` — Работно пространство на стрийминг системата
 
-Отделно npm работно пространство, публикувано като `@omniroute/open-sse`. Отговаря за обработката на заявки, изпълнителите, транслаторите, услугите, трансформатора и MCP сървъра.
+Отделно npm работно пространство, публикувано като `@omniroute/open-sse`. Отговаря за обработката на заявки, изпълнителите, преводачите, услугите, трансформатора и MCP сървъра.
 
 ```
 open-sse/
@@ -446,11 +446,11 @@ open-sse/
 ├── types.d.ts
 ├── config/                 Регистри на доставчици, профили на заглавки, идентичност, …
 ├── handlers/               Обработчици на заявки (чат, вграждания, аудио, изображения, …)
-├── executors/              108 специфични за доставчиците HTTP изпълнителя
+├── executors/              108 специфични за доставчиците HTTP изпълнители
 ├── translator/             Преобразуване на формати (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
-├── transformer/            Трансформатор на поток от Responses API ↔ Chat Completions
+├── transformer/            Трансформатор на поток Responses API ↔ Chat Completions
 ├── services/               Над 80 модула за услуги (комбинации, резервни варианти, квоти, идентичност, …)
-├── utils/                  Помощни средства за стрийминг, TLS клиент, AWS SigV4, извличане чрез прокси, …
+├── utils/                  Помощни средства за стрийминг, TLS клиент, AWS SigV4, прокси извличане, …
 └── mcp-server/             MCP сървър (3 транспорта, 33 обхвата, 110 инструмента)
 ```
 
@@ -459,24 +459,24 @@ open-sse/
 | Обработчик              | Предназначение                                                                                                   |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `chatCore.ts`           | Основен конвейер за чат (кеш, ограничаване на честотата, маршрутизиране на комбинации, изпращане към изпълнител) |
-| `responsesHandler.ts`   | Входна точка за OpenAI Responses API                                                                             |
-| `embeddings.ts`         | Векторни представяния                                                                                            |
+| `responsesHandler.ts`   | Входна точка на OpenAI Responses API                                                                             |
+| `embeddings.ts`         | Вграждания                                                                                                       |
 | `imageGeneration.ts`    | Генериране на изображения                                                                                        |
 | `audioSpeech.ts`        | Преобразуване на текст в реч                                                                                     |
 | `audioTranscription.ts` | Преобразуване на реч в текст                                                                                     |
 | `videoGeneration.ts`    | Генериране на видео                                                                                              |
 | `musicGeneration.ts`    | Генериране на музика                                                                                             |
-| `rerank.ts`             | Преподреждане                                                                                                    |
+| `rerank.ts`             | Пренареждане                                                                                                     |
 | `moderations.ts`        | Модериране                                                                                                       |
-| `search.ts`             | Търсене в уеб                                                                                                    |
-| `sseParser.ts`          | Парсер на SSE събития                                                                                            |
-| `usageExtractor.ts`     | Извличане на броя токени от потоците нагоре по веригата                                                          |
+| `search.ts`             | Търсене в мрежата                                                                                                |
+| `sseParser.ts`          | Анализатор на SSE събития                                                                                        |
+| `usageExtractor.ts`     | Извличане на броя токени от потоци нагоре по веригата                                                            |
 | `responseSanitizer.ts`  | Премахване на специфичен за доставчика шум                                                                       |
-| `responseTranslator.ts` | Свързващ слой между отговора на доставчика и слоя за транслиране                                                 |
+| `responseTranslator.ts` | Свързващ слой между отговора на доставчика и слоя за превод                                                      |
 
 ### 4.2 `open-sse/executors/`
 
-148 изпълнителя за доставчици, всеки от които разширява `BaseExecutor` (`base.ts`):
+148 изпълнители за доставчици, всеки от които разширява `BaseExecutor` (`base.ts`):
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
@@ -485,18 +485,18 @@ open-sse/
 (споделено помощно средство за идентичност) и `index.ts` (регистър).
 
 > Забележка: доставчиците, които не са изброени тук, се обслужват от `default.ts` чрез универсалния
-> изпълнител, съвместим с OpenAI. Пълният каталог с доставчици (355 доставчици) се намира в
+> изпълнител, съвместим с OpenAI. Пълният каталог на доставчиците (372 доставчици) се намира в
 > `src/shared/constants/providers.ts`.
 
 ### 4.3 `open-sse/translator/`
 
-Транслиране по модел „център и спици“ (OpenAI е центърът).
+Превод с архитектура „център и спици“ (OpenAI е центърът).
 
-- **9 транслатора на заявки** (`translator/request/`):
+- **9 преводача на заявки** (`translator/request/`):
   `antigravity-to-openai`, `claude-to-gemini`, `claude-to-openai`,
   `gemini-to-openai`, `openai-responses`, `openai-to-claude`,
   `openai-to-cursor`, `openai-to-gemini`, `openai-to-kiro`.
-- **9 транслатора на отговори** (`translator/response/`):
+- **9 преводача на отговори** (`translator/response/`):
   `claude-to-openai`, `cursor-to-openai`, `gemini-to-claude`, `gemini-to-openai`,
   `kiro-to-openai`, `openai-responses`, `openai-to-antigravity`,
   `openai-to-claude`.
@@ -509,12 +509,12 @@ open-sse/
 
 ### 4.4 `open-sse/transformer/`
 
-- `responsesTransformer.ts` — базиран на `TransformStream` преобразувател между Responses API ↔ Chat
+- `responsesTransformer.ts` — базиран на `TransformStream` преобразувател между Responses API и Chat
   Completions (използван от универсалния маршрут `responses/`).
 
 ### 4.5 `open-sse/services/`
 
-Основни модули (пълният списък се намира в `open-sse/services/`):
+Основни компоненти (пълният списък е в `open-sse/services/`):
 
 | Аспект                      | Файлове                                                                                                                                                                                                                                                  |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -529,8 +529,8 @@ open-sse/
 | Токени + сесии              | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
 | Ниво / манифест             | `tierResolver.ts`, `tierConfig.ts`, `tierDefaults.json`, `tierTypes.ts`, `manifestAdapter.ts`                                                                                                                                                            |
 | IP / мрежа                  | `ipFilter.ts`, `webSearchFallback.ts`                                                                                                                                                                                                                    |
-| Пакети                      | `batchProcessor.ts`                                                                                                                                                                                                                                      |
-| Употреба                    | `usage.ts`                                                                                                                                                                                                                                               |
+| Пакетна обработка           | `batchProcessor.ts`                                                                                                                                                                                                                                      |
+| Използване                  | `usage.ts`                                                                                                                                                                                                                                               |
 
 ### 4.6 `open-sse/mcp-server/`
 
@@ -538,7 +538,7 @@ open-sse/
   модули за памет, умения, GitHub умения, пул, игровизация, приставки, Notion, Obsidian,
   локален корпус и компресиране — обединението е преброено чрез `countUniqueMcpTools`).
 - **3 транспорта**: stdio, HTTP Streamable, SSE.
-- **33 обхвата**, налагани по време на изпълнение — основният списък е в `src/shared/constants/mcpScopes.ts`, а пълният набор е обединението на обхватите, декларирани от всеки модул с инструменти.
+- **33 обхвата**, прилагани по време на изпълнение — основният списък е в `src/shared/constants/mcpScopes.ts`, а пълният набор е обединението на обхватите, декларирани от всеки модул с инструменти.
 - Таблица за одит: `mcp_tool_audit` (попълвана от `audit.ts`).
 - Файлове: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
@@ -549,7 +549,7 @@ open-sse/
 ### 4.7 `open-sse/config/`
 
 Регистри на доставчици (`providerRegistry.ts`, `providerModels.ts`,
-`providerHeaderProfiles.ts`), регистри на модели за всеки формат (`audioRegistry.ts`,
+`providerHeaderProfiles.ts`), регистри на модели по формат (`audioRegistry.ts`,
 `embeddingRegistry.ts`, `imageRegistry.ts`, `moderationRegistry.ts`,
 `musicRegistry.ts`, `rerankRegistry.ts`, `searchRegistry.ts`, `videoRegistry.ts`),
 помощни компоненти за идентичност (`codexIdentity.ts`, `codexInstructions.ts`,
@@ -562,7 +562,7 @@ open-sse/
 
 ### 4.8 `open-sse/utils/`
 
-Примитиви за поточно предаване и помощни функции за доставчици: `stream.ts`, `streamHandler.ts`,
+Примитиви за стрийминг и помощни средства за доставчици: `stream.ts`, `streamHandler.ts`,
 `streamHelpers.ts`, `streamPayloadCollector.ts`, `streamReadiness.ts`,
 `sseHeartbeat.ts`, `proxyFetch.ts`, `proxyDispatcher.ts`, `tlsClient.ts`,
 `networkProxy.ts`, `awsSigV4.ts`, `cacheControlPolicy.ts`,
@@ -655,7 +655,7 @@ bin/
 
 ## 8. `scripts/`
 
-Организирана в 6 подпапки според предназначението.
+Организирана е в 6 подпапки според предназначението.
 
 - **`scripts/build/`** — `build-next-isolated.mjs`, `prepublish.ts`,
   `prepare-electron-standalone.mjs`, `pack-artifact-policy.ts`,
