@@ -1,13 +1,13 @@
 {
   "codexKeyServiceMode": {
     "title": "此 API 密钥的 Codex 服务模式",
-    "description": "适用于 Codex 请求，包括组合中的 Codex 模型。强制模式会覆盖客户端、全局设置和连接默认值。其他提供商不受影响。",
+    "description": "适用于 Codex 请求，包括组合中的 Codex 模型。强制模式会覆盖客户端、全局设置和连接默认值。其他提供者不受影响。",
     "label": "服务模式",
     "inherit": "继承现有行为",
     "default": "强制使用标准模式（默认）",
     "priority": "强制使用快速／优先模式",
     "flex": "强制使用弹性模式",
-    "warning": "此设置不会授予提供商访问权限。可用性、费用和配额消耗取决于您的 Codex 账户和模型。强制模式要求使用 HTTP 或 Responses WebSocket 传输；app-server 请求将被拒绝。",
+    "warning": "此设置不会授予提供者访问权限。可用性、费用和配额消耗取决于您的 Codex 账户和模型。强制模式要求使用 HTTP 或 Responses WebSocket 传输；app-server 请求将被拒绝。",
     "confirm": "要将“{mode}”应用于此 API 密钥吗？此设置将对后续请求生效。",
     "save": "保存模式",
     "retry": "重试",
@@ -3384,6 +3384,10 @@
     "comboRefMember": "组合 → {name}"
   },
   "combos": {
+    "autoTosIncludeLabel": "在 auto 中包含标记为 ToS: avoid 的提供者",
+    "autoTosDescription": "默认关闭。适用于所有 auto 组合，而非单个账户。连接提供者不会启用此选项。",
+    "autoTosSaveError": "无法保存 ToS 策略。仍显示之前的设置，请重试。",
+    "autoTosLoadError": "无法加载 ToS 策略。请重试后再进行更改。",
     "title": "组合",
     "description": "创建支持权重路由与故障回退的模型组合",
     "autoCatalogTitle": "自动路由目录",
@@ -4090,6 +4094,9 @@
     "showingTopCostRows": "正在显示 {total} 个匹配行中的 {shown} 个（前 50 个）。"
   },
   "endpoint": {
+    "cloudUploadDestination": "云同步目标（非本地备份位置）：",
+    "cloudUploadWarning": "新安装默认禁用云同步。启用后，提供者 API 密钥、OAuth 访问令牌和刷新令牌、OmniRoute API 密钥以及配置将立即上传到上述目标，并在今后的同步中继续上传。此功能与“存储”中的本地备份相互独立。仅在信任该服务器时启用。",
+    "cloudUploadConsent": "我理解并授权将我的凭据上传到此目标。",
     "title": "API 端点",
     "subtitle": "可将 OpenAI 兼容端点与大多数 SDK 和工具配合使用。",
     "testEndpoint": "测试端点 →",
@@ -5268,6 +5275,9 @@
     }
   },
   "providers": {
+    "tosAvoidNoticeTitle": "此提供者默认被排除在 auto 之外",
+    "tosAvoidNoticeDescription": "其 ToS 状态标记为 avoid。连接账户不会改变此策略。在为所有 auto 组合启用全局选项之前，请查阅提供者的条款。",
+    "tosAvoidNoticeAction": "查看 auto 策略",
     "codexReleaseCooldown": "Clear local cooldown",
     "codexReleaseCooldownHint": "Allow this Codex account to be tried again. Does not redeem a reset credit or change upstream limits.",
     "codexReleasingCooldown": "Clearing…",
@@ -5704,6 +5714,8 @@
     "disableConnection": "禁用连接",
     "enableConnection": "启用连接",
     "reauthenticateConnection": "重新验证此连接",
+    "verifyAccount": "验证账号",
+    "verifyAccountHint": "Google 要求验证此账号。请打开链接完成验证后重试。",
     "proxyConfig": "代理配置",
     "aliasExistsAlert": "别名“{alias}”已存在。请使用不同的模型或编辑现有别名。",
     "aliasInputPlaceholder": "别名",
@@ -5732,6 +5744,8 @@
     "targetFormatAuto": "默认 (自动)",
     "targetFormatGemini": "Gemini",
     "targetFormatAntigravity": "Antigravity",
+    "maxOutputTokenOverrideLabel": "最大输出代币",
+    "maxOutputTokenOverrideHint": "请输入正整数令牌数。留空以使用默认值。",
     "contextWindowOverrideLabel": "上下文窗口覆盖",
     "contextWindowOverridePlaceholder": "例如 131072",
     "contextWindowOverrideHint": "当提供者误报时，手动设置此模型的实际上下文窗口（token）。此设置优先于自动检测/目录值，并防止组合路由丢弃该模型。",
@@ -8681,6 +8695,7 @@
     "cliproxyapiPort": "端口",
     "qdrantHost": "主机",
     "qdrantCollection": "集合",
+    "catalogVisibilityHint": "隐藏的模型 ID 仍可使用相同的访问权限调用。",
     "catalogScopeTitle": "Models API 列表",
     "catalogScopeDesc": "GET /v1/models 为此密钥公开的内容。缩小列表范围绝不会改变此密钥可以调用的模型。",
     "catalogScopeAll": "两者",
@@ -9290,7 +9305,7 @@
     "previous": "上一页",
     "next": "下一页",
     "providerExposure": "提供者暴露",
-    "providerExposureDescription": "将 9Router 模型以 9router/ 前缀暴露为路由目标。",
+    "providerExposureDescription": "将 9Router 模型以 <prefix>9router/</prefix> 前缀暴露为路由目标。",
     "providerExposureLabel": "以 <prefix>9router/...</prefix> 前缀暴露",
     "providerExposureHint": "启用后，发现的模型会出现在 OmniRoute 各处的提供者选择器中。",
     "providerExposureUpdateFailed": "更新失败 (HTTP {status})",
