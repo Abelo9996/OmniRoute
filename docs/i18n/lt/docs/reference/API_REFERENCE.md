@@ -930,10 +930,10 @@ X-OmniRoute-No-Cache: true
 
 ---
 
-## Valdymo skydas ir administravimas
+## Ataskaitų skydelis ir valdymas
 
-Administravimo maršrutai (`/api/*`, išskyrus viešą autentifikavimą / prisijungimą) **nėra** autorizuojami naudojant įprastus išvadų generavimo API raktus. Kredencialų grupės, aprėptys ir curl pavyzdžiai:
-[Administravimo autentifikavimas](../guides/MANAGEMENT-AUTH.md).
+Valdymo maršrutai (`/api/*`, išskyrus viešąjį autentifikavimą / prisijungimą) **nėra** autorizuojami naudojant įprastus išvadų API raktus. Kredencialų grupės, aprėptys ir curl pavyzdžiai:
+[Valdymo autentifikavimas](../guides/MANAGEMENT-AUTH.md).
 
 ### Autentifikavimas
 
@@ -945,35 +945,35 @@ Administravimo maršrutai (`/api/*`, išskyrus viešą autentifikavimą / prisij
 
 ### Teikėjų valdymas
 
-| Galinis taškas                          | Metodas                   | Aprašymas                                                                                                                                                                                |
-| --------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/providers`                        | GET/POST                  | Pateikti teikėjų sąrašą / sukurti teikėją                                                                                                                                                |
-| `/api/providers/[id]`                   | GET/PUT/DELETE            | Valdyti teikėją                                                                                                                                                                          |
-| `/api/providers/[id]/test`              | POST                      | Išbandyti ryšį su teikėju                                                                                                                                                                |
-| `/api/providers/[id]/models`            | GET                       | Pateikti teikėjo modelių sąrašą                                                                                                                                                          |
-| `/api/providers/validate`               | POST                      | Patikrinti teikėjo konfigūraciją                                                                                                                                                         |
-| `/api/providers/bulk`                   | POST                      | Masiniu būdu pridėti VIENO teikėjo API raktus                                                                                                                                            |
-| `/api/providers/import`                 | POST                      | Importuoti nevienalytį teikėjų SĄRAŠĄ iš išanalizuoto CSV/JSON failo (#6836); pateikti dalinio nepavykimo rezultatus kiekvienai eilutei                                                  |
-| `/api/provider-nodes*`                  | Įvairūs                   | Teikėjo mazgų valdymas                                                                                                                                                                   |
-| `/api/provider-models`                  | GET/POST/PUT/PATCH/DELETE | Pasirinktiniai modeliai ir kiekvieno modelio perrašos (pridėti, atnaujinti, paslėpti / rodyti, ištrinti)                                                                                 |
-| `/api/provider-models/validate-and-add` | POST                      | Administravimo autentifikavimu apsaugotas, pasirenkamas griežtas ryšio tikrinimas ir atominė pasirinktinio modelio registracija; žr. [Modelio tikrinimas](../guides/MODEL-VALIDATION.md) |
+| Galinis taškas                          | Metodas                   | Aprašymas                                                                                                                                                                        |
+| --------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/providers`                        | GET/POST                  | Peržiūrėti teikėjų sąrašą / kurti teikėjus                                                                                                                                       |
+| `/api/providers/[id]`                   | GET/PUT/DELETE            | Valdyti teikėją                                                                                                                                                                  |
+| `/api/providers/[id]/test`              | POST                      | Tikrinti ryšį su teikėju                                                                                                                                                         |
+| `/api/providers/[id]/models`            | GET                       | Peržiūrėti teikėjo modelių sąrašą                                                                                                                                                |
+| `/api/providers/validate`               | POST                      | Patikrinti teikėjo konfigūraciją                                                                                                                                                 |
+| `/api/providers/bulk`                   | POST                      | Masiniu būdu pridėti VIENO teikėjo API raktus                                                                                                                                    |
+| `/api/providers/import`                 | POST                      | Importuoti nevienalytį teikėjų SĄRAŠĄ iš išanalizuoto CSV/JSON failo (#6836); dalinių eilučių klaidų rezultatai                                                                  |
+| `/api/provider-nodes*`                  | Įvairūs                   | Teikėjų mazgų valdymas                                                                                                                                                           |
+| `/api/provider-models`                  | GET/POST/PUT/PATCH/DELETE | Pasirinktiniai modeliai ir atskirų modelių nuostatų pakeitimai (pridėti, atnaujinti, paslėpti / rodyti, pašalinti)                                                               |
+| `/api/provider-models/validate-and-add` | POST                      | Valdymo autentifikavimu apsaugotas pasirenkamas griežtas ryšio tikrinimas ir atominė pasirinktinio modelio registracija; žr. [Modelio tikrinimas](../guides/MODEL-VALIDATION.md) |
 
 Sinchronizuotiems / importuotiems modeliams `PUT /api/provider-models` priima `provider`, `modelId` ir
-`maxOutputTokenOverride`: teigiamas sveikasis skaičius nustato rankinę išvesties žetonų ribą, o `null`
-ją išvalo ir atkuria numatytąją reikšmę. `GET /api/provider-models?provider=<provider>` grąžina šias
-reikšmes lauke `modelOutputOverrides`, įskaitant modelius, kuriems nėra pasirinktinio modelio įrašo. Perraša
+`maxOutputTokenOverride`: teigiamas sveikasis skaičius nustato rankinę išvesties prieigos raktų ribą, o `null`
+ją panaikina ir atkuria numatytąją reikšmę. `GET /api/provider-models?provider=<provider>` grąžina šias
+reikšmes lauke `modelOutputOverrides`, įskaitant modelius be pasirinktinio modelio eilutės. Šis pakeitimas
 naudoja vykdymo aplinkos `max_output_tokens` galimybę ir išlieka pakartotinai sinchronizavus modelį. Su OpenAI suderinamo
-teikėjo puslapyje siūlomi tokie patys redagavimo / išvalymo valdikliai ir pažymimi modeliai, aiškiai palaikantys vaizdų apdorojimą.
+teikėjo puslapyje pateikiami tokie patys redagavimo / išvalymo valdikliai ir pažymimi modeliai, turintys aiškiai deklaruotą vaizdų palaikymą.
 
-Pasirinktiniai Chat Completions mazgai pritaiko aiškiai nurodytą samprotavimo atsisakymą aukštesnio lygio sistemai. Sėkmingas
-ryšio bandymas automatiškai parenka pokalbio šablono valdiklius kiekvienam tiksliam modelio ID,
+Pasirinktiniai Chat Completions mazgai pritaiko aiškiai nurodytą samprotavimo atsisakymą aukštesnio lygmens sistemai. Sėkmingas
+ryšio testas automatiškai parenka pokalbio šablono valdiklius kiekvienam tiksliam modelio ID,
 kurio `/models` įrašas patvirtina atpažįstamą `owned_by` reikšmę: `vllm`, `sglang` arba `llamacpp`.
 Skaidrūs su OpenAI suderinami tarpiniai sluoksniai gali išsaugoti pradinį modelio įrašą įdėtajame
-`openai` objekte; aptikimas tikrina iki trijų tokių apvalkalų. Modeliams, kurių nuosavybės informacijos nėra, ji nežinoma arba
-prieštaringa, paliekama įprasta OpenAI elgsena. Aptikimui pakartotinai naudojama esama katalogo užklausa,
-negeneruojami užbaigimo žetonai, o pakeitus ryšio galinį tašką aptikimo rezultatas anuliuojamas.
+`openai` objekte; aptikimas apima iki trijų tokių apvalkalų. Modeliai, kurių nuosavybės informacijos nėra, ji nežinoma arba
+prieštaringa, išlaiko įprastą OpenAI veikseną. Aptikimui pakartotinai naudojama esama katalogo užklausa,
+negeneruojami jokie užbaigimo prieigos raktai, o pakeitus ryšio galinį tašką aptikimo rezultatas panaikinamas.
 
-Norėdami įtvirtinti šią elgseną aukštesnio lygio sistemai, kuri nepateikia šių metaduomenų, naudokite esamą dalinio
+Norėdami užfiksuoti šią veikseną aukštesnio lygmens sistemai, kuri nepateikia šių metaduomenų, naudokite esamą dalinio
 teikėjo atnaujinimo API:
 
 ```json
@@ -984,32 +984,32 @@ teikėjo atnaujinimo API:
 }
 ```
 
-Siųskite šį turinį naudodami `PUT /api/providers/<connection-id>`. Tame ryšyje aiškiai nurodyta
-`none` samprotavimo pastangų reikšmė siunčiama kaip `chat_template_kwargs.thinking=false` ir
+Išsiųskite šį turinį naudodami `PUT /api/providers/<connection-id>`. Naudojant šį ryšį, aiškiai nurodyta
+samprotavimo pastangų reikšmė `none` siunčiama kaip `chat_template_kwargs.thinking=false` ir
 `chat_template_kwargs.enable_thinking=false`. Aiškiai nurodytos savosios šablono reikšmės išlieka viršesnės,
 nebent serverio samprotavimo taisyklė priverstinai nustato pastangų lygį. Ši nuostata taikoma tik tada, kai pasirinktinis
-su OpenAI suderinamas ryšys perduoda Chat Completions turinį; Responses užklausos ir įprasti
-teikėjai išlaiko savąją užklausos struktūrą. Nustatykite `reasoningControl` reikšmę į `openai`, kad būtų priverstinai naudojamas įprastas OpenAI
-`reasoning_effort` perdavimas, arba praleiskite šį lauką / nustatykite jį į `null`, kad būtų naudojamas automatinis aptikimas.
+su OpenAI suderinamas ryšys siunčia Chat Completions turinį; Responses užklausos ir įprasti
+teikėjai išlaiko savąją užklausos struktūrą. Nustatykite `reasoningControl` į `openai`, kad būtų priverstinai naudojamas įprastas OpenAI
+`reasoning_effort` tiesioginis perdavimas, arba praleiskite šią nuostatą / nustatykite ją į `null`, kad būtų naudojamas automatinis aptikimas.
 
-Claude Code automatinio režimo klasifikatoriaus užklausose numatytasis savasis mąstymas išjungiamas, kai jose
-nėra aiškiai nurodytų samprotavimo valdiklių. Aptikimui naudojamas klasifikatoriaus sistemos žymuo Claude formato
+Claude Code automatinio režimo klasifikatoriaus užklausose numatytasis vidinis mąstymas išjungiamas, kai jose nėra
+jokių aiškiai nurodytų samprotavimo valdiklių. Aptikimui naudojamas klasifikatoriaus sistemos žymuo Claude formato
 užklausose, o ne modelių pavadinimai ar užbaigimo apribojimai. Aiškūs užklausos turinio valdikliai, palaikomos pastangų / mąstymo
-antraštės, maršruto parinkimo taisyklės ir nustatytos modelio pastangos išlaiko esamą prioritetą. Abiejuose klasifikatoriaus
-etapuose išlaikomos jų užklausos, užbaigimo apribojimai, stabdymo sekos ir tikrieji pirminės sistemos leidimų
-sprendimai; antrasis etapas vis dar gali pateikti prašomą matomą samprotavimą kaip paprastą tekstą.
+antraštės, maršruto parinkimo taisyklės ir nustatytos modelio pastangos išlaiko esamą prioritetą. Abu klasifikatoriaus
+etapai išlaiko savo raginimus, užbaigimo apribojimus, stabdymo sekas ir tikrus pirminės sistemos leidimų
+sprendimus; antrasis etapas vis dar gali pateikti prašomą matomą samprotavimą kaip paprastą tekstą.
 
 ### OAuth srautai
 
-| Galinis taškas                   | Metodas | Aprašymas                          |
-| -------------------------------- | ------- | ---------------------------------- |
-| `/api/oauth/[provider]/[action]` | Įvairūs | Teikėjui specifinis OAuth procesas |
+| Galinis taškas                   | Metodas | Aprašymas               |
+| -------------------------------- | ------- | ----------------------- |
+| `/api/oauth/[provider]/[action]` | Įvairūs | Teikėjui būdingas OAuth |
 
-### Maršrutizavimas ir konfigūracija
+### Maršrutų parinkimas ir konfigūracija
 
 | Galinis taškas        | Metodas  | Aprašymas                           |
 | --------------------- | -------- | ----------------------------------- |
-| `/api/models/alias`   | GET/POST | Modelių alternatyvieji pavadinimai  |
+| `/api/models/alias`   | GET/POST | Modelių pseudonimai                 |
 | `/api/models/catalog` | GET      | Visi modeliai pagal teikėją ir tipą |
 | `/api/combos*`        | Įvairūs  | Derinių valdymas                    |
 | `/api/keys*`          | Įvairūs  | API raktų valdymas                  |
@@ -1021,45 +1021,45 @@ sprendimai; antrasis etapas vis dar gali pateikti prašomą matomą samprotavim�
 | -------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/api/usage/history`             | GET             | Naudojimo istorija                                                                                                                                                                                                                                                                                                                                                     |
 | `/api/usage/logs`                | GET             | Naudojimo žurnalai                                                                                                                                                                                                                                                                                                                                                     |
-| `/api/usage/request-logs`        | GET             | Užklausų lygmens žurnalai                                                                                                                                                                                                                                                                                                                                              |
+| `/api/usage/request-logs`        | GET             | Užklausų lygio žurnalai                                                                                                                                                                                                                                                                                                                                                |
 | `/api/usage/[connectionId]`      | GET             | Kiekvieno ryšio naudojimas                                                                                                                                                                                                                                                                                                                                             |
 | `/api/usage/token-limits`        | GET/POST/DELETE | Kiekvieno API rakto žetonų limitų biudžetai                                                                                                                                                                                                                                                                                                                            |
 | `/api/usage/model-latency-stats` | GET             | Slenkamasis kiekvieno teikėjo / modelio delsos suvestinis rodiklis (vidurkis / p50 / p95 / p99, sėkmės rodiklis); filtrai: `windowHours`/`minSamples`/`maxRows`/`provider`/`model` (#6873)                                                                                                                                                                             |
-| `/api/usage/cache-health`        | GET             | Užklausų podėlio būklės suvestinė pagal `call_logs` — rašymo / skaitymo santykis, p50 / p90 / p99 rašymo dydžio pasiskirstymas, intensyvaus rašymo koncentracija, suskirstymas pagal modelį ir `healthy`/`degraded`/`thrash`/`no-data` įvertinimas; užklausos parametrai `range` (`1h`\|`24h`\|`7d`\|`30d`, numatytoji reikšmė `24h`) ir pasirinktinis `model` (#8827) |
+| `/api/usage/cache-health`        | GET             | Raginimų podėlio būklės suvestinė pagal `call_logs` — rašymo / skaitymo santykis, p50 / p90 / p99 rašymo dydžio pasiskirstymas, intensyvaus rašymo koncentracija, suskirstymas pagal modelį ir `healthy`/`degraded`/`thrash`/`no-data` įvertinimas; užklausos parametrai `range` (`1h`\|`24h`\|`7d`\|`30d`, numatytoji reikšmė `24h`) ir pasirinktinis `model` (#8827) |
 
 ### API rakto leidimai
 
-`PATCH /api/keys/{id}` atnaujina esamo rakto leidimus. Kaip ir kiekvienam `/api/keys*` maršrutui, jam reikalingas valdymo įgaliojimas (žr. [Valdymo autentifikavimas](../guides/MANAGEMENT-AUTH.md)), o ne išvadų generavimo raktas. Siųskite tik tuos laukus, kuriuos norite pakeisti; užklausa be nė vieno iš jų atmetama pateikiant pranešimą `No valid fields to update`. Priimtini laukai apibrėžti `updateKeyPermissionsSchema`, esančioje `src/shared/validation/schemas/keys.ts`.
+`PATCH /api/keys/{id}` atnaujina esamo rakto leidimus. Kaip ir kiekvienam `/api/keys*` maršrutui, jam reikalingas valdymo įgaliojimas (žr. [Valdymo autentifikavimas](../guides/MANAGEMENT-AUTH.md)), o ne išvadų generavimo raktas. Siųskite tik tuos laukus, kuriuos norite pakeisti; užklausa be nė vieno iš jų atmetama pateikiant `No valid fields to update`. Priimami laukai apibrėžti `updateKeyPermissionsSchema`, esančioje `src/shared/validation/schemas/keys.ts`.
 
-| Laukas                                      | Tipas                                                                         | Pastabos                                                                                                                                  |
-| ------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                                      | eilutė, 1–200 simbolių                                                        |                                                                                                                                           |
-| `isActive`                                  | loginė reikšmė                                                                |                                                                                                                                           |
-| `isBanned`                                  | loginė reikšmė                                                                |                                                                                                                                           |
-| `expiresAt`                                 | ISO 8601 data ir laikas arba `null`                                           | `null` pašalina galiojimo pabaigos laiką                                                                                                  |
-| `modelAccessMode`                           | `all` \| `restricted`                                                         | `allowedModels` turi būti tuščias, kai režimas yra `all`                                                                                  |
-| `allowedModels`, `blockedModels`            | eilučių masyvas, iki 1000                                                     |                                                                                                                                           |
-| `allowedCombos`                             | eilučių masyvas, iki 500                                                      | Nustato, kuriuos derinius galima iškviesti naudojant šį raktą; tiesioginius modelius valdo `modelAccessMode` / `allowedModels`            |
-| `connectionAccessMode`                      | `all` \| `restricted`                                                         | `allowedConnections` negali būti tuščias, kai nustatyta `restricted`, ir turi būti tuščias, kai nustatyta `all`                           |
-| `allowedConnections`                        | UUID masyvas, iki 100                                                         |                                                                                                                                           |
-| `allowAutoCombos`                           | loginė reikšmė                                                                | `false` atmeta užklausas dėl `auto/*` modelių naudojant šį raktą; raktams, kuriems ši reikšmė niekada nenustatyta, jos leidžiamos         |
-| `catalogScope`                              | `all` \| `combos` \| `models`                                                 | Nurodo, ką `GET /v1/models` pateikia šiam raktui (tik derinius, tik modelius arba abu); tai nekeičia, ką galima iškviesti naudojant raktą |
-| `noLog`, `autoResolve`                      | loginė reikšmė                                                                |                                                                                                                                           |
-| `throttleDelayMs`                           | sveikasis skaičius, 0–300000                                                  |                                                                                                                                           |
-| `maxSessions`                               | sveikasis skaičius, 0–10000                                                   |                                                                                                                                           |
-| `rateLimits`                                | `{ limit, window }` masyvas (teigiami sveikieji skaičiai, iki 50) arba `null` | `null` pašalina apribojimus                                                                                                               |
-| `accessSchedule`                            | tvarkaraščio objektas arba `null`                                             | `null` pašalina tvarkaraštį                                                                                                               |
-| `scopes`                                    | eilučių masyvas, iki 32                                                       |                                                                                                                                           |
-| `allowedEndpoints`                          | eilučių masyvas, iki 20                                                       |                                                                                                                                           |
-| `streamDefaultMode`                         | `legacy` \| `json`                                                            |                                                                                                                                           |
-| `cacheDefaultMode`                          | `legacy` \| `bypass`                                                          | Žr. [Podėlio apėjimas pagal raktą](#per-key-cache-bypass)                                                                                 |
-| `compressionEnabled`                        | loginė reikšmė                                                                |                                                                                                                                           |
-| `codexServiceMode`                          | vienas iš Codex paslaugos režimų                                              |                                                                                                                                           |
-| `disableNonPublicModels`                    | loginė reikšmė                                                                |                                                                                                                                           |
-| `allowUsageCommand`                         | boolean                                                                       |                                                                                                                                           |
-| `usageLimitEnabled`                         | boolean                                                                       |                                                                                                                                           |
-| `dailyUsageLimitUsd`, `weeklyUsageLimitUsd` | number >= 0 arba `null`                                                       |                                                                                                                                           |
-| `chaosModeEnabled`                          | boolean                                                                       |                                                                                                                                           |
+| Laukas                                      | Tipas                                                                         | Pastabos                                                                                                                             |
+| ------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`                                      | eilutė, 1–200 simbolių                                                        |                                                                                                                                      |
+| `isActive`                                  | loginė reikšmė                                                                |                                                                                                                                      |
+| `isBanned`                                  | loginė reikšmė                                                                |                                                                                                                                      |
+| `expiresAt`                                 | ISO 8601 data ir laikas arba `null`                                           | `null` pašalina galiojimo pabaigos laiką                                                                                             |
+| `modelAccessMode`                           | `all` \| `restricted`                                                         | `allowedModels` turi būti tuščias, kai režimas yra `all`                                                                             |
+| `allowedModels`, `blockedModels`            | eilučių masyvas, iki 1000                                                     |                                                                                                                                      |
+| `allowedCombos`                             | eilučių masyvas, iki 500                                                      | Nustato, kuriuos derinius gali iškviesti raktas; tiesioginius modelius valdo `modelAccessMode` / `allowedModels`                     |
+| `connectionAccessMode`                      | `all` \| `restricted`                                                         | `allowedConnections` turi būti netuščias, kai nustatyta `restricted`, ir tuščias, kai nustatyta `all`                                |
+| `allowedConnections`                        | UUID masyvas, iki 100                                                         |                                                                                                                                      |
+| `allowAutoCombos`                           | loginė reikšmė                                                                | `false` atmeta šiuo raktu siunčiamas užklausas dėl `auto/*` modelių; raktams, kuriems ši reikšmė niekada nenustatyta, jos leidžiamos |
+| `catalogScope`                              | `all` \| `combos` \| `models`                                                 | Nurodo, ką `GET /v1/models` pateikia šiam raktui (tik derinius, tik modelius arba abu); tai nekeičia, ką raktas gali iškviesti       |
+| `noLog`, `autoResolve`                      | loginė reikšmė                                                                |                                                                                                                                      |
+| `throttleDelayMs`                           | sveikasis skaičius, 0–300000                                                  |                                                                                                                                      |
+| `maxSessions`                               | sveikasis skaičius, 0–10000                                                   |                                                                                                                                      |
+| `rateLimits`                                | `{ limit, window }` masyvas (teigiami sveikieji skaičiai, iki 50) arba `null` | `null` pašalina apribojimus                                                                                                          |
+| `accessSchedule`                            | tvarkaraščio objektas arba `null`                                             | `null` pašalina tvarkaraštį                                                                                                          |
+| `scopes`                                    | eilučių masyvas, iki 32                                                       |                                                                                                                                      |
+| `allowedEndpoints`                          | eilučių masyvas, iki 20                                                       |                                                                                                                                      |
+| `streamDefaultMode`                         | `legacy` \| `json`                                                            |                                                                                                                                      |
+| `cacheDefaultMode`                          | `legacy` \| `bypass`                                                          | Žr. [Talpyklos apėjimas pagal raktą](#per-key-cache-bypass)                                                                          |
+| `compressionEnabled`                        | loginė reikšmė                                                                |                                                                                                                                      |
+| `codexServiceMode`                          | vienas iš Codex paslaugos režimų                                              |                                                                                                                                      |
+| `disableNonPublicModels`                    | loginė reikšmė                                                                |                                                                                                                                      |
+| `allowUsageCommand`                         | boolean                                                                       |                                                                                                                                      |
+| `usageLimitEnabled`                         | boolean                                                                       |                                                                                                                                      |
+| `dailyUsageLimitUsd`, `weeklyUsageLimitUsd` | number >= 0 arba `null`                                                       |                                                                                                                                      |
+| `chaosModeEnabled`                          | boolean                                                                       |                                                                                                                                      |
 
 ```bash
 curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
@@ -1074,120 +1074,120 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 | ------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/api/settings`                       | GET/PUT/PATCH | Bendrieji nustatymai                                                                                                                                                                                                        |
 | `/api/settings/proxy`                 | GET/PUT       | Tinklo tarpinio serverio konfigūracija                                                                                                                                                                                      |
-| `/api/settings/proxy/test`            | POST          | Patikrinti ryšį su tarpiniu serveriu                                                                                                                                                                                        |
+| `/api/settings/proxy/test`            | POST          | Tarpinio serverio ryšio testavimas                                                                                                                                                                                          |
 | `/api/settings/ip-filter`             | GET/PUT       | Leidžiamų / blokuojamų IP adresų sąrašas                                                                                                                                                                                    |
-| `/api/settings/thinking-budget`       | GET/PUT       | Mąstymo / samprotavimo **užklausos** perrašymo režimas (perdavimas be pakeitimų / automatinis pašalinimas / pasirinktinis / adaptyvus). Nepriklauso nuo glaudinimo. Žr. [THINKING_BUDGET.md](../guides/THINKING_BUDGET.md). |
-| `/api/settings/system-prompt`         | GET/PUT       | Visuotinis sistemos raginimas                                                                                                                                                                                               |
+| `/api/settings/thinking-budget`       | GET/PUT       | Mąstymo / samprotavimo **užklausos** perrašymo režimas (perdavimas nepakeitus / automatinis pašalinimas / pasirinktinis / adaptyvusis). Nepriklauso nuo glaudinimo. Žr. [THINKING_BUDGET.md](../guides/THINKING_BUDGET.md). |
+| `/api/settings/system-prompt`         | GET/PUT       | Visuotinė sistemos užklausa                                                                                                                                                                                                 |
 | `/api/settings/compression`           | GET/PUT       | Visuotinė glaudinimo konfigūracija                                                                                                                                                                                          |
-| `/api/settings/purge-request-history` | POST          | Išvalyti užklausų žurnalo eilutes ir vietinius iškvietimų žurnalo artefaktus                                                                                                                                                |
+| `/api/settings/purge-request-history` | POST          | Užklausų žurnalo eilučių ir vietinių iškvietimų žurnalo artefaktų išvalymas                                                                                                                                                 |
 
 ### Kontekstas ir glaudinimas
 
-| Galinis taškas                         | Metodas        | Aprašymas                                                                                     |
-| -------------------------------------- | -------------- | --------------------------------------------------------------------------------------------- |
-| `/api/compression/preview`             | POST           | Peržiūrėti off/lite/standard/aggressive/ultra/RTK/stacked glaudinimą                          |
-| `/api/compression/language-packs`      | GET            | Pateikti galimų „Caveman“ kalbų paketų sąrašą                                                 |
-| `/api/compression/rules`               | GET            | Pateikti „Caveman“ taisyklių metaduomenų sąrašą                                               |
-| `/api/context/caveman/config`          | GET/PUT        | „Caveman“ būdingų nustatymų alternatyvusis pavadinimas                                        |
-| `/api/context/rtk/config`              | GET/PUT        | RTK būdingi nustatymai, įskaitant pasirinktinius filtrus ir neapdorotos išvesties išsaugojimą |
-| `/api/context/rtk/filters`             | GET            | RTK filtrų katalogas ir pasirinktinių filtrų diagnostika                                      |
-| `/api/context/rtk/test`                | POST           | Vykdyti RTK peržiūrą / testą naudojant tekstinius duomenis                                    |
-| `/api/context/rtk/raw-output/[id]`     | GET            | Pagal rodyklės ID nuskaityti išsaugotą nuasmenintą neapdorotą išvestį                         |
-| `/api/context/combos`                  | GET/POST       | Glaudinimo derinių sąrašas / kūrimas                                                          |
-| `/api/context/combos/[id]`             | GET/PUT/DELETE | Glaudinimo derinio informacija / atnaujinimas / šalinimas                                     |
-| `/api/context/combos/[id]/assignments` | GET/PUT        | Priskirti glaudinimo derinius maršruto parinkimo deriniams                                    |
-| `/api/context/analytics`               | GET            | Alternatyvusis glaudinimo analizės pavadinimas                                                |
+| Galinis taškas                         | Metodas        | Aprašymas                                                                                       |
+| -------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------- |
+| `/api/compression/preview`             | POST           | Išjungto / lengvo / standartinio / agresyvaus / ultra / RTK / sudėtinio glaudinimo peržiūra     |
+| `/api/compression/language-packs`      | GET            | Galimų „Caveman“ kalbos paketų sąrašas                                                          |
+| `/api/compression/rules`               | GET            | „Caveman“ taisyklių metaduomenų sąrašas                                                         |
+| `/api/context/caveman/config`          | GET/PUT        | „Caveman“ specifinių nustatymų alternatyvusis pavadinimas                                       |
+| `/api/context/rtk/config`              | GET/PUT        | RTK specifiniai nustatymai, įskaitant pasirinktinius filtrus ir neapdorotos išvesties saugojimą |
+| `/api/context/rtk/filters`             | GET            | RTK filtrų katalogas ir pasirinktinių filtrų diagnostika                                        |
+| `/api/context/rtk/test`                | POST           | RTK peržiūros / testo vykdymas su tekstine naudingąja apkrova                                   |
+| `/api/context/rtk/raw-output/[id]`     | GET            | Išsaugotos nuasmenintos neapdorotos išvesties skaitymas pagal rodyklės ID                       |
+| `/api/context/combos`                  | GET/POST       | Glaudinimo derinių sąrašas / kūrimas                                                            |
+| `/api/context/combos/[id]`             | GET/PUT/DELETE | Glaudinimo derinio informacija / atnaujinimas / ištrynimas                                      |
+| `/api/context/combos/[id]/assignments` | GET/PUT        | Glaudinimo derinių priskyrimas maršruto parinkimo deriniams                                     |
+| `/api/context/analytics`               | GET            | Glaudinimo analizės alternatyvusis pavadinimas                                                  |
 
 ### Stebėsena
 
-| Galinis taškas                       | Metodas    | Aprašymas                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/sessions`                      | GET        | Aktyvių seansų stebėjimas                                                                                                                                                                                                                                                                                                                                                                                              |
-| `/api/rate-limits`                   | GET        | Paskyros užklausų dažnio apribojimai                                                                                                                                                                                                                                                                                                                                                                                   |
-| `/api/monitoring/health`             | GET        | Būklės patikra ir teikėjų suvestinė (`catalogCount`, `configuredCount`, `activeCount`, `monitoredCount`). Valdymo rodinyje pateikiama `credentialHealth`: zondo podėlio skaliarinės reikšmės, `failedConnections`, kai `failed>0`, ir `staleDbNonOkCount` (SQLite išliekanti `test_status`, o ne matuoklis). Žr. [MONITORING_GUIDE.md](../ops/MONITORING_GUIDE.md#credentialhealth-probe-cache-vs-sqlite-test_status). |
-| `/api/cache/stats`                   | GET/DELETE | Podėlio statistika / išvalymas                                                                                                                                                                                                                                                                                                                                                                                         |
-| `/api/modality-bridge/stats`         | GET        | Atmintyje saugomi `attempts`, sėkmingi bandymai / `bridged`, nesėkmės, podėlio pataikymai, `totalLatencyMs`, `latencySamples`, pagal imčių skaičių apskaičiuotas `averageLatencyMs` ir paskutinio naudojimo laikas (paleidus iš naujo nustatoma iš naujo; reikalingas valdymo autentifikavimas)                                                                                                                        |
-| `/api/modality-bridge/video/runtime` | GET        | Griežta patikimo atgalinio ryšio sąsajos patikra prieš valdymo autentifikavimą / zondavimą; išvalyta FFmpeg / ffprobe pasiekiamumo ir versijų informacija (nesaugoma podėlyje)                                                                                                                                                                                                                                         |
-| `/api/modality-bridge/video/extract` | POST       | Vidinis autentifikuotas patikimo atgalinio ryšio sąsajos baitų tarpininkas; 50 MiB įvestis, ribota eilė / 32 MiB išvestis, `503` – nepakanka pajėgumų, `499` – ryšys nutrauktas, `504` – viršytas terminas; tai nėra vieša failų įkėlimo API                                                                                                                                                                           |
+| Galinis taškas                       | Metodas    | Aprašymas                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/sessions`                      | GET        | Aktyvių seansų stebėjimas                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `/api/rate-limits`                   | GET        | Kiekvienos paskyros spartos apribojimai                                                                                                                                                                                                                                                                                                                                                                                    |
+| `/api/monitoring/health`             | GET        | Būklės patikra ir teikėjų suvestinė (`catalogCount`, `configuredCount`, `activeCount`, `monitoredCount`). Valdymo rodinyje pateikiama `credentialHealth`: zondavimo podėlio skaliarinės reikšmės, `failedConnections`, kai `failed>0`, ir `staleDbNonOkCount` (SQLite išliekanti `test_status`, o ne matuoklis). Žr. [MONITORING_GUIDE.md](../ops/MONITORING_GUIDE.md#credentialhealth-probe-cache-vs-sqlite-test_status). |
+| `/api/cache/stats`                   | GET/DELETE | Podėlio statistika / išvalymas                                                                                                                                                                                                                                                                                                                                                                                             |
+| `/api/modality-bridge/stats`         | GET        | Atmintyje saugomi `attempts`, sėkmingi bandymai / `bridged`, nesėkmės, podėlio pataikymai, `totalLatencyMs`, `latencySamples`, pagal imčių skaičių apskaičiuotas `averageLatencyMs` ir paskutinio naudojimo laikas (paleidus iš naujo nustatoma iš naujo; būtinas valdymo autentifikavimas)                                                                                                                                |
+| `/api/modality-bridge/video/runtime` | GET        | Griežta patikimo grįžtamojo ryšio sąsajos patikra prieš valdymo autentifikavimą / zondavimą; išvalyta FFmpeg/ffprobe pasiekiamumo ir versijų informacija (nesaugoma)                                                                                                                                                                                                                                                       |
+| `/api/modality-bridge/video/extract` | POST       | Vidinis autentifikuotas patikimos grįžtamojo ryšio sąsajos baitų tarpininkas; 50 MiB įvestis, apribota eilė / 32 MiB išvestis, `503` pajėgumo viršijimas, `499` atsijungimas, `504` termino viršijimas; tai nėra vieša įkėlimo API                                                                                                                                                                                         |
 
 ### Atsarginės kopijos ir eksportavimas / importavimas
 
-| Galinis taškas              | Metodas | Aprašymas                                             |
-| --------------------------- | ------- | ----------------------------------------------------- |
-| `/api/db-backups`           | GET     | Pateikti galimų atsarginių kopijų sąrašą              |
-| `/api/db-backups`           | PUT     | Sukurti atsarginę kopiją rankiniu būdu                |
-| `/api/db-backups`           | POST    | Atkurti iš konkrečios atsarginės kopijos              |
-| `/api/db-backups/export`    | GET     | Atsisiųsti duomenų bazę kaip .sqlite failą            |
-| `/api/db-backups/import`    | POST    | Įkelti .sqlite failą duomenų bazei pakeisti           |
-| `/api/db-backups/exportAll` | GET     | Atsisiųsti visą atsarginę kopiją kaip .tar.gz archyvą |
+| Galinis taškas              | Metodas | Aprašymas                                                                    |
+| --------------------------- | ------- | ---------------------------------------------------------------------------- |
+| `/api/db-backups`           | GET     | Galimų atsarginių kopijų sąrašas                                             |
+| `/api/db-backups`           | PUT     | Rankinis atsarginės kopijos sukūrimas                                        |
+| `/api/db-backups`           | POST    | Atkūrimas iš konkrečios atsarginės kopijos                                   |
+| `/api/db-backups/export`    | GET     | Duomenų bazės atsisiuntimas kaip .sqlite failo                               |
+| `/api/db-backups/import`    | POST    | .sqlite failo įkėlimas duomenų bazei pakeisti (`?dryRun=true` tik patikrina) |
+| `/api/db-backups/exportAll` | GET     | Visos atsarginės kopijos atsisiuntimas kaip .tar.gz archyvo                  |
 
 `/api/db-backups/export`, `/api/db-backups/exportAll` ir `/api/settings/export-json` pateikia
-visus saugomus prisijungimo duomenis, todėl jiems reikalingas prietaisų skydelio seansas arba vietinė CLI (arba išjungtas
-prisijungimas). Bet kokios apimties API raktai ir `oma_` prieigos prieigos raktai gauna `403`.
+visus saugomus prisijungimo duomenis, todėl jiems būtinas valdymo skydelio seansas, vietinė CLI
+(arba išjungtas prisijungimas). Bet kokios apimties API raktai ir `oma_` prieigos atpažinimo ženklai gauna `403`.
 
 ### Sinchronizavimas su debesija
 
-| Galinis taškas         | Metodas | Aprašymas                              |
-| ---------------------- | ------- | -------------------------------------- |
-| `/api/sync/cloud`      | Įvairūs | Sinchronizavimo su debesija operacijos |
-| `/api/sync/initialize` | POST    | Inicijuoti sinchronizavimą             |
-| `/api/cloud/*`         | Įvairūs | Debesijos valdymas                     |
+| Galinis taškas         | Metodas | Aprašymas                            |
+| ---------------------- | ------- | ------------------------------------ |
+| `/api/sync/cloud`      | Įvairūs | Sinchronizavimo su debesija veiksmai |
+| `/api/sync/initialize` | POST    | Sinchronizavimo inicijavimas         |
+| `/api/cloud/*`         | Įvairūs | Debesijos valdymas                   |
 
 ### Tuneliai
 
-| Galinis taškas             | Metodas | Aprašymas                                                                              |
-| -------------------------- | ------- | -------------------------------------------------------------------------------------- |
-| `/api/tunnels/cloudflared` | GET     | Nuskaityti prietaisų skydeliui skirtą Cloudflare Quick Tunnel diegimo / vykdymo būseną |
-| `/api/tunnels/cloudflared` | POST    | Įjungti arba išjungti Cloudflare Quick Tunnel (`action=enable/disable`)                |
-| `/api/tunnels/ngrok`       | GET     | Nuskaityti prietaisų skydeliui skirtą ngrok Tunnel vykdymo būseną                      |
-| `/api/tunnels/ngrok`       | POST    | Įjungti arba išjungti ngrok Tunnel (`action=enable/disable`)                           |
+| Galinis taškas             | Metodas | Aprašymas                                                                  |
+| -------------------------- | ------- | -------------------------------------------------------------------------- |
+| `/api/tunnels/cloudflared` | GET     | Gauti „Cloudflare Quick Tunnel“ diegimo / vykdymo būseną valdymo skydeliui |
+| `/api/tunnels/cloudflared` | POST    | Įjungti arba išjungti „Cloudflare Quick Tunnel“ (`action=enable/disable`)  |
+| `/api/tunnels/ngrok`       | GET     | Gauti „ngrok Tunnel“ vykdymo būseną valdymo skydeliui                      |
+| `/api/tunnels/ngrok`       | POST    | Įjungti arba išjungti „ngrok Tunnel“ (`action=enable/disable`)             |
 
 ### CLI įrankiai
 
-| Galinis taškas                     | Metodas | Aprašymas                    |
-| ---------------------------------- | ------- | ---------------------------- |
-| `/api/cli-tools/claude-settings`   | GET     | Claude CLI būsena            |
-| `/api/cli-tools/codex-settings`    | GET     | Codex CLI būsena             |
-| `/api/cli-tools/droid-settings`    | GET     | Droid CLI būsena             |
-| `/api/cli-tools/openclaw-settings` | GET     | OpenClaw CLI būsena          |
-| `/api/cli-tools/runtime/[toolId]`  | GET     | Bendroji CLI vykdymo aplinka |
+| Galinis taškas                     | Metodas | Aprašymas                   |
+| ---------------------------------- | ------- | --------------------------- |
+| `/api/cli-tools/claude-settings`   | GET     | „Claude CLI“ būsena         |
+| `/api/cli-tools/codex-settings`    | GET     | „Codex CLI“ būsena          |
+| `/api/cli-tools/droid-settings`    | GET     | „Droid CLI“ būsena          |
+| `/api/cli-tools/openclaw-settings` | GET     | „OpenClaw CLI“ būsena       |
+| `/api/cli-tools/runtime/[toolId]`  | GET     | Bendroji CLI vykdymo būsena |
 
-CLI atsakymuose pateikiami: `installed`, `runnable`, `command`, `commandPath`, `runtimeMode`, `reason`.
+CLI atsakymuose pateikiama: `installed`, `runnable`, `command`, `commandPath`, `runtimeMode`, `reason`.
 
 ### ACP agentai
 
-| Galinis taškas    | Metodas | Aprašymas                                                                    |
-| ----------------- | ------- | ---------------------------------------------------------------------------- |
-| `/api/acp/agents` | GET     | Pateikti visus aptiktus agentus (integruotus ir pasirinktinius) su jų būsena |
-| `/api/acp/agents` | POST    | Pridėti pasirinktinį agentą arba atnaujinti aptikimo podėlį                  |
-| `/api/acp/agents` | DELETE  | Pašalinti pasirinktinį agentą pagal `id` užklausos parametrą                 |
+| Galinis taškas    | Metodas | Aprašymas                                                                     |
+| ----------------- | ------- | ----------------------------------------------------------------------------- |
+| `/api/acp/agents` | GET     | Išvardyti visus aptiktus agentus (integruotus ir pasirinktinius) su jų būsena |
+| `/api/acp/agents` | POST    | Pridėti pasirinktinį agentą arba atnaujinti aptikimo podėlį                   |
+| `/api/acp/agents` | DELETE  | Pašalinti pasirinktinį agentą pagal `id` užklausos parametrą                  |
 
 GET atsakyme pateikiami `agents[]` (id, name, binary, version, installed, protocol, isCustom) ir `summary` (total, installed, notFound, builtIn, custom).
 
-### Atsparumas ir užklausų dažnio apribojimai
+### Atsparumas ir dažnio ribojimai
 
 | Galinis taškas                    | Metodas   | Aprašymas                                                                                               |
 | --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------- |
 | `/api/resilience`                 | GET/PATCH | Gauti / atnaujinti užklausų eilės, ryšio atvėsimo, teikėjo grandinės pertraukiklio ir laukimo nuostatas |
-| `/api/resilience/reset`           | POST      | Iš naujo nustatyti teikėjo grandinės pertraukiklius                                                     |
-| `/api/resilience/model-cooldowns` | GET       | Pateikti aktyvius kiekvieno (teikėjo, ryšio, modelio) blokavimus, surikiuotus pagal likusį laiką        |
-| `/api/resilience/model-cooldowns` | DELETE    | Pašalinti modelio blokavimą — turinys `{provider, model}` arba `{all: true}`, kad būtų pašalinti visi   |
-| `/api/rate-limits`                | GET       | Kiekvienos paskyros užklausų dažnio apribojimo būsena                                                   |
-| `/api/rate-limit`                 | GET       | Visuotinė užklausų dažnio apribojimo konfigūracija                                                      |
+| `/api/resilience/reset`           | POST      | Atkurti teikėjo grandinės pertraukiklių pradinę būseną                                                  |
+| `/api/resilience/model-cooldowns` | GET       | Išvardyti aktyvius kiekvieno (teikėjo, ryšio, modelio) blokavimus, surūšiuotus pagal likusį laiką       |
+| `/api/resilience/model-cooldowns` | DELETE    | Pašalinti modelio blokavimą — turinys `{provider, model}` arba `{all: true}`, kad būtų išvalyta viskas  |
+| `/api/rate-limits`                | GET       | Kiekvienos paskyros dažnio ribojimo būsena                                                              |
+| `/api/rate-limit`                 | GET       | Visuotinė dažnio ribojimo konfigūracija                                                                 |
 
-> Visiems keturiems `/api/resilience/*` maršrutams reikalingas **valdymo autentifikavimas** (`requireManagementAuth`). Išsamų teikėjo grandinės pertraukiklio, ryšio atvėsimo ir modelio blokavimo skirtumų paaiškinimą rasite skiltyje [Atsparumas (išplėstinis)](#resilience-extended).
+> Visiems keturiems `/api/resilience/*` maršrutams reikalingas **valdymo autentifikavimas** (`requireManagementAuth`). Išsamų teikėjo grandinės pertraukiklio, ryšio atvėsimo ir modelio blokavimo skirtumų paaiškinimą rasite skyriuje [Atsparumas (išplėstinis)](#resilience-extended).
 
 ### Vertinimai
 
-| Galinis taškas | Metodas  | Aprašymas                                        |
-| -------------- | -------- | ------------------------------------------------ |
-| `/api/evals`   | GET/POST | Pateikti vertinimo rinkinius / vykdyti vertinimą |
+| Galinis taškas | Metodas  | Aprašymas                                         |
+| -------------- | -------- | ------------------------------------------------- |
+| `/api/evals`   | GET/POST | Išvardyti vertinimo rinkinius / vykdyti vertinimą |
 
 ### Strategijos
 
-| Galinis taškas  | Metodas         | Aprašymas                              |
-| --------------- | --------------- | -------------------------------------- |
-| `/api/policies` | GET/POST/DELETE | Valdyti maršruto parinkimo strategijas |
+| Galinis taškas  | Metodas         | Aprašymas                    |
+| --------------- | --------------- | ---------------------------- |
+| `/api/policies` | GET/POST/DELETE | Valdyti maršruto strategijas |
 
 ### Atitiktis
 
@@ -1195,30 +1195,30 @@ GET atsakyme pateikiami `agents[]` (id, name, binary, version, installed, protoc
 | --------------------------- | ------- | ------------------------------------------------ |
 | `/api/compliance/audit-log` | GET     | Atitikties audito žurnalas (paskutiniai N įrašų) |
 
-### v1beta (suderinama su Gemini)
+### v1beta (suderinama su „Gemini“)
 
-| Galinis taškas             | Metodas | Aprašymas                               |
-| -------------------------- | ------- | --------------------------------------- |
-| `/v1beta/models`           | GET     | Pateikti modelius Gemini formatu        |
-| `/v1beta/models/{...path}` | POST    | Gemini `generateContent` galinis taškas |
+| Galinis taškas             | Metodas | Aprašymas                                 |
+| -------------------------- | ------- | ----------------------------------------- |
+| `/v1beta/models`           | GET     | Išvardyti modelius „Gemini“ formatu       |
+| `/v1beta/models/{...path}` | POST    | „Gemini“ `generateContent` galinis taškas |
 
-Šie galiniai taškai atkartoja Gemini API formatą klientams, kuriems reikalingas tiesioginis suderinamumas su Gemini SDK.
+Šie galiniai taškai atkartoja „Gemini“ API formatą klientams, kuriems reikalingas suderinamumas su savuoju „Gemini“ SDK.
 
 ### Vidinės / sistemos API
 
 | Galinis taškas           | Metodas | Aprašymas                                                         |
 | ------------------------ | ------- | ----------------------------------------------------------------- |
 | `/api/init`              | GET     | Programos inicijavimo patikra (naudojama pirmą kartą paleidžiant) |
-| `/api/tags`              | GET     | Su Ollama suderinamos modelių žymos (Ollama klientams)            |
+| `/api/tags`              | GET     | Su „Ollama“ suderinamos modelių žymos („Ollama“ klientams)        |
 | `/api/restart`           | POST    | Inicijuoti sklandų serverio paleidimą iš naujo                    |
 | `/api/shutdown`          | POST    | Inicijuoti sklandų serverio išjungimą                             |
-| `/api/system/env/repair` | POST    | Pataisyti OAuth teikėjo aplinkos kintamuosius                     |
+| `/api/system/env/repair` | POST    | Atkurti OAuth teikėjo aplinkos kintamuosius                       |
 | `/api/system/version`    | GET     | Dabartinė / naujausia versija, naujinimo būsena, leidimo kanalas  |
-| `/api/system/version`    | POST    | Pradėti diegimo tipą atitinkantį naujinimą į naujausią versiją    |
+| `/api/system/version`    | POST    | Pradėti diegimo aplinką atitinkantį naujinimą į naujausią versiją |
 
-> **Pastaba:** šiuos galinius taškus sistema naudoja vidinėms reikmėms arba suderinamumui su Ollama klientais. Galutiniai naudotojai paprastai jų tiesiogiai nekviečia.
+> **Pastaba:** šiuos galinius taškus sistema naudoja viduje arba jie skirti suderinamumui su „Ollama“ klientais. Paprastai galutiniai naudotojai jų nekviečia.
 
-### OAuth aplinkos taisymas _(v3.6.1+)_
+### OAuth aplinkos atkūrimas _(v3.6.1+)_
 
 ```bash
 POST /api/system/env/repair
@@ -1229,7 +1229,7 @@ Content-Type: application/json
 }
 ```
 
-Pataiso trūkstamus arba sugadintus konkretaus teikėjo OAuth aplinkos kintamuosius. Grąžina:
+Atkuria trūkstamus arba sugadintus konkretaus teikėjo OAuth aplinkos kintamuosius. Grąžina:
 
 ```json
 {
@@ -1245,9 +1245,9 @@ Pataiso trūkstamus arba sugadintus konkretaus teikėjo OAuth aplinkos kintamuos
 GET /api/system/version
 ```
 
-Tik grįžtamojo ryšio sąsajoje pasiekiamas valdymo maršrutas (administratoriaus autentifikavimas). Grąžina veikiančią versiją, naujausią
+Valdymo maršrutas, pasiekiamas tik per grįžtamojo ryšio sąsają (administratoriaus autentifikavimas). Grąžina veikiančią versiją, naujausią
 paskelbtą versiją ir automatinio naujinimo būseną. `releaseChannel` ir `channels` yra papildomi
-laukai (3.8.54 šaka); `channel` išlaiko savo reikšmę — diegimo režimą, kurį naudoja valdymo skydelio naujintuvas
+laukai (leidimų linija 3.8.54); `channel` išlaiko savo reikšmę — diegimo režimą, kurį naudoja valdymo skydelio naujinimo priemonė
 (`npm`, `source` arba `docker-compose`).
 
 ```json
@@ -1265,12 +1265,12 @@ laukai (3.8.54 šaka); `channel` išlaiko savo reikšmę — diegimo režimą, k
 ```
 
 - `releaseChannel` — veikiančios versijos npm kanalas: `nightly`, skirtas `-nightly.*` versijoms,
-  `next`, skirtas kitoms išankstinėms versijoms (`-rc.*`, `-beta.*`, `-alpha.*`), `lts`, skirtas stabiliai
-  ankstesnės pagrindinės versijos nei `channels.latest` versijai, o visais kitais atvejais — `latest`. Taikomos tos pačios taisyklės kaip
-  `scripts/release/dist-tag.mjs`, kuris publikavimo metu parenka npm dist-tag.
-- `channels` — publikuota kiekvieno dist-tag naujausia versija, gaunama iš `npm view omniroute dist-tags` (su atsarginiu
-  HTTP registro variantu), talpykloje saugoma naudojant tą patį 10 minučių TTL kaip ir `latest`. `latest` visada yra
-  pateikiamas (jei nėra, naudojamas laukas `latest`, o tada `"unavailable"`); `next`, `nightly` ir `lts` pateikiami
+  `next` — kitoms išankstinėms versijoms (`-rc.*`, `-beta.*`, `-alpha.*`), `lts` — stabiliai versijai,
+  kurios pagrindinis numeris yra senesnis nei `channels.latest`, o visais kitais atvejais — `latest`. Taikomos tos pačios taisyklės kaip
+  `scripts/release/dist-tag.mjs`, kuris paskelbimo metu parenka npm dist-tag.
+- `channels` — naujausia paskelbta kiekvieno dist-tag versija, gaunama iš `npm view omniroute dist-tags` (atsarginis
+  kreipimasis per registro HTTP), podėliuojama taikant tą patį 10 minučių TTL kaip `latest`. `latest` visada pateikiamas
+  (jei nėra, naudojamas laukas `latest`, o po jo — `"unavailable"`); `next`, `nightly` ir `lts` pateikiami
   tik tada, kai atitinkamas dist-tag egzistuoja. Užklausa su `Cache-Control: no-cache` atnaujina abi paieškas.
 
 Kanalų modelis (`latest` = v3 iki 4.0 GA, `next` = rc, `nightly` = `develop` versijos,

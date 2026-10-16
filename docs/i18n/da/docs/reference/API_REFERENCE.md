@@ -908,49 +908,49 @@ X-OmniRoute-No-Cache: true
 ## Dashboard og administration
 
 Administrationsruter (`/api/*` undtagen offentlig godkendelse/login) godkendes **ikke** med
-almindelige API-nøgler til inferens. Legitimationsoplysninger, omfang og curl-eksempler:
+almindelige API-nøgler til inferens. Legitimationsoplysningstyper, scopes og curl-eksempler:
 [Administrationsgodkendelse](../guides/MANAGEMENT-AUTH.md).
 
 ### Godkendelse
 
-| Slutpunkt                     | Metode  | Beskrivelse                   |
-| ----------------------------- | ------- | ----------------------------- |
-| `/api/auth/login`             | POST    | Log ind                       |
-| `/api/auth/logout`            | POST    | Log ud                        |
-| `/api/settings/require-login` | GET/PUT | Slå loginpåkrav til eller fra |
+| Slutpunkt                     | Metode  | Beskrivelse                     |
+| ----------------------------- | ------- | ------------------------------- |
+| `/api/auth/login`             | POST    | Log ind                         |
+| `/api/auth/logout`            | POST    | Log ud                          |
+| `/api/settings/require-login` | GET/PUT | Slå krav om login til eller fra |
 
 ### Administration af udbydere
 
-| Slutpunkt                               | Metode                    | Beskrivelse                                                                                                                                                                                      |
-| --------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `/api/providers`                        | GET/POST                  | Vis/opret udbydere                                                                                                                                                                               |
-| `/api/providers/[id]`                   | GET/PUT/DELETE            | Administrer en udbyder                                                                                                                                                                           |
-| `/api/providers/[id]/test`              | POST                      | Test forbindelsen til udbyderen                                                                                                                                                                  |
-| `/api/providers/[id]/models`            | GET                       | Vis udbyderens modeller                                                                                                                                                                          |
-| `/api/providers/validate`               | POST                      | Valider udbyderkonfigurationen                                                                                                                                                                   |
-| `/api/providers/bulk`                   | POST                      | Massetilføj API-nøgler for ÉN udbyder                                                                                                                                                            |
-| `/api/providers/import`                 | POST                      | Importer en heterogen LISTE over udbydere fra en fortolket CSV-/JSON-fil (#6836); resultater med delvise fejl pr. række                                                                          |
-| `/api/provider-nodes*`                  | Forskellige               | Administration af udbydernoder                                                                                                                                                                   |
-| `/api/provider-models`                  | GET/POST/PUT/PATCH/DELETE | Brugerdefinerede modeller og tilsidesættelser pr. model (tilføj, opdater, skjul/vis, slet)                                                                                                       |
-| `/api/provider-models/validate-and-add` | POST                      | Administrationsgodkendt, eksplicit aktiveret validering med streng forbindelseskontrol og atomisk registrering af brugerdefinerede modeller; se [Modelvalidering](../guides/MODEL-VALIDATION.md) |
+| Slutpunkt                               | Metode                    | Beskrivelse                                                                                                                                                              |
+| --------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/api/providers`                        | GET/POST                  | Vis/opret udbydere                                                                                                                                                       |
+| `/api/providers/[id]`                   | GET/PUT/DELETE            | Administrer en udbyder                                                                                                                                                   |
+| `/api/providers/[id]/test`              | POST                      | Test forbindelsen til udbyderen                                                                                                                                          |
+| `/api/providers/[id]/models`            | GET                       | Vis udbyderens modeller                                                                                                                                                  |
+| `/api/providers/validate`               | POST                      | Valider udbyderkonfigurationen                                                                                                                                           |
+| `/api/providers/bulk`                   | POST                      | Massetilføj API-nøgler for ÉN udbyder                                                                                                                                    |
+| `/api/providers/import`                 | POST                      | Importer en heterogen udbyderLISTE fra en fortolket CSV/JSON-fil (#6836); resultater med delvise fejl pr. række                                                          |
+| `/api/provider-nodes*`                  | Forskellige               | Administration af udbydernoder                                                                                                                                           |
+| `/api/provider-models`                  | GET/POST/PUT/PATCH/DELETE | Brugerdefinerede modeller og tilsidesættelser pr. model (tilføj, opdater, skjul/vis, slet)                                                                               |
+| `/api/provider-models/validate-and-add` | POST                      | Administrationsgodkendt, valgfri streng forbindelsesvalidering og atomisk registrering af brugerdefinerede modeller; se [Modelvalidering](../guides/MODEL-VALIDATION.md) |
 
 For synkroniserede/importerede modeller accepterer `PUT /api/provider-models` `provider`, `modelId` og
 `maxOutputTokenOverride`: Et positivt heltal angiver den manuelle grænse for outputtokens, og `null`
 fjerner den for at gendanne standardværdien. `GET /api/provider-models?provider=<provider>` returnerer disse
 værdier i `modelOutputOverrides`, herunder modeller uden en række for en brugerdefineret model. Tilsidesættelsen
 bruger runtime-egenskaben `max_output_tokens` og bevares efter en ny modelsynkronisering. Siden for den OpenAI-kompatible
-udbyder tilbyder de samme kontrolelementer til redigering/rydning og markerer modeller med eksplicit understøttelse af billedinput.
+udbyder tilbyder de samme funktioner til redigering og nulstilling og markerer modeller med eksplicit understøttelse af vision.
 
-Brugerdefinerede Chat Completions-noder tilpasser eksplicit fravalg af ræsonnering til backend-systemet. En
-gennemført forbindelsestest vælger automatisk kontrolelementer til chatskabeloner for hvert præcist model-id,
+Brugerdefinerede Chat Completions-noder tilpasser eksplicit fravalg af ræsonnering til upstream-backend-systemet. En
+vellykket forbindelsestest vælger automatisk kontrolelementer til chatskabeloner for hvert præcist model-id,
 hvis `/models`-post dokumenterer en genkendt `owned_by`-værdi: `vllm`, `sglang` eller `llamacpp`.
 Transparente OpenAI-kompatible wrappers kan bevare den oprindelige modelpost i et indlejret
 `openai`-objekt; registreringen følger op til tre sådanne indkapslinger. Modeller med manglende, ukendt eller
 modstridende ejerskab bevarer almindelig OpenAI-adfærd. Registreringen genbruger den eksisterende kataloganmodning,
-genererer ingen fuldførelsestokens og ugyldiggøres, når forbindelsens slutpunkt ændres.
+genererer ingen completion-tokens og ugyldiggøres, når forbindelsens slutpunkt ændres.
 
-Brug det eksisterende API til delvis opdatering af udbyderen for at fastlåse adfærden for et backend-system,
-der ikke eksponerer disse metadata:
+Hvis du vil fastholde adfærden for et backend-system, der ikke eksponerer disse metadata, skal du bruge den eksisterende API
+til delvis opdatering af udbydere:
 
 ```json
 {
@@ -960,20 +960,21 @@ der ikke eksponerer disse metadata:
 }
 ```
 
-Send denne body med `PUT /api/providers/<connection-id>`. På denne forbindelse sendes en eksplicit
+Send denne body med `PUT /api/providers/<connection-id>`. På den pågældende forbindelse sendes en eksplicit
 ræsonneringsindsats på `none` som `chat_template_kwargs.thinking=false` og
-`chat_template_kwargs.enable_thinking=false`. Eksplicitte oprindelige skabelonværdier forbliver autoritative,
+`chat_template_kwargs.enable_thinking=false`. Eksplicitte oprindelige skabelonværdier er fortsat autoritative,
 medmindre en ræsonneringsregel på serversiden gennemtvinger en indsats. Indstillingen gælder kun, når en brugerdefineret
-OpenAI-kompatibel forbindelse afsender en Chat Completions-body; Responses-anmodninger og almindelige
-udbydere beholder deres oprindelige anmodningsstruktur. Indstil `reasoningControl` til `openai` for at gennemtvinge almindelig OpenAI-
-videresendelse af `reasoning_effort`, eller udelad den/indstil den til `null` for at bruge automatisk registrering.
+OpenAI-kompatibel forbindelse sender en Chat Completions-body; Responses-anmodninger og almindelige
+udbydere bevarer deres oprindelige anmodningsstruktur. Angiv `reasoningControl` som `openai` for at gennemtvinge almindelig OpenAI-
+videresendelse af `reasoning_effort`, eller udelad den/angiv den som `null` for at bruge automatisk registrering.
 
-Claude Code-klassifikatoranmodninger indstiller som standard indbygget tænkning til deaktiveret, når de ikke indeholder
-nogen eksplicitte styringsparametre for ræsonnering. Registreringen bruger klassifikatorens systemmarkør i anmodninger
-i Claude-format, ikke modelnavne eller grænser for fuldførelse. Eksplicitte styringsparametre i request-bodyen, understøttede effort/thinking-headere,
-routingregler og den fastlagte modelindsats bevarer deres eksisterende prioritet. Begge klassifikatorfaser
-bevarer deres prompts, grænser for fuldførelse, stopsekvenser og faktiske tilladelsesafgørelser fra upstream;
-den anden fase kan stadig generere sin ønskede synlige ræsonnering som almindelig tekst.
+Claude Code-klassifikatoranmodninger deaktiverer som standard indbygget tænkning, når de ikke indeholder
+eksplicitte ræsonneringskontroller. Registreringen bruger klassifikatorens systemmarkør i anmodninger
+i Claude-format, ikke modelnavne eller grænser for fuldførelse. Eksplicitte kontroller i brødteksten,
+understøttede indsats-/tænkning-headere, routingregler og den fastlagte modelindsats bevarer deres
+eksisterende prioritet. Begge klassifikatorfaser bevarer deres prompts, grænser for fuldførelse,
+stopsekvenser og faktiske tilladelsesafgørelser fra upstream-systemet; den anden fase kan stadig
+producere sin efterspurgte synlige ræsonnering som almindelig tekst.
 
 ### OAuth-flows
 
@@ -983,29 +984,29 @@ den anden fase kan stadig generere sin ønskede synlige ræsonnering som alminde
 
 ### Routing og konfiguration
 
-| Endpoint              | Metode      | Beskrivelse                        |
-| --------------------- | ----------- | ---------------------------------- |
-| `/api/models/alias`   | GET/POST    | Modelaliasser                      |
-| `/api/models/catalog` | GET         | Alle modeller efter udbyder + type |
-| `/api/combos*`        | Forskellige | Administration af kombinationer    |
-| `/api/keys*`          | Forskellige | Administration af API-nøgler       |
-| `/api/pricing`        | GET         | Modelpriser                        |
+| Endpoint              | Metode      | Beskrivelse                         |
+| --------------------- | ----------- | ----------------------------------- |
+| `/api/models/alias`   | GET/POST    | Modelaliasser                       |
+| `/api/models/catalog` | GET         | Alle modeller efter udbyder og type |
+| `/api/combos*`        | Forskellige | Administration af kombinationer     |
+| `/api/keys*`          | Forskellige | Administration af API-nøgler        |
+| `/api/pricing`        | GET         | Modelpriser                         |
 
-### Forbrug og analyse
+### Brug og analyse
 
-| Endpoint                         | Metode          | Beskrivelse                                                                                                                                                                                                                                                                                                                                                 |
-| -------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/usage/history`             | GET             | Forbrugshistorik                                                                                                                                                                                                                                                                                                                                            |
-| `/api/usage/logs`                | GET             | Forbrugslogfiler                                                                                                                                                                                                                                                                                                                                            |
-| `/api/usage/request-logs`        | GET             | Logfiler på anmodningsniveau                                                                                                                                                                                                                                                                                                                                |
-| `/api/usage/[connectionId]`      | GET             | Forbrug pr. forbindelse                                                                                                                                                                                                                                                                                                                                     |
-| `/api/usage/token-limits`        | GET/POST/DELETE | Budgetter for tokenbegrænsninger pr. API-nøgle                                                                                                                                                                                                                                                                                                              |
-| `/api/usage/model-latency-stats` | GET             | Løbende aggregering af latenstid pr. udbyder/model (gennemsnit/p50/p95/p99, succesrate); filtre: `windowHours`/`minSamples`/`maxRows`/`provider`/`model` (#6873)                                                                                                                                                                                            |
-| `/api/usage/cache-health`        | GET             | Oversigt over prompt-cachens tilstand baseret på `call_logs` — skrive-/læseforhold, p50/p90/p99-fordeling af skrivestørrelser, koncentration af omfattende skrivninger, opdeling pr. model og en `healthy`/`degraded`/`thrash`/`no-data`-vurdering; forespørgselsparametrene `range` (`1h`\|`24h`\|`7d`\|`30d`, standard `24h`) og valgfrit `model` (#8827) |
+| Endpoint                         | Metode          | Beskrivelse                                                                                                                                                                                                                                                                                                                                             |
+| -------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/usage/history`             | GET             | Brugshistorik                                                                                                                                                                                                                                                                                                                                           |
+| `/api/usage/logs`                | GET             | Brugslogfiler                                                                                                                                                                                                                                                                                                                                           |
+| `/api/usage/request-logs`        | GET             | Logfiler på anmodningsniveau                                                                                                                                                                                                                                                                                                                            |
+| `/api/usage/[connectionId]`      | GET             | Brug pr. forbindelse                                                                                                                                                                                                                                                                                                                                    |
+| `/api/usage/token-limits`        | GET/POST/DELETE | Budgetter for tokenbegrænsning pr. API-nøgle                                                                                                                                                                                                                                                                                                            |
+| `/api/usage/model-latency-stats` | GET             | Løbende samlet latenstid pr. udbyder/model (gennemsnit/p50/p95/p99, succesrate); filtre: `windowHours`/`minSamples`/`maxRows`/`provider`/`model` (#6873)                                                                                                                                                                                                |
+| `/api/usage/cache-health`        | GET             | Oversigt over prompt-cachetilstand baseret på `call_logs` — skrive-/læseforhold, p50/p90/p99-fordeling af skrivestørrelser, koncentration af omfattende skrivning, opdeling pr. model og en vurdering på `healthy`/`degraded`/`thrash`/`no-data`; forespørgselsparametre `range` (`1h`\|`24h`\|`7d`\|`30d`, standard `24h`) og valgfrit `model` (#8827) |
 
-### API-nøgletilladelser
+### Tilladelser for API-nøgler
 
-`PATCH /api/keys/{id}` opdaterer tilladelserne for en eksisterende nøgle. Som alle `/api/keys*`-ruter kræver den administrationsgodkendelse (se [Administrationsgodkendelse](../guides/MANAGEMENT-AUTH.md)), ikke en inferensnøgle. Send kun de felter, du vil ændre; en anmodning uden nogen af dem afvises med `No valid fields to update`. De accepterede felter defineres af `updateKeyPermissionsSchema` i `src/shared/validation/schemas/keys.ts`.
+`PATCH /api/keys/{id}` opdaterer tilladelserne for en eksisterende nøgle. Ligesom alle `/api/keys*`-ruter kræver den administrationsgodkendelse (se [Administrationsgodkendelse](../guides/MANAGEMENT-AUTH.md)), ikke en inferensnøgle. Send kun de felter, du vil ændre; en anmodning uden nogen af dem afvises med `No valid fields to update`. De accepterede felter er defineret af `updateKeyPermissionsSchema` i `src/shared/validation/schemas/keys.ts`.
 
 | Felt                                        | Type                                                                   | Bemærkninger                                                                                                                     |
 | ------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -1016,9 +1017,9 @@ den anden fase kan stadig generere sin ønskede synlige ræsonnering som alminde
 | `modelAccessMode`                           | `all` \| `restricted`                                                  | `allowedModels` skal være tom, når tilstanden er `all`                                                                           |
 | `allowedModels`, `blockedModels`            | array af strenge, op til 1000                                          |                                                                                                                                  |
 | `allowedCombos`                             | array af strenge, op til 500                                           | Styrer, hvilke kombinationer nøglen må kalde; direkte modeller styres af `modelAccessMode` / `allowedModels`                     |
-| `connectionAccessMode`                      | `all` \| `restricted`                                                  | `allowedConnections` må ikke være tom, når værdien er `restricted`, og skal være tom, når værdien er `all`                       |
+| `connectionAccessMode`                      | `all` \| `restricted`                                                  | `allowedConnections` må ikke være tom, når tilstanden er `restricted`, og skal være tom, når tilstanden er `all`                 |
 | `allowedConnections`                        | array af UUID'er, op til 100                                           |                                                                                                                                  |
-| `allowAutoCombos`                           | boolesk                                                                | `false` afviser anmodninger om `auto/*`-modeller med denne nøgle; nøgler, hvor den aldrig er angivet, tillades                   |
+| `allowAutoCombos`                           | boolesk                                                                | `false` afviser anmodninger til `auto/*`-modeller med denne nøgle; nøgler, hvor den aldrig er angivet, tillades                  |
 | `catalogScope`                              | `all` \| `combos` \| `models`                                          | Hvad `GET /v1/models` viser for denne nøgle (kun kombinationer, kun modeller eller begge); det ændrer ikke, hvad nøglen må kalde |
 | `noLog`, `autoResolve`                      | boolesk                                                                |                                                                                                                                  |
 | `throttleDelayMs`                           | heltal, 0-300000                                                       |                                                                                                                                  |
@@ -1028,7 +1029,7 @@ den anden fase kan stadig generere sin ønskede synlige ræsonnering som alminde
 | `scopes`                                    | array af strenge, op til 32                                            |                                                                                                                                  |
 | `allowedEndpoints`                          | array af strenge, op til 20                                            |                                                                                                                                  |
 | `streamDefaultMode`                         | `legacy` \| `json`                                                     |                                                                                                                                  |
-| `cacheDefaultMode`                          | `legacy` \| `bypass`                                                   | Se [Cacheomgåelse pr. nøgle](#per-key-cache-bypass)                                                                              |
+| `cacheDefaultMode`                          | `legacy` \| `bypass`                                                   | Se [Cache-omgåelse pr. nøgle](#per-key-cache-bypass)                                                                             |
 | `compressionEnabled`                        | boolesk                                                                |                                                                                                                                  |
 | `codexServiceMode`                          | en af Codex-tjenestetilstandene                                        |                                                                                                                                  |
 | `disableNonPublicModels`                    | boolesk                                                                |                                                                                                                                  |
@@ -1055,84 +1056,84 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 | `/api/settings/thinking-budget`       | GET/PUT       | Omskrivningstilstand for **anmodninger** vedrørende tænkning/ræsonnement (uændret / automatisk fjernelse / brugerdefineret / adaptiv). Uafhængig af komprimering. Se [THINKING_BUDGET.md](../guides/THINKING_BUDGET.md). |
 | `/api/settings/system-prompt`         | GET/PUT       | Global systemprompt                                                                                                                                                                                                      |
 | `/api/settings/compression`           | GET/PUT       | Global komprimeringskonfiguration                                                                                                                                                                                        |
-| `/api/settings/purge-request-history` | POST          | Ryd rækker i anmodningsloggen og lokale opkaldslogartefakter                                                                                                                                                             |
+| `/api/settings/purge-request-history` | POST          | Ryd rækker i anmodningsloggen og lokale kaldelogartefakter                                                                                                                                                               |
 
 ### Kontekst og komprimering
 
-| Slutpunkt                              | Metode         | Beskrivelse                                                                                |
-| -------------------------------------- | -------------- | ------------------------------------------------------------------------------------------ |
-| `/api/compression/preview`             | POST           | Forhåndsvis komprimering med off/lite/standard/aggressive/ultra/RTK/stacked                |
-| `/api/compression/language-packs`      | GET            | Vis tilgængelige Caveman-sprogpakker                                                       |
-| `/api/compression/rules`               | GET            | Vis metadata for Caveman-regler                                                            |
-| `/api/context/caveman/config`          | GET/PUT        | Alias for Caveman-specifikke indstillinger                                                 |
-| `/api/context/rtk/config`              | GET/PUT        | RTK-specifikke indstillinger, herunder brugerdefinerede filtre og opbevaring af råt output |
-| `/api/context/rtk/filters`             | GET            | RTK-filterkatalog og diagnostik for brugerdefinerede filtre                                |
-| `/api/context/rtk/test`                | POST           | Kør RTK-forhåndsvisning/test på en tekstpayload                                            |
-| `/api/context/rtk/raw-output/[id]`     | GET            | Læs opbevaret, redigeret råt output via markør-id                                          |
-| `/api/context/combos`                  | GET/POST       | Vis/opret komprimeringskombinationer                                                       |
-| `/api/context/combos/[id]`             | GET/PUT/DELETE | Detaljer/opdatering/sletning af komprimeringskombination                                   |
-| `/api/context/combos/[id]/assignments` | GET/PUT        | Tildel komprimeringskombinationer til routingkombinationer                                 |
-| `/api/context/analytics`               | GET            | Alias for komprimeringsanalyse                                                             |
+| Slutpunkt                              | Metode         | Beskrivelse                                                                             |
+| -------------------------------------- | -------------- | --------------------------------------------------------------------------------------- |
+| `/api/compression/preview`             | POST           | Forhåndsvis komprimering med off/lite/standard/aggressive/ultra/RTK/stacked             |
+| `/api/compression/language-packs`      | GET            | Vis tilgængelige Caveman-sprogpakker                                                    |
+| `/api/compression/rules`               | GET            | Vis metadata for Caveman-regler                                                         |
+| `/api/context/caveman/config`          | GET/PUT        | Alias for Caveman-specifikke indstillinger                                              |
+| `/api/context/rtk/config`              | GET/PUT        | RTK-specifikke indstillinger, herunder brugerdefinerede filtre og lagring af råt output |
+| `/api/context/rtk/filters`             | GET            | RTK-filterkatalog og diagnosticering af brugerdefinerede filtre                         |
+| `/api/context/rtk/test`                | POST           | Kør RTK-forhåndsvisning/-test på en tekstnyttelast                                      |
+| `/api/context/rtk/raw-output/[id]`     | GET            | Læs lagret, redigeret råt output via markør-id                                          |
+| `/api/context/combos`                  | GET/POST       | Vis/opret komprimeringskombinationer                                                    |
+| `/api/context/combos/[id]`             | GET/PUT/DELETE | Detaljer/opdatering/sletning af komprimeringskombination                                |
+| `/api/context/combos/[id]/assignments` | GET/PUT        | Tildel komprimeringskombinationer til routingkombinationer                              |
+| `/api/context/analytics`               | GET            | Alias for komprimeringsanalyse                                                          |
 
 ### Overvågning
 
-| Slutpunkt                            | Metode     | Beskrivelse                                                                                                                                                                                                                                                                                                                                                                                                      |
-| ------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/sessions`                      | GET        | Sporing af aktive sessioner                                                                                                                                                                                                                                                                                                                                                                                      |
-| `/api/rate-limits`                   | GET        | Hastighedsgrænser pr. konto                                                                                                                                                                                                                                                                                                                                                                                      |
-| `/api/monitoring/health`             | GET        | Sundhedstjek + udbyderoversigt (`catalogCount`, `configuredCount`, `activeCount`, `monitoredCount`). Administrationsvisningen inkluderer `credentialHealth`: skalaværdier fra probe-cachen, `failedConnections`, når `failed>0`, og `staleDbNonOkCount` (permanent SQLite-`test_status`, ikke måleren). Se [MONITORING_GUIDE.md](../ops/MONITORING_GUIDE.md#credentialhealth-probe-cache-vs-sqlite-test_status). |
-| `/api/cache/stats`                   | GET/DELETE | Cachestatistik / rydning                                                                                                                                                                                                                                                                                                                                                                                         |
-| `/api/modality-bridge/stats`         | GET        | `attempts` i hukommelsen, vellykkede/`bridged`, fejl, cachetræffere, `totalLatencyMs`, `latencySamples`, den stikprøvebaserede `averageLatencyMs` og tidspunktet for seneste brug (nulstilles ved genstart; kræver administrationsgodkendelse)                                                                                                                                                                   |
-| `/api/modality-bridge/video/runtime` | GET        | Streng kontrol af betroet loopback før administrationsgodkendelse/probe; rensede oplysninger om tilgængelighed og versioner for FFmpeg/ffprobe (ingen lagring)                                                                                                                                                                                                                                                   |
-| `/api/modality-bridge/video/extract` | POST       | Intern godkendt byteformidler via betroet loopback; input på 50 MiB, begrænset kø/output på 32 MiB, `503` ved manglende kapacitet, `499` ved afbrydelse, `504` ved overskredet tidsfrist; ikke en offentlig upload-API                                                                                                                                                                                           |
+| Slutpunkt                            | Metode     | Beskrivelse                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/sessions`                      | GET        | Sporing af aktive sessioner                                                                                                                                                                                                                                                                                                                                                                                         |
+| `/api/rate-limits`                   | GET        | Hastighedsgrænser pr. konto                                                                                                                                                                                                                                                                                                                                                                                         |
+| `/api/monitoring/health`             | GET        | Sundhedstjek + udbyderoversigt (`catalogCount`, `configuredCount`, `activeCount`, `monitoredCount`). Administrationsvisningen inkluderer `credentialHealth`: skalaværdier fra probe-cachen, `failedConnections`, når `failed>0`, og `staleDbNonOkCount` (vedvarende `test_status` i SQLite, ikke måleren). Se [MONITORING_GUIDE.md](../ops/MONITORING_GUIDE.md#credentialhealth-probe-cache-vs-sqlite-test_status). |
+| `/api/cache/stats`                   | GET/DELETE | Cachestatistik/rydning                                                                                                                                                                                                                                                                                                                                                                                              |
+| `/api/modality-bridge/stats`         | GET        | `attempts` i hukommelsen, gennemførelser/`bridged`, fejl, cachetræffere, `totalLatencyMs`, `latencySamples`, stikprøvebaseret `averageLatencyMs` og tidspunkt for seneste brug (nulstilles ved genstart; administrationsgodkendelse)                                                                                                                                                                                |
+| `/api/modality-bridge/video/runtime` | GET        | Streng kontrol af betroet loopback før administrationsgodkendelse/probe; rensede oplysninger om tilgængelighed og versioner for FFmpeg/ffprobe (ingen lagring)                                                                                                                                                                                                                                                      |
+| `/api/modality-bridge/video/extract` | POST       | Intern, godkendt bytebroker med betroet loopback; input på 50 MiB, begrænset kø/output på 32 MiB, `503` ved kapacitetsmangel, `499` ved afbrydelse, `504` ved tidsfrist; ikke en offentlig upload-API                                                                                                                                                                                                               |
 
 ### Sikkerhedskopiering og eksport/import
 
-| Slutpunkt                   | Metode | Beskrivelse                                             |
-| --------------------------- | ------ | ------------------------------------------------------- |
-| `/api/db-backups`           | GET    | Vis tilgængelige sikkerhedskopier                       |
-| `/api/db-backups`           | PUT    | Opret en manuel sikkerhedskopi                          |
-| `/api/db-backups`           | POST   | Gendan fra en bestemt sikkerhedskopi                    |
-| `/api/db-backups/export`    | GET    | Download databasen som en .sqlite-fil                   |
-| `/api/db-backups/import`    | POST   | Upload en .sqlite-fil for at erstatte databasen         |
-| `/api/db-backups/exportAll` | GET    | Download en komplet sikkerhedskopi som et .tar.gz-arkiv |
+| Slutpunkt                   | Metode | Beskrivelse                                                                    |
+| --------------------------- | ------ | ------------------------------------------------------------------------------ |
+| `/api/db-backups`           | GET    | Vis tilgængelige sikkerhedskopier                                              |
+| `/api/db-backups`           | PUT    | Opret en manuel sikkerhedskopi                                                 |
+| `/api/db-backups`           | POST   | Gendan fra en specifik sikkerhedskopi                                          |
+| `/api/db-backups/export`    | GET    | Download databasen som en .sqlite-fil                                          |
+| `/api/db-backups/import`    | POST   | Upload en .sqlite-fil for at erstatte databasen (`?dryRun=true` validerer kun) |
+| `/api/db-backups/exportAll` | GET    | Download en komplet sikkerhedskopi som et .tar.gz-arkiv                        |
 
 `/api/db-backups/export`, `/api/db-backups/exportAll` og `/api/settings/export-json` udleverer
 alle gemte legitimationsoplysninger, så de kræver dashboardsessionen eller den lokale CLI (eller at login
 er deaktiveret). API-nøgler uanset omfang og `oma_`-adgangstokens får `403`.
 
-### Cloudsynkronisering
+### Cloud-synkronisering
 
-| Slutpunkt              | Metode      | Beskrivelse                    |
-| ---------------------- | ----------- | ------------------------------ |
-| `/api/sync/cloud`      | Forskellige | Cloudsynkroniseringshandlinger |
-| `/api/sync/initialize` | POST        | Initialiser synkronisering     |
-| `/api/cloud/*`         | Forskellige | Administration af cloud        |
+| Slutpunkt              | Metode      | Beskrivelse                         |
+| ---------------------- | ----------- | ----------------------------------- |
+| `/api/sync/cloud`      | Forskellige | Handlinger til cloud-synkronisering |
+| `/api/sync/initialize` | POST        | Initialiser synkronisering          |
+| `/api/cloud/*`         | Forskellige | Cloud-administration                |
 
 ### Tunneler
 
-| Slutpunkt                  | Metode | Beskrivelse                                                                  |
-| -------------------------- | ------ | ---------------------------------------------------------------------------- |
-| `/api/tunnels/cloudflared` | GET    | Læs installations-/kørselsstatus for Cloudflare Quick Tunnel til dashboardet |
-| `/api/tunnels/cloudflared` | POST   | Aktivér eller deaktiver Cloudflare Quick Tunnel (`action=enable/disable`)    |
-| `/api/tunnels/ngrok`       | GET    | Læs kørselsstatus for ngrok Tunnel til dashboardet                           |
-| `/api/tunnels/ngrok`       | POST   | Aktivér eller deaktiver ngrok Tunnel (`action=enable/disable`)               |
+| Slutpunkt                  | Metode | Beskrivelse                                                                     |
+| -------------------------- | ------ | ------------------------------------------------------------------------------- |
+| `/api/tunnels/cloudflared` | GET    | Læs installations-/kørselsstatus for Cloudflare Quick Tunnel til kontrolpanelet |
+| `/api/tunnels/cloudflared` | POST   | Aktivér eller deaktiver Cloudflare Quick Tunnel (`action=enable/disable`)       |
+| `/api/tunnels/ngrok`       | GET    | Læs kørselsstatus for ngrok Tunnel til kontrolpanelet                           |
+| `/api/tunnels/ngrok`       | POST   | Aktivér eller deaktiver ngrok Tunnel (`action=enable/disable`)                  |
 
 ### CLI-værktøjer
 
-| Endpoint                           | Metode | Beskrivelse             |
+| Slutpunkt                          | Metode | Beskrivelse             |
 | ---------------------------------- | ------ | ----------------------- |
-| `/api/cli-tools/claude-settings`   | GET    | Claude CLI-status       |
-| `/api/cli-tools/codex-settings`    | GET    | Codex CLI-status        |
-| `/api/cli-tools/droid-settings`    | GET    | Droid CLI-status        |
-| `/api/cli-tools/openclaw-settings` | GET    | OpenClaw CLI-status     |
-| `/api/cli-tools/runtime/[toolId]`  | GET    | Generisk CLI-kørselstid |
+| `/api/cli-tools/claude-settings`   | GET    | Status for Claude CLI   |
+| `/api/cli-tools/codex-settings`    | GET    | Status for Codex CLI    |
+| `/api/cli-tools/droid-settings`    | GET    | Status for Droid CLI    |
+| `/api/cli-tools/openclaw-settings` | GET    | Status for OpenClaw CLI |
+| `/api/cli-tools/runtime/[toolId]`  | GET    | Generisk CLI-kørsel     |
 
 CLI-svar inkluderer: `installed`, `runnable`, `command`, `commandPath`, `runtimeMode`, `reason`.
 
 ### ACP-agenter
 
-| Endpoint          | Metode | Beskrivelse                                                              |
+| Slutpunkt         | Metode | Beskrivelse                                                              |
 | ----------------- | ------ | ------------------------------------------------------------------------ |
 | `/api/acp/agents` | GET    | Vis alle registrerede agenter (indbyggede + brugerdefinerede) med status |
 | `/api/acp/agents` | POST   | Tilføj en brugerdefineret agent, eller opdater registreringscachen       |
@@ -1142,57 +1143,57 @@ GET-svaret inkluderer `agents[]` (id, name, binary, version, installed, protocol
 
 ### Robusthed og hastighedsgrænser
 
-| Endpoint                          | Metode    | Beskrivelse                                                                             |
-| --------------------------------- | --------- | --------------------------------------------------------------------------------------- |
-| `/api/resilience`                 | GET/PATCH | Hent/opdater anmodningskø, forbindelseskarantæne, udbyderafbryder og venteindstillinger |
-| `/api/resilience/reset`           | POST      | Nulstil udbydernes kredsløbsafbrydere                                                   |
-| `/api/resilience/model-cooldowns` | GET       | Vis aktive spærringer pr. (udbyder, forbindelse, model), sorteret efter resterende tid  |
-| `/api/resilience/model-cooldowns` | DELETE    | Ryd en modelspærring — body `{provider, model}` eller `{all: true}` for at rydde alt    |
-| `/api/rate-limits`                | GET       | Status for hastighedsgrænse pr. konto                                                   |
-| `/api/rate-limit`                 | GET       | Global konfiguration af hastighedsgrænser                                               |
+| Slutpunkt                         | Metode    | Beskrivelse                                                                               |
+| --------------------------------- | --------- | ----------------------------------------------------------------------------------------- |
+| `/api/resilience`                 | GET/PATCH | Hent/opdater anmodningskø, forbindelseskarantæne, udbyderafbryder og venteindstillinger   |
+| `/api/resilience/reset`           | POST      | Nulstil udbydernes kredsløbsafbrydere                                                     |
+| `/api/resilience/model-cooldowns` | GET       | Vis aktive spærringer pr. (udbyder, forbindelse, model), sorteret efter resterende tid    |
+| `/api/resilience/model-cooldowns` | DELETE    | Ryd en modelspærring — brødtekst `{provider, model}` eller `{all: true}` for at rydde alt |
+| `/api/rate-limits`                | GET       | Status for hastighedsgrænser pr. konto                                                    |
+| `/api/rate-limit`                 | GET       | Global konfiguration af hastighedsgrænser                                                 |
 
-> Alle fire `/api/resilience/*`-ruter kræver **administrationsgodkendelse** (`requireManagementAuth`). Se [Robusthed (udvidet)](#resilience-extended) for en fuldstændig gennemgang af forskellen mellem udbyderafbryder, forbindelseskarantæne og modelspærring.
+> Alle fire `/api/resilience/*`-ruter kræver **administrationsgodkendelse** (`requireManagementAuth`). Se [Robusthed (udvidet)](#resilience-extended) for en fuldstændig gennemgang af udbyderafbryder kontra forbindelseskarantæne kontra modelspærring.
 
 ### Evalueringer
 
-| Endpoint     | Metode   | Beskrivelse                             |
+| Slutpunkt    | Metode   | Beskrivelse                             |
 | ------------ | -------- | --------------------------------------- |
-| `/api/evals` | GET/POST | Vis evalueringssuiter/kør en evaluering |
+| `/api/evals` | GET/POST | Vis evalueringspakker/kør en evaluering |
 
 ### Politikker
 
-| Endpoint        | Metode          | Beskrivelse                   |
+| Slutpunkt       | Metode          | Beskrivelse                   |
 | --------------- | --------------- | ----------------------------- |
 | `/api/policies` | GET/POST/DELETE | Administrer routingpolitikker |
 
 ### Overholdelse
 
-| Endpoint                    | Metode | Beskrivelse                  |
-| --------------------------- | ------ | ---------------------------- |
-| `/api/compliance/audit-log` | GET    | Overholdelseslog (seneste N) |
+| Slutpunkt                   | Metode | Beskrivelse                               |
+| --------------------------- | ------ | ----------------------------------------- |
+| `/api/compliance/audit-log` | GET    | Revisionslog for overholdelse (seneste N) |
 
 ### v1beta (Gemini-kompatibel)
 
-| Endpoint                   | Metode | Beskrivelse                       |
-| -------------------------- | ------ | --------------------------------- |
-| `/v1beta/models`           | GET    | Vis modeller i Gemini-format      |
-| `/v1beta/models/{...path}` | POST   | Gemini-`generateContent`-endpoint |
+| Slutpunkt                  | Metode | Beskrivelse                        |
+| -------------------------- | ------ | ---------------------------------- |
+| `/v1beta/models`           | GET    | Vis modeller i Gemini-format       |
+| `/v1beta/models/{...path}` | POST   | Gemini-`generateContent`-slutpunkt |
 
-Disse endpoints afspejler Geminis API-format for klienter, der forventer kompatibilitet med det oprindelige Gemini SDK.
+Disse slutpunkter afspejler Geminis API-format for klienter, der forventer indbygget kompatibilitet med Gemini SDK.
 
 ### Interne API'er/system-API'er
 
-| Endpoint                 | Metode | Beskrivelse                                                      |
+| Slutpunkt                | Metode | Beskrivelse                                                      |
 | ------------------------ | ------ | ---------------------------------------------------------------- |
 | `/api/init`              | GET    | Kontrol af applikationsinitialisering (bruges ved første kørsel) |
 | `/api/tags`              | GET    | Ollama-kompatible modeltags (til Ollama-klienter)                |
 | `/api/restart`           | POST   | Udløs en kontrolleret genstart af serveren                       |
 | `/api/shutdown`          | POST   | Udløs en kontrolleret nedlukning af serveren                     |
 | `/api/system/env/repair` | POST   | Reparer miljøvariabler for OAuth-udbydere                        |
-| `/api/system/version`    | GET    | Aktuel/seneste version, opdateringsstatus og udgivelseskanal     |
+| `/api/system/version`    | GET    | Nuværende/seneste version, opdateringsstatus og udgivelseskanal  |
 | `/api/system/version`    | POST   | Start en installationsbevidst opdatering til den seneste version |
 
-> **Bemærk:** Disse endpoints bruges internt af systemet eller til kompatibilitet med Ollama-klienter. De kaldes normalt ikke af slutbrugere.
+> **Bemærk:** Disse slutpunkter bruges internt af systemet eller til kompatibilitet med Ollama-klienter. De kaldes normalt ikke af slutbrugere.
 
 ### Reparation af OAuth-miljø _(v3.6.1+)_
 
@@ -1205,7 +1206,7 @@ Content-Type: application/json
 }
 ```
 
-Reparerer manglende eller beskadigede OAuth-miljøvariabler for en bestemt udbyder. Returnerer:
+Reparerer manglende eller beskadigede OAuth-miljøvariabler for en specifik udbyder. Returnerer:
 
 ```json
 {
@@ -1221,9 +1222,9 @@ Reparerer manglende eller beskadigede OAuth-miljøvariabler for en bestemt udbyd
 GET /api/system/version
 ```
 
-Administrationsrute kun for loopback (administratorgodkendelse). Returnerer den kørende version, den senest
+Administrationsrute kun til loopback (administratorgodkendelse). Returnerer den kørende version, den senest
 udgivne version og status for automatisk opdatering. `releaseChannel` og `channels` er additive
-felter (spor 3.8.54); `channel` beholder sin betydning — den installationstilstand, som dashboardets opdateringsfunktion
+felter (rail 3.8.54); `channel` bevarer sin betydning — den implementeringstilstand, som dashboardets opdateringsfunktion
 bruger (`npm`, `source` eller `docker-compose`).
 
 ```json
@@ -1240,17 +1241,17 @@ bruger (`npm`, `source` eller `docker-compose`).
 }
 ```
 
-- `releaseChannel` — npm-kanalen for den kørende build: `nightly` for `-nightly.*`-versioner,
+- `releaseChannel` — npm-kanalen for den kørende build: `nightly` for versioner med `-nightly.*`,
   `next` for andre forhåndsudgivelser (`-rc.*`, `-beta.*`, `-alpha.*`), `lts` for en stabil version af en
-  ældre hovedversion end `channels.latest`, ellers `latest`. Samme regler som i
+  ældre hovedversion end `channels.latest`, ellers `latest`. Samme regler som
   `scripts/release/dist-tag.mjs`, der vælger npm-dist-tagget på udgivelsestidspunktet.
-- `channels` — det senest udgivne element for hvert dist-tag fra `npm view omniroute dist-tags` (med HTTP-reserveløsning
-  for registreringsdatabasen), cachelagret med samme TTL på 10 minutter som `latest`. `latest` er altid til stede
+- `channels` — den senest udgivne version for hvert dist-tag fra `npm view omniroute dist-tags` (HTTP-reserveløsning til
+  registreringsdatabasen), cachelagret med samme TTL på 10 minutter som `latest`. `latest` er altid til stede
   (falder tilbage til feltet `latest` og derefter `"unavailable"`); `next`, `nightly` og `lts` vises
-  kun, når det pågældende dist-tag findes. En `Cache-Control: no-cache`-anmodning opdaterer begge opslag.
+  kun, når det pågældende dist-tag findes. En anmodning med `Cache-Control: no-cache` opdaterer begge opslag.
 
 Kanalmodellen (`latest` = v3 indtil den generelle udgivelse af 4.0, `next` = rc, `nightly` = builds fra `develop`,
-`lts` = v3-programrettelser efter den generelle udgivelse af 4.0) er beskrevet i `docs/ops/RELEASE_STRATEGY.md`.
+`lts` = v3-rettelser efter den generelle udgivelse af 4.0) er beskrevet i `docs/ops/RELEASE_STRATEGY.md`.
 
 ---
 
