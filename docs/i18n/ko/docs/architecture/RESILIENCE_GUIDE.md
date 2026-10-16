@@ -423,6 +423,17 @@ concurrency**에서 전환할 수 있습니다
 `retry_after` / `reset_at`을 포함하는 `429 rate_limit_error`로
 상향 변경됩니다. 할당량, 인증 및 찾을 수 없음 잠금은 힌트 없는 503을 유지합니다.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. 요청 큐 승인 제어 (v3.8.49 · 이슈 #6593)

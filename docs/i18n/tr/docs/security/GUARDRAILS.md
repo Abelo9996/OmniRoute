@@ -104,6 +104,10 @@ mekanizmasıyla aynı hata durumunda açık kalma davranışıdır (meta
 istekler ve bu kısıtlamalara sahip olmayan anahtarlar tam olarak önceki gibi
 davranır.
 
+#### API anahtarının kapsamı (`visionBridgeKeyScope.ts`)
+
+API anahtarı bağlantıları, kota havuzlarını veya modelleri kısıtlıyorsa (`allowedConnections`, `allowedQuotas`, `allowedModels` / `blockedModels` / `modelAccessMode: "restricted"` / `disableNonPublicModels`), yeniden yönlendirme ve açıklama yalnızca o anahtara izin verilen modelleri ve bağlantıları seçer. Açıklama her zaman `x-omniroute-self-loop-key-id` başlığıyla OmniRoute'un kendi döngüsünden geçer; bağlantı ve model ilkesi yeniden uygulanır. `enforceApiKeyPolicy()` başlığı yalnızca döngünün bearer belirteciyle birlikte kabul eder: erişimi ancak daraltabilir ve çözümlenemeyen kimlik reddedilir. İzin verilen görsel model yoksa açıklama atlanır ve koruma kapalıymış gibi istek değişmeden geçer (meta `{ skipped: true, reason: "no_permitted_vision_model" }`). Anahtarsız istekler ve bu kısıtlamaları olmayan anahtarlar eskisi gibi davranır.
+
 #### Göreve duyarlı açıklama istemi (`modalityBridgeVisionTaskAware`)
 
 Varsayılan değer **true**'dur. `composeVisionPrompt()` (`visionBridgeHelpers.ts`), temel

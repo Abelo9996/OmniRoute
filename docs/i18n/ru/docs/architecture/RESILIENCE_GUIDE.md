@@ -448,6 +448,17 @@ quota-share для отдельных подключений**
 `retry_after` / `reset_at` из самой ранней истекающей временной блокировки; блокировки
 из-за квоты, аутентификации и отсутствия ресурса сохраняют ответ 503 без подсказки.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. Управление допуском в очередь запросов (v3.8.49 · issue #6593)

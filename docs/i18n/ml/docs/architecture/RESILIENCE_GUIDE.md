@@ -470,6 +470,17 @@ per-connection concurrency** എന്നതിൽ ഇത് ടോഗിൾ ച
 അപ്ഗ്രേഡ് ചെയ്യുന്നു; ക്വോട്ട, auth, not-found ലോക്കുകൾ സൂചനകളില്ലാത്ത 503
 നിലനിർത്തുന്നു.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. അഭ്യർത്ഥന ക്യൂ അഡ്മിഷൻ നിയന്ത്രണം (v3.8.49 · issue #6593)

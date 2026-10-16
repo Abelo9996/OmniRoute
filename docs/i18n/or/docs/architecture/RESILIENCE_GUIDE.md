@@ -452,6 +452,17 @@ retry-after) ଅନ୍ତର୍ଭୁକ୍ତ କରେ, ଯଥା 2-ମଡେ�
 କୁ ଉନ୍ନୀତ ହୁଏ; କୋଟା, ପ୍ରମାଣୀକରଣ ଏବଂ ନମିଳିବା ଲକ୍ଗୁଡ଼ିକ ସୂଚନାହୀନ 503କୁ
 ବଜାୟ ରଖନ୍ତି।
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. ଅନୁରୋଧ କ୍ୟୁ ଭର୍ତ୍ତି ନିୟନ୍ତ୍ରଣ (v3.8.49 · issue #6593)

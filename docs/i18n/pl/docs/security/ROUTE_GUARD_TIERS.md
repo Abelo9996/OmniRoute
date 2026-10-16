@@ -147,6 +147,8 @@ obowiązki operatora:
   cały prefiks `/api/providers/`, co nadmiernie rozszerzyłoby zakres na drzewo tras,
   którego zdalne panele zasadnie używają do operacji CRUD na dostawcach.
 
+  Moduł wczytywania migawek wykonania odrzuca takie wpisy również z zapisanej konfiguracji, a starszy import JSON (`/api/settings/import-json`) nigdy nie zapisuje kluczy obejścia. Każdy wpis `LOCAL_ONLY_API_PREFIXES` musi znajdować się na liście odmowy lub zostać zweryfikowany jako dopuszczający obejście. (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`)
+
 **Audytowanie dostępu** — aby sprawdzić, czy żadne żądania spoza hosta nie docierają do tych tras:
 
 - Otwórz **Inwentarz autoryzacji** na stronie `/dashboard/settings/security`: wyświetla on

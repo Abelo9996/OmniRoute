@@ -96,6 +96,10 @@
 `{ skipped: true, reason: "no_permitted_vision_model" }`). בקשות ללא מפתח,
 ומפתחות ללא הגבלות אלה, מתנהגים בדיוק כמו קודם.
 
+#### תחום מפתח API (`visionBridgeKeyScope.ts`)
+
+אם מפתח API מגביל חיבורים, מאגרי מכסות או מודלים (`allowedConnections`, `allowedQuotas`, `allowedModels` / `blockedModels` / `modelAccessMode: "restricted"` / `disableNonPublicModels`), הניתוב מחדש והתיאור בוחרים רק מודלים וחיבורים המותרים למפתח. התיאור עובר תמיד בלולאה הפנימית של OmniRoute עם הכותרת `x-omniroute-self-loop-key-id`, כדי לאכוף שוב את מדיניות החיבורים והמודלים. `enforceApiKeyPolicy()` מכבדת את הכותרת רק בצירוף אסימון bearer של הלולאה: היא יכולה רק לצמצם גישה, ומזהה לא מוכר נדחה. אם אין מודל ראייה מורשה, התיאור נעקף והבקשה עוברת ללא שינוי, כמו בהגנה מושבתת (meta `{ skipped: true, reason: "no_permitted_vision_model" }`). בקשות ללא מפתח ומפתחות ללא ההגבלות האלה מתנהגים כבעבר.
+
 #### הנחיית תיאור מודעת למשימה (`modalityBridgeVisionTaskAware`)
 
 ברירת המחדל היא **true**. הפונקציה `composeVisionPrompt()` ‏(`visionBridgeHelpers.ts`) מצרפת

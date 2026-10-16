@@ -447,6 +447,17 @@ dispatch කරයි. රැඳී සිටීමට ඉඩ නොමැති
 ප්රතිචාරයක් බවට උත්ශ්රේණි කෙරේ; quota, auth සහ not-found locks ඉඟියක් නොමැති
 503 ප්රතිචාරය දිගටම පවත්වා ගනී.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. ඉල්ලීම් පෝලිම් ඇතුළත් කිරීමේ පාලනය (v3.8.49 · issue #6593)

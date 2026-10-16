@@ -406,6 +406,17 @@ gate ដូចគ្នានេះក៏គ្របដណ្ដប់លើក
 `503 ALL_TARGETS_SKIPPED` ដែលគ្មានព័ត៌មានណែនាំ។ នៅពេលមិនអនុញ្ញាតឱ្យរង់ចាំ (ពិដាន ចំនួនការព្យាយាម ឬ budget ត្រូវបានប្រើអស់ ឬមុខងារត្រូវបានបិទ) ការឆ្លើយតបចុងក្រោយនឹងត្រូវបានដំឡើងទៅជា
 `429 rate_limit_error` ដែលផ្ទុក `retry_after` / `reset_at` ពីការផុតកំណត់នៃការចាក់សោបណ្ដោះអាសន្នដែលឆាប់បំផុត។ ការចាក់សោដោយសារ quota, auth និង not-found នៅតែរក្សា 503 ដែលគ្មានព័ត៌មានណែនាំ។
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. ការគ្រប់គ្រងការអនុញ្ញាតចូលជួរសំណើ (v3.8.49 · បញ្ហា #6593)

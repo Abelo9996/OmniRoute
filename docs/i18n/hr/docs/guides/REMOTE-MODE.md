@@ -256,6 +256,8 @@ Naredbe `tokens` zahtijevaju vjerodajnicu s ovlastima **administratora**. Tokeni
 
 Token nikada ne može biti izdan s većim ovlastima nego što ih ima njegov stvaratelj. Token `admin` može izraditi samo operater — putem sesije nadzorne ploče, lokalnog CLI-ja na samom poslužitelju, naredbe `omniroute connect` s lozinkom ili instance na kojoj je prijava onemogućena. Strojne vjerodajnice (pristupni token `admin` ili API ključ s opsegom `manage`/`admin`) mogu izdavati samo tokene `write` i `read`; ako se od njih zatraži `--scope admin`, vraća se `403`.
 
+Token se nikada ne može stvoriti s više ovlasti nego što ih ima njegov stvaratelj. Token `admin` može stvoriti samo operator: putem sesije nadzorne ploče, lokalnog CLI-ja na samom poslužitelju, naredbom `omniroute connect` s lozinkom ili u instanci s onemogućenom prijavom. Strojne vjerodajnice (pristupni token `admin` ili API ključ s opsegom `manage`/`admin`) mogu stvarati samo tokene `write` i `read`; zahtjev za `--scope admin` s njima vraća `403`.
+
 ---
 
 ## Konfiguriranje CLI-ja za programiranje iz udaljenog kataloga

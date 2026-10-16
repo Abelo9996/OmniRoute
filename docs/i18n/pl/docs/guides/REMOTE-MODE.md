@@ -270,6 +270,8 @@ instancji z wyłączonym logowaniem. Poświadczenia maszynowe (token dostępu `a
 lub klucz API z zakresem `manage`/`admin`) mogą tworzyć wyłącznie tokeny `write`
 i `read`; próba utworzenia za ich pomocą tokena z opcją `--scope admin` zwraca `403`.
 
+Token nigdy nie może zostać utworzony z większymi uprawnieniami niż uprawnienia jego twórcy. Token `admin` może utworzyć tylko operator: z sesji panelu, przez lokalne CLI na samym serwerze, przez `omniroute connect` z hasłem lub w instancji z wyłączonym logowaniem. Dane uwierzytelniające maszyny (token dostępu `admin` lub klucz API z zakresem `manage`/`admin`) mogą tworzyć wyłącznie tokeny `write` i `read`; żądanie `--scope admin` z ich użyciem zwraca `403`.
+
 ---
 
 ## Konfigurowanie narzędzia CLI do programowania ze zdalnego katalogu

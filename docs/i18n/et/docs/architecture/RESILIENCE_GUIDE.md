@@ -443,6 +443,17 @@ vastuseks `429 rate_limit_error`, mis sisaldab varaseima ajutise lukustuse aegum
 pärinevaid `retry_after` / `reset_at` väärtusi; kvoodi-, autentimis- ja
 mitteleidmise lukustused säilitavad vihjeta 503-vastuse.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. Päringujärjekorra vastuvõtukontroll (v3.8.49 · probleem #6593)

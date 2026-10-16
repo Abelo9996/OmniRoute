@@ -440,6 +440,17 @@ glm-4.7=3
 `retry_after` / `reset_at` მნიშვნელობებს უახლოესი გარდამავალი ბლოკირების ამოწურვის მომენტიდან;
 კვოტის, ავტორიზაციისა და ვერ-მოძებნის ბლოკირებები ინარჩუნებს მინიშნების გარეშე 503 პასუხს.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. მოთხოვნების რიგში დაშვების კონტროლი (v3.8.49 · საკითხი #6593)

@@ -261,6 +261,8 @@ omniroute tokens scopes               # uchta qamrovni tushuntirish
 
 Token hech qachon uni yaratuvchida mavjud bo‘lganidan yuqori imtiyoz bilan yaratilmaydi. `admin` tokenini faqat operator yaratishi mumkin — boshqaruv paneli seansi, serverning o‘zidagi mahalliy CLI, parol bilan `omniroute connect` yoki kirish o‘chirib qo‘yilgan nusxa orqali. Mashina hisob maʼlumotlari (`admin` kirish tokeni yoki `manage`/`admin` qamroviga ega API kaliti) faqat `write` va `read` tokenlarini yaratishi mumkin; ulardan `--scope admin` so‘ralganda `403` qaytariladi.
 
+Token hech qachon uni yaratuvchining vakolatlaridan kengroq vakolatlar bilan yaratilmaydi. `admin` tokenini faqat operator yaratishi mumkin: boshqaruv paneli sessiyasi, serverning o‘zidagi mahalliy CLI, parol bilan `omniroute connect` yoki tizimga kirish o‘chirilgan instansiya orqali. Mashina autentifikatsiya ma’lumotlari (`admin` kirish tokeni yoki `manage`/`admin` doirasidagi API kaliti) faqat `write` va `read` tokenlarini yarata oladi; ular bilan `--scope admin` so‘rash `403` qaytaradi.
+
 ---
 
 ## Masofaviy katalogdan dasturlash CLI’sini sozlash

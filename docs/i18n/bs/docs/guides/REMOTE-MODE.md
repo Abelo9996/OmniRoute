@@ -210,6 +210,8 @@ instance s onemogućenom prijavom. Mašinske vjerodajnice (pristupni token `admi
 ili API ključ s opsegom `manage`/`admin`) mogu izdavati samo tokene `write` i `read`;
 ako se od njih zatraži `--scope admin`, vraća se `403`.
 
+Token se nikada ne može kreirati s više privilegija nego što ih ima njegov kreator. Token `admin` može kreirati samo operater: putem sesije kontrolne ploče, lokalnog CLI-ja na samom serveru, naredbom `omniroute connect` s lozinkom ili u instanci s onemogućenom prijavom. Mašinski pristupni podaci (pristupni token `admin` ili API ključ s opsegom `manage`/`admin`) mogu kreirati samo tokene `write` i `read`; zahtjev za `--scope admin` s njima vraća `403`.
+
 ---
 
 ## Konfigurisanje CLI-ja za kodiranje iz udaljenog kataloga

@@ -102,6 +102,10 @@ desativada (metadados `{ skipped: true, reason: "no_permitted_vision_model" }`).
 Solicitações sem uma chave e chaves sem essas restrições se comportam exatamente como
 antes.
 
+#### Escopo da chave de API (`visionBridgeKeyScope.ts`)
+
+Se a chave de API restringe conexões, pools de cotas ou modelos (`allowedConnections`, `allowedQuotas`, `allowedModels` / `blockedModels` / `modelAccessMode: "restricted"` / `disableNonPublicModels`), o redirecionamento e a descrição escolhem apenas modelos e conexões permitidos para essa chave. A descrição sempre passa pelo loop interno do OmniRoute com o cabeçalho `x-omniroute-self-loop-key-id`, reaplicando as políticas de conexão e modelo. `enforceApiKeyPolicy()` só aceita o cabeçalho junto com o token bearer desse loop: ele só pode restringir o acesso, e um ID não encontrado é rejeitado. Sem um modelo de visão permitido, a descrição é ignorada e a solicitação passa sem alterações, como com a proteção desativada (meta `{ skipped: true, reason: "no_permitted_vision_model" }`). Solicitações sem chave e chaves sem essas restrições mantêm o comportamento anterior.
+
 #### Prompt de descrição sensível à tarefa (`modalityBridgeVisionTaskAware`)
 
 O padrão é **true**. `composeVisionPrompt()` (`visionBridgeHelpers.ts`) acrescenta

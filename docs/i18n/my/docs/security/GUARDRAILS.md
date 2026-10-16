@@ -62,6 +62,10 @@ Registry သည် import လုပ်သည့်အခါ ဦးစားပ�
 
 ထို key အတွက် ခွင့်ပြုထားသော vision model မရှိပါက describe လမ်းကြောင်းသည် ဘေးဖယ်ပေးပြီး request ကို မပြောင်းလဲဘဲ ဖြတ်သန်းခွင့်ပြုသည်။ ယင်းသည် ပိတ်ထားသော guardrail တစ်ခုကဲ့သို့ တူညီသည့် fail-open လုပ်ဆောင်ပုံဖြစ်သည် (meta `{ skipped: true, reason: "no_permitted_vision_model" }`)။ Key မပါသော request များနှင့် ဤကန့်သတ်ချက်များ မရှိသော key များသည် ယခင်အတိုင်း အတိအကျ လုပ်ဆောင်သည်။
 
+#### API သော့၏ အကျုံးဝင်မှု (`visionBridgeKeyScope.ts`)
+
+API သော့က ချိတ်ဆက်မှု၊ ခွဲတမ်းအုပ်စု သို့မဟုတ် မော်ဒယ်များကို ကန့်သတ်ပါက (`allowedConnections`, `allowedQuotas`, `allowedModels` / `blockedModels` / `modelAccessMode: "restricted"` / `disableNonPublicModels`) လမ်းကြောင်းပြောင်းခြင်းနှင့် ဖော်ပြချက်ထုတ်ခြင်းသည် ထိုသော့အတွက် ခွင့်ပြုထားသော မော်ဒယ်နှင့် ချိတ်ဆက်မှုများကိုသာ ရွေးသည်။ ဖော်ပြချက်ခေါ်ဆိုမှုသည် `x-omniroute-self-loop-key-id` header ဖြင့် OmniRoute ၏ ကိုယ်ပိုင်လည်ပတ်လမ်းကြောင်းကို အမြဲဖြတ်သန်းပြီး ချိတ်ဆက်မှုနှင့် မော်ဒယ်မူဝါဒကို ထပ်မံစစ်ဆေးသည်။ `enforceApiKeyPolicy()` သည် ထိုလမ်းကြောင်း၏ bearer token ပါမှ header ကို လက်ခံသည်။ ၎င်းသည် ဝင်ရောက်ခွင့်ကို လျှော့ချနိုင်ရုံသာဖြစ်ပြီး မသိသော ID ကို ပယ်ချသည်။ ခွင့်ပြုထားသော အမြင်မော်ဒယ်မရှိလျှင် ဖော်ပြချက်ကို ကျော်ကာ ကာကွယ်မှုကို ပိတ်ထားသကဲ့သို့ တောင်းဆိုမှုကို မပြောင်းဘဲ ဆက်ပို့သည် (meta `{ skipped: true, reason: "no_permitted_vision_model" }`)။ သော့မပါသော တောင်းဆိုမှုများနှင့် ဤကန့်သတ်ချက်များမရှိသော သော့များ၏ အပြုအမူ မပြောင်းပါ။
+
 #### Task-aware describe prompt (`modalityBridgeVisionTaskAware`)
 
 ပုံသေတန်ဖိုးမှာ **true** ဖြစ်သည်။ `composeVisionPrompt()` (`visionBridgeHelpers.ts`) သည်

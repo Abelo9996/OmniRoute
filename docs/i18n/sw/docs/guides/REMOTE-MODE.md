@@ -265,6 +265,8 @@ nakala ya programu ambayo kuingia kumezimwa. Vitambulisho vya mashine (tokeni ya
 au ufunguo wa API wenye wigo wa `manage`/`admin`) vinaweza kuunda tokeni za `write` na `read`
 pekee; kuviomba vitumie `--scope admin` hurejesha `403`.
 
+Tokeni haiwezi kamwe kuundwa ikiwa na ruhusa nyingi kuliko za aliyeiunda. Opereta pekee ndiye anayeweza kuunda tokeni ya `admin`: kupitia kipindi cha dashibodi, CLI ya ndani kwenye seva yenyewe, `omniroute connect` kwa nenosiri, au mfumo ambao kuingia kumezimwa. Vitambulisho vya mashine (tokeni ya ufikiaji ya `admin` au ufunguo wa API wenye wigo wa `manage`/`admin`) vinaweza kuunda tokeni za `write` na `read` pekee; kuomba `--scope admin` kwa vitambulisho hivyo kunarudisha `403`.
+
 ---
 
 ## Kusanidi CLI ya uandishi wa msimbo kutoka katalogi ya mbali

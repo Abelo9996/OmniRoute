@@ -402,6 +402,17 @@ glm-4.7=3
 `503 ALL_TARGETS_SKIPPED`తో సమాధానం ఇవ్వకుండా, అదే గరిష్ఠ పరిమితులకు లోబడి లాక్ ముగిసే వరకు వేచి ఉండి మళ్లీ డిస్పాచ్ చేస్తుంది. వేచి ఉండటానికి అనుమతి లేనప్పుడు (గరిష్ఠ పరిమితి, ప్రయత్నాలు లేదా బడ్జెట్ అయిపోయినప్పుడు, లేదా ఫీచర్ ఆఫ్లో ఉన్నప్పుడు), తాత్కాలిక లాక్లలో అత్యంత ముందుగా ముగిసే సమయం నుంచి `retry_after` / `reset_at`ను కలిగిన
 `429 rate_limit_error`కు తుది ప్రతిస్పందన అప్గ్రేడ్ అవుతుంది; quota, auth మరియు not-found లాక్లు సూచనలేని 503నే కొనసాగిస్తాయి.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. అభ్యర్థన క్యూ ప్రవేశ నియంత్రణ (v3.8.49 · issue #6593)

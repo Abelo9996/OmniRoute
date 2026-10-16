@@ -259,6 +259,8 @@ instance ebe agbanyụrụ nbanye. Nzere igwe (token nnweta `admin`,
 ma ọ bụ API key nwere scope `manage`/`admin`) nwere ike ịmepụta naanị token `write` na `read`;
 ịrịọ ha `--scope admin` ga-eweghachi `403`.
 
+A pụghị ịmepụta token nwere ikike karịrị nke onye mepụtara ya. Naanị onye na-ahụ maka sistemụ nwere ike ịmepụta token `admin`: site na nnọkọ dashboard, CLI dị n'ime sava ahụ n'onwe ya, `omniroute connect` na paswọọdụ, ma ọ bụ instance agbanyụrụ nbanye ya. Nkwenye njirimara igwe (token nnweta `admin` ma ọ bụ igodo API nwere oke `manage`/`admin`) nwere ike ịmepụta naanị token `write` na `read`; ịrịọ `--scope admin` site na ha na-eweghachi `403`.
+
 ---
 
 ## Ịhazigharị CLI ide koodu site na katalọgụ dịpụrụ adịpụ

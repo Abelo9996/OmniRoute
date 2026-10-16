@@ -101,6 +101,10 @@ deaktiveret sikkerhedsforanstaltning (metadata
 Anmodninger uden en nøgle og nøgler uden disse begrænsninger fungerer præcis
 som før.
 
+#### API-nøglens omfang (`visionBridgeKeyScope.ts`)
+
+Hvis API-nøglen begrænser forbindelser, kvotepuljer eller modeller (`allowedConnections`, `allowedQuotas`, `allowedModels` / `blockedModels` / `modelAccessMode: "restricted"` / `disableNonPublicModels`), vælger omdirigering og beskrivelse kun modeller og forbindelser, som nøglen må bruge. Beskrivelsen går altid gennem OmniRoutes eget loop med headeren `x-omniroute-self-loop-key-id`, så forbindelses- og modelpolitikken håndhæves igen. `enforceApiKeyPolicy()` accepterer kun headeren sammen med loopets bearer-token: den kan kun indsnævre adgang, og et ukendt id afvises. Hvis ingen synsmodel er tilladt, springes beskrivelsen over, og anmodningen forbliver uændret som ved deaktiveret beskyttelse (meta `{ skipped: true, reason: "no_permitted_vision_model" }`). Anmodninger uden nøgle og nøgler uden disse begrænsninger fungerer som før.
+
 #### Opgavebevidst beskrivelsesprompt (`modalityBridgeVisionTaskAware`)
 
 Standard **true**. `composeVisionPrompt()` (`visionBridgeHelpers.ts`) føjer teksten fra den **seneste brugermeddelelse** (afkortet til 500 tegn) til den grundlæggende beskrivelsesprompt, så beskrivelsen styres mod det, brugeren faktisk spurgte om (codex-vision-proxy-mønsteret), og synlig tekst anmodes transskriberet af visionmodellen. Når flaget er slået fra — eller der ikke er nogen brugertekst — bruges den grundlæggende prompt uændret.

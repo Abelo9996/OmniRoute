@@ -230,6 +230,8 @@ példányon keresztül, amelyen a bejelentkezés le van tiltva. A gépi hiteles�
 vagy `manage`/`admin` hatókörrel rendelkező API-kulcs) csak `write` és `read`
 tokeneket hozhatnak létre; ha `--scope admin` hatókört kérnek, a válasz `403`.
 
+Egy token soha nem hozható létre a létrehozója jogosultságainál nagyobb jogosultságokkal. `admin` tokent csak az üzemeltető hozhat létre: a vezérlőpult munkamenetéből, a szerveren futó helyi CLI-ből, az `omniroute connect` paranccsal és a jelszóval, vagy egy kikapcsolt bejelentkezésű példányon. A gépi hitelesítő adatok (`admin` hozzáférési token vagy `manage`/`admin` hatókörű API-kulcs) csak `write` és `read` tokeneket hozhatnak létre; az ezekkel kért `--scope admin` eredménye `403`.
+
 ---
 
 ## Kódolási CLI konfigurálása a távoli katalógusból

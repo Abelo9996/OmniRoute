@@ -265,6 +265,8 @@ phiên bản đã tắt đăng nhập. Thông tin xác thực máy (token truy c
 hoặc khóa API có phạm vi `manage`/`admin`) chỉ có thể cấp token `write` và `read`;
 yêu cầu chúng cấp `--scope admin` sẽ trả về `403`.
 
+Token không bao giờ được tạo với quyền cao hơn quyền của người tạo. Chỉ người vận hành mới có thể tạo token `admin`: qua phiên bảng điều khiển, CLI cục bộ ngay trên máy chủ, `omniroute connect` với mật khẩu hoặc một phiên bản đã tắt đăng nhập. Thông tin xác thực máy (token truy cập `admin` hoặc khóa API có phạm vi `manage`/`admin`) chỉ có thể tạo token `write` và `read`; yêu cầu `--scope admin` bằng các thông tin này trả về `403`.
+
 ---
 
 ## Cấu hình một CLI lập trình từ catalog từ xa

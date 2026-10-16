@@ -223,6 +223,8 @@ omniroute tokens scopes               # üç əhatə dairəsini izah edir
 
 Token heç vaxt onu yaradan şəxsin malik olduğu imtiyazlardan daha artıq imtiyazla yaradıla bilməz. `admin` tokeni yalnız operator tərəfindən — idarəetmə paneli sessiyası, serverin özündə yerli CLI, parol ilə `omniroute connect` və ya girişin deaktiv edildiyi instansiya vasitəsilə yaradıla bilər. Maşın etimadnamələri (`admin` giriş tokeni və ya `manage`/`admin` əhatə dairəsinə malik API açarı) yalnız `write` və `read` tokenləri yarada bilər; onlardan `--scope admin` tələb edildikdə `403` qaytarılır.
 
+Token heç vaxt onu yaradanın malik olduğundan daha geniş səlahiyyətlərlə yaradıla bilməz. `admin` tokenini yalnız operator yarada bilər: idarəetmə paneli sessiyası, serverin özündəki yerli CLI, parolla `omniroute connect` və ya girişin deaktiv edildiyi instansiya vasitəsilə. Maşın autentifikasiya məlumatları (`admin` giriş tokeni və ya `manage`/`admin` əhatəli API açarı) yalnız `write` və `read` tokenləri yarada bilər; onlarla `--scope admin` tələb etmək `403` qaytarır.
+
 ---
 
 ## Uzaq kataloqdan proqramlaşdırma CLI-sinin konfiqurasiyası

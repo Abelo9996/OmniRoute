@@ -443,6 +443,17 @@ funkcia), koncová odpoveď sa zmení na `429 rate_limit_error` a obsahuje
 zablokovania z dôvodu kvóty, overenia alebo nenájdenia si zachovajú odpoveď 503
 bez pomocných údajov.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. Riadenie prijímania do frontu požiadaviek (v3.8.49 · problém #6593)

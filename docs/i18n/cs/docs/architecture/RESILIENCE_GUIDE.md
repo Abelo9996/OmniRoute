@@ -454,6 +454,17 @@ koncová odpověď se změní na `429 rate_limit_error` a obsahuje `retry_after`
 `reset_at` z nejbližšího vypršení přechodného uzamčení; uzamčení kvůli kvótě,
 ověření nebo nenalezení nadále vracejí odpověď 503 bez doplňujících údajů.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. Řízení přijímání požadavků do fronty (v3.8.49 · issue #6593)

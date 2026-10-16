@@ -447,6 +447,17 @@ albo funkcja jest wyłączona), odpowiedź końcowa zostaje zmieniona na
 terminu wygaśnięcia przejściowej blokady; blokady związane z limitem, uwierzytelnianiem i nieznalezieniem
 zasobu nadal powodują odpowiedź 503 bez wskazówki.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. Kontrola przyjmowania żądań do kolejki (v3.8.49 · zgłoszenie #6593)

@@ -397,6 +397,17 @@ glm-4.7=3
 
 हेच गेट प्री-डिस्पॅच प्रकरण (#16319) हाताळते: कोणताही प्रयत्न करण्यापूर्वी कॉम्बोची सर्व लक्ष्ये वगळली गेली, कारण त्यांचे मॉडेल अल्पकालीन तात्पुरत्या लॉकआउटमध्ये होते, तर शून्य-प्रयत्न मार्ग संकेत नसलेला `503 ALL_TARGETS_SKIPPED` प्रतिसाद देण्याऐवजी त्याच मर्यादांअंतर्गत लॉक संपेपर्यंत प्रतीक्षा करतो आणि पुन्हा डिस्पॅच करतो. प्रतीक्षेला परवानगी नसताना (मर्यादा, प्रयत्न किंवा बजेट संपलेले असताना किंवा वैशिष्ट्य बंद असताना), अंतिम प्रतिसाद सर्वांत लवकर संपणाऱ्या तात्पुरत्या लॉकमधील `retry_after` / `reset_at` समाविष्ट असलेल्या `429 rate_limit_error`मध्ये अपग्रेड होतो; कोटा, प्रमाणीकरण आणि न सापडल्याचे लॉक संकेत नसलेला 503 कायम ठेवतात.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. विनंती रांग प्रवेश नियंत्रण (v3.8.49 · issue #6593)

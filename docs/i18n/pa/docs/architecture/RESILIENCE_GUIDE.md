@@ -437,6 +437,17 @@ dispatch ਹੁੰਦੀ ਹੈ — ਇਹ ਬਹੁ-ਮਾਡਲ ਕੰਬੋ�
 ਅਸਥਾਈ lock ਦੀ ਮਿਆਦ ਤੋਂ `retry_after` / `reset_at` ਸਮੇਤ
 `429 rate_limit_error` ਵਿੱਚ ਅੱਪਗ੍ਰੇਡ ਹੋ ਜਾਂਦਾ ਹੈ; quota, auth ਅਤੇ not-found locks ਬਿਨਾਂ ਸੰਕੇਤ ਵਾਲਾ 503 ਹੀ ਰੱਖਦੇ ਹਨ।
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. ਬੇਨਤੀ ਕਤਾਰ ਦਾਖ਼ਲਾ ਨਿਯੰਤਰਣ (v3.8.49 · issue #6593)

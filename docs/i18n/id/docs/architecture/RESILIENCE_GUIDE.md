@@ -435,6 +435,17 @@ telah habis, atau fitur dinonaktifkan), respons terminal ditingkatkan menjadi
 `429 rate_limit_error` yang membawa `retry_after` / `reset_at` dari waktu kedaluwarsa
 penguncian transien paling awal; penguncian kuota, autentikasi, dan tidak ditemukan tetap menghasilkan 503 tanpa petunjuk.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. Kontrol Penerimaan Antrean Permintaan (v3.8.49 · isu #6593)

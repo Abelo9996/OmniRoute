@@ -263,6 +263,8 @@ instance na naka-disable ang pag-login. Ang mga kredensyal ng makina (isang `adm
 o isang API key na may saklaw na `manage`/`admin`) ay makagagawa lamang ng mga token na `write` at `read`;
 ang paghiling sa mga ito ng `--scope admin` ay magbabalik ng `403`.
 
+Hindi kailanman maaaring gumawa ng token na may mas malawak na pribilehiyo kaysa sa gumawa nito. Ang operator lamang ang maaaring gumawa ng `admin` token: sa sesyon ng dashboard, sa lokal na CLI sa mismong server, sa `omniroute connect` gamit ang password, o sa isang instance na naka-disable ang login. Ang mga kredensyal ng makina (isang `admin` access token o API key na may saklaw na `manage`/`admin`) ay maaari lamang gumawa ng `write` at `read` token; ang paghingi ng `--scope admin` gamit ang mga ito ay nagbabalik ng `403`.
+
 ---
 
 ## Pag-configure ng coding CLI mula sa remote catalog

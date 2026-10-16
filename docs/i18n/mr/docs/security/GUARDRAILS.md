@@ -95,6 +95,10 @@ PR-1 पूर्वीच्या सुरक्षा-नियंत्र�
 (मेटा `{ skipped: true, reason: "no_permitted_vision_model" }`).
 की नसलेल्या विनंत्या आणि हे निर्बंध नसलेल्या कीज पूर्वीप्रमाणेच वागतात.
 
+#### API किल्लीची व्याप्ती (`visionBridgeKeyScope.ts`)
+
+API किल्ली जोडण्या, कोटा गट किंवा मॉडेल मर्यादित करत असेल (`allowedConnections`, `allowedQuotas`, `allowedModels` / `blockedModels` / `modelAccessMode: "restricted"` / `disableNonPublicModels`), तर पुनर्निर्देशन आणि वर्णन त्या किल्लीला परवानगी असलेली मॉडेल व जोडण्याच निवडतात. वर्णनाचा कॉल नेहमी `x-omniroute-self-loop-key-id` हेडरसह OmniRouteच्या स्व-लूपमधून जातो आणि जोडणी व मॉडेलचे धोरण पुन्हा लागू होते. `enforceApiKeyPolicy()` त्या लूपच्या bearer टोकनसोबतच हेडर स्वीकारते: तो फक्त प्रवेश कमी करू शकतो आणि अज्ञात आयडी नाकारला जातो. परवानगी असलेले व्हिजन मॉडेल नसल्यास वर्णन वगळले जाते आणि निष्क्रिय संरक्षणाप्रमाणे विनंती न बदलता पुढे जाते (meta `{ skipped: true, reason: "no_permitted_vision_model" }`). किल्ली नसलेल्या विनंत्या आणि या मर्यादा नसलेल्या किल्ल्या पूर्वीप्रमाणेच काम करतात.
+
 #### कार्य-जागरूक वर्णन प्रॉम्प्ट (`modalityBridgeVisionTaskAware`)
 
 डीफॉल्ट **true** आहे. `composeVisionPrompt()` (`visionBridgeHelpers.ts`) मूलभूत

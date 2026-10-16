@@ -229,6 +229,8 @@ omniroute tokens scopes               # 세 가지 범위 설명
 또는 `manage`/`admin` 범위가 있는 API 키)은 `write` 및 `read` 토큰만
 발급할 수 있으며, `--scope admin`을 요청하면 `403`이 반환됩니다.
 
+토큰은 생성자가 가진 권한보다 더 큰 권한으로 발급될 수 없습니다. `admin` 토큰은 운영자만 생성할 수 있습니다. 대시보드 세션, 서버 자체의 로컬 CLI, 비밀번호를 사용하는 `omniroute connect` 또는 로그인이 비활성화된 인스턴스를 통해 생성합니다. 머신 인증 정보(`admin` 액세스 토큰 또는 `manage`/`admin` 범위의 API 키)로는 `write` 및 `read` 토큰만 생성할 수 있으며, 이를 사용해 `--scope admin`을 요청하면 `403`이 반환됩니다.
+
 ---
 
 ## 원격 카탈로그에서 코딩 CLI 구성하기

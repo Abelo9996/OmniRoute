@@ -251,6 +251,8 @@ inštancie s vypnutým prihlasovaním. Strojové prihlasovacie údaje (prístupo
 `admin` alebo API kľúč s rozsahom `manage`/`admin`) môžu vytvárať iba tokeny
 `write` a `read`; požiadavka s `--scope admin` vráti `403`.
 
+Token nikdy nemožno vytvoriť s väčšími oprávneniami, než má jeho tvorca. Token `admin` môže vytvoriť iba prevádzkovateľ: z relácie ovládacieho panela, miestnym CLI priamo na serveri, pomocou `omniroute connect` s heslom alebo v inštancii s vypnutým prihlasovaním. Strojové prihlasovacie údaje (prístupový token `admin` alebo API kľúč s rozsahom `manage`/`admin`) môžu vytvárať iba tokeny `write` a `read`; požiadavka na `--scope admin` s týmito údajmi vráti `403`.
+
 ---
 
 ## Konfigurácia programovacieho CLI zo vzdialeného katalógu

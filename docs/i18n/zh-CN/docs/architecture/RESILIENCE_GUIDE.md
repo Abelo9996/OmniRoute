@@ -376,6 +376,17 @@ glm-4.7=3
 
 同一门控还涵盖分发前的情况 (#16319)：当组合的所有目标在尚未进行任何尝试前，因其模型处于短暂的瞬时锁定而被跳过时，零尝试路径会在相同上限约束下等待锁定解除并重新分发，而不是返回不含提示信息的 `503 ALL_TARGETS_SKIPPED`。当不允许等待时（达到上限、尝试次数或预算已耗尽，或该功能已关闭），最终响应会升级为 `429 rate_limit_error`，并携带最早瞬时锁定到期时间对应的 `retry_after` / `reset_at`；配额、身份验证和未找到锁定仍会返回不含提示信息的 503。
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. 请求队列准入控制（v3.8.49 · issue #6593）

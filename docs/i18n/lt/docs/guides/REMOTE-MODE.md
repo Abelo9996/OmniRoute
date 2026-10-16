@@ -264,6 +264,8 @@ egzempliorių, kuriame prisijungimas išjungtas. Mašininiai prisijungimo duomen
 arba API raktas su `manage`/`admin` apimtimi) gali kurti tik `write` ir `read`
 prieigos raktus; pateikus jiems užklausą su `--scope admin`, grąžinamas `403`.
 
+Žetono niekada negalima sukurti su didesnėmis teisėmis, nei turi jo kūrėjas. Tik operatorius gali sukurti `admin` žetoną: per valdymo skydelio seansą, vietinę CLI pačiame serveryje, `omniroute connect` su slaptažodžiu arba egzemplioriuje, kuriame prisijungimas išjungtas. Mašininiai kredencialai (`admin` prieigos žetonas arba API raktas su `manage`/`admin` aprėptimi) gali kurti tik `write` ir `read` žetonus; jais pateikta užklausa `--scope admin` grąžina `403`.
+
 ---
 
 ## Programavimo CLI konfigūravimas iš nuotolinio katalogo

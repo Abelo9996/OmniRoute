@@ -447,6 +447,17 @@ glm-4.7=3
 நிலையற்ற முடக்கத்திலிருந்து `retry_after` / `reset_at` மதிப்புகளைக் கொண்ட
 `429 rate_limit_error` ஆக மேம்படுத்தப்படுகிறது; கோட்டா, அங்கீகாரம் மற்றும் காணப்படவில்லை முடக்கங்கள் குறிப்பில்லாத 503 பதிலையே தொடர்ந்தும் வழங்கும்.
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. கோரிக்கை வரிசை அனுமதிக் கட்டுப்பாடு (v3.8.49 · issue #6593)

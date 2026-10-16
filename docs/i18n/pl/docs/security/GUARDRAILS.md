@@ -102,6 +102,10 @@ mechanizmie ochronnym (metadane `{ skipped: true, reason: "no_permitted_vision_m
 Żądania bez klucza oraz klucze bez tych ograniczeń zachowują się dokładnie tak samo
 jak wcześniej.
 
+#### Zakres klucza API (`visionBridgeKeyScope.ts`)
+
+Jeśli klucz API ogranicza połączenia, pule limitów lub modele (`allowedConnections`, `allowedQuotas`, `allowedModels` / `blockedModels` / `modelAccessMode: "restricted"` / `disableNonPublicModels`), przekierowanie i opis wybierają wyłącznie modele i połączenia dozwolone dla tego klucza. Opis zawsze przechodzi przez pętlę własną OmniRoute z nagłówkiem `x-omniroute-self-loop-key-id`, ponownie egzekwując te zasady. `enforceApiKeyPolicy()` uznaje nagłówek tylko wraz z tokenem bearer tej pętli: może on jedynie zawężać dostęp, a nierozpoznany identyfikator jest odrzucany. Jeśli klucz nie ma dozwolonego modelu wizyjnego, opis jest pomijany i żądanie pozostaje bez zmian, jak przy wyłączonej ochronie (meta `{ skipped: true, reason: "no_permitted_vision_model" }`). Żądania bez klucza i klucze bez tych ograniczeń działają jak wcześniej.
+
 #### Prompt opisu uwzględniający zadanie (`modalityBridgeVisionTaskAware`)
 
 Domyślnie **true**. `composeVisionPrompt()` (`visionBridgeHelpers.ts`) dołącza

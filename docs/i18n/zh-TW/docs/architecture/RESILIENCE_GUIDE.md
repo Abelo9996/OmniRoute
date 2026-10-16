@@ -394,6 +394,17 @@ glm-4.7=3
 `503 ALL_TARGETS_SKIPPED`。若不允許等待（已達上限、嘗試次數或預算已耗盡，或功能已關閉），最終回應會升級為
 `429 rate_limit_error`，並攜帶最早瞬時鎖定到期時間的 `retry_after` / `reset_at`；配額、驗證與找不到資源造成的鎖定則仍會傳回缺乏提示資訊的 503。
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. 請求佇列准入控制（v3.8.49 · issue #6593）

@@ -268,6 +268,8 @@ Konetunnistetiedoilla (`admin`-käyttöoikeustunnuksella tai API-avaimella, joll
 `manage`- tai `admin`-käyttöoikeusalue) voidaan luoda vain `write`- ja `read`-tunnuksia;
 `--scope admin` -pyyntö palauttaa vastauksen `403`.
 
+Tokenia ei voi koskaan luoda laajemmilla oikeuksilla kuin sen luojalla on. Vain ylläpitäjä voi luoda `admin`-tokenin: hallintapaneelin istunnosta, palvelimella itsellään toimivasta paikallisesta CLI:stä, komennolla `omniroute connect` ja salasanalla tai instanssissa, jossa kirjautuminen on poistettu käytöstä. Konetunnukset (`admin`-käyttötoken tai API-avain, jonka oikeusalue on `manage`/`admin`) voivat luoda vain `write`- ja `read`-tokeneita; niillä tehty `--scope admin` -pyyntö palauttaa `403`.
+
 ---
 
 ## Ohjelmointi-CLI:n määrittäminen etäluettelosta

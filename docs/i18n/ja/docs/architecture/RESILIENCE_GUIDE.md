@@ -368,6 +368,17 @@ glm-4.7=3
 
 同じゲートは、ディスパッチ前のケース（#16319）も対象とします。コンボのすべてのターゲットが、モデルの短時間の一時的なロックアウトにより、試行が 1 回も行われる前にスキップされた場合、ゼロ試行のパスは、ヒントのない `503 ALL_TARGETS_SKIPPED` を返す代わりに、同じ上限の範囲内でロック解除を待ってから再ディスパッチします。待機が許可されない場合（上限、試行回数、または予算を使い切った場合、あるいは機能がオフの場合）、最終レスポンスは、最も早く期限切れになる一時的ロックの `retry_after` / `reset_at` を含む `429 rate_limit_error` に変更されます。クォータ、認証、および見つからないことによるロックでは、ヒントのない 503 が維持されます。
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. リクエストキューのアドミッション制御 (v3.8.49 · issue #6593)

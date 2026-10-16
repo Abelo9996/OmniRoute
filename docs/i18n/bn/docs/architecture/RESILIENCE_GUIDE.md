@@ -429,6 +429,17 @@ transient lockout-এ আছে, তখন zero-attempt path একই সীম
 `429 rate_limit_error`-এ উন্নীত হয় এবং সবচেয়ে আগে শেষ হতে যাওয়া
 transient lock-এর `retry_after` / `reset_at` বহন করে; quota, auth এবং not-found lock-এর ক্ষেত্রে hint-বিহীন 503 বজায় থাকে।
 
+```text
+#16319 · comboCooldownWait · pre-dispatch (attempts = 0)
+all targets skipped + transient model lockout:
+  enabled ∧ 0 < waitMs ≤ maxWaitMs ∧ attempt < maxAttempts ∧ budgetLeftMs ≥ waitMs
+    → wait → re-dispatch
+  wait = false → HTTP 429 rate_limit_error
+  retry_after / reset_at ← earliest transient lock expiry
+quota_exhausted / auth_error / not_found / not_found_local:
+  no transient hint → HTTP 503 ALL_TARGETS_SKIPPED
+```
+
 ---
 
 ## 5. রিকোয়েস্ট কিউ অ্যাডমিশন কন্ট্রোল (v3.8.49 · issue #6593)
