@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Authentifizierten Frame-Drill-down zulassen",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API-Schlüsseln nur erlauben, ihre eigenen undurchsichtigen Handles zu lesen und zu löschen. Kein anonymer oder schlüsselübergreifender Zugriff.",
     "modalityBridgeVideoDrilldownUsage": "Aufbewahrte JPEGs / Bytes",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Bereitschaft für erweiterte Richtlinien",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Experimentell",
+    "modalityBridgeVideoPromotionEligible": "Berechtigt",
+    "modalityBridgeVideoPromotionContextRequired": "Die Hochstufung erfordert zwei unabhängige qualifizierende Durchläufe für exakt dieselbe Modellrevision, Richtlinie, denselben Korpus und Build. Ein nicht verifizierter Kontext verbleibt im Status HOLD; die Auswahl einer experimentellen Richtlinie stellt keine Genehmigung dar."
   },
   "contextRtk": {
     "title": "RTK-Engine",

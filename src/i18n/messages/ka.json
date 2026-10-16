@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "ავთენტიფიცირებული წვდომით კადრების დეტალური დათვალიერების დაშვება",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "დაუშვით, რომ API გასაღებებმა წაიკითხონ და წაშალონ მხოლოდ საკუთარი გაუმჭვირვალე იდენტიფიკატორები. ანონიმური ან სხვა გასაღებით წვდომა დაუშვებელია.",
     "modalityBridgeVideoDrilldownUsage": "შენახული JPEG-ები / ბაიტები",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "გაფართოებული პოლიტიკის მზადყოფნა",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "ექსპერიმენტული",
+    "modalityBridgeVideoPromotionEligible": "დაშვებული",
+    "modalityBridgeVideoPromotionContextRequired": "დაწინაურებისთვის საჭიროა ორი დამოუკიდებელი საკვალიფიკაციო გაშვება მოდელის ზუსტად იმავე რევიზიის, პოლიტიკის, კორპუსისა და ბილდისთვის. დაუდასტურებელი კონტექსტი რჩება HOLD სტატუსში; ექსპერიმენტული პოლიტიკის არჩევა დამტკიცებას არ ნიშნავს."
   },
   "contextRtk": {
     "title": "RTK ძრავა",

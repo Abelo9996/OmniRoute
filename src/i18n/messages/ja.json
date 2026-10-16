@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "認証済みのフレーム詳細表示を許可",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API キーには、それぞれ自身の不透明なハンドルの読み取りと削除のみを許可します。匿名アクセスや他のキーからのアクセスは許可されません。",
     "modalityBridgeVideoDrilldownUsage": "保持された JPEG / バイト",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "高度なポリシーの準備状況",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "試験的",
+    "modalityBridgeVideoPromotionEligible": "適格",
+    "modalityBridgeVideoPromotionContextRequired": "昇格には、モデルの正確なリビジョン、ポリシー、コーパス、ビルドについて、条件を満たす独立した2回の実行が必要です。未検証のコンテキストはHOLDのままであり、試験的なポリシーを選択しても承認されたことにはなりません。"
   },
   "contextRtk": {
     "title": "RTKエンジン",

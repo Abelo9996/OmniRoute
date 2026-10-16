@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Autentifikatsiyadan o‘tgan kadrlarni batafsil ko‘rib chiqishga ruxsat berish",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API kalitlariga faqat o‘zlarining shaffof bo‘lmagan identifikatorlarini o‘qish va o‘chirishga ruxsat bering. Anonim yoki boshqa kalit orqali kirishga ruxsat berilmaydi.",
     "modalityBridgeVideoDrilldownUsage": "Saqlab qolingan JPEG fayllari / baytlar",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Kengaytirilgan siyosatga tayyorlik",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Tajribaviy",
+    "modalityBridgeVideoPromotionEligible": "Talablarga javob beradi",
+    "modalityBridgeVideoPromotionContextRequired": "Yuqori bosqichga oʻtkazish uchun aynan shu model tahriri, siyosat, korpus va yigʻilma boʻyicha talablarga javob beradigan ikkita mustaqil ishga tushirish talab etiladi. Tasdiqlanmagan kontekst HOLD holatida qoladi; tajribaviy siyosatni tanlash tasdiqlash hisoblanmaydi."
   },
   "contextRtk": {
     "title": "RTK mexanizmi",

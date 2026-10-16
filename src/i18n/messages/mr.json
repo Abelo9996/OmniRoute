@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "प्रमाणित फ्रेम ड्रिल-डाउनला अनुमती द्या",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API कींना केवळ त्यांचे स्वतःचे अपारदर्शक हँडल वाचण्याची आणि हटवण्याची अनुमती द्या. अनामिक किंवा इतर कींद्वारे प्रवेश नाही.",
     "modalityBridgeVideoDrilldownUsage": "राखून ठेवलेले JPEG / बाइट्स",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "प्रगत धोरण सज्जता",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "प्रायोगिक",
+    "modalityBridgeVideoPromotionEligible": "पात्र",
+    "modalityBridgeVideoPromotionContextRequired": "पदोन्नतीसाठी नेमकी मॉडेल आवृत्ती, धोरण, कॉर्पस आणि बिल्ड यांसाठी दोन स्वतंत्र पात्रता पूर्ण करणाऱ्या रनची आवश्यकता आहे. असत्यापित संदर्भ HOLD स्थितीत राहतो; प्रायोगिक धोरण निवडणे म्हणजे मंजुरी नव्हे."
   },
   "contextRtk": {
     "title": "RTK इंजिन",

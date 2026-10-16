@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Να επιτρέπεται η λεπτομερής εξέταση καρέ με πιστοποίηση",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Να επιτρέπεται στα κλειδιά API να διαβάζουν και να διαγράφουν μόνο τα δικά τους αδιαφανή αναγνωριστικά. Δεν επιτρέπεται ανώνυμη πρόσβαση ή πρόσβαση μεταξύ διαφορετικών κλειδιών.",
     "modalityBridgeVideoDrilldownUsage": "Διατηρούμενα JPEG / byte",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Ετοιμότητα προηγμένης πολιτικής",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Πειραματικό",
+    "modalityBridgeVideoPromotionEligible": "Επιλέξιμο",
+    "modalityBridgeVideoPromotionContextRequired": "Η προώθηση απαιτεί δύο ανεξάρτητες εκτελέσεις που πληρούν τα κριτήρια για την ακριβή αναθεώρηση μοντέλου, την πολιτική, το σώμα κειμένων και την έκδοση. Ένα μη επαληθευμένο περιβάλλον παραμένει σε HOLD· η επιλογή μιας πειραματικής πολιτικής δεν συνιστά έγκριση."
   },
   "contextRtk": {
     "title": "Μηχανή RTK",

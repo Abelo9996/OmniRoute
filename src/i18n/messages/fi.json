@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Salli todennettu kuvaruutujen tarkastelu",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Salli API-avainten lukea ja poistaa vain omia läpinäkymättömiä tunnisteitaan. Anonyymi käyttö tai käyttö eri avainten välillä ei ole sallittua.",
     "modalityBridgeVideoDrilldownUsage": "Säilytetyt JPEG-kuvat / tavut",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Edistyneen käytännön valmius",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Kokeellinen",
+    "modalityBridgeVideoPromotionEligible": "Kelvollinen",
+    "modalityBridgeVideoPromotionContextRequired": "Ylennys edellyttää kahta toisistaan riippumatonta hyväksyttävää suoritusta täsmälleen samalla malliversiolla, käytännöllä, korpuksella ja koontiversiolla. Vahvistamaton konteksti pysyy HOLD-tilassa; kokeellisen käytännön valitseminen ei merkitse hyväksyntää."
   },
   "contextRtk": {
     "title": "RTK Engine",

@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Dozvoli autentificiranu detaljnu analizu kadrova",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Dozvoli API ključevima da čitaju i brišu samo vlastite neprozirne identifikatore. Anonimni pristup ili pristup između različitih ključeva nije dozvoljen.",
     "modalityBridgeVideoDrilldownUsage": "Zadržane JPEG datoteke / bajtovi",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Spremnost za napredne politike",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Eksperimentalno",
+    "modalityBridgeVideoPromotionEligible": "Ispunjava uslove",
+    "modalityBridgeVideoPromotionContextRequired": "Promocija zahtijeva dva nezavisna kvalifikacijska pokretanja za potpuno istu reviziju modela, politiku, korpus i verziju. Nepotvrđeni kontekst ostaje HOLD; odabir eksperimentalne politike ne predstavlja odobrenje."
   },
   "contextRtk": {
     "title": "RTK pogon",

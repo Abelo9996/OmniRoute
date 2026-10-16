@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Дозволити автентифікований деталізований перегляд кадрів",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Дозволити API-ключам читати й видаляти лише власні непрозорі дескриптори. Анонімний доступ або доступ між ключами заборонено.",
     "modalityBridgeVideoDrilldownUsage": "Збережені JPEG / байти",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Готовність розширеної політики",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Експериментальна",
+    "modalityBridgeVideoPromotionEligible": "Відповідає вимогам",
+    "modalityBridgeVideoPromotionContextRequired": "Для просування потрібні два незалежні кваліфікаційні запуски для точної ревізії моделі, політики, корпусу та збірки. Неперевірений контекст залишається в статусі HOLD; вибір експериментальної політики не є схваленням."
   },
   "contextRtk": {
     "title": "Двигун RTK",

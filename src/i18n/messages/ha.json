@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Ba da izinin zurfafa binciken firam ga waɗanda aka tantance",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Ba da izinin maɓallan API su karanta kuma su share alamomin sarrafawarsu marasa bayyana kawai. Ba a yarda da shiga ba tare da tantancewa ba ko ta wani maɓalli daban.",
     "modalityBridgeVideoDrilldownUsage": "JPEG da aka riƙe / baitoci",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Shirye-shiryen manufofi na ci gaba",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Na gwaji",
+    "modalityBridgeVideoPromotionEligible": "Ya cancanta",
+    "modalityBridgeVideoPromotionContextRequired": "Ɗaukakawa na buƙatar gudanawa biyu masu zaman kansu da suka cika sharuɗɗa don ainihin bita ta samfurin, manufa, kundin bayanai da gini. Mahallin da ba a tabbatar da shi ba zai ci gaba da kasancewa HOLD; zaɓin manufar gwaji ba amincewa ba ne."
   },
   "contextRtk": {
     "title": "Injin RTK",

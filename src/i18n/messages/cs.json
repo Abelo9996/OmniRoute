@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Povolit ověřený detailní rozbor snímků",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Povolit klíčům API číst a mazat pouze jejich vlastní neprůhledné identifikátory. Anonymní přístup ani přístup napříč klíči není povolen.",
     "modalityBridgeVideoDrilldownUsage": "Uchované soubory JPEG / bajty",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Připravenost pokročilé zásady",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Experimentální",
+    "modalityBridgeVideoPromotionEligible": "Způsobilé",
+    "modalityBridgeVideoPromotionContextRequired": "Povýšení vyžaduje dvě nezávislá kvalifikační spuštění pro přesně stejnou revizi modelu, zásadu, korpus a sestavení. Neověřený kontext zůstává ve stavu HOLD; výběr experimentální zásady nepředstavuje schválení."
   },
   "contextRtk": {
     "title": "Modul RTK",

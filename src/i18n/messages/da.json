@@ -8808,11 +8808,11 @@
     "modalityBridgeVideoDrilldownRemoteEnabled": "Tillad godkendt detaljevisning af videobilleder",
     "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Tillad kun API-nøgler at læse og slette deres egne uigennemsigtige handles. Ingen anonym adgang eller adgang på tværs af nøgler.",
     "modalityBridgeVideoDrilldownUsage": "Opbevarede JPEG-filer / byte",
-    "modalityBridgeVideoPromotionTitle": "Advanced policy readiness",
+    "modalityBridgeVideoPromotionTitle": "Parathed til avanceret politik",
     "modalityBridgeVideoPromotionHold": "HOLD",
-    "modalityBridgeVideoPromotionExperimental": "Experimental",
-    "modalityBridgeVideoPromotionEligible": "Eligible",
-    "modalityBridgeVideoPromotionContextRequired": "Promotion requires two independent qualifying runs for the exact model revision, policy, corpus and build. An unverified context remains HOLD; selecting an experimental policy is not an approval."
+    "modalityBridgeVideoPromotionExperimental": "Eksperimentel",
+    "modalityBridgeVideoPromotionEligible": "Kvalificeret",
+    "modalityBridgeVideoPromotionContextRequired": "Oprykning kræver to uafhængige kvalificerende kørsler for den nøjagtige modelrevision, politik, det pågældende korpus og build. En ubekræftet kontekst forbliver på HOLD; valg af en eksperimentel politik er ikke en godkendelse."
   },
   "contextRtk": {
     "title": "RTK Engine",
