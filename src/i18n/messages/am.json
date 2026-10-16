@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "አገናኝ (እያንዳንዱ መለያ የራሱ መበረታቸው አለው)",
     "resilienceTokenRefreshThreshold": "ማቆሚያዎ ከመጠበቅ በፊት የሚደረጉ መሳሮች",
     "resilienceTokenRefreshCooldown": "ከመዘጋት በኋላ ይታቀኑ",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "የተገኙ የቪዲዮ ፍሬሞችን ያቆዩ",
+    "modalityBridgeVideoDrilldownEnabledDesc": "የተረጋገጠው ጥያቄ drilldown: true ን ሲያቀናብር ብቻ ጊዜያዊ የJPEG ማቆየትን ይፍቀዱ። ጥሬ ቪዲዮዎች በፍጹም አይቆዩም።",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "የተረጋገጠ የፍሬም ዝርዝር እይታን ይፍቀዱ",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "የAPI ቁልፎች የራሳቸውን ግልጽ ያልሆኑ መያዣዎች ብቻ እንዲያነቡና እንዲሰርዙ ይፍቀዱ። ማንነት ያልተገለጸ ወይም በተለያዩ ቁልፎች መካከል የሚደረግ መዳረሻ አይፈቀድም።",
+    "modalityBridgeVideoDrilldownUsage": "የተቆዩ JPEGዎች / ባይቶች"
   },
   "contextRtk": {
     "title": "RTK ሞተር",

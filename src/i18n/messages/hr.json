@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "Veza (svaki račun ima vlastiti prekidač)",
     "resilienceTokenRefreshThreshold": "Neuspjesi prije pauziranja",
     "resilienceTokenRefreshCooldown": "Pauza nakon aktivacije",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "Zadrži izvedene videookvire",
+    "modalityBridgeVideoDrilldownEnabledDesc": "Dopusti privremeno zadržavanje JPEG datoteka samo kada autentificirani zahtjev također postavi drilldown: true. Izvorni videozapisi nikada se ne zadržavaju.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "Dopusti autentificirani detaljni pregled okvira",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Dopusti API ključevima čitanje i brisanje samo vlastitih neprozirnih identifikatora. Anonimni pristup i pristup između različitih ključeva nisu dopušteni.",
+    "modalityBridgeVideoDrilldownUsage": "Zadržane JPEG datoteke / bajtovi"
   },
   "contextRtk": {
     "title": "RTK mehanizam",

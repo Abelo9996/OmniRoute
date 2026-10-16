@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "Tilkobling (hver konto har sin egen breaker)",
     "resilienceTokenRefreshThreshold": "Feil før pausing",
     "resilienceTokenRefreshCooldown": "Pause etter utløsning",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "Behold avledede videobilder",
+    "modalityBridgeVideoDrilldownEnabledDesc": "Tillat midlertidig lagring av JPEG-filer bare når den autentiserte forespørselen også setter drilldown: true. Råvideoer lagres aldri.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "Tillat autentisert detaljvisning av bilderammer",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Tillat API-nøkler å lese og slette bare sine egne ugjennomsiktige referanser. Ingen anonym tilgang eller tilgang på tvers av nøkler.",
+    "modalityBridgeVideoDrilldownUsage": "Lagrede JPEG-filer / byte"
   },
   "contextRtk": {
     "title": "RTK-motor",

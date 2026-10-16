@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "ချိတ်ဆက်မှု (အကောင့်တိုင်းတွင် ၎င်း၏ breaker ရှိသည်)",
     "resilienceTokenRefreshThreshold": "ရပ်တန့်မှုမပြုမီ မအောင်မြင်မှုများ",
     "resilienceTokenRefreshCooldown": "ချောင်းဆိုးပြီးနောက် အနားယူပါ",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "ဗီဒီယိုမှ ရယူထားသော ဖရိမ်များကို ထိန်းသိမ်းထားရန်",
+    "modalityBridgeVideoDrilldownEnabledDesc": "အထောက်အထားစိစစ်ပြီးသော တောင်းဆိုမှုတွင် drilldown: true ဟုလည်း သတ်မှတ်ထားမှသာ ယာယီ JPEG များကို ထိန်းသိမ်းခွင့်ပြုပါ။ မူရင်းဗီဒီယိုများကို မည်သည့်အခါမျှ ထိန်းသိမ်းမထားပါ။",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "အထောက်အထားစိစစ်ပြီးသော ဖရိမ်အသေးစိတ် ကြည့်ရှုမှုကို ခွင့်ပြုရန်",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API key များအား ၎င်းတို့ကိုယ်ပိုင် opaque handle များကိုသာ ဖတ်ရှုခြင်းနှင့် ဖျက်ခြင်း ပြုလုပ်ခွင့်ပေးပါ။ အမည်မဖော်ဘဲ သို့မဟုတ် အခြား key မှ ဝင်ရောက်ခွင့်မပြုပါ။",
+    "modalityBridgeVideoDrilldownUsage": "ထိန်းသိမ်းထားသော JPEG များ / ဘိုက်များ"
   },
   "contextRtk": {
     "title": "RTK Engine",

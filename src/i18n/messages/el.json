@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "Σύνδεση (κάθε λογαριασμός έχει τον δικό του διακόπτη)",
     "resilienceTokenRefreshThreshold": "Αποτυχίες πριν από την παύση",
     "resilienceTokenRefreshCooldown": "Παύση μετά την ενεργοποίηση",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "Διατήρηση παραγόμενων καρέ βίντεο",
+    "modalityBridgeVideoDrilldownEnabledDesc": "Να επιτρέπεται η προσωρινή διατήρηση JPEG μόνο όταν το πιστοποιημένο αίτημα ορίζει επίσης drilldown: true. Τα ανεπεξέργαστα βίντεο δεν διατηρούνται ποτέ.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "Να επιτρέπεται η λεπτομερής εξέταση καρέ με πιστοποίηση",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Να επιτρέπεται στα κλειδιά API να διαβάζουν και να διαγράφουν μόνο τα δικά τους αδιαφανή αναγνωριστικά. Δεν επιτρέπεται ανώνυμη πρόσβαση ή πρόσβαση μεταξύ διαφορετικών κλειδιών.",
+    "modalityBridgeVideoDrilldownUsage": "Διατηρούμενα JPEG / byte"
   },
   "contextRtk": {
     "title": "Μηχανή RTK",

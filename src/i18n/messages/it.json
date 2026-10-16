@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "Connessione (ogni account ha il proprio circuit breaker)",
     "resilienceTokenRefreshThreshold": "Fallimenti prima della pausa",
     "resilienceTokenRefreshCooldown": "Pausa dopo l'attivazione",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "Conserva i fotogrammi video derivati",
+    "modalityBridgeVideoDrilldownEnabledDesc": "Consenti la conservazione temporanea dei file JPEG solo quando la richiesta autenticata imposta anche drilldown: true. I video originali non vengono mai conservati.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "Consenti l'analisi dettagliata dei fotogrammi autenticata",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Consenti alle chiavi API di leggere ed eliminare solo i propri handle opachi. Nessun accesso anonimo o tra chiavi diverse.",
+    "modalityBridgeVideoDrilldownUsage": "JPEG conservati / byte"
   },
   "contextRtk": {
     "title": "Motore RTK",

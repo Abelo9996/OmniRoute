@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "Ceangal (tá meitneoir féin ag gach cuntas)",
     "resilienceTokenRefreshThreshold": "Teipimhí roimh an sos",
     "resilienceTokenRefreshCooldown": "Sos tar éis an rith a thosú",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "Coinnigh frámaí díorthaithe físe",
+    "modalityBridgeVideoDrilldownEnabledDesc": "Ná ceadaigh coinneáil shealadach JPEG ach amháin nuair a shocraíonn an t-iarratas fíordheimhnithe drilldown: true freisin. Ní choinnítear físeáin amh riamh.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "Ceadaigh druileáil síos ar fhrámaí fíordheimhnithe",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Ná ceadaigh d'eochracha API ach a hanlaí teimhneacha féin a léamh agus a scriosadh. Ní cheadaítear rochtain gan ainm ná rochtain tras-eochrach.",
+    "modalityBridgeVideoDrilldownUsage": "JPEGanna coinnithe / bearta"
   },
   "contextRtk": {
     "title": "Inneall RTK",

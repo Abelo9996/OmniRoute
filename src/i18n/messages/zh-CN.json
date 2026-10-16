@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "连接（每个账户都有自己的熔断器）",
     "resilienceTokenRefreshThreshold": "暂停前的失败次数",
     "resilienceTokenRefreshCooldown": "触发后暂停",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "保留派生的视频帧",
+    "modalityBridgeVideoDrilldownEnabledDesc": "仅当经过身份验证的请求同时设置 drilldown: true 时，才允许临时保留 JPEG。原始视频绝不会被保留。",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "允许经过身份验证的帧下钻",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "允许 API 密钥仅查看和删除其自身的不透明句柄。禁止匿名访问或跨密钥访问。",
+    "modalityBridgeVideoDrilldownUsage": "已保留的 JPEG / 字节"
   },
   "contextRtk": {
     "title": "命令输出过滤引擎",

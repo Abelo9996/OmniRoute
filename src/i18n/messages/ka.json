@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "კავშირი (თითოეულ ანგარიშს აქვს საკუთარი გამთიშელი)",
     "resilienceTokenRefreshThreshold": "შეჩერებამდე დაშვებული მარცხების რაოდენობა",
     "resilienceTokenRefreshCooldown": "შეჩერება გამორთვის შემდეგ",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "წარმოებული ვიდეოკადრების შენახვა",
+    "modalityBridgeVideoDrilldownEnabledDesc": "დაუშვით JPEG-ების დროებით შენახვა მხოლოდ მაშინ, როცა ავთენტიფიცირებულ მოთხოვნაში ასევე მითითებულია drilldown: true. დაუმუშავებელი ვიდეოები არასოდეს ინახება.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "ავთენტიფიცირებული წვდომით კადრების დეტალური დათვალიერების დაშვება",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "დაუშვით, რომ API გასაღებებმა წაიკითხონ და წაშალონ მხოლოდ საკუთარი გაუმჭვირვალე იდენტიფიკატორები. ანონიმური ან სხვა გასაღებით წვდომა დაუშვებელია.",
+    "modalityBridgeVideoDrilldownUsage": "შენახული JPEG-ები / ბაიტები"
   },
   "contextRtk": {
     "title": "RTK ძრავა",

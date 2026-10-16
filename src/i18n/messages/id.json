@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "Koneksi (setiap akun memiliki pemutusnya sendiri)",
     "resilienceTokenRefreshThreshold": "Kegagalan sebelum dijeda",
     "resilienceTokenRefreshCooldown": "Jeda setelah terpicu",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "Simpan frame video turunan",
+    "modalityBridgeVideoDrilldownEnabledDesc": "Izinkan penyimpanan JPEG sementara hanya jika permintaan terautentikasi juga menetapkan drilldown: true. Video mentah tidak pernah disimpan.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "Izinkan penelusuran mendetail frame terautentikasi",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Izinkan kunci API untuk membaca dan menghapus hanya handle buram miliknya sendiri. Tidak ada akses anonim atau lintas-kunci.",
+    "modalityBridgeVideoDrilldownUsage": "JPEG / byte yang disimpan"
   },
   "contextRtk": {
     "title": "Mesin RTK",

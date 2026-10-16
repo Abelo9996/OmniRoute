@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "חיבור (לכל חשבון יש מפסיק משלו)",
     "resilienceTokenRefreshThreshold": "כשלים לפני השהיה",
     "resilienceTokenRefreshCooldown": "השהיה לאחר הפעלה",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "שמירת פריימים שנגזרו מסרטונים",
+    "modalityBridgeVideoDrilldownEnabledDesc": "יש לאפשר שמירה זמנית של קובצי JPEG רק כאשר הבקשה המאומתת מגדירה גם drilldown: true. סרטונים גולמיים לעולם אינם נשמרים.",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "מתן אפשרות לתחקור פריימים למשתמשים מאומתים",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "יש לאפשר למפתחות API לקרוא ולמחוק רק את המזהים האטומים שלהם. אין לאפשר גישה אנונימית או גישה בין מפתחות.",
+    "modalityBridgeVideoDrilldownUsage": "קובצי JPEG שמורים / בתים"
   },
   "contextRtk": {
     "title": "מנוע RTK",

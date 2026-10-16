@@ -8803,11 +8803,11 @@
     "resilienceTokenRefreshScopeConnection": "ସଂଯୋଗ (ପ୍ରତ୍ୟେକ ଖାତା ନିଜର ଏକ ବ୍ରେକର ରଖେ)",
     "resilienceTokenRefreshThreshold": "ବିରତି ଦେବା ପୂର୍ବରୁ ବିଫଳତା",
     "resilienceTokenRefreshCooldown": "ଟ୍ରିପ୍ ପରେ ବିରତି ନିଅନ୍ତୁ",
-    "modalityBridgeVideoDrilldownEnabled": "Retain derived video frames",
-    "modalityBridgeVideoDrilldownEnabledDesc": "Allow temporary JPEG retention only when the authenticated request also sets drilldown: true. Raw videos are never retained.",
-    "modalityBridgeVideoDrilldownRemoteEnabled": "Allow authenticated frame drill-down",
-    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "Allow API keys to read and delete only their own opaque handles. No anonymous or cross-key access.",
-    "modalityBridgeVideoDrilldownUsage": "Retained JPEGs / bytes"
+    "modalityBridgeVideoDrilldownEnabled": "ଉତ୍ପାଦିତ ଭିଡିଓ ଫ୍ରେମଗୁଡ଼ିକୁ ସଂରକ୍ଷିତ ରଖନ୍ତୁ",
+    "modalityBridgeVideoDrilldownEnabledDesc": "ପ୍ରମାଣୀକୃତ ଅନୁରୋଧରେ drilldown: true ମଧ୍ୟ ସେଟ୍ କରାଯାଇଥିଲେ ମାତ୍ର ଅସ୍ଥାୟୀ JPEG ସଂରକ୍ଷଣକୁ ଅନୁମତି ଦିଅନ୍ତୁ। କଚ୍ଚା ଭିଡିଓଗୁଡ଼ିକୁ କେବେବି ସଂରକ୍ଷିତ ରଖାଯାଏ ନାହିଁ।",
+    "modalityBridgeVideoDrilldownRemoteEnabled": "ପ୍ରମାଣୀକୃତ ଫ୍ରେମ୍ ଡ୍ରିଲ୍-ଡାଉନ୍କୁ ଅନୁମତି ଦିଅନ୍ତୁ",
+    "modalityBridgeVideoDrilldownRemoteEnabledDesc": "API କିଗୁଡ଼ିକୁ କେବଳ ସେମାନଙ୍କର ନିଜସ୍ୱ ଅସ୍ପଷ୍ଟ ହ୍ୟାଣ୍ଡଲ୍ଗୁଡ଼ିକ ପଢ଼ିବା ଏବଂ ବିଲୋପ କରିବାକୁ ଅନୁମତି ଦିଅନ୍ତୁ। ବେନାମୀ କିମ୍ବା କ୍ରସ୍-କି ଆକ୍ସେସ୍ ନାହିଁ।",
+    "modalityBridgeVideoDrilldownUsage": "ସଂରକ୍ଷିତ JPEGଗୁଡ଼ିକ / ବାଇଟ୍ଗୁଡ଼ିକ"
   },
   "contextRtk": {
     "title": "RTK ଇଞ୍ଜିନ୍",
