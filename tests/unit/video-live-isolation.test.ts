@@ -28,11 +28,19 @@ test("preparation uses a read-only snapshot and confines all keys/settings to pr
   const source = fs.mkdtempSync(path.join(os.tmpdir(), "video-live-source-fixture-"));
   // Preparation and both consumers must agree even when the runner overrides TMPDIR.
   const previousTmpdir = process.env.TMPDIR;
+  const previousEncryptionKey = process.env.STORAGE_ENCRYPTION_KEY;
   process.env.TMPDIR = source;
+  delete process.env.STORAGE_ENCRYPTION_KEY;
   t.after(() => {
     if (previousTmpdir === undefined) delete process.env.TMPDIR;
     else process.env.TMPDIR = previousTmpdir;
+    if (previousEncryptionKey === undefined) delete process.env.STORAGE_ENCRYPTION_KEY;
+    else process.env.STORAGE_ENCRYPTION_KEY = previousEncryptionKey;
   });
+  // Synthetic values only: .env must override server.env without stripping a
+  // quoted hash, while secrets remain in the private environment file.
+  fs.writeFileSync(path.join(source, "server.env"), 'STORAGE_ENCRYPTION_KEY="old-fixture"\n');
+  fs.writeFileSync(path.join(source, ".env"), 'STORAGE_ENCRYPTION_KEY="fixture # value"\n');
   const databasePath = path.join(source, "storage.sqlite");
   const original = new Database(databasePath);
   original.exec(
@@ -55,6 +63,7 @@ test("preparation uses a read-only snapshot and confines all keys/settings to pr
     assert.equal(new URL(context.baseUrl).hostname, "127.0.0.1");
     assert.equal(context.cliToken.length > 0, true);
     const environment = fs.readFileSync(path.join(prepared, ".env"), "utf8");
+    assert.equal(environment.includes('STORAGE_ENCRYPTION_KEY="fixture # value"'), true);
     assert.equal(environment.includes('OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK="true"'), true);
     assert.equal(createHash("sha256").update(fs.readFileSync(databasePath)).digest("hex"), before);
   } finally {

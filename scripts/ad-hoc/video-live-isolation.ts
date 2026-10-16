@@ -2,12 +2,11 @@
 /** Private VPS-only homologation preparation. Never opens the source through app DB modules. */
 import { randomBytes } from "node:crypto";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseEnv } from "node:util";
 
 import Database from "better-sqlite3";
-import { parse } from "dotenv";
 
 export function validateVideoLiveSource(source: string | undefined): string {
   if (!source || !path.isAbsolute(source))
@@ -23,7 +22,7 @@ function sourceEncryptionSecret(source: string): string | undefined {
   const values: Record<string, string> = {};
   for (const name of ["server.env", ".env"]) {
     const file = path.join(source, name);
-    if (fs.existsSync(file)) Object.assign(values, parse(fs.readFileSync(file)));
+    if (fs.existsSync(file)) Object.assign(values, parseEnv(fs.readFileSync(file, "utf8")));
   }
   return process.env.STORAGE_ENCRYPTION_KEY || values.STORAGE_ENCRYPTION_KEY;
 }
@@ -31,7 +30,9 @@ function sourceEncryptionSecret(source: string): string | undefined {
 export async function prepareVideoLiveIsolation(sourceInput: string | undefined) {
   const source = validateVideoLiveSource(sourceInput);
   const sourceSecret = sourceEncryptionSecret(source);
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-video-live-"));
+  // Both consumers validate this fixed private root; a runner's TMPDIR must
+  // not make preparation return a context that those consumers will reject.
+  const directory = fs.mkdtempSync(path.join("/tmp", "omniroute-video-live-"));
   fs.chmodSync(directory, 0o700);
   try {
     const databasePath = path.join(directory, "storage.sqlite");
