@@ -434,96 +434,100 @@ A pín in sí àwọn subdirectory tó dojú kọ iṣẹ́ pàtó:
 
 ---
 
-## 4. `open-sse/` — Ààyè iṣẹ́ ẹ̀rọ ìṣànwọlé
+## 4. `open-sse/` — Ààyè iṣẹ́ ẹ̀rọ ìṣànwọ́
 
-Ààyè iṣẹ́ npm ọ̀tọ̀ tí a tẹ̀jáde gẹ́gẹ́ bí `@omniroute/open-sse`. Ó ń ṣàkóso ìṣiṣẹ́ àwọn ìbéèrè, àwọn olùṣiṣẹ́, àwọn olùtumọ̀, àwọn iṣẹ́, olùyípadà, àti olupin MCP.
+Ààyè iṣẹ́ npm ọ̀tọ̀ tí a tẹ̀ jáde gẹ́gẹ́ bí `@omniroute/open-sse`. Ó ni ìṣàkóso
+ìṣàkóso ìbéèrè, àwọn aṣiṣẹ́, àwọn atúmọ̀, àwọn iṣẹ́, olùyípadà, àti olupin MCP.
 
 ```
 open-sse/
-├── index.ts                Àwọn ohun tí a ń gbé jáde fún gbogbo ènìyàn
-├── package.json            Àkọsílẹ̀ ààyè iṣẹ́
+├── index.ts                Àwọn ohun tí a kó jáde fún gbogbo ènìyàn
+├── package.json            Àfihàn ààyè iṣẹ́
 ├── tsconfig.json
 ├── types.d.ts
 ├── config/                 Àwọn àkọsílẹ̀ olùpèsè, àwọn prófáìlì àkọlé, ìdánimọ̀, …
-├── handlers/               Àwọn olùṣàkóso ìbéèrè (ìfọ̀rọ̀wérọ̀, embeddings, ohùn, àwòrán, …)
-├── executors/              Àwọn olùṣiṣẹ́ HTTP 108 tó jẹ́ pàtó sí olùpèsè
-├── translator/             Ìyípadà àgbékalẹ̀ (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
+├── handlers/               Àwọn olùṣàkóso ìbéèrè (ìfọ̀rọ̀wérọ̀, embeddings, ohun, àwòrán, …)
+├── executors/              Àwọn módù aṣiṣẹ́ olùpèsè 150 (àwọn kíláàsì aṣiṣẹ́ + àwọn olùrànlọ́wọ́ fún olùpèsè kọ̀ọ̀kan)
+├── translator/             Ìyípadà fọ́ọ̀mù (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
 ├── transformer/            Olùyípadà ìṣàn Responses API ↔ Chat Completions
-├── services/               Àwọn módù iṣẹ́ tó ju 80 lọ (àwọn àkójọpọ̀, àṣàyàn àfẹ́yìntì, iye-ààyè, ìdánimọ̀, …)
-├── utils/                  Àwọn olùrànlọ́wọ́ ìṣànwọlé, oníbàárà TLS, AWS SigV4, ìgbàjáde aṣojú, …
-└── mcp-server/             Olupin MCP (ọ̀nà ìgbékalẹ̀ 3, ààyè-àṣẹ 33, irinṣẹ́ 110)
+├── services/               Àwọn módù iṣẹ́ 80+ (àwọn àkópọ̀, ìpadàsẹ́yìn, àwọn iye ààyè, ìdánimọ̀, …)
+├── utils/                  Àwọn olùrànlọ́wọ́ ìṣànwọ́, oníbàárà TLS, AWS SigV4, ìgbàjáde nípasẹ̀ proxy, …
+└── mcp-server/             Olupin MCP (ọ̀nà ìgbéwọlé 3, ààlà 33, irinṣẹ́ 110)
 ```
 
 ### 4.1 `open-sse/handlers/`
 
-| Olùṣàkóso               | Ète                                                                                |
-| ----------------------- | ---------------------------------------------------------------------------------- |
-| `chatCore.ts`           | Ìlànà ìfọ̀rọ̀wérọ̀ àkọ́kọ́ (àpamọ́, ààlà ìwọ̀n, ìdarí àkójọpọ̀, fífi iṣẹ́ ránṣẹ́ sí olùṣiṣẹ́) |
-| `responsesHandler.ts`   | Ibi ìwọlé OpenAI Responses API                                                     |
-| `embeddings.ts`         | Àwọn ìfibọ̀                                                                         |
-| `imageGeneration.ts`    | Ṣíṣẹ̀dá àwòrán                                                                      |
-| `audioSpeech.ts`        | Ọ̀rọ̀-àkọsílẹ̀-sí-ohùn                                                                |
-| `audioTranscription.ts` | Ohùn-sí-ọ̀rọ̀-àkọsílẹ̀                                                                |
-| `videoGeneration.ts`    | Ṣíṣẹ̀dá fídíò                                                                       |
-| `musicGeneration.ts`    | Ṣíṣẹ̀dá orin                                                                        |
-| `rerank.ts`             | Àtúntò ipò                                                                         |
-| `moderations.ts`        | Àyẹ̀wò àkóónú                                                                       |
-| `search.ts`             | Ìṣàwárí wẹ́ẹ̀bù                                                                      |
-| `sseParser.ts`          | Olùtúpalẹ̀ ìṣẹ̀lẹ̀ SSE                                                                |
-| `usageExtractor.ts`     | Yíyọ iye token jáde láti inú àwọn ìṣàn orísun òkè                                  |
-| `responseSanitizer.ts`  | Yíyọ ariwo tó jẹ́ pàtó sí olùpèsè kúrò                                              |
-| `responseTranslator.ts` | Asopọ̀ láàárín èsì olùpèsè àti ìpele olùtumọ̀                                        |
+| Olùṣàkóso               | Ète                                                                           |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| `chatCore.ts`           | Ọ̀nà ìṣàkóso ìfọ̀rọ̀wérọ̀ pàtàkì (cache, ààlà ìwọ̀n, ìdarí àkópọ̀, ìránṣẹ́ sí aṣiṣẹ́) |
+| `responsesHandler.ts`   | Ibi ìwọlé OpenAI Responses API                                                |
+| `embeddings.ts`         | Àwọn embedding                                                                |
+| `imageGeneration.ts`    | Ṣíṣẹ̀dá àwòrán                                                                 |
+| `audioSpeech.ts`        | Ọ̀rọ̀-kíkọ-sí-ohùn                                                              |
+| `audioTranscription.ts` | Ohùn-sí-ọ̀rọ̀                                                                   |
+| `videoGeneration.ts`    | Ṣíṣẹ̀dá fídíò                                                                  |
+| `musicGeneration.ts`    | Ṣíṣẹ̀dá orin                                                                   |
+| `rerank.ts`             | Ṣíṣe àtúntò ipò                                                               |
+| `moderations.ts`        | Ìṣàkóso àkóónú                                                                |
+| `search.ts`             | Ìṣàwárí wẹ́ẹ̀bù                                                                 |
+| `sseParser.ts`          | Olùṣàyẹ̀wò ìṣẹ̀lẹ̀ SSE                                                           |
+| `usageExtractor.ts`     | Yíyọ iye token jáde láti inú àwọn ìṣàn orísun-ókè                             |
+| `responseSanitizer.ts`  | Yíyọ ariwo tó jẹ́ ti olùpèsè kan pàtó kúrò                                     |
+| `responseTranslator.ts` | Asopọ̀ láàárín èsì olùpèsè àti ipele atúmọ̀                                     |
 
 ### 4.2 `open-sse/executors/`
 
-Àwọn olùṣiṣẹ́ olùpèsè 148, tí ọ̀kọ̀ọ̀kan wọn ń faagun `BaseExecutor` (`base.ts`):
+Àwọn módù aṣiṣẹ́ ipele-ókè 150 (`*.ts` láìka `base.ts`, `index.ts` àti àwọn ìdánwò — iye náà ni
+`npm run check:docs-counts` ń díwọ̀n). Gbogbo kíláàsì aṣiṣẹ́ ń faagun `BaseExecutor` (`base.ts`),
+tààràtà tàbí nípasẹ̀ `DefaultExecutor` tàbí aṣiṣẹ́ mìíràn; àwọn módù tó kù jẹ́ àwọn olùrànlọ́wọ́
+fún olùpèsè kọ̀ọ̀kan (àwọn schema irinṣẹ́, àwọn ohun ìṣàmúlò fetch/TTS, àwọn olùṣàkóso ìhùwàsí àrà-ọ̀tọ̀). Àwọn aṣiṣẹ́ pẹ̀lú:
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
 `muse-spark-web`, `nlpcloud`, `opencode`, `perplexity-web`, `petals`,
 `pollinations`, `qoder`, `vertex`, `devin-desktop`, pẹ̀lú `claudeIdentity.ts`
-(olùrànlọ́wọ́ ìdánimọ̀ tí a pín) àti `index.ts` (àkọsílẹ̀).
+(olùrànlọ́wọ́ ìdánimọ̀ pínpín) àti `index.ts` (àkọsílẹ̀).
 
-> Àkíyèsí: àwọn olùpèsè tí a kò tò síbí ni `default.ts` ń ṣiṣẹ́ fún nípa lílo olùṣiṣẹ́ gbogbogbò
-> tó bá OpenAI mu. Àkójọ olùpèsè kíkún (àwọn olùpèsè 372) wà nínú
+> Àkíyèsí: `default.ts` ló ń pèsè iṣẹ́ fún àwọn olùpèsè tí a kò tò síbí nípa lílo aṣiṣẹ́ gbogbogbò
+> tó bá OpenAI mu. Àkójọ olùpèsè kíkún (olùpèsè 372) wà nínú
 > `src/shared/constants/providers.ts`.
 
 ### 4.3 `open-sse/translator/`
 
-Ìtumọ̀ ọ̀nà ibùdó-àti-ẹ̀ka (OpenAI ni ibùdó).
+Ìtumọ̀ ìpele àárín-sí-ẹ̀ka (OpenAI ni àárín).
 
-- **Àwọn olùtumọ̀ ìbéèrè 9** (`translator/request/`):
+- **Àwọn atúmọ̀ ìbéèrè 9** (`translator/request/`):
   `antigravity-to-openai`, `claude-to-gemini`, `claude-to-openai`,
   `gemini-to-openai`, `openai-responses`, `openai-to-claude`,
   `openai-to-cursor`, `openai-to-gemini`, `openai-to-kiro`.
-- **Àwọn olùtumọ̀ èsì 9** (`translator/response/`):
+- **Àwọn atúmọ̀ èsì 9** (`translator/response/`):
   `claude-to-openai`, `cursor-to-openai`, `gemini-to-claude`, `gemini-to-openai`,
   `kiro-to-openai`, `openai-responses`, `openai-to-antigravity`,
   `openai-to-claude`.
 - **Àwọn olùrànlọ́wọ́ 9** (`translator/helpers/`):
   `claudeHelper`, `geminiHelper`, `geminiToolsSanitizer`, `maxTokensHelper`,
-  `openaiHelper`, `responsesApiHelper`, `schemaCoercion`, `toolCallHelper`, pẹ̀lú
+  `openaiHelper`, `responsesApiHelper`, `schemaCoercion`, `toolCallHelper`, àti
   àwọn ìdánwò olùrànlọ́wọ́.
 - **Àwọn olùrànlọ́wọ́ àwòrán** (`translator/image/sizeMapper.ts`).
-- Ìpele òkè: `bootstrap.ts`, `formats.ts`, `registry.ts`, `index.ts`.
+- Ipele-ókè: `bootstrap.ts`, `formats.ts`, `registry.ts`, `index.ts`.
 
 ### 4.4 `open-sse/transformer/`
 
-- `responsesTransformer.ts` — Olùyípadà Responses API ↔ Chat Completions tó dá lórí `TransformStream`
-  (tí ọ̀nà `responses/` catch-all ń lò).
+- `responsesTransformer.ts` — olùyípadà Responses API ↔ Chat Completions tó dá lórí `TransformStream`
+  (èyí tí ipa-ọ̀nà `responses/` tó ń gba gbogbo ohun ń lò).
 
 ### 4.5 `open-sse/services/`
 
-Àwọn àkànṣe pàtàkì (àkójọ kíkún wà lábẹ́ `open-sse/services/`):
+Àwọn ohun pàtàkì (àkójọ kíkún wà lábẹ́ `open-sse/services/`):
 
-| Àbójútó          | Àwọn fáìlì                                                                                                                                                                                                                                               |
+| Ohun tó kan      | Àwọn fáìlì                                                                                                                                                                                                                                               |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ìtọ́sọ́nà Combo    | `combo.ts` (àwọn ọgbọ́n 19), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                    |
+| Ìdarí Combo      | `combo.ts` (àwọn ọgbọ́n 19), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                    |
 | Ẹ̀rọ Auto Combo   | `autoCombo/` — `engine.ts`, `scoring.ts`, `taskFitness.ts`, `virtualFactory.ts`, `modePacks.ts`, `autoPrefix.ts`, `persistence.ts`, `providerDiversity.ts`, `providerRegistryAccessor.ts`, `routerStrategy.ts`, `selfHealing.ts`, `index.ts`             |
 | Ìfaradà          | `accountFallback.ts` (cooldown + lockout), `errorClassifier.ts`, `requestRejectedStreak.ts`, `emergencyFallback.ts`, `rateLimitManager.ts`, `rateLimitSemaphore.ts`, `accountSemaphore.ts`, `accountSelector.ts`                                         |
-| Àwọn ìpín        | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
-| Ìfipamọ́ sí cache | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
-| Ọgbọ́n ìtọ́sọ́nà    | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
+| Àwọn ìdíwọ̀n lílò | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
+| Ìpamọ́ sínú cache | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
+| Ọgbọ́n ìdarí      | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
 | Ìṣàkóso model    | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
 | Ìfúnpọ̀           | `compression/` — ìsopọ̀ ẹ̀rọ ìfúnpọ̀ ní kíkún                                                                                                                                                                                                               |
 | Token + session  | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
@@ -534,12 +538,12 @@ open-sse/
 
 ### 4.6 `open-sse/mcp-server/`
 
-- **Àwọn irinṣẹ́ aláìlẹ́ẹ̀ke 110** ni a so pọ̀ nínú `server.ts` (45 jẹ́ canonical nínú `schemas/tools.ts` +
+- **Àwọn irinṣẹ́ aláìlẹ́gbẹ́ 110** ni a so pọ̀ sínú `server.ts` (45 jẹ́ canonical nínú `schemas/tools.ts` +
   memory, skills, GitHub-skills, pool, gamification, plugin, Notion, Obsidian,
-  local-corpus àti àwọn module compression — a ka àkójọpọ̀ wọn pẹ̀lú `countUniqueMcpTools`).
-- **Àwọn transport 3**: stdio, HTTP Streamable, SSE.
-- **Àwọn scope 33** ni a fipá mú nígbà ìṣiṣẹ́ — àkójọ ìpìlẹ̀ wà nínú `src/shared/constants/mcpScopes.ts`, àkójọpọ̀ àwọn scope tí module irinṣẹ́ kọ̀ọ̀kan kéde ni àkójọ kíkún.
-- Tábìlì audit: `mcp_tool_audit` (tí `audit.ts` ń fi dátà sínú rẹ̀).
+  local-corpus àti àwọn module compression — a ka àpapọ̀ wọn pẹ̀lú `countUniqueMcpTools`).
+- **Àwọn ọ̀nà ìgbéka 3**: stdio, HTTP Streamable, SSE.
+- **Àwọn scope 33** ni a ń fi agbára mú ní runtime — àkójọ ìpilẹ̀ wà nínú `src/shared/constants/mcpScopes.ts`, àkójọpọ̀ kíkún sì jẹ́ àpapọ̀ àwọn scope tí module irinṣẹ́ kọ̀ọ̀kan kéde.
+- Tábìlì àyẹ̀wò: `mcp_tool_audit` (tí `audit.ts` ń fi dátà kún).
 - Àwọn fáìlì: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
   `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`,
@@ -548,8 +552,8 @@ open-sse/
 
 ### 4.7 `open-sse/config/`
 
-Àwọn ìforúkọsílẹ̀ provider (`providerRegistry.ts`, `providerModels.ts`,
-`providerHeaderProfiles.ts`), àwọn ìforúkọsílẹ̀ model fún format kọ̀ọ̀kan (`audioRegistry.ts`,
+Àwọn registry provider (`providerRegistry.ts`, `providerModels.ts`,
+`providerHeaderProfiles.ts`), àwọn registry model fún format kọ̀ọ̀kan (`audioRegistry.ts`,
 `embeddingRegistry.ts`, `imageRegistry.ts`, `moderationRegistry.ts`,
 `musicRegistry.ts`, `rerankRegistry.ts`, `searchRegistry.ts`, `videoRegistry.ts`),
 àwọn olùrànlọ́wọ́ identity (`codexIdentity.ts`, `codexInstructions.ts`,
@@ -562,7 +566,7 @@ adapter cloud (`azureAi.ts`, `bedrock.ts`, `datarobot.ts`, `glmProvider.ts`,
 
 ### 4.8 `open-sse/utils/`
 
-Àwọn ohun ìpilẹ̀ fún ṣiṣàn àti àwọn olùrànlọ́wọ́ olupèsè: `stream.ts`, `streamHandler.ts`,
+Àwọn ohun ìpìlẹ̀ fún ṣiṣàn àti àwọn olùrànlọ́wọ́ olupèsè: `stream.ts`, `streamHandler.ts`,
 `streamHelpers.ts`, `streamPayloadCollector.ts`, `streamReadiness.ts`,
 `sseHeartbeat.ts`, `proxyFetch.ts`, `proxyDispatcher.ts`, `tlsClient.ts`,
 `networkProxy.ts`, `awsSigV4.ts`, `cacheControlPolicy.ts`,
@@ -655,7 +659,7 @@ A ṣe àfihàn binary méjì nínú `package.json` → `bin`:
 
 ## 8. `scripts/`
 
-A ṣètò rẹ̀ sí inú àwọn fóódà kéékèèké 6 gẹ́gẹ́ bí ète wọn.
+A ṣètò wọn sínú àwọn fódà abẹ́nú mẹ́fà gẹ́gẹ́ bí ète wọn.
 
 - **`scripts/build/`** — `build-next-isolated.mjs`, `prepublish.ts`,
   `prepare-electron-standalone.mjs`, `pack-artifact-policy.ts`,

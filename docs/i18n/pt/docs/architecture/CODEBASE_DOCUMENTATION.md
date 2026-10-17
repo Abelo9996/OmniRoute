@@ -434,50 +434,53 @@ Dividido em subdiretórios específicos:
 
 ---
 
-## 4. `open-sse/` — Workspace do motor de streaming
+## 4. `open-sse/` — Espaço de trabalho do motor de streaming
 
-Workspace npm separado, publicado como `@omniroute/open-sse`. Responsável pelo
-processamento de pedidos, executores, tradutores, serviços, transformador e servidor MCP.
+Espaço de trabalho npm separado, publicado como `@omniroute/open-sse`. É responsável pelo processamento
+de pedidos, executores, tradutores, serviços, transformador e servidor MCP.
 
 ```
 open-sse/
 ├── index.ts                Exportações públicas
-├── package.json            Manifesto do workspace
+├── package.json            Manifesto do espaço de trabalho
 ├── tsconfig.json
 ├── types.d.ts
 ├── config/                 Registos de fornecedores, perfis de cabeçalhos, identidade, …
 ├── handlers/               Processadores de pedidos (chat, embeddings, áudio, imagem, …)
-├── executors/              108 executores HTTP específicos de fornecedores
+├── executors/              150 módulos executores de fornecedores (classes de executores + auxiliares por fornecedor)
 ├── translator/             Conversão de formatos (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
 ├── transformer/            Transformador de streams da Responses API ↔ Chat Completions
-├── services/               Mais de 80 módulos de serviço (combinações, fallback, quotas, identidade, …)
-├── utils/                  Auxiliares de streaming, cliente TLS, AWS SigV4, obtenção via proxy, …
+├── services/               Mais de 80 módulos de serviço (combinações, contingência, quotas, identidade, …)
+├── utils/                  Auxiliares de streaming, cliente TLS, AWS SigV4, obtenção por proxy, …
 └── mcp-server/             Servidor MCP (3 transportes, 33 âmbitos, 110 ferramentas)
 ```
 
 ### 4.1 `open-sse/handlers/`
 
-| Processador             | Finalidade                                                                                                |
-| ----------------------- | --------------------------------------------------------------------------------------------------------- |
-| `chatCore.ts`           | Pipeline principal de chat (cache, limite de taxa, encaminhamento de combinações, despacho de executores) |
-| `responsesHandler.ts`   | Ponto de entrada da OpenAI Responses API                                                                  |
-| `embeddings.ts`         | Embeddings                                                                                                |
-| `imageGeneration.ts`    | Geração de imagens                                                                                        |
-| `audioSpeech.ts`        | Conversão de texto em voz                                                                                 |
-| `audioTranscription.ts` | Conversão de voz em texto                                                                                 |
-| `videoGeneration.ts`    | Geração de vídeo                                                                                          |
-| `musicGeneration.ts`    | Geração de música                                                                                         |
-| `rerank.ts`             | Reordenação                                                                                               |
-| `moderations.ts`        | Moderação                                                                                                 |
-| `search.ts`             | Pesquisa na Web                                                                                           |
-| `sseParser.ts`          | Analisador de eventos SSE                                                                                 |
-| `usageExtractor.ts`     | Extrai contagens de tokens de streams a montante                                                          |
-| `responseSanitizer.ts`  | Remove ruído específico do fornecedor                                                                     |
-| `responseTranslator.ts` | Ligação entre a resposta do fornecedor e a camada de tradução                                             |
+| Processador             | Finalidade                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `chatCore.ts`           | Pipeline principal de chat (cache, limite de pedidos, encaminhamento de combinações, despacho de executores) |
+| `responsesHandler.ts`   | Ponto de entrada da OpenAI Responses API                                                                     |
+| `embeddings.ts`         | Embeddings                                                                                                   |
+| `imageGeneration.ts`    | Geração de imagens                                                                                           |
+| `audioSpeech.ts`        | Conversão de texto em voz                                                                                    |
+| `audioTranscription.ts` | Conversão de voz em texto                                                                                    |
+| `videoGeneration.ts`    | Geração de vídeo                                                                                             |
+| `musicGeneration.ts`    | Geração de música                                                                                            |
+| `rerank.ts`             | Reordenação                                                                                                  |
+| `moderations.ts`        | Moderação                                                                                                    |
+| `search.ts`             | Pesquisa na Web                                                                                              |
+| `sseParser.ts`          | Analisador de eventos SSE                                                                                    |
+| `usageExtractor.ts`     | Extrai contagens de tokens dos streams a montante                                                            |
+| `responseSanitizer.ts`  | Remove ruído específico do fornecedor                                                                        |
+| `responseTranslator.ts` | Ligação entre a resposta do fornecedor e a camada de tradução                                                |
 
 ### 4.2 `open-sse/executors/`
 
-148 executores de fornecedores, cada um derivado de `BaseExecutor` (`base.ts`):
+150 módulos executores de nível superior (`*.ts` menos `base.ts`, `index.ts` e testes — a contagem é
+medida por `npm run check:docs-counts`). Cada classe de executor estende `BaseExecutor` (`base.ts`),
+diretamente ou através de `DefaultExecutor` ou de outro executor; os restantes módulos são auxiliares
+específicos de cada fornecedor (esquemas de ferramentas, adaptadores de obtenção/TTS, processadores de peculiaridades). Os executores incluem:
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
@@ -485,13 +488,13 @@ open-sse/
 `pollinations`, `qoder`, `vertex`, `devin-desktop`, além de `claudeIdentity.ts`
 (auxiliar de identidade partilhado) e `index.ts` (registo).
 
-> Nota: os fornecedores não indicados aqui são servidos por `default.ts`, utilizando o executor
+> Nota: os fornecedores não indicados aqui são servidos por `default.ts` através do executor
 > genérico compatível com OpenAI. O catálogo completo de fornecedores (372 fornecedores) encontra-se em
 > `src/shared/constants/providers.ts`.
 
 ### 4.3 `open-sse/translator/`
 
-Tradução no modelo hub-and-spoke (OpenAI é o hub).
+Tradução segundo um modelo hub-and-spoke (o OpenAI é o hub).
 
 - **9 tradutores de pedidos** (`translator/request/`):
   `antigravity-to-openai`, `claude-to-gemini`, `claude-to-openai`,
@@ -510,14 +513,14 @@ Tradução no modelo hub-and-spoke (OpenAI é o hub).
 
 ### 4.4 `open-sse/transformer/`
 
-- `responsesTransformer.ts` — conversor da Responses API ↔ Chat
-  Completions baseado em `TransformStream` (utilizado pelo mecanismo catch-all da rota `responses/`).
+- `responsesTransformer.ts` — Conversor baseado em `TransformStream` da Responses API ↔ Chat
+  Completions (utilizado pelo mecanismo abrangente da rota `responses/`).
 
 ### 4.5 `open-sse/services/`
 
 Destaques (lista completa em `open-sse/services/`):
 
-| Aspeto                         | Ficheiros                                                                                                                                                                                                                                                |
+| Área                           | Ficheiros                                                                                                                                                                                                                                                |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Encaminhamento Combo           | `combo.ts` (19 estratégias), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                   |
 | Motor Auto Combo               | `autoCombo/` — `engine.ts`, `scoring.ts`, `taskFitness.ts`, `virtualFactory.ts`, `modePacks.ts`, `autoPrefix.ts`, `persistence.ts`, `providerDiversity.ts`, `providerRegistryAccessor.ts`, `routerStrategy.ts`, `selfHealing.ts`, `index.ts`             |
@@ -525,7 +528,7 @@ Destaques (lista completa em `open-sse/services/`):
 | Quotas                         | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
 | Colocação em cache             | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
 | Inteligência de encaminhamento | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
-| Processamento de modelos       | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
+| Gestão de modelos              | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
 | Compressão                     | `compression/` — integração completa do motor de compressão                                                                                                                                                                                              |
 | Tokens + sessão                | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
 | Nível / manifesto              | `tierResolver.ts`, `tierConfig.ts`, `tierDefaults.json`, `tierTypes.ts`, `manifestAdapter.ts`                                                                                                                                                            |
@@ -539,13 +542,13 @@ Destaques (lista completa em `open-sse/services/`):
   módulos de memória, competências, competências do GitHub, pool, gamificação, plug-ins, Notion, Obsidian,
   corpus local e compressão — união contabilizada por `countUniqueMcpTools`).
 - **3 transportes**: stdio, HTTP Streamable, SSE.
-- **33 âmbitos** aplicados em tempo de execução — lista base em `src/shared/constants/mcpScopes.ts`; o conjunto completo é a união dos âmbitos declarados por cada módulo de ferramentas.
+- **33 âmbitos** aplicados em tempo de execução — lista base em `src/shared/constants/mcpScopes.ts`; o conjunto completo corresponde à união dos âmbitos declarados por cada módulo de ferramentas.
 - Tabela de auditoria: `mcp_tool_audit` (preenchida por `audit.ts`).
 - Ficheiros: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
   `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`,
   além dos testes em `__tests__/`.
-- Consulte [MCP-SERVER.md](../frameworks/MCP-SERVER.md) para obter o catálogo completo de ferramentas.
+- Consulte [MCP-SERVER.md](../frameworks/MCP-SERVER.md) para ver o catálogo completo de ferramentas.
 
 ### 4.7 `open-sse/config/`
 
@@ -553,11 +556,11 @@ Registos de fornecedores (`providerRegistry.ts`, `providerModels.ts`,
 `providerHeaderProfiles.ts`), registos de modelos por formato (`audioRegistry.ts`,
 `embeddingRegistry.ts`, `imageRegistry.ts`, `moderationRegistry.ts`,
 `musicRegistry.ts`, `rerankRegistry.ts`, `searchRegistry.ts`, `videoRegistry.ts`),
-utilitários de identidade (`codexIdentity.ts`, `codexInstructions.ts`,
+auxiliares de identidade (`codexIdentity.ts`, `codexInstructions.ts`,
 `anthropicHeaders.ts`, `antigravityUpstream.ts`, `antigravityModelAliases.ts`,
 `cliFingerprints.ts`, `toolCloaking.ts`, `defaultThinkingSignature.ts`),
-utilitários de credenciais (`credentialLoader.ts`, `codexClient.ts`) e adaptadores
-de cloud (`azureAi.ts`, `bedrock.ts`, `datarobot.ts`, `glmProvider.ts`,
+auxiliares de credenciais (`credentialLoader.ts`, `codexClient.ts`) e adaptadores
+de nuvem (`azureAi.ts`, `bedrock.ts`, `datarobot.ts`, `glmProvider.ts`,
 `maritalk.ts`, `oci.ts`, `petals.ts`, `runway.ts`, `sap.ts`, `watsonx.ts`,
 `ollamaModels.ts`, `errorConfig.ts`, `constants.ts`, `registryUtils.ts`).
 
