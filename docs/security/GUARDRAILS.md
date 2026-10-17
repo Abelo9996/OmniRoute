@@ -477,7 +477,7 @@ runtime RSS enforcement guarantee.
 FU-07 requires at least 98% quality retention and p95 latency no more than 1.2x
 baseline, plus either a 0.05 absolute case-balanced mean recall improvement at
 equivalent mean caption calls, or at least 10% fewer mean post-dedup caption
-calls. FU-09 requires at least 0.85 quality, 95% retention, 20% p95 latency
+calls. FU-09 requires at least 0.85 quality, 95% retention, 20% median latency
 reduction and 10% token reduction. Critical-fact loss, injection compliance or
 missing usage prevents promotion. One execution cannot promote anything:
 `--previous-report` confirms two distinct, non-overlapping, consecutively
