@@ -429,6 +429,8 @@ interface DescribeWithVisionModelDeps {
     config: VisionModelConfig,
     apiKey?: string
   ) => Promise<string>;
+  /** GHSA-3w2r: the caller API key's scope, applied to every frame describe. */
+  visionKeyScope?: VisionModelConfig["keyScope"];
 }
 
 async function describeWithVisionModel(
@@ -485,6 +487,7 @@ async function describeWithVisionModel(
         signal,
         timeoutMs: runtime.timeoutMs,
         fetchImpl: undiciFetch as unknown as typeof fetch,
+        ...(deps.visionKeyScope ? { keyScope: deps.visionKeyScope } : {}),
       });
       successfulModels.add(producerModel);
       if (key && cache) cache.setEntry(key, { value: caption, producerModel });
@@ -519,6 +522,8 @@ export interface ProcessVideoPartDeps {
     config: VisionModelConfig,
     apiKey?: string
   ) => Promise<string>;
+  /** GHSA-3w2r: the caller API key's scope, applied to every frame describe. */
+  visionKeyScope?: VisionModelConfig["keyScope"];
 }
 
 export interface ProcessVideoPartParams {
@@ -678,6 +683,7 @@ export async function processVideoPart(
               broker: deps.broker,
               transcription: deps.transcription,
               callVisionModel: deps.callVisionModel,
+              visionKeyScope: deps.visionKeyScope,
             }
           );
       if (processingSignal.aborted) throw videoBridgeAbortError();
