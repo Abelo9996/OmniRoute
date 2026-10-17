@@ -1860,6 +1860,10 @@ prepares a private temporary copy with isolated client keys and settings;
 credentials remain on the validation host. This variable is only for the explicit
 preparation command and is not consumed by normal server startup. Preparation
 does not call a model; the separate live smoke command requires `--execute-real`.
+Preparation requires a fresh process: it refuses a database module or connection
+already bound to another directory before changing client keys or settings. The
+loopback STT component accepts only the generated isolated owner key and claims
+one request before reading its body; concurrent requests are rejected.
 
 ### Quota-aware scheduling
 

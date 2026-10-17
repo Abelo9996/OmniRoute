@@ -34,6 +34,7 @@ export async function prepareVideoLiveIsolation(sourceInput: string | undefined)
   // not make preparation return a context that those consumers will reject.
   const directory = fs.mkdtempSync(path.join("/tmp", "omniroute-video-live-"));
   fs.chmodSync(directory, 0o700);
+  let previousEnvironment: Record<string, string | undefined> | undefined;
   try {
     const databasePath = path.join(directory, "storage.sqlite");
     const original = new Database(path.join(source, "storage.sqlite"), {
@@ -70,8 +71,22 @@ export async function prepareVideoLiveIsolation(sourceInput: string | undefined)
         .join("\n") + "\n",
       { mode: 0o600, flag: "wx" }
     );
+    previousEnvironment = Object.fromEntries(
+      Object.keys(environment).map((key) => [key, process.env[key]])
+    );
     Object.assign(process.env, environment);
     const db = await import("../../src/lib/db/core.ts");
+    // DATA_DIR is captured on first import. Never reset or mutate a previously
+    // loaded database just because the process environment now names our copy.
+    if (
+      db.isCloud ||
+      db.isBuildPhase ||
+      db.DATA_DIR !== directory ||
+      db.SQLITE_FILE !== databasePath ||
+      fs.realpathSync(db.getDbInstance().name) !== fs.realpathSync(databasePath)
+    ) {
+      throw new Error("A fresh process is required for private homologation");
+    }
     const keys = await import("../../src/lib/db/apiKeys.ts");
     const settings = await import("../../src/lib/db/settings.ts");
     const providers = await import("../../src/lib/db/providers.ts");
@@ -122,6 +137,12 @@ export async function prepareVideoLiveIsolation(sourceInput: string | undefined)
     }
     return { directory, sourceUntouched: true, mode: "diagnostic-homologation" };
   } catch {
+    if (previousEnvironment) {
+      for (const [key, value] of Object.entries(previousEnvironment)) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
     // Only the directory this invocation created; never a supplied source or broad root.
     fs.rmSync(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
     throw new Error("Private homologation preparation failed");
