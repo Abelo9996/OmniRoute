@@ -941,11 +941,11 @@ ordinary inference API keys. Credential families, scopes, and curl examples:
 
 ### Authentication
 
-| Endpoint                      | Method  | Description           |
-| ----------------------------- | ------- | --------------------- |
-| `/api/auth/login`             | POST    | Login                 |
-| `/api/auth/logout`            | POST    | Logout                |
-| `/api/settings/require-login` | GET/PUT | Toggle login required |
+| Endpoint                      | Method   | Description                                                                                                                                                                                                                                                            |
+| ----------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/auth/login`             | POST     | Login                                                                                                                                                                                                                                                                  |
+| `/api/auth/logout`            | POST     | Logout                                                                                                                                                                                                                                                                 |
+| `/api/settings/require-login` | GET/POST | Login status (GET, public). POST sets the password / toggles login: operator-only once a password exists (dashboard session, local CLI, or login disabled — API keys and `oma_` tokens get `403`); a dashboard session sends `currentPassword` to replace the password |
 
 ### Provider Management
 
@@ -1075,16 +1075,16 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 
 ### Settings
 
-| Endpoint                              | Method        | Description                                                                                                                                                                     |
-| ------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/settings`                       | GET/PUT/PATCH | General settings                                                                                                                                                                |
-| `/api/settings/proxy`                 | GET/PUT       | Network proxy config                                                                                                                                                            |
-| `/api/settings/proxy/test`            | POST          | Test proxy connection                                                                                                                                                           |
-| `/api/settings/ip-filter`             | GET/PUT       | IP allowlist/blocklist                                                                                                                                                          |
-| `/api/settings/thinking-budget`       | GET/PUT       | Thinking/reasoning **request** rewrite mode (passthrough / auto-strip / custom / adaptive). Independent of compression. See [THINKING_BUDGET.md](../guides/THINKING_BUDGET.md). |
-| `/api/settings/system-prompt`         | GET/PUT       | Global system prompt                                                                                                                                                            |
-| `/api/settings/compression`           | GET/PUT       | Global compression config                                                                                                                                                       |
-| `/api/settings/purge-request-history` | POST          | Clear request log rows and local call-log artifacts                                                                                                                             |
+| Endpoint                              | Method        | Description                                                                                                                                                                                                                                                          |
+| ------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/settings`                       | GET/PUT/PATCH | General settings. Security-policy keys (`requireLogin`, `newPassword`, `oidc*`, `corsOrigins`, `bruteForceProtection`) need `currentPassword` and an operator credential — API keys and `oma_` tokens get `403`; every mutation needs the `admin` access-token scope |
+| `/api/settings/proxy`                 | GET/PUT       | Network proxy config                                                                                                                                                                                                                                                 |
+| `/api/settings/proxy/test`            | POST          | Test proxy connection                                                                                                                                                                                                                                                |
+| `/api/settings/ip-filter`             | GET/PUT       | IP allowlist/blocklist                                                                                                                                                                                                                                               |
+| `/api/settings/thinking-budget`       | GET/PUT       | Thinking/reasoning **request** rewrite mode (passthrough / auto-strip / custom / adaptive). Independent of compression. See [THINKING_BUDGET.md](../guides/THINKING_BUDGET.md).                                                                                      |
+| `/api/settings/system-prompt`         | GET/PUT       | Global system prompt                                                                                                                                                                                                                                                 |
+| `/api/settings/compression`           | GET/PUT       | Global compression config                                                                                                                                                                                                                                            |
+| `/api/settings/purge-request-history` | POST          | Clear request log rows and local call-log artifacts                                                                                                                                                                                                                  |
 
 ### Context & Compression
 
@@ -1122,6 +1122,8 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 | `/api/db-backups`           | GET    | List available backups                                                  |
 | `/api/db-backups`           | PUT    | Create a manual backup                                                  |
 | `/api/db-backups`           | POST   | Restore from a specific backup                                          |
+| `/api/db-backups`           | PATCH  | Save backup retention settings (operator-only)                          |
+| `/api/db-backups`           | DELETE | Prune stored backups to the retention settings (operator-only)          |
 | `/api/db-backups/export`    | GET    | Download database as .sqlite file                                       |
 | `/api/db-backups/import`    | POST   | Upload .sqlite file to replace database (`?dryRun=true` validates only) |
 | `/api/db-backups/exportAll` | GET    | Download full backup as .tar.gz archive                                 |
@@ -1131,7 +1133,10 @@ every stored credential, so they require the dashboard session or the local CLI 
 disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
 boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
 by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
-credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential. So do
+`DELETE /api/db-backups` (prune stored backups) and `PATCH /api/db-backups` (retention settings:
+the persisted values drive the automatic pruning after every backup). Listing (`GET`) and creating
+a manual backup (`PUT`) keep ordinary management auth.
 
 ### Cloud Sync
 
