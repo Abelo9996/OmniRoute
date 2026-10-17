@@ -379,6 +379,25 @@ test("retention HTTP route matrix", { timeout: 300_000 }, async (t) => {
     });
   });
 
+  await t.test("network guard blocks IPC even with the allowed TCP host and port", () => {
+    const socket = new Socket();
+    socket.on("error", () => {});
+    try {
+      assert.throws(
+        () =>
+          socket.connect({
+            host: "127.0.0.1",
+            port: allowedPort,
+            path: path.join(dataDir, "outside-http-fixture.sock"),
+          }),
+        /retention fixture blocks sockets/,
+        "IPC must be rejected by the guard, not by a missing socket path"
+      );
+    } finally {
+      socket.destroy();
+    }
+  });
+
   for (const stream of [false, true]) {
     for (const padding of [100_000, 300_000, 600_000]) {
       await t.test(
