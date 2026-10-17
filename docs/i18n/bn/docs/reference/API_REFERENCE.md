@@ -319,37 +319,37 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "পাহাড়ের ওপর একটি সুন্দর সূর্যাস্ত",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
-উপলভ্য প্রোভাইডারগুলোর মধ্যে রয়েছে OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (লোকাল), ComfyUI (লোকাল)।
+উপলভ্য প্রদানকারীদের মধ্যে রয়েছে OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (স্থানীয়), ComfyUI (স্থানীয়)।
 
-`n`, `data[]`-এ `n`টি ছবি ফেরত দেয়। যেসব প্রোভাইডারের আপস্ট্রিম API প্রতিটি কলে একটি ছবি ফেরত দেয়
+`n`, `data[]`-এর মধ্যে `n`টি ছবি ফেরত দেয়। যেসব প্রদানকারীর আপস্ট্রিম API প্রতি কলে একটি ছবি ফেরত দেয়
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), তাদের ক্ষেত্রে সর্বোচ্চ 4টি একসঙ্গে চলমান রেখে `n`টি পৃথক আপস্ট্রিম কল করা হয়। একটি
-নির্দিষ্ট `seed`-কে কলের সূচক অনুযায়ী সরানো হয় (`seed`, `seed + 1`, …), ফলে ছবিগুলো ভিন্ন হলেও
-পুনরুৎপাদনযোগ্য থাকে। `n`-এর সর্বোচ্চ সীমা 10। কোনো একটি কল ব্যর্থ হলে সম্পূর্ণ অনুরোধটি
-ব্যর্থ হয়। ফ্যান-আউট ফরম্যাটের তালিকা হলো
-`open-sse/handlers/imageGeneration/fanOut.ts`-এর `SINGLE_IMAGE_FANOUT_FORMATS`।
+NVIDIA NIM, Cloudflare Workers AI), তাদের জন্য `n`টি পৃথক আপস্ট্রিম কল করা হয় এবং একই সময়ে সর্বোচ্চ ৪টি কল চলমান থাকে। একটি
+নির্দিষ্ট `seed`-এর সঙ্গে কলের সূচক যোগ করা হয় (`seed`, `seed + 1`, …), ফলে ছবিগুলো ভিন্ন হলেও
+পুনরুৎপাদনযোগ্য থাকে। `n`-এর সর্বোচ্চ সীমা ১০। কোনো একটি কল ব্যর্থ হলে পুরো অনুরোধটি
+ব্যর্থ হয়। ফ্যান-আউট ফরম্যাটের তালিকা `SINGLE_IMAGE_FANOUT_FORMATS` হিসেবে
+`open-sse/handlers/imageGeneration/fanOut.ts`-এ রয়েছে।
 
 ZenMux বিদ্যমান API-কী সংযোগ পুনরায় ব্যবহার করে এবং `zenmux/` অথবা `zm/` প্রিফিক্স গ্রহণ করে:
 
-- `zenmux/openai/gpt-image-2`, ZenMux-এর OpenAI Images API ব্যবহার করে। অপশনগুলোর মধ্যে রয়েছে `size`,
+- `zenmux/openai/gpt-image-2`, ZenMux-এর OpenAI Images API ব্যবহার করে। বিকল্পগুলোর মধ্যে রয়েছে `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, এবং `response_format`।
-- অন্যান্য পাবলিশার, যেমন `zm/meta/muse-image-1.0`, ZenMux-এর Vertex AI `:predict`
+- অন্যান্য প্রকাশক, যেমন `zm/meta/muse-image-1.0`, ZenMux-এর Vertex AI `:predict`
   এন্ডপয়েন্ট ব্যবহার করে। `n`, `sampleCount`-এ; `aspect_ratio`, `aspectRatio`-তে; এবং `image_size`
-  (`1K`, `2K`, `4K`), `sampleImageSize`-এ ম্যাপ হয়। পিক্সেলভিত্তিক `size` শুধু একটি অ্যাসপেক্ট রেশিও সরবরাহ করে,
-  নিশ্চিত পিক্সেল ডাইমেনশন নয়। সমর্থিত রেশিও, রেজোলিউশন এবং সংখ্যা মডেলভেদে পরিবর্তিত হয়।
-- `zm/inclusionai/ming-image-0.1-design` নিজস্ব ডাইমেনশন নির্বাচন করে। `size`,
-  `aspect_ratio`, এবং `image_size` বাদ দিন; স্পষ্টভাবে মান দিলে HTTP 400 ফেরত আসে। `output_format` ব্যবহার করে
-  PNG, JPEG এবং WebP অনুরোধ করা যায়।
+  (`1K`, `2K`, `4K`), `sampleImageSize`-এ ম্যাপ হয়। পিক্সেলভিত্তিক `size` শুধু একটি অনুপাত নির্ধারণ করে,
+  নিশ্চিত পিক্সেল মাত্রা নয়। সমর্থিত অনুপাত, রেজোলিউশন এবং সংখ্যা মডেলভেদে পরিবর্তিত হয়।
+- `zm/inclusionai/ming-image-0.1-design` নিজেই এর মাত্রা নির্ধারণ করে। `size`,
+  `aspect_ratio`, এবং `image_size` বাদ দিন; স্পষ্ট মান দিলে HTTP 400 ফেরত আসে। `output_format` ব্যবহার করে
+  PNG, JPEG, এবং WebP অনুরোধ করা যায়।
 
-এই ইন্টিগ্রেশন টেক্সট-টু-ইমেজ জেনারেশন সমর্থন করে, রেফারেন্স-ইমেজ সম্পাদনা নয়। Vertex-এর
+এই ইন্টিগ্রেশনটি টেক্সট-টু-ইমেজ তৈরি সমর্থন করে, রেফারেন্স-ইমেজ সম্পাদনা নয়। Vertex-এর
 আউটপুট `data[].b64_json`-এ স্বাভাবিকীকরণ করা হয়; `response_format: "url"` একটি আপস্ট্রিম
-HTTPS URL ফেরত দেয়, অথবা কেবল ছবির বাইট উপলভ্য থাকলে একটি base64 ডেটা URL ফেরত দেয়। খালি/ফিল্টার করা আউটপুটের
-ক্ষেত্রে খালি সফল ফলাফলের পরিবর্তে একটি ত্রুটি ফেরত আসে। মডেলে প্রবেশাধিকার ZenMux অ্যাকাউন্টের ওপর নির্ভর করে।
+HTTPS URL ফেরত দেয়, অথবা শুধু ছবির বাইট উপলভ্য থাকলে একটি base64 data URL ফেরত দেয়। খালি/ফিল্টার করা আউটপুটের
+ক্ষেত্রে খালি সফল ফলাফলের পরিবর্তে একটি ত্রুটি ফেরত আসে। মডেল অ্যাক্সেস ZenMux অ্যাকাউন্টের ওপর নির্ভর করে।
 দেখুন [ZenMux-এর Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) এবং
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image)।
 
@@ -1118,6 +1118,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 সংরক্ষিত ক্রেডেনশিয়াল প্রদান করে, তাই এগুলোর জন্য ড্যাশবোর্ড সেশন বা স্থানীয় CLI (অথবা লগইন
 নিষ্ক্রিয় থাকা) আবশ্যক। যেকোনো স্কোপের API কী এবং `oma_` অ্যাক্সেস টোকেন `403` পায়।
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### ক্লাউড সিঙ্ক
 
 | Endpoint               | Method  | Description            |
@@ -1483,17 +1490,17 @@ OmniRoute ইভেন্টগুলোর জন্য আউটবাউন�
 
 ## নিবন্ধিত কীসমূহ (স্বয়ংক্রিয় ব্যবস্থাপনা)
 
-দৈনিক/ঘণ্টাভিত্তিক কোটা সাপেক্ষে কোনো ব্যাকিং প্রদানকারী/অ্যাকাউন্টের বিপরীতে API কী ইস্যু ও রোটেট করতে স্বয়ংক্রিয় কী-ব্যবস্থাপনা সাবসিস্টেম এটি ব্যবহার করে।
+দৈনিক/ঘণ্টাভিত্তিক কোটা সহ কোনো ব্যাকিং প্রদানকারী/অ্যাকাউন্টে API কী ইস্যু ও রোটেট করতে স্বয়ংক্রিয় কী ব্যবস্থাপনা সাবসিস্টেম এটি ব্যবহার করে।
 
-| পদ্ধতি | পাথ                                   | বিবরণ                                                                                                                                                                                                   |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | নিবন্ধিত কীসমূহের তালিকা দেখায় (শুধু মাস্ক করা প্রিফিক্স)                                                                                                                                              |
-| POST   | `/api/v1/registered-keys`             | একটি নতুন নিবন্ধিত কী ইস্যু করে — বডি: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। মূল কীটি **একবারই** ফেরত দেয়। কোটা প্রত্যাখ্যাত হলে `429` ফেরত দেয়। |
-| GET    | `/api/v1/registered-keys/[id]`        | একটি নিবন্ধিত কী-এর মেটাডেটা পুনরুদ্ধার করে (মূল কী-উপাদান নয়)                                                                                                                                         |
-| DELETE | `/api/v1/registered-keys/[id]`        | একটি নিবন্ধিত কী বাতিল করে                                                                                                                                                                              |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | সুস্পষ্ট বাতিলকরণ এন্ডপয়েন্ট (DELETE-এর মতো একই প্রভাব)                                                                                                                                                |
+| মেথড   | পাথ                                   | বিবরণ                                                                                                                                                                                                                  |
+| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | নিবন্ধিত কীসমূহের তালিকা দেখায় (শুধু মাস্ক করা প্রিফিক্স)                                                                                                                                                             |
+| POST   | `/api/v1/registered-keys`             | একটি নতুন নিবন্ধিত কী ইস্যু করে — বডি: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। অপরিবর্তিত কীটি **শুধু একবার** ফেরত দেয়। কোটা প্রত্যাখ্যান করা হলে `429` ফেরত দেয়। |
+| GET    | `/api/v1/registered-keys/[id]`        | নিবন্ধিত কীর মেটাডেটা পুনরুদ্ধার করে (অপরিবর্তিত কী ছাড়া)                                                                                                                                                             |
+| DELETE | `/api/v1/registered-keys/[id]`        | একটি নিবন্ধিত কী প্রত্যাহার করে                                                                                                                                                                                        |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | সুস্পষ্ট প্রত্যাহার এন্ডপয়েন্ট (DELETE-এর মতো একই ফলাফল)                                                                                                                                                              |
 
-**প্রমাণীকরণ:** ব্যবস্থাপনা সেশন/API কী (`requireManagementAuth`) — `/api/keys`-এর মতো একই গার্ড: একটি ড্যাশবোর্ড সেশন, স্থানীয় CLI টোকেন, অথবা `manage`/`admin` স্কোপসহ একটি API কী; শুধু ইনফারেন্সের জন্য নির্ধারিত API কীগুলো `403` পায়। এছাড়াও `/v1/quotas/check` এবং `/v1/issues/report` দেখুন।
+**প্রমাণীকরণ:** ম্যানেজমেন্ট সেশন/API কী (`requireManagementAuth`) — `/api/keys`-এর মতো একই গার্ড: একটি ড্যাশবোর্ড সেশন, স্থানীয় CLI টোকেন, অথবা `manage`/`admin` স্কোপসহ একটি API কী; শুধু ইনফারেন্সের জন্য নির্ধারিত API কীগুলো `403` পায়। আরও দেখুন `/v1/quotas/check` এবং `/v1/issues/report`।
 
 ---
 

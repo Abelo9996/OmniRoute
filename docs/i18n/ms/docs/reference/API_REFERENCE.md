@@ -305,28 +305,28 @@ Penyedia yang tersedia termasuk OpenAI (GPT Image 2), xAI (Grok Image), Together
 `n` mengembalikan `n` imej dalam `data[]`. Bagi penyedia yang API huluannya mengembalikan satu imej bagi setiap panggilan
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
 NVIDIA NIM, Cloudflare Workers AI), `n` panggilan huluan berasingan akan dibuat, dengan paling banyak 4 panggilan berjalan serentak. Nilai
-`seed` tetap diimbangi mengikut indeks panggilan (`seed`, `seed + 1`, …), supaya imej berbeza tetapi kekal
-boleh dihasilkan semula. `n` dihadkan kepada 10. Keseluruhan permintaan akan gagal jika mana-mana panggilan gagal. Senarai
-format fan-out ialah `SINGLE_IMAGE_FANOUT_FORMATS` dalam
+`seed` tetap dianjak berdasarkan indeks panggilan (`seed`, `seed + 1`, …), supaya imej yang dihasilkan berbeza tetapi kekal
+boleh dihasilkan semula. `n` dihadkan kepada 10. Keseluruhan permintaan gagal jika mana-mana panggilan gagal. Senarai
+format pengembangan panggilan ialah `SINGLE_IMAGE_FANOUT_FORMATS` dalam
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux menggunakan semula sambungan kunci API sedia ada dan menerima awalan `zenmux/` atau `zm/`:
 
 - `zenmux/openai/gpt-image-2` menggunakan OpenAI Images API ZenMux. Pilihan termasuk `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, dan `response_format`.
-- Penerbit lain, seperti `zm/meta/muse-image-1.0`, menggunakan titik akhir `:predict`
-  Vertex AI ZenMux. `n` dipetakan kepada `sampleCount`, `aspect_ratio` kepada `aspectRatio`, dan `image_size`
-  (`1K`, `2K`, `4K`) kepada `sampleImageSize`. Nilai `size` dalam piksel hanya membekalkan nisbah aspek,
-  bukan dimensi piksel yang dijamin. Nisbah, resolusi, dan bilangan yang disokong berbeza mengikut model.
-- `zm/inclusionai/ming-image-0.1-design` memilih dimensinya sendiri. Abaikan `size`,
-  `aspect_ratio`, dan `image_size`; nilai yang dinyatakan secara eksplisit akan mengembalikan HTTP 400. PNG, JPEG, dan WebP
-  boleh diminta menggunakan `output_format`.
+- Penerbit lain, seperti `zm/meta/muse-image-1.0`, menggunakan titik akhir Vertex AI `:predict`
+  ZenMux. `n` dipetakan kepada `sampleCount`, `aspect_ratio` kepada `aspectRatio`, dan `image_size`
+  (`1K`, `2K`, `4K`) kepada `sampleImageSize`. `size` dalam piksel hanya membekalkan nisbah bidang,
+  bukan dimensi piksel yang dijamin. Nisbah, resolusi dan bilangan yang disokong berbeza mengikut model.
+- `zm/inclusionai/ming-image-0.1-design` menentukan dimensinya sendiri. Abaikan `size`,
+  `aspect_ratio`, dan `image_size`; nilai eksplisit akan mengembalikan HTTP 400. PNG, JPEG dan WebP
+  boleh diminta melalui `output_format`.
 
-Integrasi ini menyokong penjanaan teks kepada imej, bukan penyuntingan imej rujukan. Output Vertex
+Penyepaduan ini menyokong penjanaan teks kepada imej, bukan penyuntingan imej rujukan. Output Vertex
 dinormalkan kepada `data[].b64_json`; `response_format: "url"` mengembalikan URL HTTPS huluan
 atau URL data base64 apabila hanya bait imej tersedia. Output kosong/ditapis
-akan mengembalikan ralat dan bukannya kejayaan kosong. Akses model bergantung pada akaun ZenMux.
-Lihat [Vertex API ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) dan
+mengembalikan ralat dan bukannya kejayaan kosong. Akses model bergantung pada akaun ZenMux.
+Lihat [API Vertex ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) dan
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
@@ -1110,6 +1110,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 setiap kelayakan yang disimpan, jadi ia memerlukan sesi papan pemuka atau CLI setempat (atau log masuk
 dinyahdayakan). Kunci API bagi sebarang skop dan token akses `oma_` menerima `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Penyegerakan Awan
 
 | Titik akhir            | Kaedah   | Penerangan                |
@@ -1470,17 +1477,17 @@ Langganan webhook keluar untuk acara OmniRoute (penyelesaian permintaan, kehabis
 
 ## Kunci Berdaftar (Pengurusan Automatik)
 
-Digunakan oleh subsistem pengurusan kunci automatik untuk mengeluarkan dan memutar ganti kunci API melalui penyedia/akaun sokongan, dengan kuota harian/setiap jam.
+Digunakan oleh subsistem pengurusan kunci automatik untuk mengeluarkan dan menggilirkan kunci API melalui penyedia/akaun sokongan, dengan kuota harian/setiap jam.
 
-| Kaedah | Laluan                                | Penerangan                                                                                                                                                                                                                     |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GET    | `/api/v1/registered-keys`             | Senaraikan kunci berdaftar (awalan bertopeng sahaja)                                                                                                                                                                           |
-| POST   | `/api/v1/registered-keys`             | Keluarkan kunci berdaftar baharu — kandungan: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Mengembalikan kunci mentah **sekali sahaja**. Mengembalikan `429` jika kuota ditolak. |
-| GET    | `/api/v1/registered-keys/[id]`        | Dapatkan metadata kunci berdaftar (tanpa bahan kunci mentah)                                                                                                                                                                   |
-| DELETE | `/api/v1/registered-keys/[id]`        | Batalkan kunci berdaftar                                                                                                                                                                                                       |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Titik akhir pembatalan eksplisit (kesan yang sama seperti DELETE)                                                                                                                                                              |
+| Kaedah | Laluan                                | Penerangan                                                                                                                                                                                                                    |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Senaraikan kunci berdaftar (awalan bertopeng sahaja)                                                                                                                                                                          |
+| POST   | `/api/v1/registered-keys`             | Keluarkan kunci berdaftar baharu — badan: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Mengembalikan kunci mentah **sekali sahaja**. Mengembalikan `429` apabila kuota ditolak. |
+| GET    | `/api/v1/registered-keys/[id]`        | Dapatkan metadata kunci berdaftar (tanpa bahan mentah)                                                                                                                                                                        |
+| DELETE | `/api/v1/registered-keys/[id]`        | Batalkan kunci berdaftar                                                                                                                                                                                                      |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Titik akhir pembatalan eksplisit (kesan yang sama seperti DELETE)                                                                                                                                                             |
 
-**Pengesahan:** sesi pengurusan/kunci API (`requireManagementAuth`) — pelindung yang sama seperti `/api/keys`: sesi papan pemuka, token CLI setempat, atau kunci API dengan skop `manage`/`admin`; kunci API inferens sahaja menerima `403`. Lihat juga `/v1/quotas/check` dan `/v1/issues/report`.
+**Pengesahan:** sesi pengurusan/kunci API (`requireManagementAuth`) — pelindung yang sama seperti `/api/keys`: sesi papan pemuka, token CLI setempat, atau kunci API dengan skop `manage`/`admin`; kunci API untuk inferens sahaja menerima `403`. Lihat juga `/v1/quotas/check` dan `/v1/issues/report`.
 
 ---
 

@@ -257,22 +257,22 @@ src/
 
 ## `open-sse/` — Работно пространство на стрийминг енджина
 
-Отделно npm работно пространство (`@omniroute/open-sse`). Обработва заявките и изпълнението от доставчиците.
+Отделно npm работно пространство (`@omniroute/open-sse`). Обработва заявките и изпълнението от доставчици.
 
 ```
 open-sse/
 ├── handlers/            # 16 файла (12 обработчика + 4 помощни модула): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search и др.
-├── executors/           # 67 специфични за доставчиците изпълнители (разширяват BaseExecutor)
-├── translator/          # Конвертори на формати (9 за заявки, 9 за отговори, 9 помощни)
+├── executors/           # 150 модула за изпълнение (класове, разширяващи BaseExecutor + помощни модули за отделните доставчици)
+├── translator/          # Конвертори на формати (9 за заявки, 9 за отговори, 9 помощни модула)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ сервизни модула (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM и др.)
 ├── mcp-server/          # MCP сървър (110 инструмента, 3 транспорта, 33 обхвата)
 ├── config/              # Регистри на доставчици/модели, конфигурация на заглавки, псевдоними на модели
-├── utils/               # TLS клиент, proxy fetch/dispatcher, помощни модули за мрежата
+├── utils/               # TLS клиент, proxy fetch/dispatcher, мрежови помощни модули
 ├── index.ts             # Входна точка на работното пространство
 ├── package.json         # Манифест на работното пространство
 ├── tsconfig.json        # TS конфигурация на работното пространство
-└── types.d.ts           # Декларации на типове за работното пространство
+└── types.d.ts           # Декларации на типовете на работното пространство
 ```
 
 ### `open-sse/mcp-server/`
@@ -281,16 +281,16 @@ open-sse/
 | --------------------------- | ------------------------------------------------------------------------------- |
 | `server.ts`                 | Жизнен цикъл на MCP сървъра (stdio + HTTP транспорти)                           |
 | `httpTransport.ts`          | HTTP Streamable + SSE транспорти (`/api/mcp/sse`, `/api/mcp/stream`)            |
-| `audit.ts`                  | Регистриране на одитни събития в таблицата `mcp_tool_audit`                     |
-| `scopeEnforcement.ts`       | Проверка на обхвата за всеки инструмент                                         |
-| `runtimeHeartbeat.ts`       | Сигнал за състоянието към `DATA_DIR/runtime/mcp-heartbeat.json`                 |
-| `descriptionCompressor.ts`  | Компресира метаданните с описания на инструментите за пестене на контекст       |
-| `schemas/tools.ts`          | 36 базови дефиниции на инструменти + обхвати                                    |
-| `tools/advancedTools.ts`    | Разширени реализации на инструменти                                             |
+| `audit.ts`                  | Журнал за одит в таблицата `mcp_tool_audit`                                     |
+| `scopeEnforcement.ts`       | Валидиране на обхвата за всеки инструмент                                       |
+| `runtimeHeartbeat.ts`       | Сигнал за изправност към `DATA_DIR/runtime/mcp-heartbeat.json`                  |
+| `descriptionCompressor.ts`  | Компресира метаданните на описанията на инструментите за пестене на контекст    |
+| `schemas/tools.ts`          | 36 дефиниции на базови инструменти + обхвати                                    |
+| `tools/advancedTools.ts`    | Реализации на усъвършенствани инструменти                                       |
 | `tools/memoryTools.ts`      | 3 инструмента за памет (търсене/добавяне/изчистване)                            |
 | `tools/skillTools.ts`       | 4 инструмента за умения (списък/активиране/изпълнение/изпълнения)               |
 | `tools/compressionTools.ts` | 5 инструмента за компресиране                                                   |
-| `README.md`                 | Вътрешен README за MCP сървъра (с препратка от `docs/frameworks/MCP-SERVER.md`) |
+| `README.md`                 | Вътрешен README на MCP сървъра (с препратка от `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

@@ -305,17 +305,17 @@ Il-fornituri disponibbli jinkludu OpenAI (GPT Image 2), xAI (Grok Image), Togeth
 `n` jirritorna `n` immaġnijiet f’`data[]`. Il-fornituri li l-API upstream tagħhom tirritorna immaġni waħda għal kull sejħa
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
 NVIDIA NIM, Cloudflare Workers AI) jirċievu `n` sejħiet upstream separati, b’mhux aktar minn 4 għaddejjin fl-istess ħin. `seed`
-fiss jiġi aġġustat skont l-indiċi tas-sejħa (`seed`, `seed + 1`, …), sabiex l-immaġnijiet ikunu differenti iżda jibqgħu
-riproduċibbli. `n` huwa limitat għal 10. It-talba kollha kemm hi tfalli jekk tfalli xi sejħa. Il-lista
-tal-formati ta’ distribuzzjoni hija `SINGLE_IMAGE_FANOUT_FORMATS` f’
+fiss jiġi inkrementat skont l-indiċi tas-sejħa (`seed`, `seed + 1`, …), biex l-immaġnijiet ikunu differenti iżda jibqgħu
+riproduċibbli. `n` huwa limitat għal 10. It-talba tfalli kollha kemm hi jekk tfalli xi sejħa. Il-lista
+tal-formati fan-out hija `SINGLE_IMAGE_FANOUT_FORMATS` f’
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux jerġa’ juża l-konnessjoni eżistenti taċ-ċavetta tal-API u jaċċetta l-prefissi `zenmux/` jew `zm/`:
 
 - `zenmux/openai/gpt-image-2` juża l-OpenAI Images API ta’ ZenMux. L-għażliet jinkludu `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, u `response_format`.
-- Pubblikaturi oħra, bħal `zm/meta/muse-image-1.0`, jużaw l-endpoint `:predict` ta’ Vertex AI ta’ ZenMux.
-  `n` jiġi mmappjat għal `sampleCount`, `aspect_ratio` għal `aspectRatio`, u `image_size`
+- Pubblikaturi oħra, bħal `zm/meta/muse-image-1.0`, jużaw l-endpoint `:predict`
+  ta’ Vertex AI ta’ ZenMux. `n` jikkorrispondi għal `sampleCount`, `aspect_ratio` għal `aspectRatio`, u `image_size`
   (`1K`, `2K`, `4K`) għal `sampleImageSize`. `size` f’pixels jipprovdi biss proporzjon tal-aspett,
   mhux dimensjonijiet garantiti f’pixels. Il-proporzjonijiet, ir-riżoluzzjonijiet u l-għadd appoġġjati jvarjaw skont il-mudell.
 - `zm/inclusionai/ming-image-0.1-design` jagħżel id-dimensjonijiet tiegħu stess. Ħalli barra `size`,
@@ -325,7 +325,7 @@ ZenMux jerġa’ juża l-konnessjoni eżistenti taċ-ċavetta tal-API u jaċċet
 Din l-integrazzjoni tappoġġja l-ġenerazzjoni ta’ immaġnijiet minn test, mhux l-editjar ta’ immaġnijiet ta’ referenza. L-output ta’ Vertex
 jiġi normalizzat għal `data[].b64_json`; `response_format: "url"` jirritorna URL HTTPS upstream
 jew URL tad-data base64 meta jkunu disponibbli biss il-bytes tal-immaġni. Outputs vojta/iffiltrati
-jirritornaw żball minflok suċċess vojt. L-aċċess għall-mudelli jiddependi mill-kont ZenMux.
+jirritornaw żball minflok suċċess vojt. L-aċċess għall-mudelli jiddependi mill-kont ta’ ZenMux.
 Ara [l-API Vertex ta’ ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) u
 [l-OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1091,6 +1091,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 kull kredenzjali maħżuna, għalhekk jeħtieġu s-sessjoni tad-dashboard jew is-CLI lokali (jew il-login
 diżattivat). Iċ-ċwievet tal-API ta’ kwalunkwe ambitu u t-tokens ta’ aċċess `oma_` jirċievu `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Sinkronizzazzjoni mal-Cloud
 
 | Endpoint               | Metodu  | Deskrizzjoni                                    |
@@ -1450,17 +1457,17 @@ Abbonamenti għal webhooks ħerġin għal avvenimenti ta’ OmniRoute (tlestija 
 
 ## Ċwievet Irreġistrati (Ġestjoni Awtomatika)
 
-Użati mis-sottosistema tal-ġestjoni awtomatika taċ-ċwievet biex toħroġ u ddawwar ċwievet tal-API ma' fornitur/kont sottostanti, bi kwoti ta' kuljum/kull siegħa.
+Użati mis-sottosistema tal-ġestjoni awtomatika taċ-ċwievet biex toħroġ u ddawwar ċwievet tal-API ma’ fornitur/kont sottostanti, bi kwoti ta’ kuljum/kull siegħa.
 
-| Metodu | Mogħdija                              | Deskrizzjoni                                                                                                                                                                                                                            |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Elenka ċ-ċwievet irreġistrati (il-prefiss moħbi biss)                                                                                                                                                                                   |
-| POST   | `/api/v1/registered-keys`             | Oħroġ ċavetta rreġistrata ġdida — korp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Jirritorna ċ-ċavetta mhux moħbija **darba biss**. Jirritorna `429` meta l-kwota ma tippermettix dan. |
-| GET    | `/api/v1/registered-keys/[id]`        | Ikseb il-metadata ta' ċavetta rreġistrata (mingħajr il-materjal mhux moħbi)                                                                                                                                                             |
-| DELETE | `/api/v1/registered-keys/[id]`        | Irrevoka ċavetta rreġistrata                                                                                                                                                                                                            |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint espliċitu għar-revoka (l-istess effett bħal DELETE)                                                                                                                                                                            |
+| Metodu | Mogħdija                              | Deskrizzjoni                                                                                                                                                                                                                             |
+| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Elenka ċ-ċwievet irreġistrati (il-prefiss moħbi biss)                                                                                                                                                                                    |
+| POST   | `/api/v1/registered-keys`             | Oħroġ ċavetta rreġistrata ġdida — korp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Jirritorna ċ-ċavetta mhux moħbija **darba biss**. Jirritorna `429` jekk il-kwota ma tippermettix dan. |
+| GET    | `/api/v1/registered-keys/[id]`        | Ikseb il-metadata ta’ ċavetta rreġistrata (mingħajr il-materjal mhux moħbi)                                                                                                                                                              |
+| DELETE | `/api/v1/registered-keys/[id]`        | Irrevoka ċavetta rreġistrata                                                                                                                                                                                                             |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint espliċitu għar-revoka (l-istess effett bħal DELETE)                                                                                                                                                                             |
 
-**Awtentikazzjoni:** sessjoni ta' ġestjoni/ċavetta tal-API (`requireManagementAuth`) — l-istess kontroll bħal `/api/keys`: sessjoni tad-dashboard, it-token lokali tas-CLI, jew ċavetta tal-API b'ambitu `manage`/`admin`; ċwievet tal-API għall-inferenza biss jirċievu `403`. Ara wkoll `/v1/quotas/check` u `/v1/issues/report`.
+**Awtentikazzjoni:** sessjoni ta’ ġestjoni/ċavetta tal-API (`requireManagementAuth`) — l-istess kontroll bħal `/api/keys`: sessjoni tad-dashboard, it-token lokali tas-CLI, jew ċavetta tal-API bi scope `manage`/`admin`; ċwievet tal-API għall-inferenza biss jirċievu `403`. Ara wkoll `/v1/quotas/check` u `/v1/issues/report`.
 
 ---
 

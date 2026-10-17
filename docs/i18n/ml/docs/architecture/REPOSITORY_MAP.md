@@ -255,14 +255,14 @@ src/
 
 ---
 
-## `open-sse/` — സ്ട്രീമിംഗ് എഞ്ചിൻ വർക്ക്സ്പേസ്
+## `open-sse/` — സ്ട്രീമിംഗ് എൻജിൻ വർക്ക്സ്പേസ്
 
 പ്രത്യേക npm വർക്ക്സ്പേസ് (`@omniroute/open-sse`). അഭ്യർത്ഥന പ്രോസസ്സിംഗും പ്രൊവൈഡർ എക്സിക്യൂഷനും കൈകാര്യം ചെയ്യുന്നു.
 
 ```
 open-sse/
 ├── handlers/            # 16 ഫയലുകൾ (12 ഹാൻഡ്ലറുകൾ + 4 ഹെൽപ്പറുകൾ): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search തുടങ്ങിയവ.
-├── executors/           # 67 പ്രൊവൈഡർ-നിർദ്ദിഷ്ട എക്സിക്യൂട്ടറുകൾ (BaseExecutor വിപുലീകരിക്കുന്നു)
+├── executors/           # 150 എക്സിക്യൂട്ടർ മൊഡ്യൂളുകൾ (BaseExecutor വിപുലീകരിക്കുന്ന ക്ലാസുകൾ + ഓരോ പ്രൊവൈഡറിനുമുള്ള ഹെൽപ്പറുകൾ)
 ├── translator/          # ഫോർമാറ്റ് കൺവെർട്ടറുകൾ (9 അഭ്യർത്ഥന, 9 പ്രതികരണം, 9 ഹെൽപ്പറുകൾ)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ സർവീസ് മൊഡ്യൂളുകൾ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM തുടങ്ങിയവ.)
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| പാത്ത്                      | ഉദ്ദേശ്യം                                                                                          |
-| --------------------------- | -------------------------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP സെർവർ ലൈഫ്സൈക്കിൾ (stdio + HTTP ട്രാൻസ്പോർട്ടുകൾ)                                              |
-| `httpTransport.ts`          | HTTP സ്ട്രീമബിൾ + SSE ട്രാൻസ്പോർട്ടുകൾ (`/api/mcp/sse`, `/api/mcp/stream`)                         |
-| `audit.ts`                  | `mcp_tool_audit` ടേബിളിലേക്കുള്ള ഓഡിറ്റ് ലോഗിംഗ്                                                   |
-| `scopeEnforcement.ts`       | ഓരോ ടൂളിനുമുള്ള സ്കോപ്പ് സാധൂകരണം                                                                  |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`-ലേക്കുള്ള ഹെൽത്ത് ഹാർട്ട്ബീറ്റ്                              |
-| `descriptionCompressor.ts`  | കോൺടെക്സ്റ്റ് ലാഭിക്കാൻ ടൂൾ വിവരണ മെറ്റാഡാറ്റ കംപ്രസ് ചെയ്യുന്നു                                   |
-| `schemas/tools.ts`          | 36 അടിസ്ഥാന ടൂൾ നിർവചനങ്ങൾ + സ്കോപ്പുകൾ                                                            |
-| `tools/advancedTools.ts`    | വിപുലമായ ടൂൾ ഇംപ്ലിമെന്റേഷനുകൾ                                                                     |
-| `tools/memoryTools.ts`      | 3 മെമ്മറി ടൂളുകൾ (തിരയുക/ചേർക്കുക/മായ്ക്കുക)                                                       |
-| `tools/skillTools.ts`       | 4 സ്കിൽ ടൂളുകൾ (പട്ടികപ്പെടുത്തുക/പ്രവർത്തനക്ഷമമാക്കുക/നിർവഹിക്കുക/എക്സിക്യൂഷനുകൾ)                 |
-| `tools/compressionTools.ts` | 5 കംപ്രഷൻ ടൂളുകൾ                                                                                   |
-| `README.md`                 | ആന്തരിക MCP സെർവർ README (`docs/frameworks/MCP-SERVER.md`-ൽ നിന്ന് ക്രോസ്-ലിങ്ക് ചെയ്തിരിക്കുന്നു) |
+| പാത                         | ഉദ്ദേശ്യം                                                                                 |
+| --------------------------- | ----------------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP സെർവർ ലൈഫ്സൈക്കിൾ (stdio + HTTP ട്രാൻസ്പോർട്ടുകൾ)                                     |
+| `httpTransport.ts`          | HTTP Streamable + SSE ട്രാൻസ്പോർട്ടുകൾ (`/api/mcp/sse`, `/api/mcp/stream`)                |
+| `audit.ts`                  | `mcp_tool_audit` ടേബിളിലേക്കുള്ള ഓഡിറ്റ് ലോഗിംഗ്                                          |
+| `scopeEnforcement.ts`       | ഓരോ ടൂളിനുമുള്ള സ്കോപ്പ് സാധൂകരണം                                                         |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`-ലേക്കുള്ള ഹെൽത്ത് ഹാർട്ട്ബീറ്റ്                     |
+| `descriptionCompressor.ts`  | കോൺടെക്സ്റ്റ് ലാഭിക്കാൻ ടൂൾ വിവരണ മെറ്റാഡാറ്റ കംപ്രസ് ചെയ്യുന്നു                          |
+| `schemas/tools.ts`          | 36 അടിസ്ഥാന ടൂൾ നിർവചനങ്ങൾ + സ്കോപ്പുകൾ                                                   |
+| `tools/advancedTools.ts`    | അഡ്വാൻസ്ഡ് ടൂൾ ഇംപ്ലിമെന്റേഷനുകൾ                                                          |
+| `tools/memoryTools.ts`      | 3 മെമ്മറി ടൂളുകൾ (തിരയുക/ചേർക്കുക/മായ്ക്കുക)                                              |
+| `tools/skillTools.ts`       | 4 സ്കിൽ ടൂളുകൾ (പട്ടികപ്പെടുത്തുക/പ്രവർത്തനക്ഷമമാക്കുക/നിർവഹിക്കുക/നിർവഹണങ്ങൾ)            |
+| `tools/compressionTools.ts` | 5 കംപ്രഷൻ ടൂളുകൾ                                                                          |
+| `README.md`                 | ആന്തരിക MCP സെർവർ README (`docs/frameworks/MCP-SERVER.md`-ൽ നിന്ന് ക്രോസ്-ലിങ്ക് ചെയ്തത്) |
 
 ---
 

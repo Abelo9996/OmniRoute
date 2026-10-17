@@ -255,20 +255,20 @@ src/
 
 ---
 
-## `open-sse/` — Arbejdsområde til streamingmotor
+## `open-sse/` — arbejdsområde til streamingmotoren
 
 Separat npm-arbejdsområde (`@omniroute/open-sse`). Håndterer behandling af anmodninger og udførelse hos udbydere.
 
 ```
 open-sse/
-├── handlers/            # 16 filer (12 handlere + 4 hjælpefunktioner): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search osv.
-├── executors/           # 67 udbyderspecifikke eksekveringskomponenter (udvider BaseExecutor)
-├── translator/          # Formatkonvertere (9 til anmodninger, 9 til svar, 9 hjælpefunktioner)
+├── handlers/            # 16 filer (12 handlere + 4 hjælpefiler): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search osv.
+├── executors/           # 150 eksekveringsmoduler (klasser, der udvider BaseExecutor, samt udbyderspecifikke hjælpefiler)
+├── translator/          # Formatkonvertere (9 til anmodninger, 9 til svar, 9 hjælpefiler)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ tjenestemoduler (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM osv.)
-├── mcp-server/          # MCP-server (110 værktøjer, 3 transporter, 33 scopes)
+├── mcp-server/          # MCP-server (110 værktøjer, 3 transporttyper, 33 scopes)
 ├── config/              # Udbyder-/modelregistre, headerkonfiguration, modelaliasser
-├── utils/               # TLS-klient, proxy-fetch/dispatcher, netværkshjælpefunktioner
+├── utils/               # TLS-klient, proxy-fetch/-dispatcher, netværkshjælpefunktioner
 ├── index.ts             # Indgangspunkt for arbejdsområdet
 ├── package.json         # Arbejdsområdets manifest
 ├── tsconfig.json        # Arbejdsområdets TS-konfiguration
@@ -283,12 +283,12 @@ open-sse/
 | `httpTransport.ts`          | HTTP Streamable- og SSE-transporter (`/api/mcp/sse`, `/api/mcp/stream`)          |
 | `audit.ts`                  | Revisionslogning til tabellen `mcp_tool_audit`                                   |
 | `scopeEnforcement.ts`       | Scopevalidering pr. værktøj                                                      |
-| `runtimeHeartbeat.ts`       | Sundheds-heartbeat til `DATA_DIR/runtime/mcp-heartbeat.json`                     |
+| `runtimeHeartbeat.ts`       | Helbreds-heartbeat til `DATA_DIR/runtime/mcp-heartbeat.json`                     |
 | `descriptionCompressor.ts`  | Komprimerer metadata for værktøjsbeskrivelser for at spare kontekst              |
 | `schemas/tools.ts`          | 36 grundlæggende værktøjsdefinitioner + scopes                                   |
 | `tools/advancedTools.ts`    | Avancerede værktøjsimplementeringer                                              |
 | `tools/memoryTools.ts`      | 3 hukommelsesværktøjer (søg/tilføj/ryd)                                          |
-| `tools/skillTools.ts`       | 4 færdighedsværktøjer (vis/aktivér/udfør/kørsler)                                |
+| `tools/skillTools.ts`       | 4 færdighedsværktøjer (vis/aktivér/udfør/udførelser)                             |
 | `tools/compressionTools.ts` | 5 komprimeringsværktøjer                                                         |
 | `README.md`                 | Intern README til MCP-serveren (krydslinket fra `docs/frameworks/MCP-SERVER.md`) |
 

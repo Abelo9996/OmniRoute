@@ -261,14 +261,14 @@ Espacio de trabajo npm independiente (`@omniroute/open-sse`). Gestiona el proces
 
 ```
 open-sse/
-├── handlers/            # 16 archivos (12 manejadores + 4 auxiliares): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, etc.
-├── executors/           # 67 ejecutores específicos de proveedores (extienden BaseExecutor)
-├── translator/          # Conversores de formato (9 de solicitudes, 9 de respuestas, 9 auxiliares)
-├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ módulos de servicio (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, etc.)
+├── handlers/            # 16 archivos (12 manejadores + 4 auxiliares): chatCore, responsesHandler, embeddings, audio, imagen, vídeo, música, reclasificación, moderaciones, búsqueda, etc.
+├── executors/           # 150 módulos ejecutores (clases que extienden BaseExecutor + auxiliares por proveedor)
+├── translator/          # Conversores de formato (9 de solicitud, 9 de respuesta, 9 auxiliares)
+├── transformer/         # API Responses ↔ Chat Completions (TransformStream)
+├── services/            # ~80+ módulos de servicio (combo, accountFallback, autoCombo, reasoningCache, código de claude/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, etc.)
 ├── mcp-server/          # Servidor MCP (110 herramientas, 3 transportes, 33 ámbitos)
 ├── config/              # Registros de proveedores/modelos, configuración de encabezados, alias de modelos
-├── utils/               # Cliente TLS, fetch/dispatcher de proxy, utilidades de red
+├── utils/               # Cliente TLS, fetch/dispatcher de proxy, auxiliares de red
 ├── index.ts             # Punto de entrada del espacio de trabajo
 ├── package.json         # Manifiesto del espacio de trabajo
 ├── tsconfig.json        # Configuración de TS del espacio de trabajo
@@ -282,12 +282,12 @@ open-sse/
 | `server.ts`                 | Ciclo de vida del servidor MCP (transportes stdio + HTTP)                                  |
 | `httpTransport.ts`          | Transportes HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                      |
 | `audit.ts`                  | Registro de auditoría en la tabla `mcp_tool_audit`                                         |
-| `scopeEnforcement.ts`       | Validación del ámbito por herramienta                                                      |
-| `runtimeHeartbeat.ts`       | Señal de estado en `DATA_DIR/runtime/mcp-heartbeat.json`                                   |
-| `descriptionCompressor.ts`  | Comprime los metadatos de descripción de herramientas para ahorrar contexto                |
+| `scopeEnforcement.ts`       | Validación de ámbitos por herramienta                                                      |
+| `runtimeHeartbeat.ts`       | Señal periódica de estado en `DATA_DIR/runtime/mcp-heartbeat.json`                         |
+| `descriptionCompressor.ts`  | Comprime los metadatos de descripción de las herramientas para ahorrar contexto            |
 | `schemas/tools.ts`          | 36 definiciones de herramientas base + ámbitos                                             |
-| `tools/advancedTools.ts`    | Implementaciones avanzadas de herramientas                                                 |
-| `tools/memoryTools.ts`      | 3 herramientas de memoria (buscar/añadir/borrar)                                           |
+| `tools/advancedTools.ts`    | Implementaciones de herramientas avanzadas                                                 |
+| `tools/memoryTools.ts`      | 3 herramientas de memoria (buscar/añadir/limpiar)                                          |
 | `tools/skillTools.ts`       | 4 herramientas de habilidades (listar/habilitar/ejecutar/ejecuciones)                      |
 | `tools/compressionTools.ts` | 5 herramientas de compresión                                                               |
 | `README.md`                 | README interno del servidor MCP (con enlace cruzado desde `docs/frameworks/MCP-SERVER.md`) |

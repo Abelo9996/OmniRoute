@@ -326,34 +326,34 @@ Content-Type: application/json
 }
 ```
 
-يتضمن موفرو الخدمة المتاحون OpenAI ‏(GPT Image 2)، وxAI ‏(Grok Image)، وTogether AI ‏(FLUX)، وFireworks AI، وNebius ‏(FLUX)، وHyperbolic، وNanoBanana، و**OpenRouter**، و**ZenMux**، وSD WebUI (محلي)، وComfyUI (محلي).
+تشمل الجهات المزوّدة المتاحة OpenAI (GPT Image 2)، وxAI (Grok Image)، وTogether AI (FLUX)، وFireworks AI، وNebius (FLUX)، وHyperbolic، وNanoBanana، و**OpenRouter**، و**ZenMux**، وSD WebUI (محلي)، وComfyUI (محلي).
 
-يعيد `n` عدد `n` من الصور في `data[]`. أما موفرو الخدمة الذين تعيد واجهة API الأولية لديهم صورة واحدة لكل استدعاء
+يعيد `n` عدد `n` من الصور في `data[]`. بالنسبة إلى الجهات المزوّدة التي تعيد واجهة API الأولية لديها صورة واحدة لكل استدعاء
 (Black Forest Labs، وStability AI، وLeonardo، وIdeogram، وHaiper، وHyperbolic، وMagnific/Freepik،
-وNVIDIA NIM، وCloudflare Workers AI)، فيتم إجراء `n` من الاستدعاءات الأولية المنفصلة لهم، بحد أقصى 4 استدعاءات قيد التنفيذ. تتم
-إزاحة قيمة `seed` الثابتة حسب فهرس الاستدعاء (`seed`، و`seed + 1`، و…)، بحيث تختلف الصور مع بقائها
-قابلة لإعادة الإنتاج. الحد الأقصى لقيمة `n` هو 10. يفشل الطلب بالكامل إذا فشل أي استدعاء. توجد قائمة
-تنسيقات التوزيع في `SINGLE_IMAGE_FANOUT_FORMATS` ضمن
+وNVIDIA NIM، وCloudflare Workers AI)، يُجرى عدد `n` من الاستدعاءات الأولية المنفصلة، بحد أقصى 4 استدعاءات متزامنة. تُزاح قيمة
+`seed` الثابتة حسب فهرس الاستدعاء (`seed`، و`seed + 1`، و…)، بحيث تختلف الصور مع بقائها
+قابلة لإعادة الإنتاج. الحد الأقصى لـ`n` هو 10. يفشل الطلب بأكمله إذا فشل أي استدعاء. توجد قائمة
+تنسيقات التوزيع المتوازي في `SINGLE_IMAGE_FANOUT_FORMATS` داخل
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-يعيد ZenMux استخدام اتصال مفتاح API الحالي ويقبل البادئتين `zenmux/` أو `zm/`:
+يعيد ZenMux استخدام اتصال مفتاح API الحالي، ويقبل البادئتين `zenmux/` أو `zm/`:
 
-- يستخدم `zenmux/openai/gpt-image-2` واجهة OpenAI Images API الخاصة بـZenMux. تتضمن الخيارات `size`،
+- يستخدم `zenmux/openai/gpt-image-2` واجهة OpenAI Images API الخاصة بـZenMux. تشمل الخيارات `size`،
   و`quality`، و`n`، و`output_format`، و`output_compression`، و`background`، و`response_format`.
-- يستخدم ناشرون آخرون، مثل `zm/meta/muse-image-1.0`، نقطة النهاية `:predict`
-  الخاصة بـVertex AI لدى ZenMux. ترتبط `n` بـ`sampleCount`، و`aspect_ratio` بـ`aspectRatio`، و`image_size`
-  (`1K`، و`2K`، و`4K`) بـ`sampleImageSize`. لا توفر قيمة `size` بالبكسل سوى نسبة أبعاد،
+- تستخدم الجهات الناشرة الأخرى، مثل `zm/meta/muse-image-1.0`، نقطة النهاية `:predict`
+  في Vertex AI لدى ZenMux. يُطابق `n` الحقل `sampleCount`، ويُطابق `aspect_ratio` الحقل `aspectRatio`، ويُطابق `image_size`
+  (`1K`، و`2K`، و`4K`) الحقل `sampleImageSize`. لا توفّر قيمة `size` بالبكسل سوى نسبة أبعاد،
   ولا تضمن أبعادًا محددة بالبكسل. تختلف النسب والدقات والأعداد المدعومة حسب النموذج.
 - يختار `zm/inclusionai/ming-image-0.1-design` أبعاده بنفسه. احذف `size`،
-  و`aspect_ratio`، و`image_size`؛ إذ تؤدي القيم الصريحة إلى إرجاع HTTP 400. يمكن طلب PNG وJPEG وWebP
+  و`aspect_ratio`، و`image_size`؛ إذ تُرجع القيم الصريحة HTTP 400. يمكن طلب PNG وJPEG وWebP
   باستخدام `output_format`.
 
-يدعم هذا التكامل توليد الصور من النص، وليس تحرير الصور المرجعية. تتم تسوية مخرجات Vertex
-إلى `data[].b64_json`؛ وتعيد `response_format: "url"` عنوان URL أوليًا يستخدم HTTPS
-أو عنوان URL لبيانات base64 عندما لا تتوفر سوى بايتات الصورة. تؤدي المخرجات الفارغة أو الخاضعة للتصفية
-إلى إرجاع خطأ بدلًا من استجابة نجاح فارغة. يعتمد الوصول إلى النماذج على حساب ZenMux.
+يدعم هذا التكامل توليد الصور من النص، وليس تحرير الصور المرجعية. تُوحَّد مخرجات Vertex
+إلى `data[].b64_json`؛ ويُرجع `response_format: "url"` عنوان URL أوليًا عبر
+HTTPS أو عنوان URL لبيانات base64 عندما لا تتوفر سوى بايتات الصورة. تُرجع المخرجات الفارغة أو المصفّاة
+خطأً بدلًا من نجاح فارغ. يعتمد الوصول إلى النماذج على حساب ZenMux.
 راجع [واجهة Vertex API الخاصة بـZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) و
-[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
+[واجهة OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
 # سرد جميع نماذج الصور
@@ -1118,6 +1118,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 جميع بيانات الاعتماد المخزنة، لذا فهي تتطلب جلسة لوحة المعلومات أو CLI المحلي (أو تعطيل
 تسجيل الدخول). تتلقى مفاتيح API بأي نطاق ورموز الوصول التي تبدأ بـ`oma_` الاستجابة `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### المزامنة السحابية
 
 | نقطة النهاية           | الطريقة | الوصف                    |
@@ -1481,19 +1488,19 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ---
 
-## المفاتيح المسجَّلة (الإدارة التلقائية)
+## المفاتيح المسجّلة (الإدارة التلقائية)
 
-يستخدمها النظام الفرعي للإدارة التلقائية للمفاتيح لإصدار مفاتيح API وتدويرها لدى موفّر/حساب داعم، مع حصص يومية/بالساعة.
+يستخدمها النظام الفرعي للإدارة التلقائية للمفاتيح لإصدار مفاتيح API وتدويرها لدى موفّر/حساب داعم، مع حصص يومية/ساعية.
 
-| الطريقة | المسار                                | الوصف                                                                                                                                                                                   |
-| ------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET     | `/api/v1/registered-keys`             | عرض المفاتيح المسجَّلة (البادئة المحجوبة فقط)                                                                                                                                           |
-| POST    | `/api/v1/registered-keys`             | إصدار مفتاح مسجَّل جديد — المتن: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. يعيد المفتاح الخام **مرة واحدة**. يعيد `429` عند رفض الحصة. |
-| GET     | `/api/v1/registered-keys/[id]`        | استرداد البيانات الوصفية لمفتاح مسجَّل (من دون المادة الخام)                                                                                                                            |
-| DELETE  | `/api/v1/registered-keys/[id]`        | إبطال مفتاح مسجَّل                                                                                                                                                                      |
-| POST    | `/api/v1/registered-keys/[id]/revoke` | نقطة نهاية صريحة للإبطال (لها تأثير DELETE نفسه)                                                                                                                                        |
+| الطريقة | المسار                                | الوصف                                                                                                                                                                                 |
+| ------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET     | `/api/v1/registered-keys`             | سرد المفاتيح المسجّلة (البادئة المقنّعة فقط)                                                                                                                                          |
+| POST    | `/api/v1/registered-keys`             | إصدار مفتاح مسجّل جديد — النص: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. يعيد المفتاح الخام **مرة واحدة**. يعيد `429` عند رفض الحصة. |
+| GET     | `/api/v1/registered-keys/[id]`        | استرداد البيانات الوصفية لمفتاح مسجّل (من دون المادة الخام)                                                                                                                           |
+| DELETE  | `/api/v1/registered-keys/[id]`        | إبطال مفتاح مسجّل                                                                                                                                                                     |
+| POST    | `/api/v1/registered-keys/[id]/revoke` | نقطة نهاية صريحة للإبطال (لها التأثير نفسه الذي يحدثه DELETE)                                                                                                                         |
 
-**المصادقة:** جلسة الإدارة/مفتاح API (`requireManagementAuth`) — آلية الحماية نفسها المستخدمة في `/api/keys`: جلسة لوحة تحكم، أو رمز CLI المحلي، أو مفتاح API بنطاق `manage`/`admin`؛ تحصل مفاتيح API المخصّصة للاستدلال فقط على `403`. راجع أيضًا `/v1/quotas/check` و`/v1/issues/report`.
+**المصادقة:** جلسة الإدارة/مفتاح API (`requireManagementAuth`) — آلية الحماية نفسها المستخدمة في `/api/keys`: جلسة لوحة المعلومات، أو رمز CLI المحلي، أو مفتاح API بنطاق `manage`/`admin`؛ تحصل مفاتيح API المخصّصة للاستدلال فقط على `403`. راجع أيضًا `/v1/quotas/check` و`/v1/issues/report`.
 
 ---
 

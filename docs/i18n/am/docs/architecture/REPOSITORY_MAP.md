@@ -255,42 +255,42 @@ src/
 
 ---
 
-## `open-sse/` — የStreaming Engine Workspace
+## `open-sse/` — የዥረት ማስኬጃ የሥራ ቦታ
 
-የተለየ npm workspace (`@omniroute/open-sse`)። የጥያቄ ሂደትን + የprovider አፈጻጸምን ያስተናግዳል።
+የተለየ npm የሥራ ቦታ (`@omniroute/open-sse`)። የጥያቄ ሂደትን + የአቅራቢ አፈጻጸምን ያስተናግዳል።
 
 ```
 open-sse/
-├── handlers/            # 16 ፋይሎች (12 handlers + 4 helpers)፦ chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ወዘተ።
-├── executors/           # 67 provider-specific executors (BaseExecutorን ያስፋፋሉ)
-├── translator/          # የቅርጸት መቀየሪያዎች (9 request, 9 response, 9 helpers)
+├── handlers/            # 16 ፋይሎች (12 ጥያቄ አስተናጋጆች + 4 ረዳቶች): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ወዘተ።
+├── executors/           # 150 የማስፈጸሚያ ሞጁሎች (BaseExecutorን የሚያስፋፉ ክፍሎች + ለእያንዳንዱ አቅራቢ የተዘጋጁ ረዳቶች)
+├── translator/          # የቅርጸት መቀየሪያዎች (9 የጥያቄ፣ 9 የምላሽ፣ 9 ረዳቶች)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ የservice modules (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ወዘተ።)
-├── mcp-server/          # MCP server (110 tools, 3 transports, 33 scopes)
-├── config/              # የProvider/model registries፣ የheader config፣ የmodel aliases
-├── utils/               # TLS client፣ proxy fetch/dispatcher፣ የnetwork helpers
-├── index.ts             # የWorkspace መግቢያ
-├── package.json         # የWorkspace manifest
-├── tsconfig.json        # የWorkspace TS config
-└── types.d.ts           # የWorkspace type declarations
+├── services/            # ~80+ የአገልግሎት ሞጁሎች (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ወዘተ።)
+├── mcp-server/          # MCP አገልጋይ (110 መሣሪያዎች፣ 3 ማጓጓዣዎች፣ 33 ወሰኖች)
+├── config/              # የአቅራቢ/ሞዴል መዝገቦች፣ የራስጌ ውቅር፣ የሞዴል ተለዋጭ ስሞች
+├── utils/               # TLS ደንበኛ፣ የፕሮክሲ ሰርስሮ ማምጫ/አሰራጭ፣ የአውታረ መረብ ረዳቶች
+├── index.ts             # የሥራ ቦታ መግቢያ
+├── package.json         # የሥራ ቦታ መግለጫ
+├── tsconfig.json        # የሥራ ቦታ TS ውቅር
+└── types.d.ts           # የሥራ ቦታ የዓይነት መግለጫዎች
 ```
 
 ### `open-sse/mcp-server/`
 
-| ዱካ                          | ዓላማ                                                                            |
-| --------------------------- | ------------------------------------------------------------------------------ |
-| `server.ts`                 | የMCP server lifecycle (stdio + HTTP transports)                                |
-| `httpTransport.ts`          | HTTP Streamable + SSE transports (`/api/mcp/sse`, `/api/mcp/stream`)           |
-| `audit.ts`                  | Audit logging ወደ `mcp_tool_audit` table                                        |
-| `scopeEnforcement.ts`       | ለእያንዳንዱ tool የscope validation                                                 |
-| `runtimeHeartbeat.ts`       | የHealth heartbeat ወደ `DATA_DIR/runtime/mcp-heartbeat.json`                     |
-| `descriptionCompressor.ts`  | contextን ለመቆጠብ የtool description metadataን ይጨምቃል                               |
-| `schemas/tools.ts`          | 36 መሠረታዊ የtool definitions + scopes                                            |
-| `tools/advancedTools.ts`    | የላቁ tool implementations                                                       |
-| `tools/memoryTools.ts`      | 3 የmemory tools (search/add/clear)                                             |
-| `tools/skillTools.ts`       | 4 የskill tools (list/enable/execute/executions)                                |
-| `tools/compressionTools.ts` | 5 የcompression tools                                                           |
-| `README.md`                 | ውስጣዊ የMCP server README (ከ`docs/frameworks/MCP-SERVER.md` ጋር በተሻጋሪ አገናኝ የተገናኘ) |
+| ዱካ                          | ዓላማ                                                                        |
+| --------------------------- | -------------------------------------------------------------------------- |
+| `server.ts`                 | የMCP አገልጋይ የሕይወት ዑደት (stdio + HTTP ማጓጓዣዎች)                                 |
+| `httpTransport.ts`          | HTTP Streamable + SSE ማጓጓዣዎች (`/api/mcp/sse`, `/api/mcp/stream`)           |
+| `audit.ts`                  | ወደ `mcp_tool_audit` ሰንጠረዥ የኦዲት ምዝግብ                                        |
+| `scopeEnforcement.ts`       | ለእያንዳንዱ መሣሪያ የወሰን ማረጋገጫ                                                    |
+| `runtimeHeartbeat.ts`       | ወደ `DATA_DIR/runtime/mcp-heartbeat.json` የጤና ምት                            |
+| `descriptionCompressor.ts`  | ዐውድን ለመቆጠብ የመሣሪያ መግለጫ ሜታዳታን ይጨመቃል                                          |
+| `schemas/tools.ts`          | 36 መሠረታዊ የመሣሪያ ትርጓሜዎች + ወሰኖች                                               |
+| `tools/advancedTools.ts`    | የላቁ የመሣሪያ ትግበራዎች                                                           |
+| `tools/memoryTools.ts`      | 3 የማህደረ ትውስታ መሣሪያዎች (ፍለጋ/መጨመር/ማጽዳት)                                        |
+| `tools/skillTools.ts`       | 4 የክህሎት መሣሪያዎች (ዝርዝር/ማንቃት/ማስፈጸም/አፈጻጸሞች)                                    |
+| `tools/compressionTools.ts` | 5 የመጭመቂያ መሣሪያዎች                                                            |
+| `README.md`                 | ውስጣዊ የMCP አገልጋይ README (ከ`docs/frameworks/MCP-SERVER.md` ጋር ተሻጋሪ አገናኝ ያለው) |
 
 ---
 

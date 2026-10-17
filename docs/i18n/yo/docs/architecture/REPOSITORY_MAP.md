@@ -255,42 +255,42 @@ src/
 
 ---
 
-## `open-sse/` — Ààyè Iṣẹ́ Ẹ̀rọ Ṣíṣàn
+## `open-sse/` — Àyè Iṣẹ́ Ẹ́ńjìnnì Ìṣànwọlé
 
-Ààyè iṣẹ́ npm ọ̀tọ̀ (`@omniroute/open-sse`). Ó ń bójú tó ṣíṣe àwọn ìbéèrè àti ìṣiṣẹ́ olùpèsè.
+Àyè iṣẹ́ npm ọ̀tọ̀ (`@omniroute/open-sse`). Ó ń bójú tó ìṣiṣẹ́ àwọn ìbéèrè àti ìmúṣẹ olùpèsè.
 
 ```
 open-sse/
-├── handlers/            # Fáìlì 16 (olùmójútó 12 + olùrànlọ́wọ́ 4): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ.
-├── executors/           # Olùṣàkóso ìṣiṣẹ́ pàtó sí olùpèsè 67 (wọ́n ń fa BaseExecutor gbòòrò)
-├── translator/          # Àwọn olùyípadà ìgúnrégè (ìbéèrè 9, èsì 9, olùrànlọ́wọ́ 9)
+├── handlers/            # Fáìlì 16 (olóùṣàkóso 12 + olùrànlọ́wọ́ 4): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ.
+├── executors/           # Módùùlù olùmúṣẹ 150 (àwọn class tí ń fa BaseExecutor gùn + àwọn olùrànlọ́wọ́ fún olùpèsè kọ̀ọ̀kan)
+├── translator/          # Àwọn olùyí ìgúnrégẹ̀ (ìbéèrè 9, ìdáhùn 9, olùrànlọ́wọ́ 9)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ módù iṣẹ́ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ.)
-├── mcp-server/          # Sẹ́fà MCP (irinṣẹ́ 110, ọ̀nà ìgbékalẹ̀ 3, ìwọ̀n-àyè 33)
-├── config/              # Àwọn ìforúkọsílẹ̀ olùpèsè/àwòṣe, àtòpọ̀ àkọlé, àwọn orúkọ àfidípò àwòṣe
-├── utils/               # Kíláyẹ́ǹtì TLS, proxy fetch/dispatcher, àwọn olùrànlọ́wọ́ nẹ́tíwọ́ọ̀kì
-├── index.ts             # Ibi ìwọlé ààyè iṣẹ́
-├── package.json         # Àkọsílẹ̀ ààyè iṣẹ́
-├── tsconfig.json        # Àtòpọ̀ TS ààyè iṣẹ́
-└── types.d.ts           # Àwọn ìkéde irú ààyè iṣẹ́
+├── services/            # ~80+ módùùlù iṣẹ́ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ.)
+├── mcp-server/          # Ẹ̀rọ olupin MCP (irinṣẹ́ 110, ọ̀nà ìgbéwọlé 3, ààlà 33)
+├── config/              # Àwọn àkọsílẹ̀ olùpèsè/àwòṣe, àtòpọ̀ àkọlé, àwọn orúkọ àpèjẹ àwòṣe
+├── utils/               # Oníbàárà TLS, proxy fetch/dispatcher, àwọn olùrànlọ́wọ́ nẹ́tíwọ́ọ̀kì
+├── index.ts             # Ojú ìwọlé àyè iṣẹ́
+├── package.json         # Àkọsílẹ̀ àyè iṣẹ́
+├── tsconfig.json        # Àtòpọ̀ TS àyè iṣẹ́
+└── types.d.ts           # Àwọn ìkéde irú àyè iṣẹ́
 ```
 
 ### `open-sse/mcp-server/`
 
-| Path                        | Ète                                                                         |
+| Ọ̀nà                         | Ète                                                                         |
 | --------------------------- | --------------------------------------------------------------------------- |
-| `server.ts`                 | Ìgbésí-ayé sẹ́fà MCP (stdio + àwọn ọ̀nà ìgbékalẹ̀ HTTP)                        |
-| `httpTransport.ts`          | HTTP tó ṣeé ṣàn + àwọn ọ̀nà ìgbékalẹ̀ SSE (`/api/mcp/sse`, `/api/mcp/stream`) |
+| `server.ts`                 | Ìgbésí-ayé ẹ̀rọ olupin MCP (stdio + àwọn ọ̀nà ìgbéwọlé HTTP)                  |
+| `httpTransport.ts`          | Àwọn ọ̀nà ìgbéwọlé HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`) |
 | `audit.ts`                  | Ìkọsílẹ̀ àyẹ̀wò sínú tábìlì `mcp_tool_audit`                                  |
-| `scopeEnforcement.ts`       | Ìfọwọ́sí ìwọ̀n-àyè fún irinṣẹ́ kọ̀ọ̀kan                                          |
-| `runtimeHeartbeat.ts`       | Àmì ìlera sí `DATA_DIR/runtime/mcp-heartbeat.json`                          |
-| `descriptionCompressor.ts`  | Rọ metadata àpèjúwe irinṣẹ́ láti fi ààyè àyíká pamọ́                          |
-| `schemas/tools.ts`          | Àwọn ìtumọ̀ irinṣẹ́ ìpìlẹ̀ 36 + àwọn ìwọ̀n-àyè                                  |
-| `tools/advancedTools.ts`    | Àwọn ìmúṣẹ irinṣẹ́ onípele-gíga                                              |
-| `tools/memoryTools.ts`      | Irinṣẹ́ ìrántí 3 (ṣàwárí/ṣàfikún/pa rẹ́)                                      |
-| `tools/skillTools.ts`       | Irinṣẹ́ ọgbọ́n 4 (àkójọ/mú ṣiṣẹ́/ṣiṣẹ́/àwọn ìṣiṣẹ́)                              |
-| `tools/compressionTools.ts` | Irinṣẹ́ ìfúnpọ̀ 5                                                             |
-| `README.md`                 | README sẹ́fà MCP abẹ́nú (tí a so pọ̀ láti `docs/frameworks/MCP-SERVER.md`)     |
+| `scopeEnforcement.ts`       | Ìfọwọ́sowọ́pọ̀ ààlà fún irinṣẹ́ kọ̀ọ̀kan                                          |
+| `runtimeHeartbeat.ts`       | Ìlù-ọkàn ìlera sí `DATA_DIR/runtime/mcp-heartbeat.json`                     |
+| `descriptionCompressor.ts`  | Fún metadata àpèjúwe irinṣẹ́ nípọ̀ láti fi ààyè ọ̀rọ̀ pamọ́                      |
+| `schemas/tools.ts`          | Àwọn ìtumọ̀ irinṣẹ́ ìpìlẹ̀ 36 + àwọn ààlà                                      |
+| `tools/advancedTools.ts`    | Àwọn ìmúṣẹ irinṣẹ́ gíga                                                      |
+| `tools/memoryTools.ts`      | Irinṣẹ́ ìrántí 3 (ṣàwárí/ṣàfikún/parẹ́)                                       |
+| `tools/skillTools.ts`       | Irinṣẹ́ ọgbọ́n 4 (àkójọ/múṣiṣẹ́/múṣẹ/àwọn ìmúṣẹ)                               |
+| `tools/compressionTools.ts` | Irinṣẹ́ fífúnpọ̀ 5                                                            |
+| `README.md`                 | README inú ẹ̀rọ olupin MCP (tí a so pọ̀ láti `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

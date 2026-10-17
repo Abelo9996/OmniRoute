@@ -262,13 +262,13 @@ Nafasi tofauti ya kazi ya npm (`@omniroute/open-sse`). Hushughulikia uchakataji 
 ```
 open-sse/
 ├── handlers/            # Faili 16 (vishughulikiaji 12 + visaidizi 4): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, n.k.
-├── executors/           # Vitekelezaji 67 mahususi kwa watoa huduma (hupanua BaseExecutor)
+├── executors/           # Moduli 150 za utekelezaji (madarasa yanayopanua BaseExecutor + visaidizi vya kila mtoa huduma)
 ├── translator/          # Vigeuzi vya miundo (maombi 9, majibu 9, visaidizi 9)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # Moduli ~80+ za huduma (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, n.k.)
+├── services/            # ~Moduli 80+ za huduma (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, n.k.)
 ├── mcp-server/          # Seva ya MCP (zana 110, njia 3 za usafirishaji, mawanda 33)
-├── config/              # Sajili za watoa huduma/miundo, usanidi wa vichwa, lakabu za miundo
-├── utils/               # Kiteja cha TLS, fetch/dispatcher ya proksi, visaidizi vya mtandao
+├── config/              # Masajili ya watoa huduma/miundo, usanidi wa vichwa, majina mbadala ya miundo
+├── utils/               # Kiteja cha TLS, proxy fetch/dispatcher, visaidizi vya mtandao
 ├── index.ts             # Kiingilio cha nafasi ya kazi
 ├── package.json         # Manifesti ya nafasi ya kazi
 ├── tsconfig.json        # Usanidi wa TS wa nafasi ya kazi
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Njia                        | Kusudi                                                                                              |
-| --------------------------- | --------------------------------------------------------------------------------------------------- |
-| `server.ts`                 | Mzunguko wa maisha wa seva ya MCP (stdio + njia za usafirishaji za HTTP)                            |
-| `httpTransport.ts`          | Njia za usafirishaji za HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                   |
-| `audit.ts`                  | Uwekaji kumbukumbu za ukaguzi kwenye jedwali la `mcp_tool_audit`                                    |
-| `scopeEnforcement.ts`       | Uthibitishaji wa wigo kwa kila zana                                                                 |
-| `runtimeHeartbeat.ts`       | Mapigo ya afya kwenda `DATA_DIR/runtime/mcp-heartbeat.json`                                         |
-| `descriptionCompressor.ts`  | Hubana metadata ya maelezo ya zana ili kuokoa muktadha                                              |
-| `schemas/tools.ts`          | Ufafanuzi wa zana 36 za msingi + mawanda                                                            |
-| `tools/advancedTools.ts`    | Utekelezaji wa zana za hali ya juu                                                                  |
-| `tools/memoryTools.ts`      | Zana 3 za kumbukumbu (kutafuta/kuongeza/kufuta)                                                     |
-| `tools/skillTools.ts`       | Zana 4 za ujuzi (kuorodhesha/kuwezesha/kutekeleza/utekelezaji)                                      |
-| `tools/compressionTools.ts` | Zana 5 za ubanaji                                                                                   |
-| `README.md`                 | README ya ndani ya seva ya MCP (imeunganishwa kwa marejeleo kutoka `docs/frameworks/MCP-SERVER.md`) |
+| Njia                        | Kusudi                                                                                                |
+| --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `server.ts`                 | Mzunguko wa maisha wa seva ya MCP (stdio + njia za usafirishaji za HTTP)                              |
+| `httpTransport.ts`          | Njia za usafirishaji za HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                     |
+| `audit.ts`                  | Uwekaji kumbukumbu za ukaguzi kwenye jedwali la `mcp_tool_audit`                                      |
+| `scopeEnforcement.ts`       | Uthibitishaji wa wigo kwa kila zana                                                                   |
+| `runtimeHeartbeat.ts`       | Mapigo ya uhai ya afya kwenda `DATA_DIR/runtime/mcp-heartbeat.json`                                   |
+| `descriptionCompressor.ts`  | Hubana metadata ya maelezo ya zana ili kuhifadhi muktadha                                             |
+| `schemas/tools.ts`          | Ufafanuzi 36 wa zana za msingi + mawanda                                                              |
+| `tools/advancedTools.ts`    | Utekelezaji wa zana za kina                                                                           |
+| `tools/memoryTools.ts`      | Zana 3 za kumbukumbu (tafuta/ongeza/futa)                                                             |
+| `tools/skillTools.ts`       | Zana 4 za ujuzi (orodhesha/wezesha/tekeleza/utekelezaji)                                              |
+| `tools/compressionTools.ts` | Zana 5 za ubanaji                                                                                     |
+| `README.md`                 | README ya ndani ya seva ya MCP (iliyounganishwa kwa marejeleo kutoka `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

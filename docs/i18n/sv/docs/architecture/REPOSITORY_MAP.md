@@ -255,14 +255,14 @@ src/
 
 ---
 
-## `open-sse/` — Arbetsyta för strömningsmotor
+## `open-sse/` — arbetsyta för strömningsmotorn
 
-Separat npm-arbetsyta (`@omniroute/open-sse`). Hanterar bearbetning av förfrågningar samt körning mot leverantörer.
+Separat npm-arbetsyta (`@omniroute/open-sse`). Hanterar bearbetning av förfrågningar och exekvering hos leverantörer.
 
 ```
 open-sse/
 ├── handlers/            # 16 filer (12 hanterare + 4 hjälpfunktioner): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search osv.
-├── executors/           # 67 leverantörsspecifika exekverare (utökar BaseExecutor)
+├── executors/           # 150 exekveringsmoduler (klasser som utökar BaseExecutor + hjälpfunktioner per leverantör)
 ├── translator/          # Formatkonverterare (9 för förfrågningar, 9 för svar, 9 hjälpfunktioner)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ tjänstemoduler (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM osv.)
@@ -281,7 +281,7 @@ open-sse/
 | --------------------------- | ------------------------------------------------------------------------------- |
 | `server.ts`                 | MCP-serverns livscykel (stdio- + HTTP-transporter)                              |
 | `httpTransport.ts`          | HTTP Streamable- + SSE-transporter (`/api/mcp/sse`, `/api/mcp/stream`)          |
-| `audit.ts`                  | Revisionsloggning till tabellen `mcp_tool_audit`                                |
+| `audit.ts`                  | Granskningsloggning till tabellen `mcp_tool_audit`                              |
 | `scopeEnforcement.ts`       | Omfångsvalidering per verktyg                                                   |
 | `runtimeHeartbeat.ts`       | Hälsopuls till `DATA_DIR/runtime/mcp-heartbeat.json`                            |
 | `descriptionCompressor.ts`  | Komprimerar metadata för verktygsbeskrivningar för att spara kontext            |

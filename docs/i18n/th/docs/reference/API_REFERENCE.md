@@ -295,34 +295,34 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "ภาพพระอาทิตย์ตกที่สวยงามเหนือภูเขา",
+  "prompt": "พระอาทิตย์ตกที่สวยงามเหนือภูเขา",
   "size": "1024x1024"
 }
 ```
 
 ผู้ให้บริการที่พร้อมใช้งาน ได้แก่ OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (ภายในเครื่อง), ComfyUI (ภายในเครื่อง)
 
-`n` จะส่งคืนรูปภาพจำนวน `n` รูปใน `data[]` สำหรับผู้ให้บริการที่ API ต้นทางส่งคืนรูปภาพหนึ่งรูปต่อการเรียกหนึ่งครั้ง
+`n` จะส่งคืนรูปภาพจำนวน `n` รูปใน `data[]` สำหรับผู้ให้บริการที่ API ต้นทางส่งคืนหนึ่งรูปภาพต่อการเรียก
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI) ระบบจะเรียกต้นทางแยกกันจำนวน `n` ครั้ง โดยมีการเรียกที่กำลังดำเนินการพร้อมกันได้สูงสุด 4 ครั้ง
-ค่า `seed` แบบคงที่จะถูกเลื่อนตามดัชนีของการเรียก (`seed`, `seed + 1`, …) เพื่อให้รูปภาพแตกต่างกันแต่ยังคง
-สร้างซ้ำได้ ค่า `n` ถูกจำกัดไว้สูงสุดที่ 10 คำขอทั้งหมดจะล้มเหลวหากมีการเรียกใดล้มเหลว รายการ
-รูปแบบการกระจายคำขอคือ `SINGLE_IMAGE_FANOUT_FORMATS` ใน
+NVIDIA NIM, Cloudflare Workers AI) ระบบจะเรียกต้นทางแยกกันจำนวน `n` ครั้ง โดยดำเนินการพร้อมกันสูงสุด 4 ครั้ง
+ค่า `seed` แบบคงที่จะถูกเพิ่มตามดัชนีของการเรียก (`seed`, `seed + 1`, …) ดังนั้นรูปภาพจึงแตกต่างกันแต่ยังคง
+สร้างซ้ำได้ `n` จำกัดไว้สูงสุดที่ 10 คำขอทั้งหมดจะล้มเหลวหากมีการเรียกใดล้มเหลว รายการ
+รูปแบบที่ใช้การกระจายคำขออยู่ใน `SINGLE_IMAGE_FANOUT_FORMATS` ที่
 `open-sse/handlers/imageGeneration/fanOut.ts`
 
-ZenMux ใช้การเชื่อมต่อ API key ที่มีอยู่เดิมซ้ำ และรองรับคำนำหน้า `zenmux/` หรือ `zm/`:
+ZenMux ใช้การเชื่อมต่อคีย์ API ที่มีอยู่เดิม และยอมรับคำนำหน้า `zenmux/` หรือ `zm/`:
 
 - `zenmux/openai/gpt-image-2` ใช้ OpenAI Images API ของ ZenMux ตัวเลือกประกอบด้วย `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` และ `response_format`
-- ผู้เผยแพร่รายอื่น เช่น `zm/meta/muse-image-1.0` จะใช้ปลายทาง `:predict` ของ Vertex AI ผ่าน ZenMux
-  ค่า `n` จะถูกแมปไปยัง `sampleCount`, `aspect_ratio` ไปยัง `aspectRatio` และ `image_size`
-  (`1K`, `2K`, `4K`) ไปยัง `sampleImageSize` ค่า `size` ในหน่วยพิกเซลจะระบุเพียงอัตราส่วนภาพ
-  โดยไม่ได้รับประกันขนาดพิกเซล อัตราส่วน ความละเอียด และจำนวนที่รองรับจะแตกต่างกันไปตามโมเดล
-- `zm/inclusionai/ming-image-0.1-design` จะเลือกขนาดของรูปภาพเอง ให้ละเว้น `size`,
+- ผู้เผยแพร่รายอื่น เช่น `zm/meta/muse-image-1.0` ใช้ปลายทาง `:predict` ของ Vertex AI ของ ZenMux
+  `n` จะแมปกับ `sampleCount`, `aspect_ratio` จะแมปกับ `aspectRatio` และ `image_size`
+  (`1K`, `2K`, `4K`) จะแมปกับ `sampleImageSize` ค่า `size` แบบพิกเซลจะระบุเฉพาะอัตราส่วนภาพ
+  โดยไม่รับประกันขนาดพิกเซล อัตราส่วน ความละเอียด และจำนวนที่รองรับจะแตกต่างกันไปตามโมเดล
+- `zm/inclusionai/ming-image-0.1-design` จะเลือกขนาดของตนเอง ให้ละเว้น `size`,
   `aspect_ratio` และ `image_size`; การระบุค่าอย่างชัดเจนจะส่งคืน HTTP 400 สามารถขอรูปแบบ PNG, JPEG และ WebP
   ได้ด้วย `output_format`
 
-การผสานรวมนี้รองรับการสร้างรูปภาพจากข้อความ ไม่รองรับการแก้ไขรูปภาพอ้างอิง เอาต์พุตจาก Vertex
+การผสานรวมนี้รองรับการสร้างรูปภาพจากข้อความ ไม่รองรับการแก้ไขรูปภาพอ้างอิง เอาต์พุตของ Vertex
 จะถูกปรับให้อยู่ในรูปแบบ `data[].b64_json`; `response_format: "url"` จะส่งคืน URL แบบ HTTPS
 จากต้นทาง หรือ URL ข้อมูลแบบ base64 เมื่อมีเฉพาะไบต์ของรูปภาพ เอาต์พุตที่ว่างเปล่าหรือถูกกรอง
 จะส่งคืนข้อผิดพลาดแทนผลลัพธ์สำเร็จที่ว่างเปล่า การเข้าถึงโมเดลขึ้นอยู่กับบัญชี ZenMux
@@ -1107,6 +1107,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 ข้อมูลประจำตัวที่จัดเก็บไว้ทั้งหมด จึงต้องใช้เซสชันแดชบอร์ดหรือ CLI ภายในเครื่อง (หรือปิดใช้งาน
 การเข้าสู่ระบบ) คีย์ API ทุกขอบเขตและโทเค็นการเข้าถึง `oma_` จะได้รับ `403`
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### การซิงค์กับคลาวด์
 
 | Endpoint               | Method   | คำอธิบาย                   |
@@ -1472,17 +1479,17 @@ combo สำหรับการกำหนดเส้นทางระด�
 
 ## คีย์ที่ลงทะเบียน (การจัดการอัตโนมัติ)
 
-ใช้โดยระบบย่อยการจัดการคีย์อัตโนมัติเพื่อออกและหมุนเวียน API key ผ่านผู้ให้บริการ/บัญชีเบื้องหลัง โดยมีโควตารายวัน/รายชั่วโมง
+ใช้โดยระบบย่อยการจัดการคีย์อัตโนมัติ เพื่อออกและหมุนเวียนคีย์ API กับผู้ให้บริการ/บัญชีเบื้องหลัง โดยมีโควตารายวัน/รายชั่วโมง
 
-| เมธอด  | พาธ                                   | คำอธิบาย                                                                                                                                                                                              |
-| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | แสดงรายการคีย์ที่ลงทะเบียน (แสดงเฉพาะคำนำหน้าที่ปกปิดแล้ว)                                                                                                                                            |
-| POST   | `/api/v1/registered-keys`             | ออกคีย์ที่ลงทะเบียนใหม่ — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}` ส่งคืนคีย์ดิบ **เพียงครั้งเดียว** ส่งคืน `429` เมื่อถูกปฏิเสธเนื่องจากโควตา |
-| GET    | `/api/v1/registered-keys/[id]`        | ดึงข้อมูลเมตาของคีย์ที่ลงทะเบียน (ไม่มีข้อมูลคีย์ดิบ)                                                                                                                                                 |
-| DELETE | `/api/v1/registered-keys/[id]`        | เพิกถอนคีย์ที่ลงทะเบียน                                                                                                                                                                               |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | endpoint สำหรับการเพิกถอนโดยชัดแจ้ง (มีผลเหมือนกับ DELETE)                                                                                                                                            |
+| เมธอด  | พาธ                                   | คำอธิบาย                                                                                                                                                                                                     |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/v1/registered-keys`             | แสดงรายการคีย์ที่ลงทะเบียน (แสดงเฉพาะคำนำหน้าที่ปกปิดแล้ว)                                                                                                                                                   |
+| POST   | `/api/v1/registered-keys`             | ออกคีย์ที่ลงทะเบียนใหม่ — เนื้อหาคำขอ: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}` ส่งคืนคีย์ดิบ **เพียงครั้งเดียว** ส่งคืน `429` เมื่อถูกปฏิเสธเนื่องจากโควตา |
+| GET    | `/api/v1/registered-keys/[id]`        | ดึงข้อมูลเมตาของคีย์ที่ลงทะเบียน (ไม่มีข้อมูลคีย์ดิบ)                                                                                                                                                        |
+| DELETE | `/api/v1/registered-keys/[id]`        | เพิกถอนคีย์ที่ลงทะเบียน                                                                                                                                                                                      |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | จุดเชื่อมต่อสำหรับเพิกถอนโดยชัดแจ้ง (ให้ผลเช่นเดียวกับ DELETE)                                                                                                                                               |
 
-**การยืนยันตัวตน:** เซสชันการจัดการ/API key (`requireManagementAuth`) — ใช้ตัวป้องกันเดียวกับ `/api/keys`: เซสชัน dashboard, token ของ CLI ภายในเครื่อง หรือ API key ที่มี scope `manage`/`admin`; API key สำหรับ inference เท่านั้นจะได้รับ `403` ดูเพิ่มเติมที่ `/v1/quotas/check` และ `/v1/issues/report`
+**การยืนยันตัวตน:** เซสชันการจัดการ/คีย์ API (`requireManagementAuth`) — ใช้ตัวป้องกันเดียวกับ `/api/keys`: เซสชันแดชบอร์ด, โทเค็น CLI ภายในเครื่อง หรือคีย์ API ที่มีขอบเขต `manage`/`admin`; คีย์ API ที่ใช้สำหรับการอนุมานเท่านั้นจะได้รับ `403` ดูเพิ่มเติมที่ `/v1/quotas/check` และ `/v1/issues/report`
 
 ---
 

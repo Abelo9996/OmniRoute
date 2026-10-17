@@ -286,7 +286,7 @@ GET /v1/embeddings
 
 ---
 
-## छवि निर्माण
+## छवि सिर्जना
 
 ```bash
 POST /v1/images/generations
@@ -302,12 +302,12 @@ Content-Type: application/json
 
 उपलब्ध प्रदायकहरूमा OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (स्थानीय), ComfyUI (स्थानीय) समावेश छन्।
 
-`n` ले `data[]` मा `n` वटा छविहरू फर्काउँछ। जसका upstream API ले प्रत्येक कलमा एउटा छवि फर्काउँछन्
+`n` ले `data[]` मा `n` वटा छविहरू फर्काउँछ। प्रत्येक कलमा एउटा छवि फर्काउने अपस्ट्रिम API भएका प्रदायकहरू
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), ती प्रदायकहरूका लागि `n` वटा अलग-अलग upstream कल गरिन्छन्, जसमध्ये बढीमा 4 वटा एकै समयमा चल्छन्। स्थिर
-`seed` लाई कल अनुक्रमणिकाअनुसार बढाइन्छ (`seed`, `seed + 1`, …), जसले गर्दा छविहरू फरक भए पनि
+NVIDIA NIM, Cloudflare Workers AI) का लागि अधिकतम 4 वटा एकसाथ चल्ने गरी `n` वटा छुट्टाछुट्टै अपस्ट्रिम कल गरिन्छ। स्थिर
+`seed` लाई कल अनुक्रमणिकाअनुसार अफसेट गरिन्छ (`seed`, `seed + 1`, …), जसले गर्दा छविहरू फरक भए पनि
 पुनरुत्पादनयोग्य रहन्छन्। `n` को अधिकतम सीमा 10 हो। कुनै पनि कल असफल भएमा सम्पूर्ण अनुरोध
-असफल हुन्छ। fan-out ढाँचाहरूको सूची
+असफल हुन्छ। फ्यान-आउट ढाँचाहरूको सूची
 `open-sse/handlers/imageGeneration/fanOut.ts` मा रहेको `SINGLE_IMAGE_FANOUT_FORMATS` हो।
 
 ZenMux ले विद्यमान API-key जडान पुनः प्रयोग गर्छ र `zenmux/` वा `zm/` उपसर्गहरू स्वीकार गर्छ:
@@ -315,16 +315,16 @@ ZenMux ले विद्यमान API-key जडान पुनः प्�
 - `zenmux/openai/gpt-image-2` ले ZenMux को OpenAI Images API प्रयोग गर्छ। विकल्पहरूमा `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, र `response_format` समावेश छन्।
 - `zm/meta/muse-image-1.0` जस्ता अन्य प्रकाशकहरूले ZenMux को Vertex AI `:predict`
-  endpoint प्रयोग गर्छन्। `n` लाई `sampleCount` मा, `aspect_ratio` लाई `aspectRatio` मा, र `image_size`
-  (`1K`, `2K`, `4K`) लाई `sampleImageSize` मा म्याप गरिन्छ। पिक्सेल `size` ले पक्ष अनुपात मात्र प्रदान गर्छ,
-  सुनिश्चित पिक्सेल आयामहरू होइन। समर्थित अनुपात, रिजोल्युसन र सङ्ख्याहरू मोडेलअनुसार फरक हुन्छन्।
+  इन्डपोइन्ट प्रयोग गर्छन्। `n` लाई `sampleCount`, `aspect_ratio` लाई `aspectRatio`, र `image_size`
+  (`1K`, `2K`, `4K`) लाई `sampleImageSize` मा म्याप गरिन्छ। पिक्सेल `size` ले पक्षानुपात मात्र उपलब्ध गराउँछ,
+  निश्चित पिक्सेल आयामहरू होइन। समर्थित अनुपात, रिजोल्युसन र सङ्ख्या मोडेलअनुसार फरक हुन्छन्।
 - `zm/inclusionai/ming-image-0.1-design` ले आफ्ना आयामहरू आफैँ चयन गर्छ। `size`,
-  `aspect_ratio`, र `image_size` नदिनुहोस्; स्पष्ट मानहरू दिँदा HTTP 400 फर्किन्छ। PNG, JPEG, र WebP
-  लाई `output_format` मार्फत अनुरोध गर्न सकिन्छ।
+  `aspect_ratio`, र `image_size` नदिई छोड्नुहोस्; स्पष्ट मानहरू दिँदा HTTP 400 फर्किन्छ। `output_format` प्रयोग गरेर
+  PNG, JPEG, र WebP अनुरोध गर्न सकिन्छ।
 
-यो एकीकरणले पाठबाट-छवि निर्माणलाई समर्थन गर्छ, सन्दर्भ-छवि सम्पादनलाई होइन। Vertex
-आउटपुटलाई `data[].b64_json` मा सामान्यीकृत गरिन्छ; `response_format: "url"` ले upstream
-HTTPS URL फर्काउँछ वा छवि बाइटहरू मात्र उपलब्ध हुँदा base64 data URL फर्काउँछ। खाली/फिल्टर गरिएका आउटपुटहरूले
+यो एकीकरणले पाठबाट-छवि सिर्जना समर्थन गर्छ, सन्दर्भ-छवि सम्पादन होइन। Vertex
+आउटपुटलाई `data[].b64_json` मा सामान्यीकृत गरिन्छ; `response_format: "url"` ले अपस्ट्रिम
+HTTPS URL वा छविका बाइटहरू मात्र उपलब्ध हुँदा base64 डेटा URL फर्काउँछ। खाली/फिल्टर गरिएका आउटपुटहरूले
 खाली सफलताको सट्टा त्रुटि फर्काउँछन्। मोडेल पहुँच ZenMux खातामा निर्भर हुन्छ।
 [ZenMux को Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) र
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) हेर्नुहोस्।
@@ -1396,17 +1396,17 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## दर्ता गरिएका कुञ्जीहरू (स्वतः-व्यवस्थापन)
 
-दैनिक/प्रतिघण्टा कोटासहित, अन्तर्निहित प्रदायक/खातामा API कुञ्जीहरू जारी र रोटेट गर्न स्वतः-कुञ्जी व्यवस्थापन उपप्रणालीद्वारा प्रयोग गरिन्छ।
+दैनिक/प्रतिघण्टा कोटासहित ब्याकिङ प्रदायक/खातामा API कुञ्जीहरू जारी गर्न र घुमाउन स्वतः-कुञ्जी व्यवस्थापन उपप्रणालीद्वारा प्रयोग गरिन्छ।
 
 | विधि   | पथ                                    | विवरण                                                                                                                                                                                                            |
 | ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/api/v1/registered-keys`             | दर्ता गरिएका कुञ्जीहरूको सूची (मास्क गरिएको उपसर्ग मात्र)                                                                                                                                                        |
-| POST   | `/api/v1/registered-keys`             | नयाँ दर्ता गरिएको कुञ्जी जारी गर्छ — बडी: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। कच्चा कुञ्जी **एक पटक मात्र** फर्काउँछ। कोटा अस्वीकार हुँदा `429` फर्काउँछ। |
+| POST   | `/api/v1/registered-keys`             | नयाँ दर्ता गरिएको कुञ्जी जारी गर्छ — बडी: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। कच्चा कुञ्जी **एक पटक मात्र** फर्काउँछ। कोटा अस्वीकृत हुँदा `429` फर्काउँछ। |
 | GET    | `/api/v1/registered-keys/[id]`        | दर्ता गरिएको कुञ्जीको मेटाडेटा प्राप्त गर्छ (कच्चा सामग्रीबिना)                                                                                                                                                  |
-| DELETE | `/api/v1/registered-keys/[id]`        | दर्ता गरिएको कुञ्जी रद्द गर्छ                                                                                                                                                                                    |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | स्पष्ट रद्दीकरण एन्डपोइन्ट (`DELETE` सरह प्रभाव)                                                                                                                                                                 |
+| DELETE | `/api/v1/registered-keys/[id]`        | दर्ता गरिएको कुञ्जी खारेज गर्छ                                                                                                                                                                                   |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | स्पष्ट खारेजी एन्डपोइन्ट (DELETE सरह प्रभाव)                                                                                                                                                                     |
 
-**प्रमाणीकरण:** व्यवस्थापन सत्र/API कुञ्जी (`requireManagementAuth`) — `/api/keys` कै समान गार्ड: ड्यासबोर्ड सत्र, स्थानीय CLI टोकन, वा `manage`/`admin` स्कोप भएको API कुञ्जी; अनुमान-मात्र API कुञ्जीहरूले `403` प्राप्त गर्छन्। `/v1/quotas/check` र `/v1/issues/report` पनि हेर्नुहोस्।
+**प्रमाणीकरण:** व्यवस्थापन सत्र/API कुञ्जी (`requireManagementAuth`) — `/api/keys` कै गार्ड: ड्यासबोर्ड सत्र, स्थानीय CLI टोकन, वा `manage`/`admin` स्कोप भएको API कुञ्जी; इन्फरेन्स-मात्र API कुञ्जीहरूले `403` प्राप्त गर्छन्। `/v1/quotas/check` र `/v1/issues/report` पनि हेर्नुहोस्।
 
 ---
 

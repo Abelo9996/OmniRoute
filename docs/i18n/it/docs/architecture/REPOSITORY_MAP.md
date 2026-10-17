@@ -261,10 +261,10 @@ Workspace npm separato (`@omniroute/open-sse`). Gestisce l'elaborazione delle ri
 
 ```
 open-sse/
-├── handlers/            # 16 file (12 handler + 4 helper): chatCore, responsesHandler, embeddings, audio, immagini, video, musica, rerank, moderazioni, ricerca, ecc.
-├── executors/           # 67 executor specifici per provider (estendono BaseExecutor)
+├── handlers/            # 16 file (12 handler + 4 helper): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ecc.
+├── executors/           # 150 moduli executor (classi che estendono BaseExecutor + helper specifici per provider)
 ├── translator/          # Convertitori di formato (9 per le richieste, 9 per le risposte, 9 helper)
-├── transformer/         # API Responses ↔ Chat Completions (TransformStream)
+├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ moduli di servizio (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ecc.)
 ├── mcp-server/          # Server MCP (110 strumenti, 3 trasporti, 33 ambiti)
 ├── config/              # Registri di provider/modelli, configurazione degli header, alias dei modelli
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Percorso                    | Scopo                                                                                          |
-| --------------------------- | ---------------------------------------------------------------------------------------------- |
-| `server.ts`                 | Ciclo di vita del server MCP (trasporti stdio + HTTP)                                          |
-| `httpTransport.ts`          | Trasporti HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                            |
-| `audit.ts`                  | Registrazione degli audit nella tabella `mcp_tool_audit`                                       |
-| `scopeEnforcement.ts`       | Validazione dell'ambito per ogni strumento                                                     |
-| `runtimeHeartbeat.ts`       | Heartbeat di integrità in `DATA_DIR/runtime/mcp-heartbeat.json`                                |
-| `descriptionCompressor.ts`  | Comprime i metadati delle descrizioni degli strumenti per risparmiare contesto                 |
-| `schemas/tools.ts`          | 36 definizioni di strumenti di base + ambiti                                                   |
-| `tools/advancedTools.ts`    | Implementazioni degli strumenti avanzati                                                       |
-| `tools/memoryTools.ts`      | 3 strumenti di memoria (ricerca/aggiunta/cancellazione)                                        |
-| `tools/skillTools.ts`       | 4 strumenti per le skill (elenco/abilitazione/esecuzione/esecuzioni)                           |
-| `tools/compressionTools.ts` | 5 strumenti di compressione                                                                    |
-| `README.md`                 | README interno del server MCP (con collegamento incrociato da `docs/frameworks/MCP-SERVER.md`) |
+| Percorso                    | Scopo                                                                                         |
+| --------------------------- | --------------------------------------------------------------------------------------------- |
+| `server.ts`                 | Ciclo di vita del server MCP (trasporti stdio + HTTP)                                         |
+| `httpTransport.ts`          | Trasporti HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                           |
+| `audit.ts`                  | Registrazione degli audit nella tabella `mcp_tool_audit`                                      |
+| `scopeEnforcement.ts`       | Convalida degli ambiti per ciascuno strumento                                                 |
+| `runtimeHeartbeat.ts`       | Heartbeat di integrità in `DATA_DIR/runtime/mcp-heartbeat.json`                               |
+| `descriptionCompressor.ts`  | Comprime i metadati delle descrizioni degli strumenti per risparmiare contesto                |
+| `schemas/tools.ts`          | 36 definizioni di strumenti di base + ambiti                                                  |
+| `tools/advancedTools.ts`    | Implementazioni avanzate degli strumenti                                                      |
+| `tools/memoryTools.ts`      | 3 strumenti di memoria (ricerca/aggiunta/cancellazione)                                       |
+| `tools/skillTools.ts`       | 4 strumenti per le skill (elenco/abilitazione/esecuzione/esecuzioni)                          |
+| `tools/compressionTools.ts` | 5 strumenti di compressione                                                                   |
+| `README.md`                 | README interno del server MCP (con riferimenti incrociati da `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

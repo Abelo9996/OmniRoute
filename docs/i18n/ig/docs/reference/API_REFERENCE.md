@@ -299,32 +299,32 @@ Content-Type: application/json
 }
 ```
 
-Ndị na-eweta ọrụ dịnụ gụnyere OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (mpaghara), ComfyUI (mpaghara).
+Ndị na-eweta ọrụ dịnụ gụnyere OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (nke mpaghara), ComfyUI (nke mpaghara).
 
-`n` na-eweghachi onyonyo `n` n'ime `data[]`. Maka ndị na-eweta ọrụ nke API upstream ha na-eweghachi otu onyonyo n'otu oku
+`n` na-eweghachi onyonyo `n` n'ime `data[]`. Maka ndị na-eweta ọrụ nke API ha dị n'elu na-eweghachi otu onyonyo n'otu oku
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), a na-eme oku upstream `n` dị iche iche, ebe oku na-aga n'otu oge agaghị akarị 4. A
-na-agbanwe `seed` edobere site n'ịgbakwunye indeks oku (`seed`, `seed + 1`, …), ka onyonyo ndị ahụ wee dị iche ma ka
-nwee ike ịmepụtaghachi ha otu ahụ. Oke `n` bụ 10. Arịrịọ ahụ dum ga-ada ma ọ bụrụ na oku ọ bụla adaa. Ndepụta
-usoro fan-out bụ `SINGLE_IMAGE_FANOUT_FORMATS` dị na
+NVIDIA NIM, Cloudflare Workers AI), a na-akpọ API ha dị n'elu ugboro `n`, ma ọ bụghị karịa oku 4 na-aga n'otu oge. A
+na-agbakwunye ndeksi oku na `seed` edobere (`seed`, `seed + 1`, …), ka onyonyo ndị ahụ wee dị iche ma nọgide
+na-enwe ike imepụtaghachi otu nsonaazụ ahụ. Oke `n` bụ 10. Arịrịọ ahụ dum ga-ada ma ọ bụrụ na oku ọ bụla adaa. Ndepụta
+usoro fan-out dị na `SINGLE_IMAGE_FANOUT_FORMATS` n'ime
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux na-ejigharị njikọ API-key dị adị ma na-anabata prefix `zenmux/` ma ọ bụ `zm/`:
+ZenMux na-eji njikọ API-key dị ugbu a eme ihe ọzọ ma na-anabata nganiihu `zenmux/` ma ọ bụ `zm/`:
 
 - `zenmux/openai/gpt-image-2` na-eji OpenAI Images API nke ZenMux. Nhọrọ gụnyere `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, na `response_format`.
-- Ndị mbipụta ndị ọzọ, dịka `zm/meta/muse-image-1.0`, na-eji endpoint `:predict` nke Vertex AI nke ZenMux.
-  `n` kwekọrọ na `sampleCount`, `aspect_ratio` kwekọrọ na `aspectRatio`, ebe `image_size`
-  (`1K`, `2K`, `4K`) kwekọrọ na `sampleImageSize`. `size` piksel na-enye naanị oke akụkụ,
-  ọ naghị ekwe nkwa nha piksel. Oke akụkụ, mkpebi onyonyo, na ọnụọgụ ndị akwadoro na-adịgasị iche dabere na model.
-- `zm/inclusionai/ming-image-0.1-design` na-ahọrọ nha nke ya. Wepụ `size`,
-  `aspect_ratio`, na `image_size`; itinye ụkpụrụ ndị a kpọmkwem ga-eweghachi HTTP 400. Enwere ike ịrịọ PNG, JPEG, na WebP
+- Ndị mbipụta ndị ọzọ, dịka `zm/meta/muse-image-1.0`, na-eji endpoint `:predict`
+  nke Vertex AI nke ZenMux. `n` na-adaba na `sampleCount`, `aspect_ratio` na `aspectRatio`, ebe `image_size`
+  (`1K`, `2K`, `4K`) na-adaba na `sampleImageSize`. `size` pikselụ na-enye naanị oke akụkụ,
+  ọ naghị ekwe nkwa nha pikselụ. Oke akụkụ, mkpebi onyonyo, na ọnụọgụ ndị a na-akwado na-adị iche dịka model si dị.
+- `zm/inclusionai/ming-image-0.1-design` na-ahọrọ nha nke ya. Ahapụla `size`,
+  `aspect_ratio`, na `image_size`; ụkpụrụ e nyere kpọmkwem ga-eweghachi HTTP 400. Enwere ike ịrịọ PNG, JPEG, na WebP
   site na `output_format`.
 
-Njikọta a na-akwado mmepụta onyonyo site na ederede, ọ bụghị ndezi onyonyo ntụaka. A na-ahazi
-mmepụta Vertex ka ọ bụrụ `data[].b64_json`; `response_format: "url"` na-eweghachi URL HTTPS
-upstream ma ọ bụ URL data base64 mgbe naanị bytes onyonyo dị. Mmepụta efu/e nyochachara
-na-eweghachi njehie kama ihe ịga nke ọma efu. Ịnweta model dabere na akaụntụ ZenMux.
+Njikọ a na-akwado imepụta onyonyo site na ederede, ọ bụghị idezi onyonyo ntụaka. A na-ahazi
+nsonaazụ Vertex ka ọ bụrụ `data[].b64_json`; `response_format: "url"` na-eweghachi URL HTTPS
+nke dị n'elu ma ọ bụ URL data base64 mgbe naanị bytes onyonyo dị. Nsonaazụ efu/azachapụrụ
+na-eweghachi mperi kama ihe ịga nke ọma efu. Ịnweta model dabere na akaụntụ ZenMux.
 Lee [Vertex API nke ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) na
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1106,6 +1106,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 nzere niile echekwara, ya mere ha chọrọ nnọkọ dashboard ma ọ bụ CLI mpaghara (ma ọ bụ ka agbanyụọ
 nbanye). Igodo API nke scope ọ bụla na token nnweta `oma_` na-enweta `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Mmekọrịta Cloud
 
 | Endpoint               | Usoro Dị Iche Iche | Nkọwa               |
@@ -1469,19 +1476,19 @@ Ndenye aha webhook ndị na-apụ apụ maka mmemme OmniRoute (mmecha arịrị�
 
 ---
 
-## Igodo Edebanyere Aha (Njikwa Akpaaka)
+## Igodo Ndị E Debanyere Aha (Nlekọta Akpaaka)
 
-Usoro nta nke njikwa igodo akpaaka na-eji nke a ewepụta ma gbanwee igodo API megide onye na-eweta ọrụ/akaụntụ ndabere, yana oke ojiji kwa ụbọchị/kwa awa.
+Usoro nta nke nlekọta igodo akpaaka na-eji nke a ewepụta ma na-agbanwe igodo API n'aka onye na-eweta ọrụ/akaụntụ ndabere, yana oke ojiji kwa ụbọchị/kwa elekere.
 
-| Usoro  | Ụzọ                                   | Nkọwa                                                                                                                                                                                                                                              |
-| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Depụta igodo ndị e debanyere aha (naanị nganiihu ezoro ezo)                                                                                                                                                                                        |
-| POST   | `/api/v1/registered-keys`             | Wepụta igodo ọhụrụ e debanyere aha — ahụ: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Na-eweghachi igodo ahụ n’ụdị mbụ ya **otu ugboro**. Na-eweghachi `429` ma ọ bụrụ na ajụrụ ya n’ihi oke ojiji. |
-| GET    | `/api/v1/registered-keys/[id]`        | Nweta metadata nke igodo e debanyere aha (enweghị igodo ahụ n’ụdị mbụ ya)                                                                                                                                                                          |
-| DELETE | `/api/v1/registered-keys/[id]`        | Kagbuo igodo e debanyere aha                                                                                                                                                                                                                       |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Ebe njedebe maka ịkagbu kpọmkwem (otu mmetụta ahụ dị ka DELETE)                                                                                                                                                                                    |
+| Usoro  | Ụzọ                                   | Nkọwa                                                                                                                                                                                                                                                       |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Depụta igodo ndị e debanyere aha (naanị nganiihu ezoro ezo)                                                                                                                                                                                                 |
+| POST   | `/api/v1/registered-keys`             | Wepụta igodo ọhụrụ e debanyere aha — ahụ: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Ọ na-eweghachi igodo ahụ n'ụdị mbụ ya **naanị otu ugboro**. Ọ na-eweghachi `429` ma ọ bụrụ na a jụ ya n'ihi oke ojiji. |
+| GET    | `/api/v1/registered-keys/[id]`        | Nweta metadata nke igodo e debanyere aha (enweghị ihe nzuzo mbụ nke igodo ahụ)                                                                                                                                                                              |
+| DELETE | `/api/v1/registered-keys/[id]`        | Kagbuo igodo e debanyere aha                                                                                                                                                                                                                                |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint maka ịkagbu n'ụzọ doro anya (otu mmetụta ahụ dị ka DELETE)                                                                                                                                                                                         |
 
-**Nyocha njirimara:** nnọkọ njikwa/igodo API (`requireManagementAuth`) — otu ihe nchebe ahụ dị ka `/api/keys`: nnọkọ dashboard, token CLI mpaghara, ma ọ bụ igodo API nwere ikike `manage`/`admin`; igodo API maka inference naanị na-enweta `403`. Hụkwa `/v1/quotas/check` na `/v1/issues/report`.
+**Nyocha ikike:** nnọkọ njikwa/igodo API (`requireManagementAuth`) — otu ihe nche ahụ dị ka `/api/keys`: nnọkọ dashboard, token CLI mpaghara, ma ọ bụ igodo API nwere scope `manage`/`admin`; igodo API ndị e ji naanị inference eme ihe na-enweta `403`. Hụkwa `/v1/quotas/check` na `/v1/issues/report`.
 
 ---
 

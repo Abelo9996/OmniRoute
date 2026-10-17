@@ -257,19 +257,19 @@ src/
 
 ## `open-sse/` — Spațiul de lucru al motorului de streaming
 
-Spațiu de lucru npm separat (`@omniroute/open-sse`). Gestionează procesarea cererilor și execuția furnizorilor.
+Spațiu de lucru npm separat (`@omniroute/open-sse`). Gestionează procesarea solicitărilor și execuția furnizorilor.
 
 ```
 open-sse/
-├── handlers/            # 16 fișiere (12 gestionari + 4 funcții auxiliare): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search etc.
-├── executors/           # 67 de executori specifici furnizorilor (extind BaseExecutor)
-├── translator/          # Convertoare de format (9 pentru cereri, 9 pentru răspunsuri, 9 funcții auxiliare)
+├── handlers/            # 16 fișiere (12 gestionare + 4 auxiliare): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search etc.
+├── executors/           # 150 de module de execuție (clase care extind BaseExecutor + module auxiliare pentru fiecare furnizor)
+├── translator/          # Convertoare de format (9 pentru solicitări, 9 pentru răspunsuri, 9 auxiliare)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ module de servicii (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM etc.)
-├── mcp-server/          # Server MCP (110 instrumente, 3 transporturi, 33 de domenii)
-├── config/              # Registre de furnizori/modele, configurarea anteturilor, aliasuri de modele
-├── utils/               # Client TLS, fetch/dispecer proxy, funcții auxiliare de rețea
-├── index.ts             # Punct de intrare al spațiului de lucru
+├── services/            # Peste ~80 de module de servicii (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM etc.)
+├── mcp-server/          # Server MCP (110 instrumente, 3 transporturi, 33 de domenii de acces)
+├── config/              # Registre de furnizori/modele, configurarea antetelor, aliasuri de modele
+├── utils/               # Client TLS, preluare/dispecer proxy, module auxiliare de rețea
+├── index.ts             # Punctul de intrare al spațiului de lucru
 ├── package.json         # Manifestul spațiului de lucru
 ├── tsconfig.json        # Configurația TS a spațiului de lucru
 └── types.d.ts           # Declarațiile de tipuri ale spațiului de lucru
@@ -281,15 +281,15 @@ open-sse/
 | --------------------------- | ---------------------------------------------------------------------------------------------- |
 | `server.ts`                 | Ciclul de viață al serverului MCP (transporturi stdio + HTTP)                                  |
 | `httpTransport.ts`          | Transporturi HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                         |
-| `audit.ts`                  | Jurnalizare de audit în tabelul `mcp_tool_audit`                                               |
-| `scopeEnforcement.ts`       | Validarea domeniului pentru fiecare instrument                                                 |
-| `runtimeHeartbeat.ts`       | Semnal periodic de stare către `DATA_DIR/runtime/mcp-heartbeat.json`                           |
+| `audit.ts`                  | Jurnalizarea auditului în tabelul `mcp_tool_audit`                                             |
+| `scopeEnforcement.ts`       | Validarea domeniului de acces pentru fiecare instrument                                        |
+| `runtimeHeartbeat.ts`       | Semnal periodic de stare în `DATA_DIR/runtime/mcp-heartbeat.json`                              |
 | `descriptionCompressor.ts`  | Comprimă metadatele descrierilor instrumentelor pentru a economisi context                     |
-| `schemas/tools.ts`          | 36 de definiții de bază ale instrumentelor + domenii                                           |
+| `schemas/tools.ts`          | 36 de definiții de bază ale instrumentelor + domenii de acces                                  |
 | `tools/advancedTools.ts`    | Implementări avansate ale instrumentelor                                                       |
 | `tools/memoryTools.ts`      | 3 instrumente de memorie (căutare/adăugare/ștergere)                                           |
 | `tools/skillTools.ts`       | 4 instrumente pentru abilități (listare/activare/executare/execuții)                           |
-| `tools/compressionTools.ts` | 5 instrumente de compresie                                                                     |
+| `tools/compressionTools.ts` | 5 instrumente de comprimare                                                                    |
 | `README.md`                 | README intern al serverului MCP (cu referință încrucișată din `docs/frameworks/MCP-SERVER.md`) |
 
 ---

@@ -295,38 +295,23 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "群山上空美丽的日落",
+  "prompt": "群山之上的美丽日落",
   "size": "1024x1024"
 }
 ```
 
-可用的提供者包括 OpenAI (GPT Image 2)、xAI (Grok Image)、Together AI (FLUX)、Fireworks AI、Nebius (FLUX)、Hyperbolic、NanoBanana、**OpenRouter**、**ZenMux**、SD WebUI（本地）、ComfyUI（本地）。
+可用提供者包括 OpenAI（GPT Image 2）、xAI（Grok Image）、Together AI（FLUX）、Fireworks AI、Nebius（FLUX）、Hyperbolic、NanoBanana、**OpenRouter**、**ZenMux**、SD WebUI（本地）、ComfyUI（本地）。
 
-`n` 会在 `data[]` 中返回 `n` 张图像。对于上游 API 每次调用返回一张图像的提供者
-（Black Forest Labs、Stability AI、Leonardo、Ideogram、Haiper、Hyperbolic、Magnific/Freepik、
-NVIDIA NIM、Cloudflare Workers AI），系统会分别向上游发起 `n` 次调用，最多同时执行 4 次。
-固定的 `seed` 会根据调用索引进行偏移（`seed`、`seed + 1`、……），因此图像各不相同，但仍可
-复现。`n` 的上限为 10。如果任何调用失败，则整个请求都会失败。扇出格式列表为
-`open-sse/handlers/imageGeneration/fanOut.ts` 中的
-`SINGLE_IMAGE_FANOUT_FORMATS`。
+`n` 会在 `data[]` 中返回 `n` 张图像。对于上游 API 每次调用仅返回一张图像的提供者（Black Forest Labs、Stability AI、Leonardo、Ideogram、Haiper、Hyperbolic、Magnific/Freepik、NVIDIA NIM、Cloudflare Workers AI），系统会发起 `n` 次独立的上游调用，最多同时执行 4 次。固定的 `seed` 会根据调用索引递增（`seed`、`seed + 1`、……），因此图像会有所不同，但仍可复现。`n` 的上限为 10。如果任何一次调用失败，则整个请求都会失败。扇出格式列表为
+`open-sse/handlers/imageGeneration/fanOut.ts` 中的 `SINGLE_IMAGE_FANOUT_FORMATS`。
 
 ZenMux 会复用现有的 API 密钥连接，并接受 `zenmux/` 或 `zm/` 前缀：
 
-- `zenmux/openai/gpt-image-2` 使用 ZenMux 的 OpenAI Images API。选项包括 `size`、
-  `quality`、`n`、`output_format`、`output_compression`、`background` 和 `response_format`。
-- 其他发布者（例如 `zm/meta/muse-image-1.0`）使用 ZenMux 的 Vertex AI `:predict`
-  端点。`n` 映射到 `sampleCount`，`aspect_ratio` 映射到 `aspectRatio`，而 `image_size`
-  （`1K`、`2K`、`4K`）映射到 `sampleImageSize`。像素 `size` 仅用于提供宽高比，
-  不保证像素尺寸。支持的比例、分辨率和数量因模型而异。
-- `zm/inclusionai/ming-image-0.1-design` 会自行选择尺寸。请省略 `size`、
-  `aspect_ratio` 和 `image_size`；提供显式值会返回 HTTP 400。可以使用 `output_format`
-  请求 PNG、JPEG 和 WebP 格式。
+- `zenmux/openai/gpt-image-2` 使用 ZenMux 的 OpenAI Images API。选项包括 `size`、`quality`、`n`、`output_format`、`output_compression`、`background` 和 `response_format`。
+- 其他发布商（例如 `zm/meta/muse-image-1.0`）使用 ZenMux 的 Vertex AI `:predict` 端点。`n` 映射到 `sampleCount`，`aspect_ratio` 映射到 `aspectRatio`，`image_size`（`1K`、`2K`、`4K`）映射到 `sampleImageSize`。以像素表示的 `size` 仅用于提供宽高比，不保证具体的像素尺寸。支持的宽高比、分辨率和数量因模型而异。
+- `zm/inclusionai/ming-image-0.1-design` 会自行选择尺寸。请省略 `size`、`aspect_ratio` 和 `image_size`；显式指定这些值会返回 HTTP 400。可通过 `output_format` 请求 PNG、JPEG 和 WebP 格式。
 
-此集成支持文生图，不支持参考图像编辑。Vertex
-输出会被规范化为 `data[].b64_json`；当只有图像字节可用时，`response_format: "url"` 会返回上游
-HTTPS URL 或 base64 数据 URL。空输出或被过滤的输出会返回错误，而不是返回内容为空的成功响应。
-模型访问权限取决于 ZenMux 账户。请参阅 [ZenMux 的 Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) 和
-[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image)。
+此集成支持文生图，不支持参考图像编辑。Vertex 输出会被规范化为 `data[].b64_json`；当 `response_format: "url"` 时，将返回上游 HTTPS URL；如果仅有图像字节可用，则返回 base64 数据 URL。对于空输出或被过滤的输出，系统会返回错误，而不是返回内容为空的成功响应。模型访问权限取决于 ZenMux 账户。请参阅 [ZenMux 的 Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) 和 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image)。
 
 ```bash
 # 列出所有图像模型
@@ -1073,6 +1058,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 所有已存储的凭据，因此它们需要仪表板会话或本地 CLI（或者禁用登录）。
 任何作用域的 API 密钥和 `oma_` 访问令牌都会收到 `403`。
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### 云同步
 
 | 端点                   | 方法 | 描述       |
@@ -1344,7 +1336,7 @@ Content-Type: application/json
 }
 ```
 
-> **Schema 说明** (`setBudgetSchema`)：`apiKeyId` 为必填项；`dailyLimitUsd`、`weeklyLimitUsd` 或 `monthlyLimitUsd` 中至少有一个必须大于零。可选字段：`warningThreshold`（0–1）、`resetInterval`（`daily` | `weekly` | `monthly`）、`resetTime`（`HH:MM`）。旧版 `{keyId, limit, period}` 格式会返回 `400 Bad Request`。
+> **架构说明** (`setBudgetSchema`)：`apiKeyId` 为必填项；`dailyLimitUsd`、`weeklyLimitUsd` 或 `monthlyLimitUsd` 中至少有一个必须大于零。可选字段：`warningThreshold`（0–1）、`resetInterval`（`daily` | `weekly` | `monthly`）、`resetTime`（`HH:MM`）。旧版 `{keyId, limit, period}` 格式会返回 `400 Bad Request`。
 
 ## Token 限制
 
@@ -1423,19 +1415,19 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ---
 
-## 已注册密钥（自动管理）
+## 注册密钥（自动管理）
 
-由自动密钥管理子系统使用，用于针对后端提供者/账户签发和轮换 API 密钥，并设置每日/每小时配额。
+由自动密钥管理子系统使用，通过后端提供者/账户签发和轮换 API 密钥，并设置每日/每小时配额。
 
-| 方法   | 路径                                  | 说明                                                                                                                                                                       |
+| 方法   | 路径                                  | 描述                                                                                                                                                                       |
 | ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | 列出已注册的密钥（仅显示脱敏后的前缀）                                                                                                                                     |
-| POST   | `/api/v1/registered-keys`             | 签发新的已注册密钥 — 请求体：`{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`。原始密钥仅返回**一次**。因配额而拒绝时返回 `429`。 |
-| GET    | `/api/v1/registered-keys/[id]`        | 获取已注册密钥的元数据（不包含原始密钥内容）                                                                                                                               |
-| DELETE | `/api/v1/registered-keys/[id]`        | 吊销已注册密钥                                                                                                                                                             |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | 显式吊销端点（效果与 DELETE 相同）                                                                                                                                         |
+| GET    | `/api/v1/registered-keys`             | 列出已注册的密钥（仅显示经过掩码处理的前缀）                                                                                                                               |
+| POST   | `/api/v1/registered-keys`             | 签发新的注册密钥 — 请求体：`{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`。原始密钥**仅返回一次**。因配额而被拒绝时返回 `429`。 |
+| GET    | `/api/v1/registered-keys/[id]`        | 获取注册密钥的元数据（不包含原始密钥内容）                                                                                                                                 |
+| DELETE | `/api/v1/registered-keys/[id]`        | 撤销注册密钥                                                                                                                                                               |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | 显式撤销端点（效果与 DELETE 相同）                                                                                                                                         |
 
-**身份验证：** 管理会话/API 密钥（`requireManagementAuth`）— 使用与 `/api/keys` 相同的保护机制：控制面板会话、本地 CLI 令牌，或具有 `manage`/`admin` 作用域的 API 密钥；仅限推理的 API 密钥将收到 `403`。另请参阅 `/v1/quotas/check` 和 `/v1/issues/report`。
+**身份验证：**管理会话/API 密钥（`requireManagementAuth`）— 使用与 `/api/keys` 相同的守卫：仪表板会话、本地 CLI 令牌，或具有 `manage`/`admin` 作用域的 API 密钥；仅限推理的 API 密钥会收到 `403`。另请参阅 `/v1/quotas/check` 和 `/v1/issues/report`。
 
 ---
 

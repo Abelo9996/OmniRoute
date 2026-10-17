@@ -317,10 +317,10 @@ Les fournisseurs disponibles incluent OpenAI (GPT Image 2), xAI (Grok Image), To
 
 `n` renvoie `n` images dans `data[]`. Pour les fournisseurs dont l’API en amont renvoie une image par appel
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), `n` appels distincts sont effectués en amont, avec au maximum 4 appels simultanés. Une
-`seed` fixe est décalée selon l’indice de l’appel (`seed`, `seed + 1`, …), afin que les images soient différentes tout en restant
-reproductibles. `n` est plafonné à 10. La requête entière échoue si l’un des appels échoue. La liste
-des formats répartis en plusieurs appels est définie par `SINGLE_IMAGE_FANOUT_FORMATS` dans
+NVIDIA NIM, Cloudflare Workers AI), `n` appels distincts sont effectués en amont, avec au plus 4 appels simultanés. Une
+`seed` fixe est décalée selon l’index de l’appel (`seed`, `seed + 1`, …), afin que les images soient différentes tout en restant
+reproductibles. `n` est plafonné à 10. La requête échoue dans son intégralité si l’un des appels échoue. La liste
+des formats de distribution est définie dans `SINGLE_IMAGE_FANOUT_FORMATS` dans
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux réutilise la connexion par clé d’API existante et accepte les préfixes `zenmux/` ou `zm/` :
@@ -329,21 +329,21 @@ ZenMux réutilise la connexion par clé d’API existante et accepte les préfix
   `quality`, `n`, `output_format`, `output_compression`, `background` et `response_format`.
 - Les autres éditeurs, tels que `zm/meta/muse-image-1.0`, utilisent le point de terminaison `:predict`
   de Vertex AI de ZenMux. `n` correspond à `sampleCount`, `aspect_ratio` à `aspectRatio` et `image_size`
-  (`1K`, `2K`, `4K`) à `sampleImageSize`. Une valeur `size` en pixels fournit uniquement un format d’image,
-  sans garantir les dimensions en pixels. Les formats, résolutions et nombres pris en charge varient selon le modèle.
+  (`1K`, `2K`, `4K`) à `sampleImageSize`. Une valeur `size` en pixels fournit uniquement un rapport d’aspect,
+  sans garantir les dimensions en pixels. Les rapports, résolutions et nombres pris en charge varient selon le modèle.
 - `zm/inclusionai/ming-image-0.1-design` choisit ses propres dimensions. Omettez `size`,
   `aspect_ratio` et `image_size` ; des valeurs explicites renvoient une erreur HTTP 400. Les formats PNG, JPEG et WebP
   peuvent être demandés avec `output_format`.
 
-Cette intégration prend en charge la génération de texte en image, mais pas la modification d’images de référence. La sortie de Vertex
-est normalisée dans `data[].b64_json` ; `response_format: "url"` renvoie une URL HTTPS en amont
-ou une URL de données en base64 lorsque seuls les octets de l’image sont disponibles. Les sorties vides/filtrées
+Cette intégration prend en charge la génération de texte en image, mais pas la retouche à partir d’une image de référence. La sortie
+Vertex est normalisée dans `data[].b64_json` ; `response_format: "url"` renvoie une URL HTTPS provenant du service en amont
+ou une URL de données en base64 lorsque seuls les octets de l’image sont disponibles. Les sorties vides ou filtrées
 renvoient une erreur plutôt qu’un succès vide. L’accès aux modèles dépend du compte ZenMux.
 Consultez [l’API Vertex de ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) et
 [l’API OpenAI Images](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Répertorier tous les modèles d’image
+# Répertorier tous les modèles d’images
 GET /v1/images/generations
 ```
 
@@ -1098,6 +1098,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 tous les identifiants stockés ; ils nécessitent donc la session du tableau de bord ou la CLI locale (ou que la connexion
 soit désactivée). Les clés d’API, quelle que soit leur portée, et les jetons d’accès `oma_` reçoivent une réponse `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Synchronisation avec le cloud
 
 | Point de terminaison   | Méthode | Description                         |
@@ -1468,11 +1475,11 @@ Utilisées par le sous-système de gestion automatique des clés pour émettre e
 | ------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | GET     | `/api/v1/registered-keys`             | Répertorier les clés enregistrées (préfixe masqué uniquement)                                                                                                                                                                  |
 | POST    | `/api/v1/registered-keys`             | Émettre une nouvelle clé enregistrée — corps : `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Renvoie la clé brute **une seule fois**. Renvoie `429` en cas de refus lié au quota. |
-| GET     | `/api/v1/registered-keys/[id]`        | Récupérer les métadonnées d’une clé enregistrée (sans données brutes)                                                                                                                                                          |
+| GET     | `/api/v1/registered-keys/[id]`        | Récupérer les métadonnées d’une clé enregistrée (sans la clé brute)                                                                                                                                                            |
 | DELETE  | `/api/v1/registered-keys/[id]`        | Révoquer une clé enregistrée                                                                                                                                                                                                   |
 | POST    | `/api/v1/registered-keys/[id]/revoke` | Point de terminaison de révocation explicite (même effet que DELETE)                                                                                                                                                           |
 
-**Authentification :** session/clé API de gestion (`requireManagementAuth`) — le même mécanisme de contrôle que pour `/api/keys` : une session du tableau de bord, le jeton CLI local ou une clé API avec une portée `manage`/`admin` ; les clés API réservées à l’inférence reçoivent une réponse `403`. Voir également `/v1/quotas/check` et `/v1/issues/report`.
+**Authentification :** session/clé API de gestion (`requireManagementAuth`) — le même contrôle d’accès que pour `/api/keys` : une session du tableau de bord, le jeton CLI local ou une clé API avec la portée `manage`/`admin` ; les clés API limitées à l’inférence reçoivent une réponse `403`. Voir également `/v1/quotas/check` et `/v1/issues/report`.
 
 ---
 

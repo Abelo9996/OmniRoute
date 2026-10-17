@@ -257,17 +257,17 @@ src/
 
 ## `open-sse/` — Ebe Ọrụ Injin Nkwanye Data
 
-Ebe ọrụ npm dị iche (`@omniroute/open-sse`). Ọ na-ahụ maka nhazi arịrịọ + mmejuputa onye na-eweta ọrụ.
+Ebe ọrụ npm dị iche (`@omniroute/open-sse`). Ọ na-ahụ maka nhazi arịrịọ + mmejuputa nke ndị na-eweta ọrụ.
 
 ```
 open-sse/
-├── handlers/            # Faịlụ 16 (ndị njikwa 12 + ndị enyemaka 4): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, wdg.
-├── executors/           # Ndị mmejuputa 67 akọwapụtara maka onye na-eweta ọrụ (na-agbatị BaseExecutor)
+├── handlers/            # Faịlụ 16 (ndị njikwa 12 + ndị enyemaka 4): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, dgz.
+├── executors/           # Modul mmejuputa 150 (klaasị ndị na-agbatị BaseExecutor + ndị enyemaka maka onye na-eweta ọrụ ọ bụla)
 ├── translator/          # Ndị ntụgharị usoro (arịrịọ 9, nzaghachi 9, ndị enyemaka 9)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ modul ọrụ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, wdg.)
-├── mcp-server/          # Sava MCP (ngwaọrụ 110, ụzọ mbufe 3, oke ikike 33)
-├── config/              # Ndebanye ndị na-eweta ọrụ/ụdị, nhazi nkụnyeisi, aha ọzọ nke ụdị
+├── services/            # ~80+ modul ọrụ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, dgz.)
+├── mcp-server/          # Sava MCP (ngwaọrụ 110, ụzọ mbufe 3, ókè ikike 33)
+├── config/              # Ndebanye ndị na-eweta ọrụ/ụdị, nhazi nkụnye-isi, aha nnọchi ụdị
 ├── utils/               # Klayent TLS, proxy fetch/dispatcher, ndị enyemaka netwọkụ
 ├── index.ts             # Ebe mbata ebe ọrụ
 ├── package.json         # Nkọwapụta ebe ọrụ
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Ụzọ                         | Ebumnuche                                                                     |
-| --------------------------- | ----------------------------------------------------------------------------- |
-| `server.ts`                 | Usoro ndụ sava MCP (ụzọ mbufe stdio + HTTP)                                   |
-| `httpTransport.ts`          | Ụzọ mbufe HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)           |
-| `audit.ts`                  | Ide ndekọ nyocha n'ime tebụl `mcp_tool_audit`                                 |
-| `scopeEnforcement.ts`       | Nkwado nkwado oke ikike maka ngwa ọrụ ọ bụla                                  |
-| `runtimeHeartbeat.ts`       | Mkpụrụobi ọnọdụ ahụike gaa na `DATA_DIR/runtime/mcp-heartbeat.json`           |
-| `descriptionCompressor.ts`  | Mkpakọ metadata nkọwa ngwa ọrụ iji chekwaa ọnọdụ                              |
-| `schemas/tools.ts`          | Nkọwa ngwa ọrụ ntọala 36 + oke ikike                                          |
-| `tools/advancedTools.ts`    | Mmejuputa ngwa ọrụ ndị dị elu                                                 |
-| `tools/memoryTools.ts`      | Ngwa ọrụ ebe nchekwa 3 (chọọ/tinye/hichapụ)                                   |
-| `tools/skillTools.ts`       | Ngwa ọrụ nka 4 (depụta/mee ka ọ rụọ ọrụ/mee/ọrụ ndị e mere)                   |
-| `tools/compressionTools.ts` | Ngwa ọrụ mkpakọ 5                                                             |
-| `README.md`                 | README sava MCP nke ime (e jikọrọ ya site na `docs/frameworks/MCP-SERVER.md`) |
+| Ụzọ                         | Ebumnuche                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| `server.ts`                 | Usoro ndụ sava MCP (ụzọ mbufe stdio + HTTP)                                    |
+| `httpTransport.ts`          | Ụzọ mbufe HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)            |
+| `audit.ts`                  | Ide ndekọ nyocha na tebụl `mcp_tool_audit`                                     |
+| `scopeEnforcement.ts`       | Nnyocha ókè ikike maka ngwaọrụ ọ bụla                                          |
+| `runtimeHeartbeat.ts`       | Mkpụrụobi ahụike na `DATA_DIR/runtime/mcp-heartbeat.json`                      |
+| `descriptionCompressor.ts`  | Na-apịakọta metadata nkọwa ngwaọrụ iji chekwaa ọnọdụ                           |
+| `schemas/tools.ts`          | Nkọwapụta ngwaọrụ ntọala 36 + ókè ikike                                        |
+| `tools/advancedTools.ts`    | Mmejuputa ngwaọrụ dị elu                                                       |
+| `tools/memoryTools.ts`      | Ngwaọrụ ebe nchekwa 3 (ịchọ/ịgbakwunye/ihichapụ)                               |
+| `tools/skillTools.ts`       | Ngwaọrụ nka 4 (ndepụta/ịgbalite/imezu/mmezu)                                   |
+| `tools/compressionTools.ts` | Ngwaọrụ mkpakọ 5                                                               |
+| `README.md`                 | README ime nke sava MCP (ejikọtara ya site na `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

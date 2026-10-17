@@ -295,35 +295,35 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Một cảnh hoàng hôn tuyệt đẹp trên núi",
+  "prompt": "Cảnh hoàng hôn tuyệt đẹp trên những ngọn núi",
   "size": "1024x1024"
 }
 ```
 
 Các nhà cung cấp khả dụng bao gồm OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (cục bộ), ComfyUI (cục bộ).
 
-`n` trả về `n` hình ảnh trong `data[]`. Với các nhà cung cấp có API nguồn trả về một hình ảnh cho mỗi lần gọi
+`n` trả về `n` hình ảnh trong `data[]`. Đối với các nhà cung cấp có API thượng nguồn trả về một hình ảnh cho mỗi lần gọi
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), hệ thống sẽ thực hiện `n` lệnh gọi riêng biệt đến API nguồn, với tối đa 4 lệnh gọi đồng thời. Một
-`seed` cố định được tăng theo chỉ số lệnh gọi (`seed`, `seed + 1`, …), nhờ đó các hình ảnh khác nhau nhưng vẫn có thể
-tái tạo. `n` được giới hạn tối đa là 10. Toàn bộ yêu cầu sẽ thất bại nếu bất kỳ lệnh gọi nào thất bại. Danh sách
-các định dạng fan-out là `SINGLE_IMAGE_FANOUT_FORMATS` trong
+NVIDIA NIM, Cloudflare Workers AI), hệ thống thực hiện `n` lệnh gọi thượng nguồn riêng biệt, với tối đa 4 lệnh gọi đồng thời. Một
+`seed` cố định được tăng theo chỉ số lệnh gọi (`seed`, `seed + 1`, …), vì vậy các hình ảnh sẽ khác nhau nhưng vẫn
+có thể tái tạo. `n` được giới hạn tối đa là 10. Toàn bộ yêu cầu sẽ thất bại nếu bất kỳ lệnh gọi nào thất bại. Danh sách
+các định dạng phân tách lệnh gọi là `SINGLE_IMAGE_FANOUT_FORMATS` trong
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux tái sử dụng kết nối khóa API hiện có và chấp nhận các tiền tố `zenmux/` hoặc `zm/`:
+ZenMux tái sử dụng kết nối khóa API hiện có và chấp nhận tiền tố `zenmux/` hoặc `zm/`:
 
 - `zenmux/openai/gpt-image-2` sử dụng OpenAI Images API của ZenMux. Các tùy chọn bao gồm `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` và `response_format`.
-- Các nhà phát hành khác, chẳng hạn như `zm/meta/muse-image-1.0`, sử dụng endpoint `:predict`
-  của Vertex AI từ ZenMux. `n` ánh xạ tới `sampleCount`, `aspect_ratio` tới `aspectRatio`, và `image_size`
-  (`1K`, `2K`, `4K`) tới `sampleImageSize`. Giá trị `size` theo pixel chỉ cung cấp tỷ lệ khung hình,
-  không đảm bảo kích thước pixel. Tỷ lệ, độ phân giải và số lượng được hỗ trợ sẽ khác nhau tùy theo mô hình.
+- Các nhà phát hành khác, chẳng hạn như `zm/meta/muse-image-1.0`, sử dụng điểm cuối `:predict`
+  của Vertex AI trên ZenMux. `n` ánh xạ tới `sampleCount`, `aspect_ratio` tới `aspectRatio` và `image_size`
+  (`1K`, `2K`, `4K`) tới `sampleImageSize`. `size` tính bằng pixel chỉ cung cấp tỷ lệ khung hình,
+  không đảm bảo kích thước pixel. Các tỷ lệ, độ phân giải và số lượng được hỗ trợ khác nhau tùy theo mô hình.
 - `zm/inclusionai/ming-image-0.1-design` tự chọn kích thước. Hãy bỏ qua `size`,
-  `aspect_ratio` và `image_size`; việc chỉ định rõ các giá trị này sẽ trả về HTTP 400. Có thể yêu cầu định dạng PNG, JPEG và WebP
+  `aspect_ratio` và `image_size`; các giá trị được chỉ định rõ ràng sẽ trả về HTTP 400. Có thể yêu cầu định dạng PNG, JPEG và WebP
   bằng `output_format`.
 
 Tích hợp này hỗ trợ tạo hình ảnh từ văn bản, không hỗ trợ chỉnh sửa hình ảnh tham chiếu. Đầu ra của Vertex
-được chuẩn hóa thành `data[].b64_json`; `response_format: "url"` trả về một URL HTTPS từ nguồn
+được chuẩn hóa thành `data[].b64_json`; `response_format: "url"` trả về một URL HTTPS từ thượng nguồn
 hoặc URL dữ liệu base64 khi chỉ có dữ liệu byte của hình ảnh. Đầu ra trống/bị lọc
 sẽ trả về lỗi thay vì phản hồi thành công nhưng trống. Quyền truy cập mô hình phụ thuộc vào tài khoản ZenMux.
 Xem [Vertex API của ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) và
@@ -1460,17 +1460,17 @@ Các combo định tuyến cấp cao hơn (đã được tóm tắt trong `/api/
 
 ## Khóa đã đăng ký (Tự động quản lý)
 
-Được hệ thống con tự động quản lý khóa sử dụng để cấp và luân phiên khóa API thông qua nhà cung cấp/tài khoản nền, với hạn ngạch hằng ngày/hằng giờ.
+Được hệ thống con tự động quản lý khóa sử dụng để cấp và luân chuyển khóa API với nhà cung cấp/tài khoản nền, áp dụng hạn ngạch theo ngày/giờ.
 
 | Phương thức | Đường dẫn                             | Mô tả                                                                                                                                                                                                             |
 | ----------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET         | `/api/v1/registered-keys`             | Liệt kê các khóa đã đăng ký (chỉ hiển thị tiền tố đã che)                                                                                                                                                         |
 | POST        | `/api/v1/registered-keys`             | Cấp khóa đã đăng ký mới — nội dung yêu cầu: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Chỉ trả về khóa thô **một lần**. Trả về `429` khi bị từ chối do hạn ngạch. |
-| GET         | `/api/v1/registered-keys/[id]`        | Truy xuất siêu dữ liệu của khóa đã đăng ký (không có dữ liệu khóa thô)                                                                                                                                            |
+| GET         | `/api/v1/registered-keys/[id]`        | Truy xuất siêu dữ liệu của khóa đã đăng ký (không bao gồm khóa thô)                                                                                                                                               |
 | DELETE      | `/api/v1/registered-keys/[id]`        | Thu hồi khóa đã đăng ký                                                                                                                                                                                           |
-| POST        | `/api/v1/registered-keys/[id]/revoke` | Điểm cuối thu hồi tường minh (có tác dụng tương tự DELETE)                                                                                                                                                        |
+| POST        | `/api/v1/registered-keys/[id]/revoke` | Điểm cuối thu hồi rõ ràng (có tác dụng tương tự DELETE)                                                                                                                                                           |
 
-**Xác thực:** phiên quản lý/khóa API (`requireManagementAuth`) — cơ chế bảo vệ giống như `/api/keys`: phiên bảng điều khiển, token CLI cục bộ hoặc khóa API có phạm vi `manage`/`admin`; các khóa API chỉ dành cho suy luận sẽ nhận mã `403`. Xem thêm `/v1/quotas/check` và `/v1/issues/report`.
+**Xác thực:** phiên quản lý/khóa API (`requireManagementAuth`) — cùng cơ chế bảo vệ như `/api/keys`: phiên bảng điều khiển, token CLI cục bộ hoặc khóa API có phạm vi `manage`/`admin`; khóa API chỉ dành cho suy luận sẽ nhận mã `403`. Xem thêm `/v1/quotas/check` và `/v1/issues/report`.
 
 ---
 

@@ -312,42 +312,42 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "Krásný západ slunce nad horami",
   "size": "1024x1024"
 }
 ```
 
 Mezi dostupné poskytovatele patří OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokální), ComfyUI (lokální).
 
-`n` vrací `n` obrázků v `data[]`. U poskytovatelů, jejichž upstream API vrací jeden obrázek na jedno volání
+`n` vrátí `n` obrázků v poli `data[]`. U poskytovatelů, jejichž upstream API vrací jeden obrázek na jedno volání
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), se provede `n` samostatných upstream volání, přičemž souběžně mohou probíhat nejvýše 4. Pevná
-hodnota `seed` se posouvá podle indexu volání (`seed`, `seed + 1`, …), takže se obrázky liší, ale zůstávají
-reprodukovatelné. Hodnota `n` je omezena na 10. Pokud některé volání selže, selže celý požadavek. Seznam
-formátů s rozvětveným voláním je `SINGLE_IMAGE_FANOUT_FORMATS` v
+NVIDIA NIM, Cloudflare Workers AI), se provede `n` samostatných upstream volání, přičemž souběžně probíhají nejvýše 4. Pevně zadaná
+hodnota `seed` se posune o index volání (`seed`, `seed + 1`, …), takže se obrázky liší, ale zůstávají
+reprodukovatelné. Hodnota `n` je omezena na 10. Pokud kterékoli volání selže, selže celý požadavek. Seznam
+formátů s rozdělením do více volání je uveden v `SINGLE_IMAGE_FANOUT_FORMATS` v souboru
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux opětovně používá existující připojení s API klíčem a přijímá prefixy `zenmux/` nebo `zm/`:
+ZenMux znovu používá existující připojení s API klíčem a přijímá předpony `zenmux/` nebo `zm/`:
 
 - `zenmux/openai/gpt-image-2` používá OpenAI Images API služby ZenMux. Mezi možnosti patří `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` a `response_format`.
-- Ostatní vydavatelé, například `zm/meta/muse-image-1.0`, používají endpoint `:predict`
-  služby Vertex AI od ZenMux. `n` se mapuje na `sampleCount`, `aspect_ratio` na `aspectRatio` a `image_size`
+- Ostatní poskytovatelé, například `zm/meta/muse-image-1.0`, používají endpoint Vertex AI `:predict`
+  služby ZenMux. `n` se mapuje na `sampleCount`, `aspect_ratio` na `aspectRatio` a `image_size`
   (`1K`, `2K`, `4K`) na `sampleImageSize`. Hodnota `size` v pixelech určuje pouze poměr stran,
   nikoli zaručené rozměry v pixelech. Podporované poměry stran, rozlišení a počty se liší podle modelu.
-- `zm/inclusionai/ming-image-0.1-design` volí vlastní rozměry. Vynechejte `size`,
-  `aspect_ratio` a `image_size`; explicitní hodnoty vrátí HTTP 400. Formáty PNG, JPEG a WebP
+- `zm/inclusionai/ming-image-0.1-design` si volí vlastní rozměry. Vynechejte `size`,
+  `aspect_ratio` a `image_size`; explicitní hodnoty způsobí vrácení HTTP 400. Formáty PNG, JPEG a WebP
   lze vyžádat pomocí `output_format`.
 
-Tato integrace podporuje generování obrázků z textu, nikoli úpravy referenčních obrázků. Výstup služby Vertex
-je normalizován do `data[].b64_json`; `response_format: "url"` vrací upstream
-HTTPS URL nebo datovou URL ve formátu base64, pokud jsou k dispozici pouze obrazová data. Prázdné či odfiltrované výstupy
+Tato integrace podporuje generování obrázků z textu, nikoli úpravy referenčních obrázků. Výstup Vertexu
+je normalizován do `data[].b64_json`; `response_format: "url"` vrátí upstream
+HTTPS URL nebo datovou URL s base64, pokud jsou k dispozici pouze bajty obrázku. Prázdné nebo odfiltrované výstupy
 vrátí chybu namísto prázdné úspěšné odpovědi. Přístup k modelům závisí na účtu ZenMux.
 Viz [Vertex API služby ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) a
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Vypsat všechny modely obrázků
+# Vypsat všechny modely pro obrázky
 GET /v1/images/generations
 ```
 
@@ -1125,6 +1125,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 všechny uložené přihlašovací údaje, proto vyžadují relaci řídicího panelu nebo místní CLI (případně
 vypnuté přihlašování). API klíče libovolného rozsahu a přístupové tokeny `oma_` obdrží `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Cloudová synchronizace
 
 | Endpoint               | Metoda | Popis                          |
@@ -1491,17 +1498,17 @@ Odběry odchozích webhooků pro události OmniRoute (dokončení požadavku, vy
 
 ## Registrované klíče (automatická správa)
 
-Používá subsystém automatické správy klíčů k vydávání a rotaci API klíčů u poskytovatele/účtu na pozadí s denními/hodinovými kvótami.
+Podsystém automatické správy klíčů je používá k vydávání a obměně API klíčů u poskytovatele/účtu na pozadí s denními/hodinovými kvótami.
 
 | Metoda | Cesta                                 | Popis                                                                                                                                                                                                           |
 | ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/api/v1/registered-keys`             | Vypíše registrované klíče (pouze maskovaný prefix)                                                                                                                                                              |
-| POST   | `/api/v1/registered-keys`             | Vydá nový registrovaný klíč — tělo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Nezpracovaný klíč vrátí **pouze jednou**. Při odmítnutí kvůli kvótě vrátí `429`. |
+| POST   | `/api/v1/registered-keys`             | Vydá nový registrovaný klíč — tělo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Nezpracovaný klíč vrátí **pouze jednou**. Při zamítnutí kvůli kvótě vrátí `429`. |
 | GET    | `/api/v1/registered-keys/[id]`        | Načte metadata registrovaného klíče (bez nezpracovaného klíče)                                                                                                                                                  |
 | DELETE | `/api/v1/registered-keys/[id]`        | Zneplatní registrovaný klíč                                                                                                                                                                                     |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | Explicitní koncový bod pro zneplatnění (stejný účinek jako DELETE)                                                                                                                                              |
 
-**Ověření:** relace pro správu/API klíč (`requireManagementAuth`) — stejná ochrana jako u `/api/keys`: relace řídicího panelu, místní token CLI nebo API klíč s rozsahem `manage`/`admin`; API klíče určené pouze pro inferenci obdrží `403`. Viz také `/v1/quotas/check` a `/v1/issues/report`.
+**Ověření:** relace pro správu/API klíč (`requireManagementAuth`) — stejná ochrana jako u `/api/keys`: relace ovládacího panelu, lokální token CLI nebo API klíč s rozsahem `manage`/`admin`; API klíče určené pouze pro inferenci obdrží `403`. Viz také `/v1/quotas/check` a `/v1/issues/report`.
 
 ---
 

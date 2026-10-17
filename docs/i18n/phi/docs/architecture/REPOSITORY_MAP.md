@@ -262,35 +262,35 @@ Hiwalay na npm workspace (`@omniroute/open-sse`). Pinangangasiwaan ang pagproses
 ```
 open-sse/
 ├── handlers/            # 16 na file (12 handler + 4 helper): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, atbp.
-├── executors/           # 67 executor na partikular sa provider (nag-e-extend sa BaseExecutor)
+├── executors/           # 150 executor module (mga class na nag-e-extend sa BaseExecutor + mga helper para sa bawat provider)
 ├── translator/          # Mga converter ng format (9 request, 9 response, 9 helper)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ module ng serbisyo (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, atbp.)
+├── services/            # ~80+ service module (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, atbp.)
 ├── mcp-server/          # MCP server (110 tool, 3 transport, 33 scope)
-├── config/              # Mga registry ng provider/model, config ng header, mga alias ng model
-├── utils/               # TLS client, proxy fetch/dispatcher, mga helper ng network
+├── config/              # Mga registry ng provider/model, configuration ng header, mga alias ng model
+├── utils/               # TLS client, proxy fetch/dispatcher, mga network helper
 ├── index.ts             # Entry ng workspace
 ├── package.json         # Manifest ng workspace
-├── tsconfig.json        # TS config ng workspace
+├── tsconfig.json        # TS configuration ng workspace
 └── types.d.ts           # Mga deklarasyon ng type ng workspace
 ```
 
 ### `open-sse/mcp-server/`
 
-| Path                        | Layunin                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------------------ |
-| `server.ts`                 | Lifecycle ng MCP server (stdio + mga HTTP transport)                                       |
-| `httpTransport.ts`          | HTTP Streamable + mga SSE transport (`/api/mcp/sse`, `/api/mcp/stream`)                    |
-| `audit.ts`                  | Pag-log ng audit sa table na `mcp_tool_audit`                                              |
-| `scopeEnforcement.ts`       | Pag-validate ng scope para sa bawat tool                                                   |
-| `runtimeHeartbeat.ts`       | Heartbeat ng kalusugan sa `DATA_DIR/runtime/mcp-heartbeat.json`                            |
-| `descriptionCompressor.ts`  | Kino-compress ang metadata ng paglalarawan ng tool upang makatipid ng context              |
-| `schemas/tools.ts`          | 36 na batayang depinisyon ng tool + mga scope                                              |
-| `tools/advancedTools.ts`    | Mga advanced na implementasyon ng tool                                                     |
-| `tools/memoryTools.ts`      | 3 memory tool (search/add/clear)                                                           |
-| `tools/skillTools.ts`       | 4 skill tool (list/enable/execute/executions)                                              |
-| `tools/compressionTools.ts` | 5 compression tool                                                                         |
-| `README.md`                 | Internal na README ng MCP server (naka-cross-link mula sa `docs/frameworks/MCP-SERVER.md`) |
+| Path                        | Layunin                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------- |
+| `server.ts`                 | Lifecycle ng MCP server (stdio + HTTP transport)                                          |
+| `httpTransport.ts`          | HTTP Streamable + SSE transport (`/api/mcp/sse`, `/api/mcp/stream`)                       |
+| `audit.ts`                  | Pag-log ng audit sa table na `mcp_tool_audit`                                             |
+| `scopeEnforcement.ts`       | Pagpapatunay ng scope para sa bawat tool                                                  |
+| `runtimeHeartbeat.ts`       | Heartbeat ng kalagayan sa `DATA_DIR/runtime/mcp-heartbeat.json`                           |
+| `descriptionCompressor.ts`  | Kino-compress ang metadata ng paglalarawan ng tool upang makatipid ng context             |
+| `schemas/tools.ts`          | 36 na batayang depinisyon ng tool + mga scope                                             |
+| `tools/advancedTools.ts`    | Mga advanced na implementasyon ng tool                                                    |
+| `tools/memoryTools.ts`      | 3 memory tool (search/add/clear)                                                          |
+| `tools/skillTools.ts`       | 4 skill tool (list/enable/execute/executions)                                             |
+| `tools/compressionTools.ts` | 5 compression tool                                                                        |
+| `README.md`                 | Panloob na README ng MCP server (naka-cross-link mula sa `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

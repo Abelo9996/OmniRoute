@@ -257,15 +257,15 @@ src/
 
 ## `open-sse/` — স্ট্রিমিং ইঞ্জিন ওয়ার্কস্পেস
 
-পৃথক npm ওয়ার্কস্পেস (`@omniroute/open-sse`)। রিকোয়েস্ট প্রক্রিয়াকরণ + প্রোভাইডার এক্সিকিউশন পরিচালনা করে।
+পৃথক npm ওয়ার্কস্পেস (`@omniroute/open-sse`)। অনুরোধ প্রক্রিয়াকরণ + প্রোভাইডার এক্সিকিউশন পরিচালনা করে।
 
 ```
 open-sse/
-├── handlers/            # ১৬টি ফাইল (১২টি হ্যান্ডলার + ৪টি হেল্পার): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search ইত্যাদি।
-├── executors/           # ৬৭টি প্রোভাইডার-নির্দিষ্ট এক্সিকিউটর (BaseExecutor এক্সটেন্ড করে)
+├── handlers/            # ১৬টি ফাইল (১২টি হ্যান্ডলার + ৪টি হেল্পার): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ইত্যাদি
+├── executors/           # ১৫০টি এক্সিকিউটর মডিউল (BaseExecutor প্রসারিতকারী ক্লাস + প্রতি-প্রোভাইডার হেল্পার)
 ├── translator/          # ফরম্যাট কনভার্টার (৯টি রিকোয়েস্ট, ৯টি রেসপন্স, ৯টি হেল্পার)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~৮০টির বেশি সার্ভিস মডিউল (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM ইত্যাদি)
+├── services/            # ~৮০+টি সার্ভিস মডিউল (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ইত্যাদি)
 ├── mcp-server/          # MCP সার্ভার (১১০টি টুল, ৩টি ট্রান্সপোর্ট, ৩৩টি স্কোপ)
 ├── config/              # প্রোভাইডার/মডেল রেজিস্ট্রি, হেডার কনফিগ, মডেল অ্যালিয়াস
 ├── utils/               # TLS ক্লায়েন্ট, প্রক্সি fetch/dispatcher, নেটওয়ার্ক হেল্পার
@@ -282,13 +282,13 @@ open-sse/
 | `server.ts`                 | MCP সার্ভারের লাইফসাইকেল (stdio + HTTP ট্রান্সপোর্ট)                                |
 | `httpTransport.ts`          | HTTP Streamable + SSE ট্রান্সপোর্ট (`/api/mcp/sse`, `/api/mcp/stream`)              |
 | `audit.ts`                  | `mcp_tool_audit` টেবিলে অডিট লগিং                                                   |
-| `scopeEnforcement.ts`       | প্রতিটি টুলের জন্য স্কোপ যাচাইকরণ                                                   |
+| `scopeEnforcement.ts`       | প্রতি-টুল স্কোপ যাচাইকরণ                                                            |
 | `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`-এ হেলথ হার্টবিট                               |
 | `descriptionCompressor.ts`  | কনটেক্সট সাশ্রয়ের জন্য টুলের বিবরণসংক্রান্ত মেটাডেটা কম্প্রেস করে                  |
 | `schemas/tools.ts`          | ৩৬টি বেস টুলের সংজ্ঞা + স্কোপ                                                       |
-| `tools/advancedTools.ts`    | উন্নত টুলের ইমপ্লিমেন্টেশন                                                          |
-| `tools/memoryTools.ts`      | ৩টি মেমরি টুল (search/add/clear)                                                    |
-| `tools/skillTools.ts`       | ৪টি স্কিল টুল (list/enable/execute/executions)                                      |
+| `tools/advancedTools.ts`    | অ্যাডভান্সড টুল ইমপ্লিমেন্টেশন                                                      |
+| `tools/memoryTools.ts`      | ৩টি মেমরি টুল (সার্চ/অ্যাড/ক্লিয়ার)                                                |
+| `tools/skillTools.ts`       | ৪টি স্কিল টুল (লিস্ট/এনেবল/এক্সিকিউট/এক্সিকিউশন)                                    |
 | `tools/compressionTools.ts` | ৫টি কম্প্রেশন টুল                                                                   |
 | `README.md`                 | অভ্যন্তরীণ MCP সার্ভার README (`docs/frameworks/MCP-SERVER.md` থেকে ক্রস-লিঙ্ক করা) |
 

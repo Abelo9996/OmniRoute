@@ -15,88 +15,88 @@ un tiek izvērtēta pirms jebkura cita autentifikācijas atzara izpildes.
 ### 1. līmenis — LOCAL_ONLY
 
 **Nodrošina:** `isLocalOnlyPath(path)` → atgriezeniskās cilpas resursdatora pārbaude  
-**Apiešana:** pēc noklusējuma nav iespējama. Šauri definēts izņēmums ceļiem, kas norādīti
+**Apiešana:** Pēc noklusējuma nav. Šauri definēts izņēmums ceļiem sarakstā
 `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`, ja pieprasījumā ir derīga
 API atslēga ar tvērumu `manage` (skatiet [Tvēruma „manage” izņēmums](#manage-scope-carve-out)).
 
-Šie maršruti palaiž bērnprocesus vai izpilda izpildlaika kodu. Ja tie būtu
-pieejami datplūsmai, kas nenāk no atgriezeniskās cilpas, uzbrucējs, kurš ieguvis
+Šie maršruti palaiž pakārtotos procesus vai izpilda kodu izpildlaikā. Padarot tos
+pieejamus datplūsmai, kas nenāk no atgriezeniskās cilpas, uzbrucējs, kurš ieguvis
 derīgu JWT (piemēram, izmantojot Cloudflared/Ngrok tuneli), varētu aktivizēt
 procesu palaišanu — tā ir zināma CVE klase
 ([GHSA-fhh6-4qxv-rpqj](https://github.com/advisories/GHSA-fhh6-4qxv-rpqj)).
 
 **Kas ir GHSA-fhh6-4qxv-rpqj (uzbrukuma klase):** pārvaldības/aģenta serveris
 nodrošina galapunktu, kas palaiž apakšprocesu (`npm install`, `node`, pārlūkprogrammu,
-starpniekserveri, `git`, `tar`, …). Ja šis galapunkts ir sasniedzams ārpus resursdatora,
-jo operators novietojis OmniRoute aiz nginx/Cloudflare/Tailscale tuneļa un ir
-noplūdis JWT vai autentifikācija ir nepareizi konfigurēta, uzbrucējs pārvērš
-„API izsaukšanu” par „komandas izpildi resursdatorā” (attālu koda izpildi).
-OmniRoute to novērš, **bez nosacījumiem un pirms jebkuras autentifikācijas
-pārbaudes veicot atgriezeniskās cilpas resursdatora pārbaudi** katram maršrutam,
-kas spēj palaist procesus: noplūdis pilnvarojums tunelī joprojām nevar sasniegt
-procesa palaišanas funkcionalitāti.
+starpniekserveri, `git`, `tar`, …). Ja šis galapunkts ir sasniedzams ārpus
+resursdatora — jo operators novietojis OmniRoute aiz nginx/Cloudflare/Tailscale
+tuneļa un JWT ir noplūdis vai autentifikācija ir konfigurēta nepareizi — uzbrucējs
+pārvērš „izsaukt API” par „izpildīt komandu resursdatorā” (attālināta koda
+izpilde). OmniRoute to novērš, katrā maršrutā, kas spēj palaist procesus,
+**bez nosacījumiem veicot atgriezeniskās cilpas resursdatora pārbaudi pirms
+jebkuras autentifikācijas pārbaudes**: ar tunelī noplūdušu pilnvaru joprojām
+nevar piekļūt procesu palaišanas funkcionalitātei.
 
 **Pilnā LOCAL_ONLY kopa.** Autoritatīvais avots ir
 `LOCAL_ONLY_API_PREFIXES` / `LOCAL_ONLY_API_PATTERNS` failā
-`src/server/authz/routeGuard.ts`; tālāk esošā tabula atspoguļo pašreizējo stāvokli.
-`check-route-guard-membership` pārbaude uzskaita katru `route.ts` zem
-procesu palaišanu atbalstošajiem prefiksiem un izraisa CI kļūmi, ja kāds no tiem
-nav klasificēts kā tikai lokāli pieejams.
+`src/server/authz/routeGuard.ts`; tālāk redzamā tabula atspoguļo pašreizējo
+stāvokli. `check-route-guard-membership` kontrole uzskaita katru `route.ts`
+zem prefiksiem, kas spēj palaist procesus, un CI pārbaude neizdodas, ja kāds
+no tiem nav klasificēts kā tikai lokāli pieejams.
 
-| Prefikss / modelis                                                                                       | Kāpēc tas ir pieejams tikai lokāli                                                                                                                            |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/mcp/`                                                                                              | MCP serveris — palaiž stdio tiltus un SSE apstrādātājus                                                                                                       |
-| `/api/cli-tools/runtime/`                                                                                | CLI rīka izpildvide — izpilda patvaļīgu spraudņu kodu                                                                                                         |
-| `/api/cli-tools/{omp,letta,grok-build,forge,jcode,qwen}-settings`                                        | Katra rīka iestatījumu rakstītāji, kas var mainīt rīku bināros failus/konfigurāciju resursdatorā                                                              |
-| `/api/cli-tools/{claude,cline,codewhale,codex,crush,deepseek-tui,droid,kilo,openclaw,pi,smelt}-settings` | Tas pats `getCliRuntimeStatus()` process kā sešiem iepriekš minētajiem rīkiem (GHSA-35fw-cv32-2373)                                                           |
-| `/api/cli-tools/{all-statuses,status,detect}`                                                            | CLI inventāra pārbaudes — katram rīkam palaiž `command -v` / `--version` (GHSA-35fw-cv32-2373)                                                                |
-| `/api/cli-tools/antigravity-mitm`                                                                        | Antigravity MITM starpniekservera vadība (palaiž/norāda sistēmas starpniekserveri)                                                                            |
-| `/api/modality-bridge/video/`                                                                            | Stingri uzticamas atgriezeniskās cilpas Video Bridge izpildvides pārbaude un iekšējais izvilkšanas tilts                                                      |
-| `/api/services/`                                                                                         | Iegultie pakalpojumi (9Router / CLIProxy / Bifrost / Mux / Dario) — `npm install` + palaišana                                                                 |
-| `/dashboard/providers/services/`                                                                         | Reversais starpniekserveris uz iegulto pakalpojumu lietotāja saskarnēm                                                                                        |
-| `/api/tunnels/cloudflared`                                                                               | Instalē/palaiž cloudflared bināro failu                                                                                                                       |
-| `/api/tunnels/tailscale/{install,enable,disable,login,start-daemon}`                                     | Instalē/vada tailscaled resursdatorā                                                                                                                          |
-| `/api/copilot/`                                                                                          | Neautentificēts LLM draiveris — pēc noklusējuma paredzēts tikai CLI                                                                                           |
-| `/api/tools/agent-bridge/`                                                                               | AgentBridge — palaiž MITM serveri un veic DNS izmaiņas                                                                                                        |
-| `/api/tools/traffic-inspector/`                                                                          | Traffic Inspector — http-proxy klausītājs un sistēmas starpniekserveris                                                                                       |
-| `/api/settings/mitm`                                                                                     | Iespējo MITM pārtveršanu (sistēmas līmeņa starpniekservera stāvoklis)                                                                                         |
-| `/api/issue-agent/`                                                                                      | Problēmu aģents — palaiž lokālos rīkus darbam ar repozitoriju                                                                                                 |
-| `/api/plugins/`, `/api/plugins`                                                                          | Spraudņi — ielādē/izpilda, izmantojot `worker_threads` un `child_process`                                                                                     |
-| `/api/middleware/`                                                                                       | Lietotāja starpprogrammatūra — ielādē/izpilda operatora kodu procesā                                                                                          |
-| `/api/system/version`                                                                                    | Automātiskā atjaunināšana (tikai POST; GET/HEAD/OPTIONS ir izņēmumi) — palaiž `git checkout` un `npm install`                                                 |
-| `/api/db-backups/exportAll`                                                                              | Palaiž `tar`, lai izveidotu eksporta arhīvu                                                                                                                   |
-| `/api/local/`                                                                                            | Lokālie palaidēji ar vienu klikšķi (pašlaik Redis) — palaiž podman/docker                                                                                     |
-| `/api/headroom/start`, `/api/headroom/stop`                                                              | Headroom starpniekservera dzīves cikls — palaiž python CLI / nosūta signālus PID                                                                              |
-| `/api/jobs`, `/api/jobs/`                                                                                | Uzdevumu izpildītāja vadība — izpilda ieplānotu darbu resursdatorā                                                                                            |
-| `/api/oauth/cursor/auto-import`                                                                          | Pirms akreditācijas datu importēšanas izpilda `execFile("which", ["cursor"])`                                                                                 |
-| `/api/oauth/kiro/auto-import`                                                                            | Nolasa Kiro CLI akreditācijas datu failus no resursdatora                                                                                                     |
-| `/api/skills/collect/`                                                                                   | Prasmju apkopošana — nosaka/instalē lokālos rīkus                                                                                                             |
-| `/api/skills/install`, `/api/skills/executions`                                                          | Prasmju apstrādātāju reģistrēšana un izpilde — nodrošina piekļuvi smilškastes konteinera palaišanai (GHSA-jx89)                                               |
-| `/api/discovery/`                                                                                        | Lokālā tīkla/pakalpojumu sniedzēju atklāšanas zondes                                                                                                          |
-| `/api/vnc-session` (`VNC_ROUTE_PREFIX`)                                                                  | Palaiž pārlūkprogrammu grafiskajā režīmā un VNC sesiju interaktīvai pieteikšanai                                                                              |
-| `/api/acp/agents`                                                                                        | ACP — atrod un palaiž lokālo CLI aģentu bināros failus                                                                                                        |
-| `/api/resilience/connections`                                                                            | Katram kontam paredzēts noturības JSON (nogaidīšanas periods, ķēdes pārtraucējs, bloķēšana). Informācijas paneļa HTML nav ierobežots tikai lokālai piekļuvei. |
-| `/api/providers/cursor/agent-availability`                                                               | Informācijas paneļa instalēšanas atgādinājuma pārbaude — palaiž `cursor-agent status --format json`                                                           |
-| `/api/providers/{id}/login` (regulārā izteiksme)                                                         | Palaiž Playwright Chromium grafiskajā režīmā, lai pieteiktos, izmantojot tīmekļa sīkfailus                                                                    |
-| `/api/providers/volcengine-plan/connect` (regulārā izteiksme)                                            | Manuāla plūsma grafiskajā režīmā un uz sesiju balstīta automātiska pieteikšanās ar tālruni/SMS (palaiž Playwright)                                            |
-| `/api/providers/{id}/refresh-cursor` (regulārā izteiksme)                                                | Manuāla Cursor sesijas atjaunošana — aktivizē `cursor-agent`                                                                                                  |
-| `/api/providers/{id}/chatgpt-web-codex-doctor` (regulārā izteiksme)                                      | Diagnosticē lokālo Codex CLI instalāciju (palaiž bināro failu)                                                                                                |
+| Prefikss / modelis                                                                                       | Kāpēc tas ir pieejams tikai lokāli                                                                                                   |
+| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `/api/mcp/`                                                                                              | MCP serveris — palaiž stdio tiltus un SSE apstrādātājus                                                                              |
+| `/api/cli-tools/runtime/`                                                                                | CLI rīku izpildlaika vide — izpilda patvaļīgu spraudņu kodu                                                                          |
+| `/api/cli-tools/{omp,letta,grok-build,forge,jcode,qwen}-settings`                                        | Atsevišķu rīku iestatījumu rakstītāji, kas resursdatorā var mainīt rīku bināros failus/konfigurāciju                                 |
+| `/api/cli-tools/{claude,cline,codewhale,codex,crush,deepseek-tui,droid,kilo,openclaw,pi,smelt}-settings` | Tāda pati `getCliRuntimeStatus()` palaišana kā sešiem iepriekš minētajiem radniecīgajiem rīkiem (GHSA-35fw-cv32-2373)                |
+| `/api/cli-tools/{all-statuses,status,detect}`                                                            | CLI inventāra pārbaudes — katram rīkam palaiž `command -v` / `--version` (GHSA-35fw-cv32-2373)                                       |
+| `/api/cli-tools/antigravity-mitm`                                                                        | Antigravity MITM starpniekservera vadība (palaiž/norāda sistēmas starpniekserveri)                                                   |
+| `/api/modality-bridge/video/`                                                                            | Stingra, uzticama lokālā atgriezeniskā savienojuma Video Bridge izpildlaika pārbaude un iekšējs izgūšanas tilts                      |
+| `/api/services/`                                                                                         | Iegultie pakalpojumi (9Router / CLIProxy / Bifrost / Mux / Dario) — `npm install` + palaišana                                        |
+| `/dashboard/providers/services/`                                                                         | Reversais starpniekserveris uz iegulto pakalpojumu lietotāja saskarnēm                                                               |
+| `/api/tunnels/cloudflared`                                                                               | Instalē/palaiž cloudflared bināro failu                                                                                              |
+| `/api/tunnels/tailscale/{install,enable,disable,login,start-daemon}`                                     | Instalē/vada tailscaled resursdatorā                                                                                                 |
+| `/api/copilot/`                                                                                          | Neautentificēts LLM draiveris — pēc noklusējuma paredzēts tikai CLI                                                                  |
+| `/api/tools/agent-bridge/`                                                                               | AgentBridge — palaiž MITM serveri un veic DNS izmaiņas                                                                               |
+| `/api/tools/traffic-inspector/`                                                                          | Traffic Inspector — http-proxy klausītājs un sistēmas starpniekserveris                                                              |
+| `/api/settings/mitm`                                                                                     | Iespējo MITM pārtveršanu (sistēmas līmeņa starpniekservera stāvokli)                                                                 |
+| `/api/issue-agent/`                                                                                      | Problēmu aģents — repozitorijā palaiž lokālos rīkus                                                                                  |
+| `/api/plugins/`, `/api/plugins`                                                                          | Spraudņi — ielādē/izpilda, izmantojot `worker_threads` + `child_process`                                                             |
+| `/api/middleware/`                                                                                       | Lietotāja starpprogrammatūra — ielādē/izpilda operatora kodu procesa ietvaros                                                        |
+| `/api/system/version`                                                                                    | Automātiskā atjaunināšana (tikai POST; GET/HEAD/OPTIONS ir izņēmumi) — palaiž `git checkout` + `npm install`                         |
+| `/api/db-backups/exportAll`                                                                              | Palaiž `tar`, lai izveidotu eksportēšanas arhīvu                                                                                     |
+| `/api/local/`                                                                                            | Lokālie palaidēji ar vienu klikšķi (pašlaik Redis) — palaiž podman/docker                                                            |
+| `/api/headroom/start`, `/api/headroom/stop`                                                              | Headroom starpniekservera dzīves cikls — palaiž python CLI / nosūta signālus PID                                                     |
+| `/api/jobs`, `/api/jobs/`                                                                                | Darbu izpildītāja vadība — izpilda ieplānotus darbus resursdatorā                                                                    |
+| `/api/oauth/cursor/auto-import`                                                                          | Pirms akreditācijas datu importēšanas izpilda `execFile("which", ["cursor"])`                                                        |
+| `/api/oauth/kiro/auto-import`                                                                            | Nolasa Kiro CLI akreditācijas datu failus no resursdatora                                                                            |
+| `/api/skills/collect/`                                                                                   | Prasmju apkopošana — nosaka/instalē lokālos rīkus                                                                                    |
+| `/api/skills/install`, `/api/skills/executions`                                                          | Prasmju apstrādātāju reģistrēšana un izpilde — sasniedz smilškastes konteinera palaišanu (GHSA-jx89)                                 |
+| `/api/discovery/`                                                                                        | Lokālā tīkla/pakalpojumu sniedzēju atklāšanas pārbaudes                                                                              |
+| `/api/vnc-session` (`VNC_ROUTE_PREFIX`)                                                                  | Palaiž pārlūku ar grafisko saskarni un VNC sesiju interaktīvai pieteikšanās veikšanai                                                |
+| `/api/acp/agents`                                                                                        | ACP — atrod un palaiž lokālo CLI aģentu bināros failus                                                                               |
+| `/api/resilience/connections`                                                                            | Noturības JSON katram kontam (atdzišanas periods, ķēdes pārtraucējs, bloķēšana). Informācijas paneļa HTML nav pieejams tikai lokāli. |
+| `/api/providers/cursor/agent-availability`                                                               | Informācijas paneļa instalēšanas atgādinājuma pārbaude — palaiž `cursor-agent status --format json`                                  |
+| `/api/providers/{id}/login` (regulārā izteiksme)                                                         | Palaiž Playwright Chromium ar grafisko saskarni, lai pieteiktos ar tīmekļa sīkfailiem                                                |
+| `/api/providers/volcengine-plan/connect` (regulārā izteiksme)                                            | Manuāla plūsma ar grafisko saskarni un uz sesiju balstīta automātiska pieteikšanās ar tālruni/SMS (palaiž Playwright)                |
+| `/api/providers/{id}/refresh-cursor` (regulārā izteiksme)                                                | Manuāla Cursor sesijas atjaunošana — aktivizē `cursor-agent`                                                                         |
+| `/api/providers/{id}/chatgpt-web-codex-doctor` (regulārā izteiksme)                                      | Diagnosticē lokālo Codex CLI instalāciju (palaiž bināro failu)                                                                       |
 
 **Atbilde pārkāpuma gadījumā:** `403 LOCAL_ONLY`
 
 #### Pārvaldības tvēruma izņēmums
 
-LOCAL_ONLY ceļu apakškopai VAR piekļūt arī no adresēm, kas nav atgriezeniskās cilpas adreses, tikai un
-vienīgi tad, ja pieprasījumā ir `Authorization: Bearer <api-key>`, kura
-metadatos ir iekļauts tvērums `manage` (vai `admin`). Izņēmums tiek
-tieši iespējots katram ceļam, izmantojot `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`, tādēļ
-jebkuram jaunam LOCAL_ONLY ceļam pēc noklusējuma joprojām ir spēkā stingra piekļuve tikai no atgriezeniskās cilpas. Neautentificēti
+LOCAL_ONLY ceļu apakškopai VAR piekļūt arī no adreses, kas nav atgriezeniskās cilpas adrese, tad un
+tikai tad, ja pieprasījumā ir `Authorization: Bearer <api-key>`, kura
+metadatos ir iekļauts tvērums `manage` (vai `admin`). Izņēmums tiek iespējots
+atsevišķi katram ceļam, izmantojot `LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES`, lai
+jebkuram jaunam LOCAL_ONLY ceļam pēc noklusējuma joprojām tiktu prasīta tikai atgriezeniskās cilpas adrese. Neautentificēti
 pieprasījumi un pieprasījumi ar atslēgām bez pārvaldības tvēruma joprojām tiek noraidīti ar
 `403 LOCAL_ONLY`.
 
 Pašlaik vienīgais prefikss, kam var piemērot izņēmumu, ir `/api/mcp/`. `/api/cli-tools/runtime/` un
 `/api/services/` ir apzināti izslēgti, jo tie var palaist patvaļīgus
-apakšprocesus (`npm install`, `node`), un tieši šīs CVE kategorijas novēršanai
+apakšprocesus (`npm install`, `node`), un tieši šīs CVE klases novēršanai
 pastāv LOCAL_ONLY līmenis.
 
 **#7895 — `mcp:connect` šaurais tvērums:** `/api/mcp/` izņēmums PIEŅEM ARĪ
@@ -104,120 +104,140 @@ Bearer atslēgu ar šauro `mcp:connect` tvērumu
 (`src/shared/constants/managementScopes.ts::MCP_CONNECT_SCOPE`), ko pārbauda
 `hasMcpConnectOrManageScope()` failā `src/server/authz/policies/management.ts`.
 Tas attiecas TIKAI uz `/api/mcp/` — `mcp:connect` nepiešķir nekādas tiesības nevienā citā
-pārvaldības maršrutā (tostarp nevienam citam LOCAL_ONLY izņēmuma prefiksam, ja tāds
+pārvaldības maršrutā (tostarp nevienā citā LOCAL_ONLY izņēmuma prefiksā, ja tāds
 kādreiz tiktu pievienots), un tas ir apzināti izslēgts no
-`MANAGEMENT_API_KEY_SCOPES`. Atslēgai ar `manage`/`admin` izņēmums joprojām tiek
-piemērots tieši tāpat kā iepriekš; `mcp:connect` ir alternatīva ar mazākām privilēģijām
-attāliem, tikai MCP izmantojošiem klientiem, kuriem nav vajadzīga plaša pārvaldības piekļuve.
+`MANAGEMENT_API_KEY_SCOPES`. Atslēga ar `manage`/`admin` joprojām izmanto šo
+izņēmumu tieši tāpat kā iepriekš; `mcp:connect` ir zemāku privilēģiju alternatīva
+attāliem klientiem, kas izmanto tikai MCP un kam nav nepieciešama plaša pārvaldības piekļuve.
 
-| Pieprasījums                                                    | Ceļš                       | Rezultāts                  |
-| --------------------------------------------------------------- | -------------------------- | -------------------------- |
-| Nav no atgriezeniskās cilpas, nav Bearer                        | `/api/mcp/*`               | 403 LOCAL_ONLY             |
-| Nav no atgriezeniskās cilpas, Bearer ar `manage` tvērumu        | `/api/mcp/*`               | Atļaut                     |
-| Nav no atgriezeniskās cilpas, Bearer ar `mcp:connect` tvērumu   | `/api/mcp/*`               | Atļaut                     |
-| Nav no atgriezeniskās cilpas, Bearer bez `manage`/`mcp:connect` | `/api/mcp/*`               | 403 LOCAL_ONLY             |
-| Nav no atgriezeniskās cilpas, Bearer ar `mcp:connect` tvērumu   | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY             |
-| Nav no atgriezeniskās cilpas, Bearer ar `manage` tvērumu        | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY             |
-| Atgriezeniskā cilpa, ar jebkādu Bearer vai bez tā               | jebkurš LOCAL_ONLY         | Atļaut (pārbaude izturēta) |
+| Pieprasījums                                                            | Ceļš                       | Rezultāts                           |
+| ----------------------------------------------------------------------- | -------------------------- | ----------------------------------- |
+| Nav no atgriezeniskās cilpas adreses, nav Bearer                        | `/api/mcp/*`               | 403 LOCAL_ONLY                      |
+| Nav no atgriezeniskās cilpas adreses, Bearer ar `manage` tvērumu        | `/api/mcp/*`               | Atļaut                              |
+| Nav no atgriezeniskās cilpas adreses, Bearer ar `mcp:connect` tvērumu   | `/api/mcp/*`               | Atļaut                              |
+| Nav no atgriezeniskās cilpas adreses, Bearer bez `manage`/`mcp:connect` | `/api/mcp/*`               | 403 LOCAL_ONLY                      |
+| Nav no atgriezeniskās cilpas adreses, Bearer ar `mcp:connect` tvērumu   | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY                      |
+| Nav no atgriezeniskās cilpas adreses, Bearer ar `manage` tvērumu        | `/api/cli-tools/runtime/*` | 403 LOCAL_ONLY                      |
+| Atgriezeniskās cilpas adrese, jebkāds/nav Bearer                        | jebkurš LOCAL_ONLY         | Atļaut (vārtejas pārbaude izturēta) |
 
 #### Norādījumi operatoriem un auditēšana
 
-Ja OmniRoute izmantojat aiz reversā starpniekservera vai tuneļa (nginx, Caddy, Cloudflare
+Ja darbināt OmniRoute aiz reversā starpniekservera vai tuneļa (nginx, Caddy, Cloudflare
 Tunnel, Tailscale, Ngrok), atgriezeniskās cilpas pārbaude joprojām aizsargā iepriekš minētos maršrutus,
 kas spēj palaist procesus — pieprasījums, kura klienta adrese nav atgriezeniskās cilpas adrese, tiek noraidīts ar
-`403 LOCAL_ONLY` **pirms autentifikācijas izpildes**, tādēļ nopludināts JWT nevar izraisīt procesa palaišanu. Operatoriem
-joprojām ir divi pienākumi:
+`403 LOCAL_ONLY` **pirms autentifikācijas izpildes**, tādēļ nopludināts JWT nevar izraisīt procesa palaišanu. Joprojām ir divi
+operatora pienākumi:
 
-- **Nemēģiniet “labot” 403 kļūdu, viltojot klienta IP adresi kā cilpas adresi.** Iestatot
+- **Nemēģiniet „labot” 403 kļūdu, viltojot klienta IP adresi kā atgriezeniskās cilpas adresi.** Iestatot
   `X-Forwarded-For: 127.0.0.1` vai izmantojot starpniekserveri, kas pārraksta avota adresi uz
-  cilpas adresi, tiek no jauna atvērta tieši tā RCE ievainojamību klase, kuru šis līmenis novērš. Izgaismojiet
-  informācijas paneli/API caur starpniekserveri — nekad neizgaismojiet maršrutus, kuri spēj palaist procesus.
-- **Saglabājiet `manage` tvēruma apiešanas iespēju minimālu.** Apiet var tikai `/api/mcp/`, un
-  tikai ar API atslēgu, kurai ir `manage` tvērums. `SPAWN_CAPABLE_PREFIXES` nekad nevar
+  atgriezeniskās cilpas adresi, tiek no jauna atvērta tieši tā RCE klase, kuru šis līmenis aizver. Caur
+  starpniekserveri dariet pieejamu informācijas paneli/API — nekad ne procesus palaižošos maršrutus.
+- **Saglabājiet `manage` tvēruma apiešanu minimālu.** Apiet var tikai `/api/mcp/` un
+  tikai ar `manage` tvēruma API atslēgu. `SPAWN_CAPABLE_PREFIXES` nekad nevar
   pievienot apiešanas sarakstam — zod shēma tos noraida, un
-  `isLocalOnlyBypassableByManageScope` tos izpildlaikā liedz (daudzslāņu aizsardzība),
-  ko informācijas panelī nozīmē “nevar padarīt apejamu”. Tas pats
-  liegumu saraksts ietver arī dažus LOCAL_ONLY maršrutus, kuri nepalaiž procesus, taču arī tie nekad nedrīkst būt
+  `isLocalOnlyBypassableByManageScope` tos izpildlaikā liedz (daudzslāņu aizsardzība);
+  tieši to informācijas panelī nozīmē „nevar padarīt apejamu”. Tajā pašā
+  liegumu sarakstā ir arī daži LOCAL_ONLY maršruti, kas nepalaiž procesus, bet arī nekad nedrīkst būt
   attāli sasniedzami — `/api/oauth/kiro/auto-import` (lasa resursdatora lokālos Kiro
   akreditācijas datu failus), `/api/discovery/` un `/api/issue-agent/`. Izpildlaika
   momentuzņēmuma ielādētājs arī atmet šādus ierakstus no saglabātas iestatījumu rindas, un
   mantotā JSON importēšana (`/api/settings/import-json`) nekad neieraksta apiešanas atslēgas.
   Katram `LOCAL_ONLY_API_PREFIXES` ierakstam jābūt vai nu liegumu sarakstā, vai
   pārskatītam kā apiešanai piemērotam (`tests/unit/authz/local-only-bypass-spawn-denylist.test.ts`). Dinamisko segmentu
-  un statisko ceļu procesus palaist spējīgos maršrutus zem `/api/providers/` (piem., `/login`,
-  `/refresh-cursor`) aptver regulārajās izteiksmēs balstītais `SPAWN_CAPABLE_PATTERNS` /
-  `SPAWN_CAPABLE_PATTERN_ANCESTORS` papildinājums failā
-  `src/shared/constants/spawnCapablePrefixes.ts`, nevis plakanais
-  `SPAWN_CAPABLE_PREFIXES` masīvs — plakanajam masīvam būtu jāaptver viss
-  `/api/providers/` prefikss, lai tos uztvertu, tādējādi pārmērīgi paplašinot maršrutu koku,
-  kuru attālie informācijas paneļi pamatoti izmanto pakalpojumu sniedzēju CRUD darbībām.
+  un statisko ceļu procesus palaižošie maršruti zem `/api/providers/` (piem., `/login`,
+  `/refresh-cursor`) tiek aptverti ar regulārajās izteiksmēs balstīto `SPAWN_CAPABLE_PATTERNS` /
+  `SPAWN_CAPABLE_PATTERN_ANCESTORS` papildinājumu failā
+  `src/shared/constants/spawnCapablePrefixes.ts`, nevis ar plakano
+  `SPAWN_CAPABLE_PREFIXES` masīvu — plakanajam masīvam būtu jāaptver viss
+  `/api/providers/` prefikss, lai tos notvertu, pārmērīgi paplašinot maršrutu koku,
+  kuru attālie informācijas paneļi pamatoti izmanto pakalpojumu sniedzēju CRUD operācijām.
 
-**Piekļuves audits** — lai pārbaudītu, ka neviens ārpus resursdatora nesasniedz šos maršrutus:
+**Piekļuves auditēšana** — lai pārbaudītu, ka nekas ārpus resursdatora nesasniedz šos maršrutus:
 
 - Atveriet **Autorizācijas inventāru** lapā `/dashboard/settings/security`: tajā tiek attēlots
-  aktuālais LOCAL_ONLY prefiksu saraksts, informācija par to, kurus prefiksus var apiet, un kompilēšanas laikā
-  noteiktā procesus palaist spējīgo prefiksu kopa (“nevar padarīt apejamu”).
-- Meklējiet savos reversā starpniekservera / piekļuves žurnālos iepriekš norādītos prefiksus kopā ar
-  klienta adresi, kas nav cilpas adrese. Jebkurš šāds pieprasījums, kas atgrieza `200`, nevis
+  aktuālais LOCAL_ONLY prefiksu saraksts, apiešanai pieejamie prefiksi un kompilēšanas laikā noteiktā
+  procesus palaižošo maršrutu kopa („nevar padarīt apejamu”).
+- Meklējiet savos reversā starpniekservera / piekļuves žurnālos iepriekš minētos prefiksus kopā ar
+  klienta adresi, kas nav atgriezeniskās cilpas adrese. Jebkurš šāds pieprasījums, kas atgrieza `200`, nevis
   `403 LOCAL_ONLY`, nozīmē, ka starpniekserveris maskē īsto klienta IP adresi — izlabojiet starpniekservera konfigurāciju.
 - `403 LOCAL_ONLY` OmniRoute žurnālos vienam no šiem ceļiem nozīmē, ka aizsardzība
-  darbojas, kā paredzēts, nevis kļūdu, kas jāslāpē.
+  darbojas, kā paredzēts, nevis kļūdu, kas jāapslāpē.
+
+#### Attāli sasniedzami maršruti ar izsaukuma vietas zondēšanas vārteju
+
+Dažiem maršrutiem jāpaliek sasniedzamiem no attāla informācijas paneļa, bet lokāliem izsaucējiem
+jāpalaiž resursdatora zondēšana (`which <binary>`, `<binary> --version`, `tailscale status --json`).
+Tie nav LOCAL_ONLY attiecībā uz `GET`; tā vietā apstrādātājs nolasa uzticamā vienranga lokalitātes spriedumu,
+izmantojot `getRequestPeerLocality()` (`src/shared/utils/apiAuth.ts`), un palaiž zondēšanu tikai
+`loopback` / `lan` izsaucējiem. `remote` izsaucējs saņem tādas pašas formas atbildi, kas izveidota no
+procesus nepalaižošiem avotiem (saglabāts stāvoklis, iestatījumi, failu sistēmas pārbaudes), ar atzīmi `probed: false`.
+
+| Maršruts                                                         | Attāliem izsaucējiem izlaistā zondēšana                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `POST /api/providers/{id}/test`, `/api/providers/test-batch`     | CLI izpildlaika zondēšana (`allowLocalRuntimeProbe`) un CLI atkāpes procesa palaišana |
+| `GET /api/headroom/status`                                       | `which headroom` un python `--version` zondēšana                                      |
+| `GET /api/tunnels/tailscale`, `GET /api/tunnels/tailscale/check` | `which tailscale`, `tailscale status/funnel --json`, `which brew`                     |
+| `GET /api/tunnels/cloudflared` (`GET` atbrīvots no LOCAL_ONLY)   | `which cloudflared` PATH uzmeklēšana                                                  |
+
+Jauns lasīšanas maršruts, kas zondē resursdatoru, ievēro to pašu modeli vai arī tiek pilnībā
+klasificēts kā LOCAL_ONLY.
 
 ### 2. līmenis — ALWAYS_PROTECTED
 
 **Nodrošina:** `isAlwaysProtectedPath(path)` → izlaiž `requireLogin=false` apiešanu
-**Apiešana:** Nav, ja `requireLogin=false`; JWT ir nepieciešams vienmēr
+**Apiešana:** nav iespējama, ja `requireLogin=false`; JWT vienmēr ir obligāts
 
-Šie maršruti veic destruktīvas vai neatgriezeniskas darbības. Atļaujot tās instalācijā
-“bez paroles”, ikviens tajā pašā LAN varētu izdzēst datubāzi vai apturēt
-servera procesu.
+Šie maršruti veic destruktīvas vai neatgriezeniskas darbības. Atļaujot tos instalācijā „bez paroles”,
+ikviens tajā pašā LAN varētu izdzēst datubāzi vai apturēt servera
+procesu.
 
-| Ceļš                                      | Iemesls                                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------------------------- |
-| `/api/shutdown`                           | Izbeidz servera procesu                                                               |
-| `/api/settings/database`                  | Datubāzes eksportēšana, importēšana un dzēšana                                        |
-| `/api/db-backups`                         | Piekļuve pilnam datubāzes dublējuma arhīvam                                           |
-| `/api/settings/export-json`               | Eksportē visu iestatījumu kopumu (tostarp noslēpumus)                                 |
-| `/api/settings/import-json`               | Aizstāj visu iestatījumu kopumu                                                       |
-| `/api/providers/health-autopilot/actions` | Izpilda autopilota koriģējošās darbības                                               |
-| `/api/settings/obsidian`                  | Izsniedz atkārtoti izmantojamus WebDAV akreditācijas datus jebkurai glabātuves saknei |
+| Ceļš                                      | Iemesls                                                                             |
+| ----------------------------------------- | ----------------------------------------------------------------------------------- |
+| `/api/shutdown`                           | Pārtrauc servera procesu                                                            |
+| `/api/settings/database`                  | Datubāzes eksportēšana, importēšana un dzēšana                                      |
+| `/api/db-backups`                         | Piekļuve pilnam datubāzes dublējuma arhīvam                                         |
+| `/api/settings/export-json`               | Eksportē pilno iestatījumu kopu (tostarp noslēpumus)                                |
+| `/api/settings/import-json`               | Aizstāj pilno iestatījumu kopu                                                      |
+| `/api/providers/health-autopilot/actions` | Izpilda autopilota koriģējošās darbības                                             |
+| `/api/settings/obsidian`                  | Ģenerē atkārtoti izmantojamus WebDAV akreditācijas datus jebkurai glabātuves saknei |
 
 **Atbilde pārkāpuma gadījumā:** `401 Authentication required`
 
-`/api/settings/obsidian` aptver tā pakārtoto `/webdav` ceļu: `POST` norāda WebDAV failu servisam —
-ko pirms Next.js apkalpo pielāgotais Node slānis ārpus šī konveijera — izsaucēja izvēlētu sakni
-un atbildē atgriež tikko izsniegtus Basic akreditācijas datus, `DELETE` tos rotē, bet vecākceļa `POST` saglabā
+`/api/settings/obsidian` aptver tā `/webdav` bērnmaršrutu: `POST` norāda WebDAV failu pakalpojumam —
+ko pielāgotais Node slānis apkalpo pirms Next.js, ārpus šī konveijera — izsaucēja izvēlētu sakni
+un atgriež tikko ģenerētus Basic akreditācijas datus, `DELETE` tos nomaina, bet vecākmaršruta `POST` saglabā
 Obsidian REST API pilnvaru. GHSA-62vw tikai maskēja paroles atklāšanu ar `GET`; izsniegšana
-joprojām atradās kļūmes gadījumā atvērtajā līmenī (GHSA-7pq4-8pvv-rx7r). `enableObsidianVaultSync()` papildus
-noraida glabātuvi, kas ir datu direktorijs, atrodas tajā vai ietver to.
+joprojām atradās kļūmes gadījumā piekļuvi atļaujošajā līmenī (GHSA-7pq4-8pvv-rx7r). `enableObsidianVaultSync()` papildus
+noraida glabātuvi, kas ir datu direktorijs, atrodas tajā vai satur to.
 
-#### Akreditācijas datu eksportēšana ir pieejama tikai operatoram
+#### Akreditācijas datu eksportēšana ir paredzēta tikai operatoriem
 
-Iepriekš minētais līmenis nosaka tikai to, vai ir nepieciešami _kādi_ akreditācijas dati. Maršruti, kas lejupielādē
-saglabātos akreditācijas datus, apdarinātājā veic otru pārbaudi: `GET /api/settings/export-json` (atšifrēti
+Iepriekšējais līmenis nosaka tikai to, vai ir nepieciešami _kādi_ akreditācijas dati. Maršruti, kas lejupielādē
+saglabātos akreditācijas datus, apstrādātājā veic otru pārbaudi: `GET /api/settings/export-json` (atšifrēti
 pakalpojumu sniedzēju savienojumi un neapstrādātas API atslēgas), `GET /api/db-backups/export` (SQLite fails) un
-`GET /api/db-backups/exportAll` (pilns arhīvs) izsauc `requireOperatorCredential()`
-(`src/lib/api/operatorCredential.ts`). Tas pieņem informācijas paneļa sesiju, lokālā CLI subjektu vai
+`GET /api/db-backups/exportAll` (pilnais arhīvs) izsauc `requireOperatorCredential()`
+(`src/lib/api/operatorCredential.ts`). Tā pieņem informācijas paneļa sesiju, lokālā CLI subjektu vai
 instanci ar atspējotu pieteikšanos un atbild ar `403` jebkura tvēruma API atslēgām (tostarp `manage`
 un `admin`), kā arī `oma_` piekļuves pilnvarām. Sinhronizācijas pilnvaru izsniegšana (`POST /api/sync/tokens`) izmanto to
-pašu palīgfunkciju, kā arī uzticamo cilpas adreses iekšējā servisa pilnvaru.
+pašu palīgfunkciju, kā arī uzticamo atgriezeniskās cilpas iekšējā pakalpojuma pilnvaru.
 
-### Svaigas instalācijas sāknēšana ir pieejama tikai no cilpas adreses — pēc īstā vienranga, nevis `Host`
+### Svaigas instalācijas sāknēšana ir pieejama tikai atgriezeniskajā cilpā — pēc reālā vienranga mezgla, nevis `Host`
 
 Ja nav konfigurēta pārvaldības parole (un nav `INITIAL_PASSWORD`), `isAuthRequired()` failā
-`src/shared/utils/apiAuth.ts` saglabā anonīmo sāknēšanu atvērtu **tikai cilpas vienranga savienojumiem**.
-Cilpas adrese tiek noteikta pēc uzticamiem vienranga signāliem šādā secībā: ar pilnvaru apzīmogotais īstais TCP vienrangs
-(`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, ko redz politika), paša konveijera
-`AUTHZ_HEADER_PEER_LOCALITY` spriedums (ko redz maršrutu apdarinātāji un kam uzticas tikai tad, kamēr
-ir iestatīts `OMNIROUTE_PEER_STAMP_TOKEN`) vai īstais ligzdas vienrangs tiešajiem izsaucējiem. `Host` /
-`nextUrl.hostname` nekad netiek izmantoti, un pirmās paroles ierakstīšanai
-(`POST /api/settings/require-login`) piemēro to pašu ierobežojumu, nevis atstāj to atvērtu katram
-tīkla vienrangam (GHSA-7pq4-8pvv-rx7r). `managementPolicy` nepārprotami nodod savu `peerContext` spriedumu
-tālāk, tāpēc SĀKOTNĒJĀ (pirms noņemšanas) pieprasījuma galvenes nekad to nenosaka.
+`src/shared/utils/apiAuth.ts` saglabā anonīmo sāknēšanu pieejamu **tikai atgriezeniskās cilpas vienranga mezgliem**.
+Atgriezeniskā cilpa tiek noteikta pēc uzticamiem vienranga mezgla signāliem šādā secībā: ar pilnvaru apzīmogotais reālais TCP vienranga mezgls
+(`PEER_IP_HEADER` + `VIA_PROXY_HEADER`, ko redz politika), konveijera paša
+`AUTHZ_HEADER_PEER_LOCALITY` slēdziens (ko redz maršrutu apstrādātāji un kam uzticas tikai tad, kamēr
+ir iestatīts `OMNIROUTE_PEER_STAMP_TOKEN`) vai tiešo izsaucēju reālais ligzdas vienranga mezgls. `Host` /
+`nextUrl.hostname` nekad netiek ņemti vērā, un pirmās paroles ierakstīšanai
+(`POST /api/settings/require-login`) piemēro to pašu ierobežojumu, nevis nodrošina piekļuvi ikvienam
+tīkla vienranga mezglam (GHSA-7pq4-8pvv-rx7r). `managementPolicy` nepārprotami nodod tālāk savu `peerContext` slēdzienu,
+tāpēc to nekad nenosaka SĀKOTNĒJĀ (pirms noņemšanas) pieprasījuma galvenes.
 
-### 3. līmenis — MANAGEMENT (noklusējums)
+### 3. līmenis — PĀRVALDĪBA (noklusējums)
 
-Visi pārējie pārvaldības maršruti. Nepieciešama autentifikācija, ja vien nav konfigurēts `requireLogin=false`. CLI pilnvaras var autentificēties šajos maršrutos (atgriezeniskā cilpa + derīgs HMAC).
+Visi pārējie pārvaldības maršruti. Autentifikācija ir nepieciešama, ja vien nav konfigurēts
+`requireLogin=false`. CLI pilnvaras var autentificēt šos maršrutus (atgriezeniskā cilpa + derīgs HMAC).
 
 ## Izvērtēšanas secība
 

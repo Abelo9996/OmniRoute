@@ -257,15 +257,15 @@ src/
 
 ## `open-sse/` — Workspace do mecanismo de streaming
 
-Workspace npm separado (`@omniroute/open-sse`). Processa requisições e executa provedores.
+Workspace npm separado (`@omniroute/open-sse`). Gerencia o processamento de requisições e a execução de provedores.
 
 ```
 open-sse/
-├── handlers/            # 16 arquivos (12 handlers + 4 auxiliares): chatCore, responsesHandler, embeddings, audio, imagem, vídeo, música, reclassificação, moderações, pesquisa etc.
-├── executors/           # 67 executores específicos de provedores (estendem BaseExecutor)
+├── handlers/            # 16 arquivos (12 manipuladores + 4 auxiliares): chatCore, responsesHandler, embeddings, áudio, imagem, vídeo, música, reclassificação, moderações, busca etc.
+├── executors/           # 150 módulos executores (classes que estendem BaseExecutor + auxiliares específicos de cada provedor)
 ├── translator/          # Conversores de formato (9 de requisição, 9 de resposta, 9 auxiliares)
-├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # Mais de 80 módulos de serviço (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM etc.)
+├── transformer/         # API Responses ↔ Chat Completions (TransformStream)
+├── services/            # ~80+ módulos de serviço (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM etc.)
 ├── mcp-server/          # Servidor MCP (110 ferramentas, 3 transportes, 33 escopos)
 ├── config/              # Registros de provedores/modelos, configuração de cabeçalhos, aliases de modelos
 ├── utils/               # Cliente TLS, fetch/dispatcher de proxy, auxiliares de rede
@@ -284,7 +284,7 @@ open-sse/
 | `audit.ts`                  | Registro de auditoria na tabela `mcp_tool_audit`                                           |
 | `scopeEnforcement.ts`       | Validação de escopo por ferramenta                                                         |
 | `runtimeHeartbeat.ts`       | Sinal de integridade em `DATA_DIR/runtime/mcp-heartbeat.json`                              |
-| `descriptionCompressor.ts`  | Compacta os metadados de descrição das ferramentas para economizar contexto                |
+| `descriptionCompressor.ts`  | Compacta metadados de descrição das ferramentas para economizar contexto                   |
 | `schemas/tools.ts`          | 36 definições de ferramentas básicas + escopos                                             |
 | `tools/advancedTools.ts`    | Implementações de ferramentas avançadas                                                    |
 | `tools/memoryTools.ts`      | 3 ferramentas de memória (pesquisar/adicionar/limpar)                                      |

@@ -317,38 +317,38 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "En vacker solnedgång över bergen",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 Tillgängliga leverantörer inkluderar OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokalt), ComfyUI (lokalt).
 
-`n` returnerar `n` bilder i `data[]`. För leverantörer vars uppströms-API returnerar en bild per anrop
+`n` returnerar `n` bilder i `data[]`. För leverantörer vars överordnade API returnerar en bild per anrop
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI) görs `n` separata uppströmsanrop, med högst 4 pågående samtidigt. Ett
-fast `seed` förskjuts med anropsindex (`seed`, `seed + 1`, …), så att bilderna skiljer sig åt men förblir
+NVIDIA NIM, Cloudflare Workers AI) görs `n` separata anrop till den överordnade tjänsten, med högst 4 samtidiga anrop. Ett
+fast `seed` förskjuts med anropets index (`seed`, `seed + 1`, …), så att bilderna skiljer sig åt men förblir
 reproducerbara. `n` är begränsat till 10. Hela begäran misslyckas om något anrop misslyckas. Listan
-över fan-out-format finns i `SINGLE_IMAGE_FANOUT_FORMATS` i
+över format som använder parallella anrop finns i `SINGLE_IMAGE_FANOUT_FORMATS` i
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux återanvänder den befintliga API-nyckelanslutningen och accepterar prefixen `zenmux/` eller `zm/`:
 
 - `zenmux/openai/gpt-image-2` använder ZenMux OpenAI Images API. Alternativen inkluderar `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` och `response_format`.
-- Andra utgivare, såsom `zm/meta/muse-image-1.0`, använder ZenMux Vertex AI-slutpunkt `:predict`.
+- Andra utgivare, såsom `zm/meta/muse-image-1.0`, använder ZenMux Vertex AI-ändpunkt `:predict`.
   `n` mappas till `sampleCount`, `aspect_ratio` till `aspectRatio` och `image_size`
-  (`1K`, `2K`, `4K`) till `sampleImageSize`. En pixelbaserad `size` anger endast ett bildförhållande,
-  inte garanterade pixeldimensioner. Vilka bildförhållanden, upplösningar och antal som stöds varierar mellan modeller.
+  (`1K`, `2K`, `4K`) till `sampleImageSize`. Ett pixelvärde för `size` anger endast ett bildförhållande,
+  inte garanterade pixeldimensioner. Vilka bildförhållanden, upplösningar och antal som stöds varierar beroende på modell.
 - `zm/inclusionai/ming-image-0.1-design` väljer sina egna dimensioner. Utelämna `size`,
-  `aspect_ratio` och `image_size`; explicita värden returnerar HTTP 400. PNG, JPEG och WebP
+  `aspect_ratio` och `image_size`; uttryckliga värden returnerar HTTP 400. PNG, JPEG och WebP
   kan begäras med `output_format`.
 
-Den här integreringen stöder generering av bilder från text, inte redigering med referensbilder. Utdata från Vertex
-normaliseras till `data[].b64_json`; `response_format: "url"` returnerar en uppströms
-HTTPS-URL eller en base64-data-URL när endast bildbyte är tillgängliga. Tomma/filtrerade utdata
+Den här integrationen stöder text-till-bild-generering, inte redigering med referensbilder. Utdata från Vertex
+normaliseras till `data[].b64_json`; `response_format: "url"` returnerar en överordnad
+HTTPS-URL eller en base64-data-URL när endast bilddata är tillgängliga. Tomma eller filtrerade utdata
 returnerar ett fel i stället för ett tomt lyckat svar. Modellåtkomst beror på ZenMux-kontot.
-Se [ZenMux Vertex-API](https://docs.zenmux.ai/api/vertexai/generate-images) och
+Se [ZenMux Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) och
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
@@ -1127,6 +1127,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 alla lagrade autentiseringsuppgifter, så de kräver en session i instrumentpanelen eller lokal CLI (eller att
 inloggning är inaktiverad). API-nycklar oavsett omfattning och `oma_`-åtkomsttoken får `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Molnsynkronisering
 
 | Slutpunkt              | Metod    | Beskrivning                     |
@@ -1492,17 +1499,17 @@ Utgående webhook-prenumerationer för OmniRoute-händelser (slutförda begäran
 
 ## Registrerade nycklar (automatisk hantering)
 
-Används av undersystemet för automatisk nyckelhantering för att utfärda och rotera API-nycklar hos en underliggande leverantör/ett underliggande konto, med dagliga kvoter och timkvoter.
+Används av delsystemet för automatisk nyckelhantering för att utfärda och rotera API-nycklar hos en underliggande leverantör/ett underliggande konto, med dagliga/timvisa kvoter.
 
-| Metod  | Sökväg                                | Beskrivning                                                                                                                                                                                                                         |
-| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Lista registrerade nycklar (endast maskerat prefix)                                                                                                                                                                                 |
-| POST   | `/api/v1/registered-keys`             | Utfärda en ny registrerad nyckel — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Returnerar den obehandlade nyckeln **en gång**. Returnerar `429` om kvoten inte medger begäran. |
-| GET    | `/api/v1/registered-keys/[id]`        | Hämta metadata för en registrerad nyckel (inget obehandlat nyckelmaterial)                                                                                                                                                          |
-| DELETE | `/api/v1/registered-keys/[id]`        | Återkalla en registrerad nyckel                                                                                                                                                                                                     |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Explicit slutpunkt för återkallning (samma effekt som DELETE)                                                                                                                                                                       |
+| Metod  | Sökväg                                | Beskrivning                                                                                                                                                                                                                            |
+| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Lista registrerade nycklar (endast maskerat prefix)                                                                                                                                                                                    |
+| POST   | `/api/v1/registered-keys`             | Utfärda en ny registrerad nyckel — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Returnerar den obearbetade nyckeln **en gång**. Returnerar `429` om kvoten inte tillåter åtgärden. |
+| GET    | `/api/v1/registered-keys/[id]`        | Hämta metadata för en registrerad nyckel (inget obearbetat nyckelmaterial)                                                                                                                                                             |
+| DELETE | `/api/v1/registered-keys/[id]`        | Återkalla en registrerad nyckel                                                                                                                                                                                                        |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Explicit slutpunkt för återkallande (samma effekt som DELETE)                                                                                                                                                                          |
 
-**Autentisering:** hanteringssession/API-nyckel (`requireManagementAuth`) — samma åtkomstkontroll som för `/api/keys`: en kontrollpanelssession, den lokala CLI-token eller en API-nyckel med omfånget `manage`/`admin`; API-nycklar endast för inferens får `403`. Se även `/v1/quotas/check` och `/v1/issues/report`.
+**Autentisering:** hanteringssession/API-nyckel (`requireManagementAuth`) — samma åtkomstkontroll som för `/api/keys`: en dashboard-session, den lokala CLI-tokenen eller en API-nyckel med omfånget `manage`/`admin`; API-nycklar avsedda enbart för inferens får `403`. Se även `/v1/quotas/check` och `/v1/issues/report`.
 
 ---
 

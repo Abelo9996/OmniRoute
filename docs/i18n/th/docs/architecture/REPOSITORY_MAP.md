@@ -257,18 +257,18 @@ src/
 
 ## `open-sse/` — เวิร์กสเปซเอนจินสตรีมมิง
 
-เวิร์กสเปซ npm แยกต่างหาก (`@omniroute/open-sse`) จัดการการประมวลผลคำขอและการเรียกใช้งานผู้ให้บริการ
+เวิร์กสเปซ npm แยกต่างหาก (`@omniroute/open-sse`) จัดการการประมวลผลคำขอและการดำเนินงานของผู้ให้บริการ
 
 ```
 open-sse/
 ├── handlers/            # 16 ไฟล์ (12 แฮนด์เลอร์ + 4 ตัวช่วย): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search ฯลฯ
-├── executors/           # ตัวดำเนินการเฉพาะผู้ให้บริการ 67 รายการ (สืบทอดจาก BaseExecutor)
-├── translator/          # ตัวแปลงรูปแบบ (คำขอ 9 รายการ, การตอบกลับ 9 รายการ, ตัวช่วย 9 รายการ)
+├── executors/           # โมดูลตัวดำเนินการ 150 โมดูล (คลาสที่สืบทอดจาก BaseExecutor + ตัวช่วยเฉพาะผู้ให้บริการ)
+├── translator/          # ตัวแปลงรูปแบบ (คำขอ 9 รายการ การตอบกลับ 9 รายการ ตัวช่วย 9 รายการ)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # โมดูลบริการประมาณ 80+ รายการ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM ฯลฯ)
-├── mcp-server/          # เซิร์ฟเวอร์ MCP (110 เครื่องมือ, 3 การขนส่ง, 33 ขอบเขต)
-├── config/              # รีจิสทรีผู้ให้บริการ/โมเดล, การกำหนดค่าส่วนหัว, นามแฝงโมเดล
-├── utils/               # ไคลเอนต์ TLS, การดึงข้อมูล/ตัวจัดส่งพร็อกซี, ตัวช่วยด้านเครือข่าย
+├── services/            # โมดูลบริการมากกว่า ~80 โมดูล (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM ฯลฯ)
+├── mcp-server/          # เซิร์ฟเวอร์ MCP (เครื่องมือ 110 รายการ ทรานสปอร์ต 3 แบบ สโคป 33 รายการ)
+├── config/              # รีจิสทรีผู้ให้บริการ/โมเดล การกำหนดค่าเฮดเดอร์ นามแฝงโมเดล
+├── utils/               # ไคลเอนต์ TLS, proxy fetch/dispatcher, ตัวช่วยเครือข่าย
 ├── index.ts             # จุดเริ่มต้นของเวิร์กสเปซ
 ├── package.json         # แมนิเฟสต์ของเวิร์กสเปซ
 ├── tsconfig.json        # การกำหนดค่า TS ของเวิร์กสเปซ
@@ -279,16 +279,16 @@ open-sse/
 
 | พาธ                         | วัตถุประสงค์                                                                      |
 | --------------------------- | --------------------------------------------------------------------------------- |
-| `server.ts`                 | วงจรชีวิตของเซิร์ฟเวอร์ MCP (การขนส่ง stdio + HTTP)                               |
-| `httpTransport.ts`          | การขนส่ง HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                |
+| `server.ts`                 | วงจรชีวิตของเซิร์ฟเวอร์ MCP (ทรานสปอร์ต stdio + HTTP)                             |
+| `httpTransport.ts`          | ทรานสปอร์ต HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)              |
 | `audit.ts`                  | บันทึกการตรวจสอบลงในตาราง `mcp_tool_audit`                                        |
-| `scopeEnforcement.ts`       | การตรวจสอบขอบเขตแยกตามเครื่องมือ                                                  |
-| `runtimeHeartbeat.ts`       | ฮาร์ตบีตสถานะระบบไปยัง `DATA_DIR/runtime/mcp-heartbeat.json`                      |
-| `descriptionCompressor.ts`  | บีบอัดเมทาดาทาคำอธิบายเครื่องมือเพื่อประหยัดบริบท                                 |
-| `schemas/tools.ts`          | นิยามเครื่องมือพื้นฐาน 36 รายการ + ขอบเขต                                         |
+| `scopeEnforcement.ts`       | การตรวจสอบสโคปสำหรับแต่ละเครื่องมือ                                               |
+| `runtimeHeartbeat.ts`       | ฮาร์ตบีตสถานะการทำงานไปยัง `DATA_DIR/runtime/mcp-heartbeat.json`                  |
+| `descriptionCompressor.ts`  | บีบอัดข้อมูลเมตาคำอธิบายเครื่องมือเพื่อประหยัดบริบท                               |
+| `schemas/tools.ts`          | คำจำกัดความเครื่องมือพื้นฐาน 36 รายการ + สโคป                                     |
 | `tools/advancedTools.ts`    | การใช้งานเครื่องมือขั้นสูง                                                        |
 | `tools/memoryTools.ts`      | เครื่องมือหน่วยความจำ 3 รายการ (ค้นหา/เพิ่ม/ล้าง)                                 |
-| `tools/skillTools.ts`       | เครื่องมือทักษะ 4 รายการ (แสดงรายการ/เปิดใช้งาน/ดำเนินการ/ประวัติการดำเนินการ)    |
+| `tools/skillTools.ts`       | เครื่องมือทักษะ 4 รายการ (แสดงรายการ/เปิดใช้งาน/ดำเนินการ/การดำเนินการ)           |
 | `tools/compressionTools.ts` | เครื่องมือบีบอัด 5 รายการ                                                         |
 | `README.md`                 | README ภายในของเซิร์ฟเวอร์ MCP (เชื่อมโยงข้ามจาก `docs/frameworks/MCP-SERVER.md`) |
 

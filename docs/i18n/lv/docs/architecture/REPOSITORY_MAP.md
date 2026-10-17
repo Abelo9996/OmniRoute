@@ -262,7 +262,7 @@ Atsevišķa npm darbvieta (`@omniroute/open-sse`). Apstrādā pieprasījumus un 
 ```
 open-sse/
 ├── handlers/            # 16 faili (12 apstrādātāji + 4 palīgmoduļi): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search utt.
-├── executors/           # 67 pakalpojumu sniedzējiem specifiski izpildītāji (paplašina BaseExecutor)
+├── executors/           # 150 izpildītāju moduļi (klases, kas paplašina BaseExecutor, un katram pakalpojumu sniedzējam paredzēti palīgmoduļi)
 ├── translator/          # Formātu pārveidotāji (9 pieprasījumiem, 9 atbildēm, 9 palīgmoduļi)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ pakalpojumu moduļi (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM utt.)
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Ceļš                        | Nolūks                                                                                   |
-| --------------------------- | ---------------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP servera dzīves cikls (stdio + HTTP transporti)                                       |
-| `httpTransport.ts`          | HTTP Streamable + SSE transporti (`/api/mcp/sse`, `/api/mcp/stream`)                     |
-| `audit.ts`                  | Audita žurnalēšana tabulā `mcp_tool_audit`                                               |
-| `scopeEnforcement.ts`       | Tvēruma validācija katram rīkam                                                          |
-| `runtimeHeartbeat.ts`       | Veselības signāls failā `DATA_DIR/runtime/mcp-heartbeat.json`                            |
-| `descriptionCompressor.ts`  | Rīku aprakstu metadatu saspiešana konteksta taupīšanai                                   |
-| `schemas/tools.ts`          | 36 pamata rīku definīcijas + tvērumi                                                     |
-| `tools/advancedTools.ts`    | Paplašināto rīku implementācijas                                                         |
-| `tools/memoryTools.ts`      | 3 atmiņas rīki (meklēšana/pievienošana/notīrīšana)                                       |
-| `tools/skillTools.ts`       | 4 prasmju rīki (saraksts/iespējošana/izpilde/izpildes)                                   |
-| `tools/compressionTools.ts` | 5 saspiešanas rīki                                                                       |
-| `README.md`                 | Iekšējais MCP servera README (savstarpēji sasaistīts ar `docs/frameworks/MCP-SERVER.md`) |
+| Ceļš                        | Nolūks                                                                                 |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP servera dzīves cikls (stdio + HTTP transporti)                                     |
+| `httpTransport.ts`          | HTTP Streamable + SSE transporti (`/api/mcp/sse`, `/api/mcp/stream`)                   |
+| `audit.ts`                  | Audita žurnālu ierakstīšana tabulā `mcp_tool_audit`                                    |
+| `scopeEnforcement.ts`       | Katra rīka tvēruma validācija                                                          |
+| `runtimeHeartbeat.ts`       | Darbspējas sirdspuksta ierakstīšana failā `DATA_DIR/runtime/mcp-heartbeat.json`        |
+| `descriptionCompressor.ts`  | Rīku aprakstu metadatu saspiešana konteksta taupīšanai                                 |
+| `schemas/tools.ts`          | 36 pamata rīku definīcijas + tvērumi                                                   |
+| `tools/advancedTools.ts`    | Paplašināto rīku implementācijas                                                       |
+| `tools/memoryTools.ts`      | 3 atmiņas rīki (meklēšana/pievienošana/notīrīšana)                                     |
+| `tools/skillTools.ts`       | 4 prasmju rīki (uzskaitīšana/iespējošana/izpilde/izpildes)                             |
+| `tools/compressionTools.ts` | 5 saspiešanas rīki                                                                     |
+| `README.md`                 | Iekšējais MCP servera README (ar savstarpēju saiti no `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

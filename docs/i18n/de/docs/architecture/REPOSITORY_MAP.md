@@ -257,20 +257,20 @@ src/
 
 ## `open-sse/` — Arbeitsbereich der Streaming-Engine
 
-Separater npm-Arbeitsbereich (`@omniroute/open-sse`). Übernimmt die Anfrageverarbeitung und die Ausführung durch Anbieter.
+Separater npm-Arbeitsbereich (`@omniroute/open-sse`). Übernimmt die Anfrageverarbeitung und die Ausführung der Provider.
 
 ```
 open-sse/
-├── handlers/            # 16 Dateien (12 Handler + 4 Hilfsdateien): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search usw.
-├── executors/           # 67 anbieterspezifische Executors (erweitern BaseExecutor)
-├── translator/          # Formatkonverter (9 für Anfragen, 9 für Antworten, 9 Hilfsdateien)
+├── handlers/            # 16 Dateien (12 Handler + 4 Hilfsmodule): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search usw.
+├── executors/           # 150 Executor-Module (Klassen, die BaseExecutor erweitern, sowie providerspezifische Hilfsmodule)
+├── translator/          # Formatkonverter (9 für Anfragen, 9 für Antworten, 9 Hilfsmodule)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ Servicemodule (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM usw.)
+├── services/            # ~80+ Dienstmodule (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM usw.)
 ├── mcp-server/          # MCP-Server (110 Tools, 3 Transports, 33 Scopes)
-├── config/              # Anbieter-/Modellregister, Header-Konfiguration, Modellaliase
-├── utils/               # TLS-Client, Proxy-Fetch/Dispatcher, Netzwerkhilfen
+├── config/              # Provider-/Modellregister, Header-Konfiguration, Modellaliase
+├── utils/               # TLS-Client, Proxy-Fetch/-Dispatcher, Netzwerkhilfsmodule
 ├── index.ts             # Einstiegspunkt des Arbeitsbereichs
-├── package.json         # Manifest des Arbeitsbereichs
+├── package.json         # Arbeitsbereichsmanifest
 ├── tsconfig.json        # TS-Konfiguration des Arbeitsbereichs
 └── types.d.ts           # Typdeklarationen des Arbeitsbereichs
 ```
@@ -279,14 +279,14 @@ open-sse/
 
 | Pfad                        | Zweck                                                                            |
 | --------------------------- | -------------------------------------------------------------------------------- |
-| `server.ts`                 | Lebenszyklus des MCP-Servers (stdio- und HTTP-Transports)                        |
+| `server.ts`                 | Lebenszyklus des MCP-Servers (stdio- + HTTP-Transports)                          |
 | `httpTransport.ts`          | HTTP-Streamable- und SSE-Transports (`/api/mcp/sse`, `/api/mcp/stream`)          |
 | `audit.ts`                  | Audit-Protokollierung in der Tabelle `mcp_tool_audit`                            |
 | `scopeEnforcement.ts`       | Tool-spezifische Scope-Validierung                                               |
-| `runtimeHeartbeat.ts`       | Zustands-Heartbeat an `DATA_DIR/runtime/mcp-heartbeat.json`                      |
-| `descriptionCompressor.ts`  | Komprimiert Metadaten von Tool-Beschreibungen, um Kontext zu sparen              |
+| `runtimeHeartbeat.ts`       | Zustands-Heartbeat nach `DATA_DIR/runtime/mcp-heartbeat.json`                    |
+| `descriptionCompressor.ts`  | Komprimiert Metadaten der Tool-Beschreibungen, um Kontext zu sparen              |
 | `schemas/tools.ts`          | 36 grundlegende Tool-Definitionen + Scopes                                       |
-| `tools/advancedTools.ts`    | Implementierungen erweiterter Tools                                              |
+| `tools/advancedTools.ts`    | Erweiterte Tool-Implementierungen                                                |
 | `tools/memoryTools.ts`      | 3 Speicher-Tools (Suchen/Hinzufügen/Löschen)                                     |
 | `tools/skillTools.ts`       | 4 Skill-Tools (Auflisten/Aktivieren/Ausführen/Ausführungen)                      |
 | `tools/compressionTools.ts` | 5 Komprimierungs-Tools                                                           |

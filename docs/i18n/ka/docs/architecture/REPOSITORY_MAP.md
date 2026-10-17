@@ -262,13 +262,13 @@ src/
 ```
 open-sse/
 ├── handlers/            # 16 ფაილი (12 დამმუშავებელი + 4 დამხმარე): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search და სხვ.
-├── executors/           # პროვაიდერისთვის სპეციფიკური 67 შემსრულებელი (აფართოებს BaseExecutor-ს)
-├── translator/          # ფორმატის გარდამქმნელები (9 მოთხოვნის, 9 პასუხის, 9 დამხმარე)
+├── executors/           # 150 შემსრულებელი მოდული (კლასები, რომლებიც აფართოებენ BaseExecutor-ს, + თითოეული პროვაიდერის დამხმარეები)
+├── translator/          # ფორმატის კონვერტერები (9 მოთხოვნისთვის, 9 პასუხისთვის, 9 დამხმარე)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ სერვისის მოდული (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM და სხვ.)
-├── mcp-server/          # MCP სერვერი (110 ინსტრუმენტი, 3 ტრანსპორტი, 33 მოქმედების არე)
+├── mcp-server/          # MCP სერვერი (110 ხელსაწყო, 3 ტრანსპორტი, 33 წვდომის არე)
 ├── config/              # პროვაიდერების/მოდელების რეესტრები, სათაურების კონფიგურაცია, მოდელების ფსევდონიმები
-├── utils/               # TLS კლიენტი, პროქსი-მოთხოვნა/დისპეტჩერი, ქსელის დამხმარე საშუალებები
+├── utils/               # TLS კლიენტი, პროქსი-მოთხოვნა/დისპეტჩერი, ქსელის დამხმარეები
 ├── index.ts             # სამუშაო სივრცის შესასვლელი წერტილი
 ├── package.json         # სამუშაო სივრცის მანიფესტი
 ├── tsconfig.json        # სამუშაო სივრცის TS კონფიგურაცია
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| გზა                         | დანიშნულება                                                                   |
-| --------------------------- | ----------------------------------------------------------------------------- |
-| `server.ts`                 | MCP სერვერის სასიცოცხლო ციკლი (stdio + HTTP ტრანსპორტები)                     |
-| `httpTransport.ts`          | HTTP Streamable + SSE ტრანსპორტები (`/api/mcp/sse`, `/api/mcp/stream`)        |
-| `audit.ts`                  | აუდიტის ჟურნალის წარმოება `mcp_tool_audit` ცხრილში                            |
-| `scopeEnforcement.ts`       | მოქმედების არეალის ვალიდაცია თითოეული ინსტრუმენტისთვის                        |
-| `runtimeHeartbeat.ts`       | მდგომარეობის პერიოდული სიგნალი `DATA_DIR/runtime/mcp-heartbeat.json`-ში       |
-| `descriptionCompressor.ts`  | კონტექსტის დასაზოგად ინსტრუმენტის აღწერის მეტამონაცემების შეკუმშვა            |
-| `schemas/tools.ts`          | 36 საბაზისო ინსტრუმენტის განსაზღვრება + მოქმედების არეები                     |
-| `tools/advancedTools.ts`    | გაფართოებული ინსტრუმენტების იმპლემენტაციები                                   |
-| `tools/memoryTools.ts`      | მეხსიერების 3 ინსტრუმენტი (ძებნა/დამატება/გასუფთავება)                        |
-| `tools/skillTools.ts`       | უნარების 4 ინსტრუმენტი (სია/ჩართვა/შესრულება/შესრულებების სია)                |
-| `tools/compressionTools.ts` | შეკუმშვის 5 ინსტრუმენტი                                                       |
-| `README.md`                 | შიდა MCP სერვერის README (`docs/frameworks/MCP-SERVER.md`-დან ჯვარედინი ბმით) |
+| გზა                         | დანიშნულება                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP სერვერის სასიცოცხლო ციკლი (stdio + HTTP ტრანსპორტები)                        |
+| `httpTransport.ts`          | HTTP Streamable + SSE ტრანსპორტები (`/api/mcp/sse`, `/api/mcp/stream`)           |
+| `audit.ts`                  | აუდიტის ჟურნალის წარმოება `mcp_tool_audit` ცხრილში                               |
+| `scopeEnforcement.ts`       | თითოეული ხელსაწყოს წვდომის არეების ვალიდაცია                                     |
+| `runtimeHeartbeat.ts`       | ჯანმრთელობის პერიოდული სიგნალი `DATA_DIR/runtime/mcp-heartbeat.json`-ში          |
+| `descriptionCompressor.ts`  | კონტექსტის დასაზოგად ხელსაწყოს აღწერის მეტამონაცემების შეკუმშვა                  |
+| `schemas/tools.ts`          | 36 საბაზისო ხელსაწყოს განსაზღვრება + წვდომის არეები                              |
+| `tools/advancedTools.ts`    | გაფართოებული ხელსაწყოების იმპლემენტაციები                                        |
+| `tools/memoryTools.ts`      | მეხსიერების 3 ხელსაწყო (ძებნა/დამატება/გასუფთავება)                              |
+| `tools/skillTools.ts`       | უნარების 4 ხელსაწყო (სია/ჩართვა/შესრულება/შესრულებების ისტორია)                  |
+| `tools/compressionTools.ts` | შეკუმშვის 5 ხელსაწყო                                                             |
+| `README.md`                 | MCP სერვერის შიდა README (`docs/frameworks/MCP-SERVER.md`-იდან ჯვარედინი ბმულით) |
 
 ---
 

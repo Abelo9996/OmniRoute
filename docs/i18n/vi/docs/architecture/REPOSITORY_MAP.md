@@ -255,20 +255,20 @@ src/
 
 ---
 
-## `open-sse/` — Không gian làm việc của công cụ truyền luồng
+## `open-sse/` — Không gian làm việc của công cụ phát trực tuyến
 
-Không gian làm việc npm riêng biệt (`@omniroute/open-sse`). Xử lý yêu cầu và thực thi nhà cung cấp.
+Không gian làm việc npm riêng biệt (`@omniroute/open-sse`). Xử lý yêu cầu + thực thi nhà cung cấp.
 
 ```
 open-sse/
-├── handlers/            # 16 tệp (12 trình xử lý + 4 trình trợ giúp): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, v.v.
-├── executors/           # 67 trình thực thi dành riêng cho từng nhà cung cấp (mở rộng BaseExecutor)
-├── translator/          # Bộ chuyển đổi định dạng (9 yêu cầu, 9 phản hồi, 9 trình trợ giúp)
+├── handlers/            # 16 tệp (12 trình xử lý + 4 tiện ích): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, v.v.
+├── executors/           # 150 mô-đun thực thi (các lớp mở rộng BaseExecutor + tiện ích riêng cho từng nhà cung cấp)
+├── translator/          # Bộ chuyển đổi định dạng (9 yêu cầu, 9 phản hồi, 9 tiện ích)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # Hơn ~80 mô-đun dịch vụ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, v.v.)
+├── services/            # ~80+ mô-đun dịch vụ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, v.v.)
 ├── mcp-server/          # Máy chủ MCP (110 công cụ, 3 phương thức truyền tải, 33 phạm vi)
 ├── config/              # Sổ đăng ký nhà cung cấp/mô hình, cấu hình tiêu đề, bí danh mô hình
-├── utils/               # Máy khách TLS, proxy fetch/dispatcher, trình trợ giúp mạng
+├── utils/               # Máy khách TLS, fetch/dispatcher proxy, tiện ích mạng
 ├── index.ts             # Điểm vào của không gian làm việc
 ├── package.json         # Tệp kê khai không gian làm việc
 ├── tsconfig.json        # Cấu hình TS của không gian làm việc
@@ -283,10 +283,10 @@ open-sse/
 | `httpTransport.ts`          | Phương thức truyền tải HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)      |
 | `audit.ts`                  | Ghi nhật ký kiểm tra vào bảng `mcp_tool_audit`                                        |
 | `scopeEnforcement.ts`       | Xác thực phạm vi cho từng công cụ                                                     |
-| `runtimeHeartbeat.ts`       | Nhịp tim kiểm tra tình trạng tới `DATA_DIR/runtime/mcp-heartbeat.json`                |
+| `runtimeHeartbeat.ts`       | Gửi nhịp tim tình trạng đến `DATA_DIR/runtime/mcp-heartbeat.json`                     |
 | `descriptionCompressor.ts`  | Nén siêu dữ liệu mô tả công cụ để tiết kiệm ngữ cảnh                                  |
 | `schemas/tools.ts`          | 36 định nghĩa công cụ cơ sở + phạm vi                                                 |
-| `tools/advancedTools.ts`    | Các phần triển khai công cụ nâng cao                                                  |
+| `tools/advancedTools.ts`    | Các triển khai công cụ nâng cao                                                       |
 | `tools/memoryTools.ts`      | 3 công cụ bộ nhớ (tìm kiếm/thêm/xóa)                                                  |
 | `tools/skillTools.ts`       | 4 công cụ kỹ năng (liệt kê/bật/thực thi/các lần thực thi)                             |
 | `tools/compressionTools.ts` | 5 công cụ nén                                                                         |

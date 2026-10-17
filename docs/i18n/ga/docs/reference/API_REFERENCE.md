@@ -295,7 +295,7 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Luí álainn gréine os cionn sléibhte",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
@@ -304,33 +304,33 @@ I measc na soláthraithe atá ar fáil tá OpenAI (GPT Image 2), xAI (Grok Image
 
 Filleann `n` líon `n` íomhánna in `data[]`. I gcás soláthraithe a bhfilleann a n-API réamhtheachtach íomhá amháin in aghaidh an ghlao
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), déantar `n` glao réamhtheachtach ar leith, agus 4 cinn ar a mhéad ar siúl ag an am céanna. Déantar
+NVIDIA NIM, Cloudflare Workers AI), déantar `n` glao réamhtheachtacha ar leith, agus 4 cinn ar a mhéad ar siúl ag an am céanna. Déantar
 `seed` seasta a fhritháireamh de réir innéacs an ghlao (`seed`, `seed + 1`, …), ionas go mbíonn na híomhánna éagsúil ach gur féidir
 iad a atáirgeadh. Tá uasteorainn 10 ar `n`. Teipeann ar an iarratas ina iomláine má theipeann ar aon ghlao. Tá liosta
-na bhformáidí scaipthe in `SINGLE_IMAGE_FANOUT_FORMATS` in
+na bhformáidí fan-amach in `SINGLE_IMAGE_FANOUT_FORMATS` in
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-Athúsáideann ZenMux an nasc API-eochrach atá ann cheana agus glacann sé le réimíreanna `zenmux/` nó `zm/`:
+Athúsáideann ZenMux an nasc eochair-API atá ann cheana agus glacann sé le réimíreanna `zenmux/` nó `zm/`:
 
 - Úsáideann `zenmux/openai/gpt-image-2` API Íomhánna OpenAI ZenMux. I measc na roghanna tá `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, agus `response_format`.
-- Úsáideann foilsitheoirí eile, amhail `zm/meta/muse-image-1.0`, críochphointe `:predict` Vertex AI ZenMux.
-  Comhfhreagraíonn `n` do `sampleCount`, `aspect_ratio` do `aspectRatio`, agus `image_size`
-  (`1K`, `2K`, `4K`) do `sampleImageSize`. Ní sholáthraíonn `size` picteilín ach cóimheas treoíochta,
-  ní toisí ráthaithe picteilín. Athraíonn na cóimheasa, taifigh agus líonmhaireachtaí a dtacaítear leo de réir samhla.
+- Úsáideann foilsitheoirí eile, amhail `zm/meta/muse-image-1.0`, críochphointe `:predict`
+  Vertex AI ZenMux. Mapálann `n` go `sampleCount`, `aspect_ratio` go `aspectRatio`, agus `image_size`
+  (`1K`, `2K`, `4K`) go `sampleImageSize`. Ní sholáthraíonn `size` i bpicteilíní ach cóimheas treoíochta,
+  ní toisí picteilín ráthaithe. Athraíonn na cóimheasa, na taifigh agus na comhairimh a dtacaítear leo de réir na samhla.
 - Roghnaíonn `zm/inclusionai/ming-image-0.1-design` a thoisí féin. Fág `size`,
   `aspect_ratio`, agus `image_size` ar lár; filleann luachanna sainráite HTTP 400. Is féidir PNG, JPEG, agus WebP
   a iarraidh le `output_format`.
 
-Tacaíonn an comhtháthú seo le giniúint téacs-go-híomhá, ní le heagarthóireacht íomhánna tagartha. Déantar
-aschur Vertex a normalú go `data[].b64_json`; filleann `response_format: "url"` URL HTTPS réamhtheachtach
-nó URL sonraí base64 nuair nach bhfuil ar fáil ach bearta íomhá. I gcás aschuir fholmha/scagtha,
-filleann sé earráid seachas rath folamh. Braitheann rochtain ar shamhlacha ar an gcuntas ZenMux.
+Tacaíonn an comhtháthú seo le giniúint téacs-go-híomhá, ní le heagarthóireacht íomhánna tagartha. Déantar aschur Vertex
+a normalú go `data[].b64_json`; filleann `response_format: "url"` URL HTTPS réamhtheachtach
+nó URL sonraí base64 nuair nach mbíonn ach bearta íomhá ar fáil. Filleann aschuir fholmha/scagtha
+earráid seachas freagra rathúil folamh. Braitheann rochtain ar shamhlacha ar an gcuntas ZenMux.
 Féach [API Vertex ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) agus
 [API Íomhánna OpenAI](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Liostaigh gach samhail íomhá
+# Liostaigh na samhlacha íomhá go léir
 GET /v1/images/generations
 ```
 
@@ -1103,6 +1103,13 @@ Dáileann `/api/db-backups/export`, `/api/db-backups/exportAll` agus `/api/setti
 gach dintiúr stóráilte, mar sin teastaíonn seisiún an deais nó an CLI áitiúil uathu (nó logáil
 isteach díchumasaithe). Faigheann eochracha API d'aon raon agus comharthaí rochtana `oma_` `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Sioncronú Néalríomhaireachta
 
 | Críochphointe          | Modhanna | Cur síos                       |
@@ -1466,17 +1473,17 @@ Síntiúis crúca gréasáin amach do theagmhais OmniRoute (cur i gcrích iarrat
 
 ## Eochracha Cláraithe (Uathbhainistiú)
 
-Úsáideann an fochóras uathbhainistithe eochracha iad chun eochracha API a eisiúint agus a rothlú i gcoinne soláthraí/cuntais taca, le cuótaí laethúla/in aghaidh na huaire.
+Úsáideann an fochóras uathbhainistithe eochracha iad chun eochracha API a eisiúint agus a rothlú i gcoinne soláthraí/cuntais taca, le cuótaí laethúla/uairiúla.
 
-| Modh   | Conair                                | Cur síos                                                                                                                                                                                                                                |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Liostaigh eochracha cláraithe (réimír folaithe amháin)                                                                                                                                                                                  |
-| POST   | `/api/v1/registered-keys`             | Eisigh eochair chláraithe nua — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Seoltar an eochair amh ar ais **uair amháin**. Seoltar `429` ar ais má dhiúltaítear di de bharr cuóta. |
-| GET    | `/api/v1/registered-keys/[id]`        | Aisghabh meiteashonraí eochrach cláraithe (gan aon ábhar amh)                                                                                                                                                                           |
-| DELETE | `/api/v1/registered-keys/[id]`        | Cúlghair eochair chláraithe                                                                                                                                                                                                             |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Críochphointe cúlghairthe sainráite (an éifeacht chéanna le DELETE)                                                                                                                                                                     |
+| Modh   | Conair                                | Cur Síos                                                                                                                                                                                                                                   |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/v1/registered-keys`             | Liostaigh eochracha cláraithe (réimír folaithe amháin)                                                                                                                                                                                     |
+| POST   | `/api/v1/registered-keys`             | Eisigh eochair chláraithe nua — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Seoltar an eochair amh ar ais **uair amháin**. Seoltar `429` ar ais má dhiúltaítear mar gheall ar chuóta. |
+| GET    | `/api/v1/registered-keys/[id]`        | Aisghabh meiteashonraí eochrach cláraithe (gan aon ábhar amh)                                                                                                                                                                              |
+| DELETE | `/api/v1/registered-keys/[id]`        | Cúlghair eochair chláraithe                                                                                                                                                                                                                |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Críochphointe sainráite cúlghairme (an éifeacht chéanna le DELETE)                                                                                                                                                                         |
 
-**Fíordheimhniú:** seisiún bainistíochta/eochair API (`requireManagementAuth`) — an chosaint chéanna agus atá ag `/api/keys`: seisiún deais, an comhartha CLI áitiúil, nó eochair API le scóip `manage`/`admin`; faigheann eochracha API atá teoranta do thátal amháin `403`. Féach freisin `/v1/quotas/check` agus `/v1/issues/report`.
+**Fíordheimhniú:** seisiún bainistíochta/eochair API (`requireManagementAuth`) — an chosaint chéanna agus atá ag `/api/keys`: seisiún deais, an comhartha CLI áitiúil, nó eochair API a bhfuil scóip `manage`/`admin` aici; faigheann eochracha API atá le haghaidh tátail amháin `403`. Féach freisin `/v1/quotas/check` agus `/v1/issues/report`.
 
 ---
 

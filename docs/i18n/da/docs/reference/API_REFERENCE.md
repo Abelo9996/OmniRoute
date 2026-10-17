@@ -305,27 +305,27 @@ Tilgængelige udbydere omfatter OpenAI (GPT Image 2), xAI (Grok Image), Together
 `n` returnerer `n` billeder i `data[]`. For udbydere, hvis upstream-API returnerer ét billede pr. kald
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
 NVIDIA NIM, Cloudflare Workers AI), foretages der `n` separate upstream-kald med højst 4 samtidige kald. En
-fast `seed` forskydes med kaldets indeks (`seed`, `seed + 1`, …), så billederne er forskellige, men stadig
+fast `seed` forskydes med kaldets indeks (`seed`, `seed + 1`, …), så billederne er forskellige, men forbliver
 reproducerbare. `n` er begrænset til 10. Hele anmodningen mislykkes, hvis et af kaldene mislykkes. Listen
 over fan-out-formater er `SINGLE_IMAGE_FANOUT_FORMATS` i
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux genbruger den eksisterende API-nøgleforbindelse og accepterer præfikserne `zenmux/` eller `zm/`:
 
-- `zenmux/openai/gpt-image-2` bruger ZenMux' OpenAI Images API. Indstillingerne omfatter `size`,
+- `zenmux/openai/gpt-image-2` bruger ZenMux' OpenAI Images API. Valgmulighederne omfatter `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` og `response_format`.
 - Andre udgivere, såsom `zm/meta/muse-image-1.0`, bruger ZenMux' Vertex AI-`:predict`-
-  slutpunkt. `n` mappes til `sampleCount`, `aspect_ratio` til `aspectRatio` og `image_size`
-  (`1K`, `2K`, `4K`) til `sampleImageSize`. En pixelbaseret `size` angiver kun et billedformat,
+  slutpunkt. `n` knyttes til `sampleCount`, `aspect_ratio` til `aspectRatio` og `image_size`
+  (`1K`, `2K`, `4K`) til `sampleImageSize`. En `size` i pixels angiver kun et billedformat,
   ikke garanterede pixeldimensioner. Understøttede billedformater, opløsninger og antal varierer fra model til model.
-- `zm/inclusionai/ming-image-0.1-design` vælger sine egne dimensioner. Udelad `size`,
+- `zm/inclusionai/ming-image-0.1-design` vælger selv sine dimensioner. Udelad `size`,
   `aspect_ratio` og `image_size`; eksplicitte værdier returnerer HTTP 400. PNG, JPEG og WebP
-  kan anmodes om med `output_format`.
+  kan anmodes med `output_format`.
 
-Denne integration understøtter tekst-til-billede-generering, ikke redigering baseret på referencebilleder. Vertex-
+Denne integration understøtter tekst-til-billede-generering, ikke redigering med referencebilleder. Vertex-
 output normaliseres til `data[].b64_json`; `response_format: "url"` returnerer en upstream-
-HTTPS-URL eller en base64-data-URL, når kun billeddata er tilgængelige. Tomme/filtrerede output
-returnerer en fejl i stedet for et tomt, vellykket svar. Modeladgang afhænger af ZenMux-kontoen.
+HTTPS-URL eller en base64-data-URL, når kun billedbytes er tilgængelige. Tomme/filtrerede output
+returnerer en fejl frem for et tomt succesresultat. Adgang til modeller afhænger af ZenMux-kontoen.
 Se [ZenMux' Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) og
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1478,7 +1478,7 @@ Bruges af undersystemet til automatisk nøgleadministration til at udstede og ro
 | ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/api/v1/registered-keys`             | Vis registrerede nøgler (kun maskeret præfiks)                                                                                                                                                                            |
 | POST   | `/api/v1/registered-keys`             | Udsted en ny registreret nøgle — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Returnerer den rå nøgle **én gang**. Returnerer `429`, hvis kvoten afviser anmodningen. |
-| GET    | `/api/v1/registered-keys/[id]`        | Hent metadata for en registreret nøgle (intet råt nøglemateriale)                                                                                                                                                         |
+| GET    | `/api/v1/registered-keys/[id]`        | Hent metadataene for en registreret nøgle (intet råt nøglemateriale)                                                                                                                                                      |
 | DELETE | `/api/v1/registered-keys/[id]`        | Tilbagekald en registreret nøgle                                                                                                                                                                                          |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | Eksplicit slutpunkt til tilbagekaldelse (samme effekt som DELETE)                                                                                                                                                         |
 

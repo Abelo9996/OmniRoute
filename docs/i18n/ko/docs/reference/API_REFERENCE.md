@@ -293,7 +293,7 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "산 너머로 지는 아름다운 석양",
+  "prompt": "산 너머로 보이는 아름다운 일몰",
   "size": "1024x1024"
 }
 ```
@@ -302,9 +302,9 @@ Content-Type: application/json
 
 `n`은 `data[]`에 `n`개의 이미지를 반환합니다. 업스트림 API가 호출당 하나의 이미지를 반환하는 제공업체
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI)의 경우 최대 4개까지 동시에 실행되는 별도의 업스트림 호출을 `n`번 수행합니다. 고정
-`seed`에는 호출 인덱스만큼 오프셋이 적용되므로(`seed`, `seed + 1`, …), 이미지가 서로 다르면서도
-재현 가능합니다. `n`의 최댓값은 10입니다. 호출 중 하나라도 실패하면 전체 요청이 실패합니다. 팬아웃
+NVIDIA NIM, Cloudflare Workers AI)의 경우 `n`개의 개별 업스트림 호출이 이루어지며, 동시에 최대 4개까지 실행됩니다. 고정된
+`seed`는 호출 인덱스에 따라 오프셋(`seed`, `seed + 1`, …)되므로, 이미지가 서로 다르면서도
+재현성을 유지합니다. `n`의 상한은 10입니다. 호출 중 하나라도 실패하면 요청 전체가 실패합니다. 팬아웃
 형식 목록은
 `open-sse/handlers/imageGeneration/fanOut.ts`의 `SINGLE_IMAGE_FANOUT_FORMATS`에 있습니다.
 
@@ -312,18 +312,18 @@ ZenMux는 기존 API 키 연결을 재사용하며 `zenmux/` 또는 `zm/` 접두
 
 - `zenmux/openai/gpt-image-2`는 ZenMux의 OpenAI Images API를 사용합니다. 옵션에는 `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, `response_format`가 포함됩니다.
-- `zm/meta/muse-image-1.0`과 같은 다른 퍼블리셔는 ZenMux의 Vertex AI `:predict`
+- `zm/meta/muse-image-1.0`과 같은 다른 게시자는 ZenMux의 Vertex AI `:predict`
   엔드포인트를 사용합니다. `n`은 `sampleCount`에, `aspect_ratio`는 `aspectRatio`에, `image_size`
-  (`1K`, `2K`, `4K`)는 `sampleImageSize`에 매핑됩니다. 픽셀 단위의 `size`는 종횡비만 지정하며,
-  픽셀 치수를 보장하지 않습니다. 지원되는 비율, 해상도 및 개수는 모델에 따라 다릅니다.
-- `zm/inclusionai/ming-image-0.1-design`은 자체적으로 이미지 치수를 선택합니다. `size`,
-  `aspect_ratio`, `image_size`를 생략하세요. 값을 명시하면 HTTP 400이 반환됩니다. `output_format`을 사용하여
+  (`1K`, `2K`, `4K`)는 `sampleImageSize`에 매핑됩니다. 픽셀 `size`는 가로세로 비율만 제공하며,
+  해당 픽셀 크기를 보장하지 않습니다. 지원되는 비율, 해상도 및 개수는 모델마다 다릅니다.
+- `zm/inclusionai/ming-image-0.1-design`은 자체적으로 크기를 선택합니다. `size`,
+  `aspect_ratio`, `image_size`는 생략하세요. 값을 명시하면 HTTP 400이 반환됩니다. `output_format`을 사용하여
   PNG, JPEG, WebP를 요청할 수 있습니다.
 
 이 통합은 텍스트-이미지 생성을 지원하지만 참조 이미지 편집은 지원하지 않습니다. Vertex
 출력은 `data[].b64_json`으로 정규화됩니다. `response_format: "url"`은 업스트림
-HTTPS URL을 반환하며, 이미지 바이트만 사용할 수 있는 경우에는 base64 데이터 URL을 반환합니다. 비어 있거나 필터링된 출력은
-빈 성공 응답 대신 오류를 반환합니다. 모델 액세스 가능 여부는 ZenMux 계정에 따라 달라집니다.
+HTTPS URL을 반환하거나, 이미지 바이트만 사용할 수 있는 경우 base64 데이터 URL을 반환합니다. 비어 있거나 필터링된 출력은
+빈 성공 응답 대신 오류를 반환합니다. 모델 접근 권한은 ZenMux 계정에 따라 달라집니다.
 [ZenMux의 Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) 및
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image)를 참조하세요.
 
@@ -1090,6 +1090,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 모든 자격 증명을 제공하므로 대시보드 세션이나 로컬 CLI가 필요합니다(또는 로그인이
 비활성화되어 있어야 함). 범위와 관계없이 모든 API 키와 `oma_` 액세스 토큰에는 `403`이 반환됩니다.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### 클라우드 동기화
 
 | 엔드포인트             | 메서드 | 설명                 |
@@ -1347,7 +1354,7 @@ GET /api/telemetry/summary
 ## 예산
 
 ```bash
-# 모든 API 키의 예산 상태 가져오기
+# 모든 API 키의 예산 상태 조회
 GET /api/usage/budget
 
 # 예산 설정 또는 업데이트
@@ -1364,7 +1371,7 @@ Content-Type: application/json
 }
 ```
 
-> **스키마 참고 사항** (`setBudgetSchema`): `apiKeyId`는 필수이며, `dailyLimitUsd`, `weeklyLimitUsd`, `monthlyLimitUsd` 중 하나 이상이 0보다 커야 합니다. 선택적 필드: `warningThreshold`(0–1), `resetInterval`(`daily` | `weekly` | `monthly`), `resetTime`(`HH:MM`). 기존 `{keyId, limit, period}` 형식을 사용하면 `400 Bad Request`가 반환됩니다.
+> **스키마 참고 사항** (`setBudgetSchema`): `apiKeyId`는 필수이며, `dailyLimitUsd`, `weeklyLimitUsd`, `monthlyLimitUsd` 중 하나 이상이 0보다 커야 합니다. 선택적 필드: `warningThreshold` (0–1), `resetInterval` (`daily` | `weekly` | `monthly`), `resetTime` (`HH:MM`). 기존 `{keyId, limit, period}` 형식은 `400 Bad Request`를 반환합니다.
 
 ## 토큰 한도
 
@@ -1445,17 +1452,17 @@ OmniRoute 이벤트(요청 완료, 할당량 소진, 키 교체 등)에 대한 �
 
 ## 등록된 키(자동 관리)
 
-자동 키 관리 하위 시스템에서 백엔드 공급자/계정에 대해 일일/시간별 할당량을 적용하여 API 키를 발급하고 교체하는 데 사용됩니다.
+자동 키 관리 하위 시스템에서 백엔드 제공업체/계정을 대상으로 API 키를 발급하고 교체하며, 일일/시간당 할당량을 적용하는 데 사용됩니다.
 
 | 메서드 | 경로                                  | 설명                                                                                                                                                                                              |
 | ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/api/v1/registered-keys`             | 등록된 키 목록 조회(마스킹된 접두사만 표시)                                                                                                                                                       |
 | POST   | `/api/v1/registered-keys`             | 새 등록 키 발급 — 본문: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. 원본 키는 **한 번만** 반환됩니다. 할당량으로 인해 거부되면 `429`를 반환합니다. |
-| GET    | `/api/v1/registered-keys/[id]`        | 등록된 키의 메타데이터 조회(원본 키 데이터 제외)                                                                                                                                                  |
+| GET    | `/api/v1/registered-keys/[id]`        | 등록된 키의 메타데이터 조회(원본 키 정보 제외)                                                                                                                                                    |
 | DELETE | `/api/v1/registered-keys/[id]`        | 등록된 키 폐기                                                                                                                                                                                    |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | 명시적 폐기 엔드포인트(DELETE와 동일한 효과)                                                                                                                                                      |
 
-**인증:** 관리 세션/API 키(`requireManagementAuth`) — `/api/keys`와 동일한 가드가 적용됩니다. 대시보드 세션, 로컬 CLI 토큰 또는 `manage`/`admin` 범위가 있는 API 키를 사용할 수 있으며, 추론 전용 API 키는 `403`을 반환합니다. `/v1/quotas/check` 및 `/v1/issues/report`도 참조하세요.
+**인증:** 관리 세션/API 키(`requireManagementAuth`) — `/api/keys`와 동일한 가드입니다. 대시보드 세션, 로컬 CLI 토큰 또는 `manage`/`admin` 범위가 있는 API 키를 사용할 수 있으며, 추론 전용 API 키에는 `403`이 반환됩니다. `/v1/quotas/check` 및 `/v1/issues/report`도 참조하세요.
 
 ---
 

@@ -295,42 +295,42 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "שקיעה יפה מעל הרים",
   "size": "1024x1024"
 }
 ```
 
 הספקים הזמינים כוללים את OpenAI (GPT Image 2),‏ xAI (Grok Image),‏ Together AI (FLUX),‏ Fireworks AI,‏ Nebius (FLUX),‏ Hyperbolic,‏ NanoBanana,‏ **OpenRouter**,‏ **ZenMux**,‏ SD WebUI (מקומי),‏ ComfyUI (מקומי).
 
-`n` מחזיר `n` תמונות בתוך `data[]`. עבור ספקים שממשק ה-API שלהם במעלה הזרם מחזיר תמונה אחת בכל קריאה
+`n` מחזיר `n` תמונות בתוך `data[]`. עבור ספקים שה-API שלהם במעלה הזרם מחזיר תמונה אחת בכל קריאה
 (Black Forest Labs,‏ Stability AI,‏ Leonardo,‏ Ideogram,‏ Haiper,‏ Hyperbolic,‏ Magnific/Freepik,
-NVIDIA NIM,‏ Cloudflare Workers AI), מתבצעות `n` קריאות נפרדות במעלה הזרם, עם לכל היותר 4 קריאות מקבילות. לערך
-`seed` קבוע מתווסף אינדקס הקריאה (`seed`,‏ `seed + 1`, …), כך שהתמונות שונות אך נותרות
+‏NVIDIA NIM,‏ Cloudflare Workers AI), מתבצעות `n` קריאות נפרדות במעלה הזרם, עם עד 4 קריאות פעילות במקביל. ערך
+`seed` קבוע מוסט לפי אינדקס הקריאה (`seed`,‏ `seed + 1`, …), כך שהתמונות שונות אך נותרות
 ניתנות לשחזור. `n` מוגבל ל-10. הבקשה כולה נכשלת אם אחת מהקריאות נכשלת. רשימת
-הפורמטים המבצעים פיצול לקריאות נמצאת ב-`SINGLE_IMAGE_FANOUT_FORMATS` בתוך
+הפורמטים להפצה מקבילית היא `SINGLE_IMAGE_FANOUT_FORMATS` בקובץ
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux עושה שימוש חוזר בחיבור הקיים באמצעות מפתח API ומקבל את התחיליות `zenmux/` או `zm/`:
+ZenMux משתמש מחדש בחיבור הקיים עם מפתח ה-API ומקבל את התחיליות `zenmux/` או `zm/`:
 
-- `zenmux/openai/gpt-image-2` משתמש ב-OpenAI Images API של ZenMux. האפשרויות כוללות `size`,
+- `zenmux/openai/gpt-image-2` משתמש ב-OpenAI Images API של ZenMux. האפשרויות כוללות את `size`,
   `quality`,‏ `n`,‏ `output_format`,‏ `output_compression`,‏ `background` ו-`response_format`.
 - מפרסמים אחרים, כגון `zm/meta/muse-image-1.0`, משתמשים בנקודת הקצה `:predict` של Vertex AI מבית ZenMux.
-  `n` ממופה אל `sampleCount`,‏ `aspect_ratio` אל `aspectRatio`, ו-`image_size`
+  ‏`n` ממופה אל `sampleCount`,‏ `aspect_ratio` אל `aspectRatio`, ו-`image_size`
   (`1K`,‏ `2K`,‏ `4K`) אל `sampleImageSize`. ערך `size` בפיקסלים מספק יחס גובה-רוחב בלבד,
-  ולא מידות מובטחות בפיקסלים. היחסים, הרזולוציות והכמויות הנתמכים משתנים לפי דגם.
-- `zm/inclusionai/ming-image-0.1-design` בוחר את המידות בעצמו. יש להשמיט את `size`,
+  ולא ממדי פיקסלים מובטחים. היחסים, הרזולוציות והכמויות הנתמכים משתנים בהתאם למודל.
+- `zm/inclusionai/ming-image-0.1-design` בוחר את הממדים שלו בעצמו. יש להשמיט את `size`,
   `aspect_ratio` ו-`image_size`; ערכים מפורשים מחזירים HTTP 400. ניתן לבקש PNG,‏ JPEG ו-WebP
   באמצעות `output_format`.
 
-שילוב זה תומך ביצירת תמונות מטקסט, ולא בעריכת תמונות ייחוס. פלט Vertex
-מנורמל אל `data[].b64_json`;‏ `response_format: "url"` מחזיר כתובת HTTPS במעלה הזרם
-או כתובת URL של נתוני base64 כאשר זמינים רק בתים של תמונה. פלטים ריקים או מסוננים
-מחזירים שגיאה במקום הצלחה ריקה. הגישה לדגמים תלויה בחשבון ZenMux.
-ראו [Vertex API של ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) וכן
+שילוב זה תומך ביצירת תמונות מטקסט, ולא בעריכת תמונות ייחוס. הפלט של Vertex
+מנורמל אל `data[].b64_json`;‏ `response_format: "url"` מחזיר כתובת URL מסוג HTTPS ממעלה הזרם
+או כתובת URL של נתוני base64 כאשר זמינים רק בתים של התמונה. פלטים ריקים או מסוננים
+מחזירים שגיאה במקום הצלחה ריקה. הגישה למודלים תלויה בחשבון ZenMux.
+ראו [Vertex API של ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) ואת
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# הצגת כל דגמי התמונות
+# הצגת כל מודלי התמונות
 GET /v1/images/generations
 ```
 
@@ -1105,6 +1105,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 את כל פרטי האימות המאוחסנים, ולכן הם דורשים הפעלת לוח מחוונים או CLI מקומי (או שההתחברות
 מושבתת). מפתחות API מכל היקף ואסימוני גישה מסוג `oma_` מקבלים `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### סנכרון ענן
 
 | נקודת קצה              | שיטה  | תיאור             |
@@ -1469,17 +1476,17 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## מפתחות רשומים (ניהול אוטומטי)
 
-משמש את תת-המערכת לניהול אוטומטי של מפתחות לצורך הנפקה ורוטציה של מפתחות API מול ספק/חשבון תומך, עם מכסות יומיות/שעתיות.
+משמש את תת-המערכת לניהול אוטומטי של מפתחות לצורך הנפקה ותחלופה של מפתחות API מול ספק/חשבון מגבה, עם מכסות יומיות/שעתיות.
 
-| מתודה  | נתיב                                  | תיאור                                                                                                                                                                                               |
+| שיטה   | נתיב                                  | תיאור                                                                                                                                                                                               |
 | ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | הצגת רשימת המפתחות הרשומים (קידומת מוסווית בלבד)                                                                                                                                                    |
-| POST   | `/api/v1/registered-keys`             | הנפקת מפתח רשום חדש — גוף הבקשה: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. מחזיר את המפתח הגולמי **פעם אחת**. מחזיר `429` במקרה של סירוב עקב מכסה. |
+| GET    | `/api/v1/registered-keys`             | הצגת המפתחות הרשומים (קידומת מוסווית בלבד)                                                                                                                                                          |
+| POST   | `/api/v1/registered-keys`             | הנפקת מפתח רשום חדש — גוף הבקשה: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. מחזיר את המפתח הגולמי **פעם אחת**. מחזיר `429` במקרה של דחייה עקב מכסה. |
 | GET    | `/api/v1/registered-keys/[id]`        | אחזור המטא-נתונים של מפתח רשום (ללא חומר המפתח הגולמי)                                                                                                                                              |
 | DELETE | `/api/v1/registered-keys/[id]`        | ביטול מפתח רשום                                                                                                                                                                                     |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | נקודת קצה מפורשת לביטול (אותה השפעה כמו DELETE)                                                                                                                                                     |
 
-**אימות:** סשן ניהול/מפתח API (`requireManagementAuth`) — אותו מנגנון הגנה כמו ב-`/api/keys`: סשן לוח בקרה, אסימון CLI מקומי, או מפתח API עם הרשאת `manage`/`admin`; מפתחות API המיועדים להסקה בלבד מקבלים `403`. ראו גם `/v1/quotas/check` ו-`/v1/issues/report`.
+**אימות:** הפעלת ניהול/מפתח API (`requireManagementAuth`) — אותו מנגנון הגנה כמו ב-`/api/keys`: הפעלת לוח מחוונים, אסימון CLI מקומי, או מפתח API עם היקף `manage`/`admin`; מפתחות API להסקה בלבד מקבלים `403`. ראו גם `/v1/quotas/check` ו-`/v1/issues/report`.
 
 ---
 

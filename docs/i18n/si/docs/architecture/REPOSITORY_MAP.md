@@ -255,40 +255,40 @@ src/
 
 ---
 
-## `open-sse/` — ප්රවාහ එන්ජින් වැඩබිම
+## `open-sse/` — ස්ට්රීමිං එන්ජින් වැඩ අවකාශය
 
-වෙන්වූ npm වැඩබිම (`@omniroute/open-sse`). ඉල්ලීම් සැකසීම + සැපයුම්කරු ක්රියාත්මක කිරීම හසුරුවයි.
+වෙන් කළ npm වැඩ අවකාශයකි (`@omniroute/open-sse`). ඉල්ලීම් සැකසීම සහ සැපයුම්කරු ක්රියාත්මක කිරීම හසුරුවයි.
 
 ```
 open-sse/
-├── handlers/            # ගොනු 16ක් (හසුරුවන 12ක් + සහායක 4ක්): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ආදිය.
-├── executors/           # සැපයුම්කරු-විශේෂිත ක්රියාත්මකකාරක 67ක් (BaseExecutor පුළුල් කරයි)
+├── handlers/            # ගොනු 16ක් (හසුරුවන්නන් 12ක් + සහායක 4ක්): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ආදිය.
+├── executors/           # ක්රියාත්මකකාරක මොඩියුල 150ක් (BaseExecutor විස්තාරණය කරන පන්ති + එක් එක් සැපයුම්කරු සඳහා සහායක)
 ├── translator/          # ආකෘති පරිවර්තක (ඉල්ලීම් 9ක්, ප්රතිචාර 9ක්, සහායක 9ක්)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # සේවා මොඩියුල ~80+ක් (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ආදිය)
-├── mcp-server/          # MCP සේවාදායකය (මෙවලම් 110ක්, ප්රවාහන 3ක්, විෂයපථ 33ක්)
-├── config/              # සැපයුම්කරු/ආකෘති රෙජිස්ට්රි, ශීර්ෂක වින්යාසය, ආකෘති අන්වර්ථ
-├── utils/               # TLS අනුග්රාහකය, ප්රොක්සි fetch/dispatcher, ජාල සහායක
-├── index.ts             # වැඩබිම් පිවිසුම
-├── package.json         # වැඩබිම් මැනිෆෙස්ටය
-├── tsconfig.json        # වැඩබිම් TS වින්යාසය
-└── types.d.ts           # වැඩබිම් වර්ග ප්රකාශන
+├── services/            # ~80+ සේවා මොඩියුල (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ආදිය.)
+├── mcp-server/          # MCP සේවාදායකය (මෙවලම් 110ක්, ප්රවාහන ක්රම 3ක්, විෂය පථ 33ක්)
+├── config/              # සැපයුම්කරු/ආකෘති ලේඛන, ශීර්ෂක වින්යාසය, ආකෘති අන්වර්ථ
+├── utils/               # TLS සේවාලාභියා, ප්රොක්සි fetch/dispatcher, ජාල සහායක
+├── index.ts             # වැඩ අවකාශයේ ප්රවේශ ලක්ෂ්යය
+├── package.json         # වැඩ අවකාශ ප්රකාශනය
+├── tsconfig.json        # වැඩ අවකාශයේ TS වින්යාසය
+└── types.d.ts           # වැඩ අවකාශයේ වර්ග ප්රකාශන
 ```
 
 ### `open-sse/mcp-server/`
 
 | මාර්ගය                      | අරමුණ                                                                                  |
 | --------------------------- | -------------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP සේවාදායක ජීවන චක්රය (stdio + HTTP ප්රවාහන)                                         |
-| `httpTransport.ts`          | HTTP Streamable + SSE ප්රවාහන (`/api/mcp/sse`, `/api/mcp/stream`)                      |
-| `audit.ts`                  | `mcp_tool_audit` වගුව වෙත විගණන ලොග්කරණය                                               |
-| `scopeEnforcement.ts`       | එක් එක් මෙවලම සඳහා විෂයපථ වලංගුකරණය                                                    |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` වෙත සෞඛ්ය හෘදස්පන්දනය                            |
-| `descriptionCompressor.ts`  | සන්දර්භය ඉතිරි කිරීමට මෙවලම් විස්තර පාරදත්ත සම්පීඩනය කරයි                              |
-| `schemas/tools.ts`          | මූලික මෙවලම් අර්ථදැක්වීම් 36ක් + විෂයපථ                                                |
+| `server.ts`                 | MCP සේවාදායකයේ ජීවන චක්රය (stdio + HTTP ප්රවාහන ක්රම)                                  |
+| `httpTransport.ts`          | HTTP Streamable + SSE ප්රවාහන ක්රම (`/api/mcp/sse`, `/api/mcp/stream`)                 |
+| `audit.ts`                  | `mcp_tool_audit` වගුවට විගණන සටහන් තැබීම                                               |
+| `scopeEnforcement.ts`       | එක් එක් මෙවලම සඳහා විෂය පථ සත්යාපනය                                                    |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` වෙත සෞඛ්ය හෘදස්පන්දන සංඥාව                       |
+| `descriptionCompressor.ts`  | සන්දර්භය ඉතිරි කිරීමට මෙවලම් විස්තර පාර-දත්ත සම්පීඩනය කිරීම                            |
+| `schemas/tools.ts`          | මූලික මෙවලම් අර්ථදැක්වීම් 36ක් + විෂය පථ                                               |
 | `tools/advancedTools.ts`    | උසස් මෙවලම් ක්රියාත්මක කිරීම්                                                          |
 | `tools/memoryTools.ts`      | මතක මෙවලම් 3ක් (සෙවීම/එක් කිරීම/හිස් කිරීම)                                            |
-| `tools/skillTools.ts`       | කුසලතා මෙවලම් 4ක් (ලැයිස්තුගත කිරීම/සක්රීය කිරීම/ක්රියාත්මක කිරීම/ක්රියාත්මක කිරීම්)   |
+| `tools/skillTools.ts`       | කුසලතා මෙවලම් 4ක් (ලැයිස්තුගත කිරීම/සක්රිය කිරීම/ක්රියාත්මක කිරීම/ක්රියාත්මක කිරීම්)   |
 | `tools/compressionTools.ts` | සම්පීඩන මෙවලම් 5ක්                                                                     |
 | `README.md`                 | අභ්යන්තර MCP සේවාදායක README (`docs/frameworks/MCP-SERVER.md` වෙතින් හරස්-සබැඳි කර ඇත) |
 

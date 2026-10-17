@@ -255,20 +255,20 @@ src/
 
 ---
 
-## `open-sse/` — Radni prostor mehanizma za strujanje
+## `open-sse/` — Radni prostor mehanizma za streaming
 
 Zaseban npm radni prostor (`@omniroute/open-sse`). Obrađuje zahtjeve i izvršavanje pružatelja usluga.
 
 ```
 open-sse/
-├── handlers/            # 16 datoteka (12 rukovatelja + 4 pomoćne datoteke): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search itd.
-├── executors/           # 67 izvršitelja specifičnih za pružatelje usluga (proširuju BaseExecutor)
+├── handlers/            # 16 datoteka (12 obrađivača + 4 pomoćna modula): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search itd.
+├── executors/           # 150 izvršnih modula (klase koje proširuju BaseExecutor + pomoćni moduli za pojedinačne pružatelje)
 ├── translator/          # Pretvarači formata (9 za zahtjeve, 9 za odgovore, 9 pomoćnih)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ servisnih modula (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM itd.)
-├── mcp-server/          # MCP poslužitelj (110 alata, 3 transporta, 33 opsega)
-├── config/              # Registri pružatelja usluga/modela, konfiguracija zaglavlja, pseudonimi modela
-├── utils/               # TLS klijent, proxy dohvaćanje/dispečer, mrežni pomoćni alati
+├── mcp-server/          # MCP poslužitelj (110 alata, 3 prijenosa, 33 opsega)
+├── config/              # Registri pružatelja/modela, konfiguracija zaglavlja, pseudonimi modela
+├── utils/               # TLS klijent, proxy fetch/dispatcher, mrežni pomoćni moduli
 ├── index.ts             # Ulazna točka radnog prostora
 ├── package.json         # Manifest radnog prostora
 ├── tsconfig.json        # TS konfiguracija radnog prostora
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Putanja                     | Svrha                                                                                 |
-| --------------------------- | ------------------------------------------------------------------------------------- |
-| `server.ts`                 | Životni ciklus MCP poslužitelja (stdio + HTTP transporti)                             |
-| `httpTransport.ts`          | HTTP Streamable + SSE transporti (`/api/mcp/sse`, `/api/mcp/stream`)                  |
-| `audit.ts`                  | Zapisivanje revizijskog traga u tablicu `mcp_tool_audit`                              |
-| `scopeEnforcement.ts`       | Provjera opsega za svaki alat                                                         |
-| `runtimeHeartbeat.ts`       | Signal stanja u `DATA_DIR/runtime/mcp-heartbeat.json`                                 |
-| `descriptionCompressor.ts`  | Sažimanje metapodataka opisa alata radi uštede konteksta                              |
-| `schemas/tools.ts`          | 36 osnovnih definicija alata + opsezi                                                 |
-| `tools/advancedTools.ts`    | Implementacije naprednih alata                                                        |
-| `tools/memoryTools.ts`      | 3 memorijska alata (pretraživanje/dodavanje/brisanje)                                 |
-| `tools/skillTools.ts`       | 4 alata za vještine (popis/omogućavanje/izvršavanje/izvršenja)                        |
-| `tools/compressionTools.ts` | 5 alata za sažimanje                                                                  |
-| `README.md`                 | Interni README MCP poslužitelja (unakrsno povezan iz `docs/frameworks/MCP-SERVER.md`) |
+| Putanja                     | Namjena                                                                                              |
+| --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `server.ts`                 | Životni ciklus MCP poslužitelja (stdio + HTTP prijenosi)                                             |
+| `httpTransport.ts`          | HTTP Streamable + SSE prijenosi (`/api/mcp/sse`, `/api/mcp/stream`)                                  |
+| `audit.ts`                  | Zapisivanje revizijskog traga u tablicu `mcp_tool_audit`                                             |
+| `scopeEnforcement.ts`       | Provjera opsega za svaki alat                                                                        |
+| `runtimeHeartbeat.ts`       | Signal stanja u `DATA_DIR/runtime/mcp-heartbeat.json`                                                |
+| `descriptionCompressor.ts`  | Sažima metapodatke opisa alata radi uštede konteksta                                                 |
+| `schemas/tools.ts`          | 36 osnovnih definicija alata + opsezi                                                                |
+| `tools/advancedTools.ts`    | Napredne implementacije alata                                                                        |
+| `tools/memoryTools.ts`      | 3 memorijska alata (pretraživanje/dodavanje/brisanje)                                                |
+| `tools/skillTools.ts`       | 4 alata za vještine (popis/omogućavanje/izvršavanje/izvršenja)                                       |
+| `tools/compressionTools.ts` | 5 alata za kompresiju                                                                                |
+| `README.md`                 | Interna README dokumentacija MCP poslužitelja (unakrsno povezana iz `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

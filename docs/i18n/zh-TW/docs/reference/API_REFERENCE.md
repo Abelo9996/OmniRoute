@@ -298,14 +298,13 @@ Content-Type: application/json
 }
 ```
 
-可用的提供者包括 OpenAI (GPT Image 2)、xAI (Grok Image)、Together AI (FLUX)、Fireworks AI、Nebius (FLUX)、Hyperbolic、NanoBanana、**OpenRouter**、**ZenMux**、SD WebUI（本機）、ComfyUI（本機）。
+可用的提供者包括 OpenAI（GPT Image 2）、xAI（Grok Image）、Together AI（FLUX）、Fireworks AI、Nebius（FLUX）、Hyperbolic、NanoBanana、**OpenRouter**、**ZenMux**、SD WebUI（本機）、ComfyUI（本機）。
 
-`n` 會在 `data[]` 中傳回 `n` 張圖像。對於上游 API 每次呼叫僅傳回一張圖像的提供者
+`n` 會在 `data[]` 中傳回 `n` 張圖像。對於其上游 API 每次呼叫僅傳回一張圖像的提供者
 （Black Forest Labs、Stability AI、Leonardo、Ideogram、Haiper、Hyperbolic、Magnific/Freepik、
-NVIDIA NIM、Cloudflare Workers AI），系統會對上游發出 `n` 次獨立呼叫，同時進行的呼叫最多為 4 次。固定的
-`seed` 會依呼叫索引遞增（`seed`、`seed + 1`、…），因此圖像各不相同，但仍可
-重現。`n` 的上限為 10。若任何呼叫失敗，整個請求都會失敗。扇出格式的清單
-是
+NVIDIA NIM、Cloudflare Workers AI），系統會進行 `n` 次獨立的上游呼叫，最多同時執行 4 次。
+固定的 `seed` 會依呼叫索引進行位移（`seed`、`seed + 1`、…），因此圖像會有所不同，但仍可
+重現。`n` 的上限為 10。如果任何一次呼叫失敗，整個請求都會失敗。扇出格式的清單位於
 `open-sse/handlers/imageGeneration/fanOut.ts` 中的 `SINGLE_IMAGE_FANOUT_FORMATS`。
 
 ZenMux 會重複使用現有的 API 金鑰連線，並接受 `zenmux/` 或 `zm/` 前綴：
@@ -314,16 +313,15 @@ ZenMux 會重複使用現有的 API 金鑰連線，並接受 `zenmux/` 或 `zm/`
   `quality`、`n`、`output_format`、`output_compression`、`background` 和 `response_format`。
 - 其他發布商（例如 `zm/meta/muse-image-1.0`）使用 ZenMux 的 Vertex AI `:predict`
   端點。`n` 對應至 `sampleCount`，`aspect_ratio` 對應至 `aspectRatio`，而 `image_size`
-  （`1K`、`2K`、`4K`）對應至 `sampleImageSize`。以像素指定的 `size` 只會提供長寬比，
+  （`1K`、`2K`、`4K`）對應至 `sampleImageSize`。以像素指定的 `size` 僅提供長寬比，
   不保證像素尺寸。支援的比例、解析度和數量會因模型而異。
 - `zm/inclusionai/ming-image-0.1-design` 會自行選擇尺寸。請省略 `size`、
-  `aspect_ratio` 和 `image_size`；明確指定這些值會傳回 HTTP 400。可透過 `output_format`
-  要求 PNG、JPEG 和 WebP。
+  `aspect_ratio` 和 `image_size`；明確指定這些值會傳回 HTTP 400。可使用 `output_format`
+  請求 PNG、JPEG 和 WebP。
 
 此整合支援文字轉圖像生成，不支援參考圖像編輯。Vertex
-輸出會正規化為 `data[].b64_json`；當 `response_format: "url"` 時，會傳回上游的
-HTTPS URL，或在只有圖像位元組可用時傳回 base64 資料 URL。空白或遭篩選的輸出
-會傳回錯誤，而不是空白的成功結果。模型存取權限取決於 ZenMux 帳戶。
+輸出會正規化為 `data[].b64_json`；當只有圖像位元組可用時，`response_format: "url"` 會傳回上游
+HTTPS URL 或 base64 資料 URL。空白或遭篩除的輸出會傳回錯誤，而不是空白的成功回應。模型存取權限取決於 ZenMux 帳戶。
 請參閱 [ZenMux 的 Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) 和
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image)。
 
@@ -1059,6 +1057,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 所有已儲存的認證資訊，因此需要儀表板工作階段或本機 CLI（或停用登入）。
 任何範圍的 API 金鑰與 `oma_` 存取權杖都會收到 `403`。
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### 雲端同步
 
 | 端點                   | 方法 | 說明         |
@@ -1330,7 +1335,7 @@ Content-Type: application/json
 }
 ```
 
-> **結構描述注意事項** (`setBudgetSchema`)：`apiKeyId` 為必填；`dailyLimitUsd`、`weeklyLimitUsd` 或 `monthlyLimitUsd` 中至少一項必須大於零。選填欄位：`warningThreshold`（0–1）、`resetInterval`（`daily` | `weekly` | `monthly`）、`resetTime`（`HH:MM`）。舊版 `{keyId, limit, period}` 格式會傳回 `400 Bad Request`。
+> **結構描述備註** (`setBudgetSchema`)：`apiKeyId` 為必填；`dailyLimitUsd`、`weeklyLimitUsd` 或 `monthlyLimitUsd` 中至少一項必須大於零。選填欄位：`warningThreshold`（0–1）、`resetInterval`（`daily` | `weekly` | `monthly`）、`resetTime`（`HH:MM`）。舊版的 `{keyId, limit, period}` 格式會傳回 `400 Bad Request`。
 
 ## Token 限制
 
@@ -1411,17 +1416,17 @@ OmniRoute 事件（請求完成、配額耗盡、金鑰輪替等）的對外 Web
 
 ## 已註冊金鑰（自動管理）
 
-供自動金鑰管理子系統使用，以針對後端提供者／帳戶發行及輪替 API 金鑰，並設有每日／每小時配額。
+由自動金鑰管理子系統使用，針對後端提供者／帳戶簽發及輪替 API 金鑰，並設有每日／每小時配額。
 
-| 方法   | 路徑                                  | 說明                                                                                                                                                                         |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | 列出已註冊的金鑰（僅顯示遮罩後的前綴）                                                                                                                                       |
-| POST   | `/api/v1/registered-keys`             | 發行新的已註冊金鑰 — 請求主體：`{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`。原始金鑰僅傳回**一次**。因配額而拒絕時傳回 `429`。 |
-| GET    | `/api/v1/registered-keys/[id]`        | 擷取已註冊金鑰的中繼資料（不包含原始金鑰內容）                                                                                                                               |
-| DELETE | `/api/v1/registered-keys/[id]`        | 撤銷已註冊的金鑰                                                                                                                                                             |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | 明確的撤銷端點（效果與 DELETE 相同）                                                                                                                                         |
+| 方法   | 路徑                                  | 說明                                                                                                                                                                       |
+| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | 列出已註冊的金鑰（僅顯示經遮蔽的前綴）                                                                                                                                     |
+| POST   | `/api/v1/registered-keys`             | 簽發新的已註冊金鑰 — 請求主體：`{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`。僅回傳原始金鑰**一次**。因配額拒絕時回傳 `429`。 |
+| GET    | `/api/v1/registered-keys/[id]`        | 擷取已註冊金鑰的中繼資料（不含原始金鑰內容）                                                                                                                               |
+| DELETE | `/api/v1/registered-keys/[id]`        | 撤銷已註冊的金鑰                                                                                                                                                           |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | 明確的撤銷端點（效果與 DELETE 相同）                                                                                                                                       |
 
-**驗證：** 管理工作階段／API 金鑰（`requireManagementAuth`）— 與 `/api/keys` 使用相同的存取防護：儀表板工作階段、本機 CLI 權杖，或具有 `manage`/`admin` 範圍的 API 金鑰；僅供推論使用的 API 金鑰會收到 `403`。另請參閱 `/v1/quotas/check` 和 `/v1/issues/report`。
+**驗證：** 管理工作階段／API 金鑰（`requireManagementAuth`）— 與 `/api/keys` 使用相同的防護機制：儀表板工作階段、本機 CLI 權杖，或具有 `manage`／`admin` 範圍的 API 金鑰；僅限推論的 API 金鑰會收到 `403`。另請參閱 `/v1/quotas/check` 與 `/v1/issues/report`。
 
 ---
 

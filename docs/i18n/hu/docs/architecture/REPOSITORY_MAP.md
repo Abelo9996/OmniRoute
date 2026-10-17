@@ -255,42 +255,42 @@ src/
 
 ---
 
-## `open-sse/` — Streamelési motor munkaterülete
+## `open-sse/` — Streamingmotor-munkaterület
 
 Különálló npm-munkaterület (`@omniroute/open-sse`). A kérések feldolgozását és a szolgáltatók végrehajtását kezeli.
 
 ```
 open-sse/
 ├── handlers/            # 16 fájl (12 kezelő + 4 segéd): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search stb.
-├── executors/           # 67 szolgáltatóspecifikus végrehajtó (a BaseExecutor kiterjesztései)
-├── translator/          # Formátumkonverterek (9 kérés-, 9 válasz- és 9 segédmodul)
+├── executors/           # 150 végrehajtómodul (a BaseExecutor osztályt kiterjesztő osztályok + szolgáltatónkénti segédek)
+├── translator/          # Formátumkonvertálók (9 kérés-, 9 válasz- és 9 segédmodul)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ szolgáltatásmodul (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM stb.)
-├── mcp-server/          # MCP-kiszolgáló (110 eszköz, 3 transzport, 33 hatókör)
-├── config/              # Szolgáltató- és modell-nyilvántartások, fejléc-konfiguráció, modellálnevek
-├── utils/               # TLS-kliens, proxy fetch/dispatcher, hálózati segédmodulok
-├── index.ts             # Munkaterület belépési pontja
-├── package.json         # Munkaterület manifesztuma
-├── tsconfig.json        # Munkaterület TS-konfigurációja
-└── types.d.ts           # Munkaterület típusdeklarációi
+├── mcp-server/          # MCP-kiszolgáló (110 eszköz, 3 átviteli mód, 33 hatókör)
+├── config/              # Szolgáltató- és modell-nyilvántartások, fejléc-konfiguráció, modellaliasok
+├── utils/               # TLS-kliens, proxy fetch/dispatcher, hálózati segédek
+├── index.ts             # A munkaterület belépési pontja
+├── package.json         # A munkaterület manifesztje
+├── tsconfig.json        # A munkaterület TS-konfigurációja
+└── types.d.ts           # A munkaterület típusdeklarációi
 ```
 
 ### `open-sse/mcp-server/`
 
-| Elérési út                  | Rendeltetés                                                                      |
-| --------------------------- | -------------------------------------------------------------------------------- |
-| `server.ts`                 | Az MCP-kiszolgáló életciklusa (stdio + HTTP-transzportok)                        |
-| `httpTransport.ts`          | HTTP Streamable + SSE-transzportok (`/api/mcp/sse`, `/api/mcp/stream`)           |
-| `audit.ts`                  | Auditnaplózás az `mcp_tool_audit` táblába                                        |
-| `scopeEnforcement.ts`       | Eszközönkénti hatókör-ellenőrzés                                                 |
-| `runtimeHeartbeat.ts`       | Állapotjelzés a `DATA_DIR/runtime/mcp-heartbeat.json` fájlba                     |
-| `descriptionCompressor.ts`  | Az eszközleírások metaadatainak tömörítése a kontextus megtakarításához          |
-| `schemas/tools.ts`          | 36 alapvető eszközdefiníció + hatókörök                                          |
-| `tools/advancedTools.ts`    | Speciális eszközök implementációi                                                |
-| `tools/memoryTools.ts`      | 3 memóriaeszköz (keresés/hozzáadás/törlés)                                       |
-| `tools/skillTools.ts`       | 4 készségeszköz (listázás/engedélyezés/végrehajtás/végrehajtások)                |
-| `tools/compressionTools.ts` | 5 tömörítési eszköz                                                              |
-| `README.md`                 | Belső MCP-kiszolgáló README (kereszthivatkozás: `docs/frameworks/MCP-SERVER.md`) |
+| Elérési út                  | Rendeltetés                                                                                         |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| `server.ts`                 | Az MCP-kiszolgáló életciklusa (stdio + HTTP átviteli módok)                                         |
+| `httpTransport.ts`          | HTTP Streamable + SSE átviteli módok (`/api/mcp/sse`, `/api/mcp/stream`)                            |
+| `audit.ts`                  | Auditnaplózás az `mcp_tool_audit` táblába                                                           |
+| `scopeEnforcement.ts`       | Eszközönkénti hatókör-ellenőrzés                                                                    |
+| `runtimeHeartbeat.ts`       | Állapotjelzés a `DATA_DIR/runtime/mcp-heartbeat.json` fájlba                                        |
+| `descriptionCompressor.ts`  | Az eszközleírások metaadatainak tömörítése a kontextus csökkentése érdekében                        |
+| `schemas/tools.ts`          | 36 alapvető eszközdefiníció + hatókörök                                                             |
+| `tools/advancedTools.ts`    | Speciális eszközök implementációi                                                                   |
+| `tools/memoryTools.ts`      | 3 memóriaeszköz (keresés/hozzáadás/törlés)                                                          |
+| `tools/skillTools.ts`       | 4 készségeszköz (listázás/engedélyezés/végrehajtás/végrehajtások)                                   |
+| `tools/compressionTools.ts` | 5 tömörítési eszköz                                                                                 |
+| `README.md`                 | Belső MCP-kiszolgálói README (kereszthivatkozással a `docs/frameworks/MCP-SERVER.md` dokumentumból) |
 
 ---
 

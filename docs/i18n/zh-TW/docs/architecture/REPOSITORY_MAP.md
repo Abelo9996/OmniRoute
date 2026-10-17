@@ -261,14 +261,14 @@ src/
 
 ```
 open-sse/
-├── handlers/            # 16 個檔案（12 個處理器 + 4 個輔助工具）：chatCore、responsesHandler、embeddings、audio、image、video、music、rerank、moderations、search 等。
-├── executors/           # 67 個提供者專屬執行器（擴充 BaseExecutor）
-├── translator/          # 格式轉換器（9 個請求、9 個回應、9 個輔助工具）
+├── handlers/            # 16 個檔案（12 個處理器 + 4 個輔助程式）：chatCore、responsesHandler、embeddings、audio、image、video、music、rerank、moderations、search 等。
+├── executors/           # 150 個執行器模組（繼承 BaseExecutor 的類別 + 各提供者專用的輔助程式）
+├── translator/          # 格式轉換器（9 個請求、9 個回應、9 個輔助程式）
 ├── transformer/         # Responses API ↔ Chat Completions（TransformStream）
 ├── services/            # 約 80+ 個服務模組（combo、accountFallback、autoCombo、reasoningCache、claude code/chatgpt stealth、modelDeprecation、taskAwareRouter、workflowFSM 等）
 ├── mcp-server/          # MCP 伺服器（110 個工具、3 種傳輸方式、33 個範圍）
-├── config/              # 提供者／模型登錄檔、標頭設定、模型別名
-├── utils/               # TLS 用戶端、代理 fetch／dispatcher、網路輔助工具
+├── config/              # 提供者／模型登錄、標頭設定、模型別名
+├── utils/               # TLS 用戶端、代理擷取／分派器、網路輔助程式
 ├── index.ts             # 工作區進入點
 ├── package.json         # 工作區資訊清單
 ├── tsconfig.json        # 工作區 TS 設定
@@ -290,7 +290,7 @@ open-sse/
 | `tools/memoryTools.ts`      | 3 個記憶體工具（搜尋／新增／清除）                                    |
 | `tools/skillTools.ts`       | 4 個技能工具（列出／啟用／執行／執行記錄）                            |
 | `tools/compressionTools.ts` | 5 個壓縮工具                                                          |
-| `README.md`                 | 內部 MCP 伺服器 README（與 `docs/frameworks/MCP-SERVER.md` 交叉連結） |
+| `README.md`                 | 內部 MCP 伺服器 README（從 `docs/frameworks/MCP-SERVER.md` 交叉連結） |
 
 ---
 

@@ -295,36 +295,36 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "Piękny zachód słońca nad górami",
   "size": "1024x1024"
 }
 ```
 
-Dostępni dostawcy obejmują OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokalnie) i ComfyUI (lokalnie).
+Dostępni dostawcy obejmują OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokalnie), ComfyUI (lokalnie).
 
-Parametr `n` zwraca `n` obrazów w `data[]`. W przypadku dostawców, których nadrzędne API zwraca jeden obraz na wywołanie
+Parametr `n` zwraca `n` obrazów w `data[]`. W przypadku dostawców, których nadrzędny interfejs API zwraca jeden obraz na wywołanie
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), wykonywanych jest `n` oddzielnych wywołań nadrzędnych, przy czym jednocześnie mogą być realizowane najwyżej 4. Stała wartość `seed` jest zwiększana o indeks wywołania (`seed`, `seed + 1`, …), dzięki czemu obrazy różnią się, ale pozostają
-odtwarzalne. Wartość `n` jest ograniczona do 10. Jeśli którekolwiek wywołanie zakończy się niepowodzeniem, całe żądanie kończy się niepowodzeniem. Lista
-formatów obsługujących rozdzielanie wywołań znajduje się w `SINGLE_IMAGE_FANOUT_FORMATS` w pliku
+NVIDIA NIM, Cloudflare Workers AI), wykonywanych jest `n` oddzielnych wywołań nadrzędnego interfejsu API, przy czym jednocześnie mogą być wykonywane maksymalnie 4. Stała wartość `seed` jest zwiększana o indeks wywołania (`seed`, `seed + 1`, …), dzięki czemu obrazy różnią się od siebie, ale pozostają
+odtwarzalne. Maksymalna wartość `n` wynosi 10. Jeśli którekolwiek wywołanie zakończy się niepowodzeniem, całe żądanie kończy się błędem. Lista
+formatów wymagających wielu wywołań znajduje się w `SINGLE_IMAGE_FANOUT_FORMATS` w pliku
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux ponownie wykorzystuje istniejące połączenie z kluczem API i akceptuje prefiksy `zenmux/` lub `zm/`:
 
 - `zenmux/openai/gpt-image-2` korzysta z interfejsu OpenAI Images API usługi ZenMux. Dostępne opcje obejmują `size`,
-  `quality`, `n`, `output_format`, `output_compression`, `background` i `response_format`.
-- Modele innych wydawców, takie jak `zm/meta/muse-image-1.0`, korzystają z punktu końcowego Vertex AI `:predict`
-  usługi ZenMux. Parametr `n` jest mapowany na `sampleCount`, `aspect_ratio` na `aspectRatio`, a `image_size`
-  (`1K`, `2K`, `4K`) na `sampleImageSize`. Parametr `size` podany w pikselach określa wyłącznie proporcje obrazu,
-  bez gwarancji konkretnych wymiarów w pikselach. Obsługiwane proporcje, rozdzielczości i liczby obrazów różnią się w zależności od modelu.
+  `quality`, `n`, `output_format`, `output_compression`, `background` oraz `response_format`.
+- Inni wydawcy, tacy jak `zm/meta/muse-image-1.0`, korzystają z punktu końcowego `:predict`
+  usługi Vertex AI firmy ZenMux. Parametr `n` jest mapowany na `sampleCount`, `aspect_ratio` na `aspectRatio`, a `image_size`
+  (`1K`, `2K`, `4K`) na `sampleImageSize`. Rozmiar pikselowy podany w `size` określa jedynie proporcje obrazu,
+  a nie gwarantowane wymiary w pikselach. Obsługiwane proporcje, rozdzielczości i liczby obrazów różnią się w zależności od modelu.
 - `zm/inclusionai/ming-image-0.1-design` samodzielnie dobiera wymiary. Należy pominąć `size`,
-  `aspect_ratio` i `image_size`; jawne podanie tych wartości zwraca HTTP 400. Za pomocą `output_format` można
-  zażądać formatu PNG, JPEG lub WebP.
+  `aspect_ratio` oraz `image_size`; jawne podanie tych wartości powoduje zwrócenie błędu HTTP 400. Formaty PNG, JPEG i WebP
+  można wybrać za pomocą `output_format`.
 
 Ta integracja obsługuje generowanie obrazów na podstawie tekstu, ale nie edycję z użyciem obrazu referencyjnego. Dane wyjściowe Vertex
-są normalizowane do `data[].b64_json`; `response_format: "url"` zwraca nadrzędny
-adres URL HTTPS lub adres URL danych base64, gdy dostępne są tylko bajty obrazu. Puste lub odfiltrowane dane wyjściowe
-powodują zwrócenie błędu zamiast pustej odpowiedzi o powodzeniu. Dostęp do modeli zależy od konta ZenMux.
+są normalizowane do `data[].b64_json`; parametr `response_format: "url"` zwraca nadrzędny
+adres URL HTTPS lub adres URL danych base64, gdy dostępne są wyłącznie bajty obrazu. Puste lub odfiltrowane wyniki
+zwracają błąd zamiast pustej odpowiedzi zakończonej powodzeniem. Dostęp do modeli zależy od konta ZenMux.
 Zobacz [Vertex API usługi ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) oraz
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1086,6 +1086,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 wszystkie zapisane dane uwierzytelniające, dlatego wymagają sesji panelu lub lokalnego interfejsu CLI (albo wyłączonego
 logowania). Klucze API dowolnego zakresu i tokeny dostępu `oma_` otrzymują odpowiedź `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Synchronizacja z chmurą
 
 | Endpoint               | Metoda | Opis                             |
@@ -1451,17 +1458,17 @@ Subskrypcje wychodzących webhooków dla zdarzeń OmniRoute (ukończenie żądan
 
 ## Zarejestrowane klucze (automatyczne zarządzanie)
 
-Używane przez podsystem automatycznego zarządzania kluczami do wydawania i rotacji kluczy API u bazowego dostawcy/na koncie, z limitami dziennymi/godzinowymi.
+Używane przez podsystem automatycznego zarządzania kluczami do wystawiania i rotacji kluczy API u bazowego dostawcy/na bazowym koncie, z limitami dziennymi/godzinowymi.
 
-| Metoda | Ścieżka                               | Opis                                                                                                                                                                                                                              |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Wyświetla listę zarejestrowanych kluczy (tylko zamaskowany prefiks)                                                                                                                                                               |
-| POST   | `/api/v1/registered-keys`             | Wydaje nowy zarejestrowany klucz — treść: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Zwraca nieprzetworzony klucz **jeden raz**. Zwraca `429` w przypadku odmowy z powodu limitu. |
-| GET    | `/api/v1/registered-keys/[id]`        | Pobiera metadane zarejestrowanego klucza (bez nieprzetworzonego klucza)                                                                                                                                                           |
-| DELETE | `/api/v1/registered-keys/[id]`        | Unieważnia zarejestrowany klucz                                                                                                                                                                                                   |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Jawny punkt końcowy do unieważniania (taki sam efekt jak DELETE)                                                                                                                                                                  |
+| Metoda | Ścieżka                               | Opis                                                                                                                                                                                                                                |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Wyświetla zarejestrowane klucze (tylko zamaskowany prefiks)                                                                                                                                                                         |
+| POST   | `/api/v1/registered-keys`             | Wystawia nowy zarejestrowany klucz — treść: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Zwraca nieprzetworzony klucz **tylko raz**. W przypadku odmowy z powodu limitu zwraca `429`. |
+| GET    | `/api/v1/registered-keys/[id]`        | Pobiera metadane zarejestrowanego klucza (bez nieprzetworzonego klucza)                                                                                                                                                             |
+| DELETE | `/api/v1/registered-keys/[id]`        | Unieważnia zarejestrowany klucz                                                                                                                                                                                                     |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Dedykowany endpoint do unieważniania (ten sam efekt co DELETE)                                                                                                                                                                      |
 
-**Uwierzytelnianie:** sesja zarządzania/klucz API (`requireManagementAuth`) — ten sam mechanizm ochrony co w `/api/keys`: sesja panelu, lokalny token CLI lub klucz API z zakresem `manage`/`admin`; klucze API przeznaczone wyłącznie do inferencji otrzymują `403`. Zobacz także `/v1/quotas/check` i `/v1/issues/report`.
+**Uwierzytelnianie:** sesja zarządzania/klucz API (`requireManagementAuth`) — ten sam mechanizm ochrony co w `/api/keys`: sesja panelu, lokalny token CLI lub klucz API z zakresem `manage`/`admin`; klucze API przeznaczone wyłącznie do wnioskowania otrzymują `403`. Zobacz także `/v1/quotas/check` i `/v1/issues/report`.
 
 ---
 

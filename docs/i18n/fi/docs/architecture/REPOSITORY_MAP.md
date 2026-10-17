@@ -262,13 +262,13 @@ Erillinen npm-työtila (`@omniroute/open-sse`). Käsittelee pyyntöjen prosessoi
 ```
 open-sse/
 ├── handlers/            # 16 tiedostoa (12 käsittelijää + 4 apufunktiota): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search jne.
-├── executors/           # 67 palveluntarjoajakohtaista suorittajaa (laajentavat BaseExecutor-luokkaa)
+├── executors/           # 150 suoritusmoduulia (BaseExecutor-luokkaa laajentavat luokat + palveluntarjoajakohtaiset apufunktiot)
 ├── translator/          # Muotomuuntimet (9 pyynnöille, 9 vastauksille, 9 apufunktiota)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ palvelumoduulia (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM jne.)
-├── mcp-server/          # MCP-palvelin (110 työkalua, 3 siirtotapaa, 33 käyttöoikeusaluetta)
+├── mcp-server/          # MCP-palvelin (110 työkalua, 3 siirtotapaa, 33 käyttöaluetta)
 ├── config/              # Palveluntarjoaja- ja mallirekisterit, otsakemääritykset, mallien aliakset
-├── utils/               # TLS-asiakasohjelma, välityspalvelimen fetch/dispatcher, verkkoapufunktiot
+├── utils/               # TLS-asiakasohjelma, välityspalvelimen fetch/dispatcher, verkon apufunktiot
 ├── index.ts             # Työtilan aloituspiste
 ├── package.json         # Työtilan manifesti
 ├── tsconfig.json        # Työtilan TS-määritykset
@@ -282,13 +282,13 @@ open-sse/
 | `server.ts`                 | MCP-palvelimen elinkaari (stdio- ja HTTP-siirtotavat)                                          |
 | `httpTransport.ts`          | HTTP Streamable- ja SSE-siirtotavat (`/api/mcp/sse`, `/api/mcp/stream`)                        |
 | `audit.ts`                  | Tarkastuslokien kirjaaminen `mcp_tool_audit`-tauluun                                           |
-| `scopeEnforcement.ts`       | Työkalukohtainen käyttöoikeusalueiden validointi                                               |
-| `runtimeHeartbeat.ts`       | Kunnon syketieto tiedostoon `DATA_DIR/runtime/mcp-heartbeat.json`                              |
-| `descriptionCompressor.ts`  | Työkalukuvausten metatietojen pakkaaminen kontekstin säästämiseksi                             |
-| `schemas/tools.ts`          | 36 perustyökalun määritelmät ja käyttöoikeusalueet                                             |
+| `scopeEnforcement.ts`       | Työkalukohtainen käyttöalueen validointi                                                       |
+| `runtimeHeartbeat.ts`       | Toimintakunnon sykesignaali tiedostoon `DATA_DIR/runtime/mcp-heartbeat.json`                   |
+| `descriptionCompressor.ts`  | Pakkaa työkalukuvausten metatiedot kontekstin säästämiseksi                                    |
+| `schemas/tools.ts`          | 36 perustyökalun määritelmät + käyttöalueet                                                    |
 | `tools/advancedTools.ts`    | Edistyneiden työkalujen toteutukset                                                            |
 | `tools/memoryTools.ts`      | 3 muistityökalua (haku/lisäys/tyhjennys)                                                       |
-| `tools/skillTools.ts`       | 4 taitotyökalua (luettelo/käyttöönotto/suoritus/suoritukset)                                   |
+| `tools/skillTools.ts`       | 4 taitotyökalua (luettelointi/käyttöönotto/suoritus/suoritukset)                               |
 | `tools/compressionTools.ts` | 5 pakkaustyökalua                                                                              |
 | `README.md`                 | Sisäinen MCP-palvelimen README (ristiinlinkitetty tiedostosta `docs/frameworks/MCP-SERVER.md`) |
 

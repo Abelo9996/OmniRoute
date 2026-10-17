@@ -262,13 +262,13 @@ Espace de travail npm distinct (`@omniroute/open-sse`). Gère le traitement des 
 ```
 open-sse/
 ├── handlers/            # 16 fichiers (12 gestionnaires + 4 utilitaires) : chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, etc.
-├── executors/           # 67 exécuteurs propres aux fournisseurs (étendent BaseExecutor)
-├── translator/          # Convertisseurs de formats (9 pour les requêtes, 9 pour les réponses, 9 utilitaires)
+├── executors/           # 150 modules d’exécution (classes étendant BaseExecutor + utilitaires propres à chaque fournisseur)
+├── translator/          # Convertisseurs de format (9 pour les requêtes, 9 pour les réponses, 9 utilitaires)
 ├── transformer/         # API Responses ↔ Chat Completions (TransformStream)
-├── services/            # Plus de 80 modules de service (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, etc.)
+├── services/            # Environ 80 modules de service ou plus (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, etc.)
 ├── mcp-server/          # Serveur MCP (110 outils, 3 transports, 33 portées)
-├── config/              # Registres des fournisseurs/modèles, configuration des en-têtes, alias de modèles
-├── utils/               # Client TLS, fetch/répartiteur avec proxy, utilitaires réseau
+├── config/              # Registres de fournisseurs/modèles, configuration des en-têtes, alias de modèles
+├── utils/               # Client TLS, récupération/répartiteur de proxy, utilitaires réseau
 ├── index.ts             # Point d’entrée de l’espace de travail
 ├── package.json         # Manifeste de l’espace de travail
 ├── tsconfig.json        # Configuration TS de l’espace de travail
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Chemin                      | Fonction                                                                          |
-| --------------------------- | --------------------------------------------------------------------------------- |
-| `server.ts`                 | Cycle de vie du serveur MCP (transports stdio + HTTP)                             |
-| `httpTransport.ts`          | Transports HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)              |
-| `audit.ts`                  | Journalisation des audits dans la table `mcp_tool_audit`                          |
-| `scopeEnforcement.ts`       | Validation de la portée pour chaque outil                                         |
-| `runtimeHeartbeat.ts`       | Signal de disponibilité dans `DATA_DIR/runtime/mcp-heartbeat.json`                |
-| `descriptionCompressor.ts`  | Compression des métadonnées de description des outils pour économiser du contexte |
-| `schemas/tools.ts`          | 36 définitions d’outils de base + portées                                         |
-| `tools/advancedTools.ts`    | Implémentations des outils avancés                                                |
-| `tools/memoryTools.ts`      | 3 outils de mémoire (rechercher/ajouter/effacer)                                  |
-| `tools/skillTools.ts`       | 4 outils de compétences (répertorier/activer/exécuter/exécutions)                 |
-| `tools/compressionTools.ts` | 5 outils de compression                                                           |
-| `README.md`                 | README interne du serveur MCP (référencé depuis `docs/frameworks/MCP-SERVER.md`)  |
+| Chemin                      | Fonction                                                                                 |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| `server.ts`                 | Cycle de vie du serveur MCP (transports stdio + HTTP)                                    |
+| `httpTransport.ts`          | Transports HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                     |
+| `audit.ts`                  | Journalisation des audits dans la table `mcp_tool_audit`                                 |
+| `scopeEnforcement.ts`       | Validation des portées pour chaque outil                                                 |
+| `runtimeHeartbeat.ts`       | Signal d’intégrité dans `DATA_DIR/runtime/mcp-heartbeat.json`                            |
+| `descriptionCompressor.ts`  | Compresse les métadonnées de description des outils pour économiser du contexte          |
+| `schemas/tools.ts`          | 36 définitions d’outils de base + portées                                                |
+| `tools/advancedTools.ts`    | Implémentations d’outils avancés                                                         |
+| `tools/memoryTools.ts`      | 3 outils de mémoire (rechercher/ajouter/effacer)                                         |
+| `tools/skillTools.ts`       | 4 outils de compétence (répertorier/activer/exécuter/exécutions)                         |
+| `tools/compressionTools.ts` | 5 outils de compression                                                                  |
+| `README.md`                 | README interne du serveur MCP (référence croisée depuis `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

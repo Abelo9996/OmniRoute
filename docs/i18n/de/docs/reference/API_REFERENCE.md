@@ -327,28 +327,28 @@ Content-Type: application/json
 
 Zu den verfügbaren Anbietern gehören OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokal), ComfyUI (lokal).
 
-`n` gibt `n` Bilder in `data[]` zurück. Bei Anbietern, deren vorgelagerte API ein Bild pro Aufruf zurückgibt
+`n` gibt `n` Bilder in `data[]` zurück. Bei Anbietern, deren Upstream-API pro Aufruf ein Bild zurückgibt
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), werden `n` separate vorgelagerte Aufrufe ausgeführt, wobei höchstens 4 gleichzeitig aktiv sind. Ein
+NVIDIA NIM, Cloudflare Workers AI), werden `n` separate Upstream-Aufrufe ausgeführt, von denen höchstens 4 gleichzeitig aktiv sind. Ein
 fester `seed` wird um den Aufrufindex erhöht (`seed`, `seed + 1`, …), sodass sich die Bilder unterscheiden, aber
 reproduzierbar bleiben. `n` ist auf 10 begrenzt. Die gesamte Anfrage schlägt fehl, wenn ein Aufruf fehlschlägt. Die Liste
 der Fan-out-Formate befindet sich als `SINGLE_IMAGE_FANOUT_FORMATS` in
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux verwendet die bestehende API-Schlüssel-Verbindung erneut und akzeptiert die Präfixe `zenmux/` oder `zm/`:
+ZenMux verwendet die bestehende API-Schlüssel-Verbindung wieder und akzeptiert die Präfixe `zenmux/` oder `zm/`:
 
 - `zenmux/openai/gpt-image-2` verwendet die OpenAI Images API von ZenMux. Zu den Optionen gehören `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` und `response_format`.
-- Andere Herausgeber, beispielsweise `zm/meta/muse-image-1.0`, verwenden den Vertex-AI-Endpunkt `:predict`
+- Andere Herausgeber, etwa `zm/meta/muse-image-1.0`, verwenden den Vertex-AI-Endpunkt `:predict`
   von ZenMux. `n` wird `sampleCount`, `aspect_ratio` wird `aspectRatio` und `image_size`
   (`1K`, `2K`, `4K`) wird `sampleImageSize` zugeordnet. Eine Pixelangabe für `size` legt nur ein Seitenverhältnis fest,
-  keine garantierten Pixelabmessungen. Unterstützte Seitenverhältnisse, Auflösungen und Anzahlen variieren je nach Modell.
+  nicht jedoch garantierte Pixelabmessungen. Unterstützte Seitenverhältnisse, Auflösungen und Anzahlen variieren je nach Modell.
 - `zm/inclusionai/ming-image-0.1-design` wählt seine Abmessungen selbst. Lassen Sie `size`,
   `aspect_ratio` und `image_size` weg; explizite Werte führen zu HTTP 400. PNG, JPEG und WebP
   können mit `output_format` angefordert werden.
 
 Diese Integration unterstützt die Text-zu-Bild-Erzeugung, nicht die Bearbeitung von Referenzbildern. Die Vertex-
-Ausgabe wird zu `data[].b64_json` normalisiert; `response_format: "url"` gibt eine vorgelagerte
+Ausgabe wird zu `data[].b64_json` normalisiert; `response_format: "url"` gibt eine Upstream-
 HTTPS-URL oder eine Base64-Daten-URL zurück, wenn nur Bilddaten verfügbar sind. Leere/gefilterte Ausgaben
 führen zu einem Fehler statt zu einer leeren Erfolgsmeldung. Der Modellzugriff hängt vom ZenMux-Konto ab.
 Siehe [Vertex API von ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) und
@@ -1119,6 +1119,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 alle gespeicherten Anmeldedaten aus und erfordern daher die Dashboard-Sitzung oder die lokale CLI
 (oder eine deaktivierte Anmeldung). API-Schlüssel jeglichen Geltungsbereichs und `oma_`-Zugriffstoken erhalten `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Cloud-Synchronisierung
 
 | Endpunkt               | Methode      | Beschreibung                    |
@@ -1478,7 +1485,7 @@ Ausgehende Webhook-Abonnements für OmniRoute-Ereignisse (Abschluss von Anfragen
 
 ## Registrierte Schlüssel (automatische Verwaltung)
 
-Wird vom Subsystem zur automatischen Schlüsselverwaltung verwendet, um API-Schlüssel für einen zugrunde liegenden Anbieter bzw. ein zugrunde liegendes Konto auszustellen und zu rotieren, wobei tägliche bzw. stündliche Kontingente gelten.
+Wird vom Subsystem zur automatischen Schlüsselverwaltung verwendet, um API-Schlüssel bei einem zugrunde liegenden Anbieter/Konto unter Einhaltung täglicher/stündlicher Kontingente auszustellen und zu rotieren.
 
 | Methode | Pfad                                  | Beschreibung                                                                                                                                                                                                                                                     |
 | ------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1488,7 +1495,7 @@ Wird vom Subsystem zur automatischen Schlüsselverwaltung verwendet, um API-Schl
 | DELETE  | `/api/v1/registered-keys/[id]`        | Einen registrierten Schlüssel widerrufen                                                                                                                                                                                                                         |
 | POST    | `/api/v1/registered-keys/[id]/revoke` | Expliziter Endpunkt zum Widerrufen (gleiche Wirkung wie DELETE)                                                                                                                                                                                                  |
 
-**Authentifizierung:** Verwaltungssitzung/API-Schlüssel (`requireManagementAuth`) — derselbe Schutzmechanismus wie für `/api/keys`: eine Dashboard-Sitzung, das lokale CLI-Token oder ein API-Schlüssel mit dem Geltungsbereich `manage`/`admin`; API-Schlüssel, die ausschließlich für Inferenz vorgesehen sind, erhalten `403`. Siehe auch `/v1/quotas/check` und `/v1/issues/report`.
+**Authentifizierung:** Verwaltungssitzung/API-Schlüssel (`requireManagementAuth`) — derselbe Zugriffsschutz wie bei `/api/keys`: eine Dashboard-Sitzung, das lokale CLI-Token oder ein API-Schlüssel mit dem Geltungsbereich `manage`/`admin`; reine Inferenz-API-Schlüssel erhalten `403`. Siehe auch `/v1/quotas/check` und `/v1/issues/report`.
 
 ---
 

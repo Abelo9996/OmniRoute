@@ -300,32 +300,32 @@ Content-Type: application/json
 }
 ```
 
-Доступные провайдеры: OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (локально), ComfyUI (локально).
+Среди доступных провайдеров — OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (локально), ComfyUI (локально).
 
 `n` возвращает `n` изображений в `data[]`. Для провайдеров, чей вышестоящий API возвращает одно изображение за вызов
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), выполняется `n` отдельных вышестоящих вызовов, при этом одновременно выполняется не более 4. Фиксированное значение
-`seed` смещается на индекс вызова (`seed`, `seed + 1`, …), поэтому изображения отличаются, но остаются
-воспроизводимыми. Значение `n` ограничено 10. Весь запрос завершается ошибкой, если хотя бы один вызов завершается ошибкой. Список
-форматов с параллельным выполнением вызовов находится в `SINGLE_IMAGE_FANOUT_FORMATS` в файле
+NVIDIA NIM, Cloudflare Workers AI), выполняется `n` отдельных вышестоящих вызовов, не более 4 одновременно. При
+фиксированном `seed` к нему добавляется индекс вызова (`seed`, `seed + 1`, …), поэтому изображения различаются, но остаются
+воспроизводимыми. Максимальное значение `n` — 10. Если какой-либо вызов завершается ошибкой, весь запрос считается
+неуспешным. Список форматов с разветвлением вызовов задаётся в `SINGLE_IMAGE_FANOUT_FORMATS` в
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux повторно использует существующее подключение с API-ключом и принимает префиксы `zenmux/` или `zm/`:
 
 - `zenmux/openai/gpt-image-2` использует OpenAI Images API от ZenMux. Доступные параметры включают `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` и `response_format`.
-- Другие издатели, например `zm/meta/muse-image-1.0`, используют эндпоинт Vertex AI `:predict`
+- Другие издатели, например `zm/meta/muse-image-1.0`, используют конечную точку Vertex AI `:predict`
   от ZenMux. `n` сопоставляется с `sampleCount`, `aspect_ratio` — с `aspectRatio`, а `image_size`
   (`1K`, `2K`, `4K`) — с `sampleImageSize`. Значение `size` в пикселях задаёт только соотношение сторон,
   а не гарантированные размеры в пикселях. Поддерживаемые соотношения сторон, разрешения и количества зависят от модели.
 - `zm/inclusionai/ming-image-0.1-design` самостоятельно выбирает размеры. Не указывайте `size`,
-  `aspect_ratio` и `image_size`; явное указание этих значений приводит к возврату HTTP 400. Форматы PNG, JPEG и WebP
+  `aspect_ratio` и `image_size`; явное задание этих значений приводит к ответу HTTP 400. Форматы PNG, JPEG и WebP
   можно запросить с помощью `output_format`.
 
-Эта интеграция поддерживает генерацию изображений по тексту, но не редактирование на основе референсных изображений. Выходные данные Vertex
-нормализуются в `data[].b64_json`; при `response_format: "url"` возвращается вышестоящий
-HTTPS-URL или URL с данными в формате base64, если доступны только байты изображения. Пустые или отфильтрованные выходные данные
-приводят к ошибке, а не к пустому успешному ответу. Доступ к моделям зависит от учётной записи ZenMux.
+Эта интеграция поддерживает генерацию изображений по тексту, но не редактирование по референсному изображению. Выходные данные Vertex
+нормализуются в `data[].b64_json`; `response_format: "url"` возвращает вышестоящий
+HTTPS URL или URL с данными в формате base64, если доступны только байты изображения. Пустой или отфильтрованный результат
+приводит к ошибке, а не к пустому успешному ответу. Доступ к моделям зависит от учётной записи ZenMux.
 См. [Vertex API от ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) и
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1099,6 +1099,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 все сохранённые учётные данные, поэтому требуют сессию панели управления или локальный CLI (либо
 отключённый вход). API-ключи с любой областью действия и токены доступа `oma_` получают `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Облачная синхронизация
 
 | Эндпоинт               | Метод     | Описание                        |
@@ -1464,17 +1471,17 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## Зарегистрированные ключи (автоматическое управление)
 
-Используются подсистемой автоматического управления ключами для выпуска и ротации API-ключей у базового провайдера/аккаунта с учётом дневных/часовых квот.
+Используется подсистемой автоматического управления ключами для выпуска и ротации API-ключей у базового провайдера/учётной записи с учётом дневных и почасовых квот.
 
 | Метод  | Путь                                  | Описание                                                                                                                                                                                                                   |
 | ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/api/v1/registered-keys`             | Получить список зарегистрированных ключей (только замаскированный префикс)                                                                                                                                                 |
 | POST   | `/api/v1/registered-keys`             | Выпустить новый зарегистрированный ключ — тело: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Возвращает исходный ключ **один раз**. При отказе из-за квоты возвращает `429`. |
-| GET    | `/api/v1/registered-keys/[id]`        | Получить метаданные зарегистрированного ключа (без исходного ключа)                                                                                                                                                        |
+| GET    | `/api/v1/registered-keys/[id]`        | Получить метаданные зарегистрированного ключа (без исходного ключевого материала)                                                                                                                                          |
 | DELETE | `/api/v1/registered-keys/[id]`        | Отозвать зарегистрированный ключ                                                                                                                                                                                           |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Явная конечная точка отзыва (эффект аналогичен DELETE)                                                                                                                                                                     |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Явная конечная точка для отзыва (действует так же, как DELETE)                                                                                                                                                             |
 
-**Аутентификация:** сессия управления/API-ключ (`requireManagementAuth`) — та же проверка доступа, что и для `/api/keys`: сессия панели управления, локальный токен CLI или API-ключ с областью действия `manage`/`admin`; API-ключи, предназначенные только для инференса, получают `403`. См. также `/v1/quotas/check` и `/v1/issues/report`.
+**Аутентификация:** сессия управления/API-ключ (`requireManagementAuth`) — та же проверка доступа, что и для `/api/keys`: сессия панели управления, локальный токен CLI или API-ключ с областью доступа `manage`/`admin`; API-ключи, предназначенные только для инференса, получают `403`. См. также `/v1/quotas/check` и `/v1/issues/report`.
 
 ---
 

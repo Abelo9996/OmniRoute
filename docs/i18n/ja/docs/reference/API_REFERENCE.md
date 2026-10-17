@@ -279,37 +279,36 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "山々に沈む美しい夕日",
   "size": "1024x1024"
 }
 ```
 
-利用可能なプロバイダーには、OpenAI（GPT Image 2）、xAI（Grok Image）、Together AI（FLUX）、Fireworks AI、Nebius（FLUX）、Hyperbolic、NanoBanana、**OpenRouter**、**ZenMux**、SD WebUI（ローカル）、ComfyUI（ローカル）が含まれます。
+利用可能なプロバイダーには、OpenAI (GPT Image 2)、xAI (Grok Image)、Together AI (FLUX)、Fireworks AI、Nebius (FLUX)、Hyperbolic、NanoBanana、**OpenRouter**、**ZenMux**、SD WebUI（ローカル）、ComfyUI（ローカル）が含まれます。
 
-`n` は `data[]` 内に `n` 枚の画像を返します。アップストリーム API が呼び出しごとに 1 枚の画像を返すプロバイダー
+`n` を指定すると、`data[]` に `n` 枚の画像が返されます。アップストリーム API が呼び出しごとに 1 枚の画像を返すプロバイダー
 （Black Forest Labs、Stability AI、Leonardo、Ideogram、Haiper、Hyperbolic、Magnific/Freepik、
-NVIDIA NIM、Cloudflare Workers AI）に対しては、最大 4 件を同時実行して、`n` 回の個別のアップストリーム呼び出しを行います。
-固定された `seed` は呼び出しインデックスに応じてオフセットされるため（`seed`、`seed + 1`、…）、画像は互いに異なりながらも
-再現可能です。`n` の上限は 10 です。いずれかの呼び出しが失敗した場合、リクエスト全体が失敗します。ファンアウト形式の一覧は、
-`open-sse/handlers/imageGeneration/fanOut.ts` 内の
-`SINGLE_IMAGE_FANOUT_FORMATS` にあります。
+NVIDIA NIM、Cloudflare Workers AI）では、アップストリームへの呼び出しが `n` 回個別に実行され、同時実行数は最大 4 です。
+固定の `seed` は呼び出しインデックスに応じてオフセットされるため（`seed`、`seed + 1`、…）、画像はそれぞれ異なりますが、
+再現性は維持されます。`n` の上限は 10 です。いずれかの呼び出しが失敗した場合、リクエスト全体が失敗します。ファンアウト形式の一覧は、
+`open-sse/handlers/imageGeneration/fanOut.ts` の `SINGLE_IMAGE_FANOUT_FORMATS` にあります。
 
 ZenMux は既存の API キー接続を再利用し、`zenmux/` または `zm/` プレフィックスを受け付けます。
 
 - `zenmux/openai/gpt-image-2` は ZenMux の OpenAI Images API を使用します。オプションには `size`、
   `quality`、`n`、`output_format`、`output_compression`、`background`、`response_format` が含まれます。
-- `zm/meta/muse-image-1.0` など、その他のパブリッシャーでは ZenMux の Vertex AI `:predict`
+- `zm/meta/muse-image-1.0` などの他のパブリッシャーは、ZenMux の Vertex AI `:predict`
   エンドポイントを使用します。`n` は `sampleCount` に、`aspect_ratio` は `aspectRatio` に、`image_size`
-  （`1K`、`2K`、`4K`）は `sampleImageSize` にマッピングされます。ピクセル指定の `size` はアスペクト比のみを指定するものであり、
-  ピクセル寸法は保証されません。サポートされる比率、解像度、枚数はモデルによって異なります。
+  （`1K`、`2K`、`4K`）は `sampleImageSize` にマッピングされます。ピクセル単位の `size` はアスペクト比のみを指定し、
+  ピクセル寸法を保証するものではありません。サポートされる比率、解像度、枚数はモデルによって異なります。
 - `zm/inclusionai/ming-image-0.1-design` は独自に寸法を決定します。`size`、
-  `aspect_ratio`、`image_size` は省略してください。明示的に値を指定すると HTTP 400 が返されます。`output_format` を使用して、
+  `aspect_ratio`、`image_size` は省略してください。明示的な値を指定すると HTTP 400 が返されます。`output_format` を使用して、
   PNG、JPEG、WebP をリクエストできます。
 
-この統合は、参照画像の編集ではなく、テキストからの画像生成をサポートします。Vertex の
-出力は `data[].b64_json` に正規化されます。`response_format: "url"` はアップストリームの
-HTTPS URL を返します。画像バイトのみが利用可能な場合は、base64 データ URL を返します。空またはフィルタリング済みの出力の場合は、
-空の成功レスポンスではなくエラーを返します。モデルへのアクセス可否は ZenMux アカウントによって異なります。
+この統合はテキストからの画像生成をサポートしますが、参照画像の編集はサポートしません。Vertex の
+出力は `data[].b64_json` に正規化されます。`response_format: "url"` を指定すると、アップストリームの
+HTTPS URL、または画像バイトのみが利用可能な場合は base64 データ URL が返されます。空またはフィルタリングされた出力の場合、
+空の成功レスポンスではなくエラーが返されます。モデルへのアクセス可否は ZenMux アカウントによって異なります。
 [ZenMux の Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) および
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) を参照してください。
 
@@ -1064,6 +1063,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 保存されているすべての認証情報を提供するため、ダッシュボードセッションまたはローカル CLI が必要です（ログインが
 無効な場合を除く）。スコープを問わず、API キーおよび `oma_` アクセストークンには `403` が返されます。
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### クラウド同期
 
 | エンドポイント         | メソッド | 説明             |
@@ -1350,7 +1356,7 @@ Content-Type: application/json
 }
 ```
 
-> **スキーマに関する注意事項** (`setBudgetSchema`): `apiKeyId` は必須です。`dailyLimitUsd`、`weeklyLimitUsd`、`monthlyLimitUsd` のうち、少なくとも 1 つはゼロより大きい値でなければなりません。省略可能なフィールド: `warningThreshold`（0～1）、`resetInterval`（`daily` | `weekly` | `monthly`）、`resetTime`（`HH:MM`）。旧形式の `{keyId, limit, period}` を使用すると、`400 Bad Request` が返されます。
+> **スキーマに関する注記** (`setBudgetSchema`): `apiKeyId` は必須です。`dailyLimitUsd`、`weeklyLimitUsd`、`monthlyLimitUsd` のうち、少なくとも 1 つはゼロより大きい値である必要があります。オプションのフィールド: `warningThreshold`（0～1）、`resetInterval`（`daily` | `weekly` | `monthly`）、`resetTime`（`HH:MM`）。従来の `{keyId, limit, period}` 形式では `400 Bad Request` が返されます。
 
 ## トークン制限
 
@@ -1431,15 +1437,15 @@ OmniRoute イベント（リクエスト完了、クォータ枯渇、キーの�
 
 ## 登録済みキー（自動管理）
 
-自動キー管理サブシステムで使用され、バックエンドのプロバイダー／アカウントに対して、日次／時間単位のクォータに基づき API キーを発行およびローテーションします。
+自動キー管理サブシステムが、基盤となるプロバイダー／アカウントに対して、日次／時間単位のクォータに基づき API キーを発行およびローテーションするために使用します。
 
-| メソッド | パス                                  | 説明                                                                                                                                                                                                                        |
-| -------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET      | `/api/v1/registered-keys`             | 登録済みキーの一覧（マスクされたプレフィックスのみ）                                                                                                                                                                        |
-| POST     | `/api/v1/registered-keys`             | 新しい登録済みキーを発行 — リクエストボディ: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`。生のキーを **一度だけ** 返します。クォータにより拒否された場合は `429` を返します。 |
-| GET      | `/api/v1/registered-keys/[id]`        | 登録済みキーのメタデータを取得（生のキーデータは含まれません）                                                                                                                                                              |
-| DELETE   | `/api/v1/registered-keys/[id]`        | 登録済みキーを失効                                                                                                                                                                                                          |
-| POST     | `/api/v1/registered-keys/[id]/revoke` | 明示的な失効エンドポイント（DELETE と同じ効果）                                                                                                                                                                             |
+| メソッド | パス                                  | 説明                                                                                                                                                                                                              |
+| -------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET      | `/api/v1/registered-keys`             | 登録済みキーの一覧を取得（マスクされたプレフィックスのみ）                                                                                                                                                        |
+| POST     | `/api/v1/registered-keys`             | 新しい登録済みキーを発行 — 本文: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`。生のキーは **一度だけ** 返されます。クォータにより拒否された場合は `429` を返します。 |
+| GET      | `/api/v1/registered-keys/[id]`        | 登録済みキーのメタデータを取得（生のキー情報は含まれません）                                                                                                                                                      |
+| DELETE   | `/api/v1/registered-keys/[id]`        | 登録済みキーを失効                                                                                                                                                                                                |
+| POST     | `/api/v1/registered-keys/[id]/revoke` | 明示的な失効エンドポイント（DELETE と同じ効果）                                                                                                                                                                   |
 
 **認証:** 管理セッション／API キー（`requireManagementAuth`）— `/api/keys` と同じガードです。ダッシュボードセッション、ローカル CLI トークン、または `manage`／`admin` スコープを持つ API キーを使用できます。推論専用の API キーには `403` が返されます。`/v1/quotas/check` および `/v1/issues/report` も参照してください。
 

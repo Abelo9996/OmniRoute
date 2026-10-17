@@ -257,22 +257,22 @@ src/
 
 ## `open-sse/` — स्ट्रीमिंग इंजन वर्कस्पेस
 
-अलग npm वर्कस्पेस (`@omniroute/open-sse`)। अनुरोध प्रोसेसिंग और प्रदाता निष्पादन संभालता है।
+अलग npm वर्कस्पेस (`@omniroute/open-sse`)। अनुरोध प्रोसेसिंग + प्रदाता निष्पादन संभालता है।
 
 ```
 open-sse/
-├── handlers/            # 16 फ़ाइलें (12 हैंडलर + 4 हेल्पर): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, आदि।
-├── executors/           # 67 प्रदाता-विशिष्ट एक्ज़ीक्यूटर (BaseExecutor को एक्सटेंड करते हैं)
-├── translator/          # फ़ॉर्मेट कन्वर्टर (9 अनुरोध, 9 प्रतिक्रिया, 9 हेल्पर)
+├── handlers/            # 16 फ़ाइलें (12 हैंडलर + 4 सहायक): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, आदि।
+├── executors/           # 150 निष्पादक मॉड्यूल (BaseExecutor को विस्तारित करने वाली क्लासें + प्रत्येक प्रदाता के लिए सहायक)
+├── translator/          # प्रारूप कन्वर्टर (9 अनुरोध, 9 प्रतिक्रिया, 9 सहायक)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ सर्विस मॉड्यूल (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, आदि)
+├── services/            # ~80+ सेवा मॉड्यूल (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, आदि)
 ├── mcp-server/          # MCP सर्वर (110 टूल, 3 ट्रांसपोर्ट, 33 स्कोप)
-├── config/              # प्रदाता/मॉडल रजिस्ट्री, हेडर कॉन्फ़िगरेशन, मॉडल एलियास
-├── utils/               # TLS क्लाइंट, प्रॉक्सी fetch/dispatcher, नेटवर्क हेल्पर
-├── index.ts             # वर्कस्पेस एंट्री
+├── config/              # प्रदाता/मॉडल रजिस्ट्री, हेडर कॉन्फ़िगरेशन, मॉडल उपनाम
+├── utils/               # TLS क्लाइंट, प्रॉक्सी फ़ेच/डिस्पैचर, नेटवर्क सहायक
+├── index.ts             # वर्कस्पेस प्रवेश-बिंदु
 ├── package.json         # वर्कस्पेस मैनिफ़ेस्ट
 ├── tsconfig.json        # वर्कस्पेस TS कॉन्फ़िगरेशन
-└── types.d.ts           # वर्कस्पेस टाइप घोषणाएँ
+└── types.d.ts           # वर्कस्पेस प्रकार घोषणाएँ
 ```
 
 ### `open-sse/mcp-server/`
@@ -281,14 +281,14 @@ open-sse/
 | --------------------------- | -------------------------------------------------------------------------------- |
 | `server.ts`                 | MCP सर्वर जीवनचक्र (stdio + HTTP ट्रांसपोर्ट)                                    |
 | `httpTransport.ts`          | HTTP Streamable + SSE ट्रांसपोर्ट (`/api/mcp/sse`, `/api/mcp/stream`)            |
-| `audit.ts`                  | `mcp_tool_audit` टेबल में ऑडिट लॉगिंग                                            |
-| `scopeEnforcement.ts`       | प्रति-टूल स्कोप सत्यापन                                                          |
+| `audit.ts`                  | `mcp_tool_audit` तालिका में ऑडिट लॉगिंग                                          |
+| `scopeEnforcement.ts`       | प्रत्येक टूल के लिए स्कोप सत्यापन                                                |
 | `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` में स्वास्थ्य हार्टबीट                     |
-| `descriptionCompressor.ts`  | कॉन्टेक्स्ट बचाने के लिए टूल विवरण मेटाडेटा को संपीड़ित करता है                  |
-| `schemas/tools.ts`          | 36 बेस टूल परिभाषाएँ + स्कोप                                                     |
+| `descriptionCompressor.ts`  | संदर्भ बचाने के लिए टूल विवरण मेटाडेटा को संपीड़ित करना                          |
+| `schemas/tools.ts`          | 36 आधारभूत टूल परिभाषाएँ + स्कोप                                                 |
 | `tools/advancedTools.ts`    | उन्नत टूल कार्यान्वयन                                                            |
-| `tools/memoryTools.ts`      | 3 मेमोरी टूल (search/add/clear)                                                  |
-| `tools/skillTools.ts`       | 4 स्किल टूल (list/enable/execute/executions)                                     |
+| `tools/memoryTools.ts`      | 3 मेमोरी टूल (खोजना/जोड़ना/साफ़ करना)                                            |
+| `tools/skillTools.ts`       | 4 कौशल टूल (सूचीबद्ध करना/सक्षम करना/निष्पादित करना/निष्पादन)                    |
 | `tools/compressionTools.ts` | 5 संपीड़न टूल                                                                    |
 | `README.md`                 | आंतरिक MCP सर्वर README (`docs/frameworks/MCP-SERVER.md` से क्रॉस-लिंक किया गया) |
 

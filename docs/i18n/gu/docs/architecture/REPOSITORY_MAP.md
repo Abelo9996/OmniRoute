@@ -261,14 +261,14 @@ src/
 
 ```
 open-sse/
-├── handlers/            # 16 ફાઇલો (12 હેન્ડલર + 4 હેલ્પર): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, વગેરે.
-├── executors/           # 67 પ્રદાતા-વિશિષ્ટ એક્ઝિક્યુટર (BaseExecutor ને વિસ્તારે છે)
-├── translator/          # ફોર્મેટ કન્વર્ટર (9 વિનંતી, 9 પ્રતિસાદ, 9 હેલ્પર)
+├── handlers/            # 16 ફાઇલો (12 હેન્ડલર્સ + 4 હેલ્પર્સ): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, વગેરે.
+├── executors/           # 150 એક્ઝિક્યુટર મોડ્યુલો (BaseExecutor ને વિસ્તૃત કરતા ક્લાસિસ + દરેક પ્રદાતા માટેના હેલ્પર્સ)
+├── translator/          # ફોર્મેટ કન્વર્ટર્સ (9 વિનંતી, 9 પ્રતિસાદ, 9 હેલ્પર્સ)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ સર્વિસ મોડ્યુલ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, વગેરે.)
-├── mcp-server/          # MCP સર્વર (110 ટૂલ, 3 ટ્રાન્સપોર્ટ, 33 સ્કોપ)
-├── config/              # પ્રદાતા/મોડલ રજિસ્ટ્રી, હેડર કૉન્ફિગ, મોડલ ઉપનામો
-├── utils/               # TLS ક્લાયન્ટ, પ્રૉક્સી fetch/dispatcher, નેટવર્ક હેલ્પર
+├── services/            # ~80+ સર્વિસ મોડ્યુલો (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, વગેરે.)
+├── mcp-server/          # MCP સર્વર (110 ટૂલ્સ, 3 ટ્રાન્સપોર્ટ્સ, 33 સ્કોપ્સ)
+├── config/              # પ્રદાતા/મોડેલ રજિસ્ટ્રીઓ, હેડર કૉન્ફિગ, મોડેલ ઉપનામો
+├── utils/               # TLS ક્લાયન્ટ, પ્રૉક્સી fetch/dispatcher, નેટવર્ક હેલ્પર્સ
 ├── index.ts             # વર્કસ્પેસ એન્ટ્રી
 ├── package.json         # વર્કસ્પેસ મેનિફેસ્ટ
 ├── tsconfig.json        # વર્કસ્પેસ TS કૉન્ફિગ
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| પાથ                         | હેતુ                                                                            |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP સર્વર જીવનચક્ર (stdio + HTTP ટ્રાન્સપોર્ટ)                                  |
-| `httpTransport.ts`          | HTTP Streamable + SSE ટ્રાન્સપોર્ટ (`/api/mcp/sse`, `/api/mcp/stream`)          |
-| `audit.ts`                  | `mcp_tool_audit` ટેબલમાં ઑડિટ લૉગિંગ                                            |
-| `scopeEnforcement.ts`       | દરેક ટૂલ માટે સ્કોપ માન્યતા                                                     |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` પર હેલ્થ હાર્ટબીટ                         |
-| `descriptionCompressor.ts`  | કોન્ટેક્સ્ટ બચાવવા માટે ટૂલ વર્ણન મેટાડેટા સંકુચિત કરે છે                       |
-| `schemas/tools.ts`          | 36 મૂળભૂત ટૂલ વ્યાખ્યાઓ + સ્કોપ                                                 |
-| `tools/advancedTools.ts`    | અદ્યતન ટૂલ અમલીકરણ                                                              |
-| `tools/memoryTools.ts`      | 3 મેમરી ટૂલ (શોધો/ઉમેરો/સાફ કરો)                                                |
-| `tools/skillTools.ts`       | 4 સ્કિલ ટૂલ (સૂચિ/સક્ષમ કરો/એક્ઝિક્યુટ કરો/એક્ઝિક્યુશન)                         |
-| `tools/compressionTools.ts` | 5 કમ્પ્રેશન ટૂલ                                                                 |
-| `README.md`                 | આંતરિક MCP સર્વર README (`docs/frameworks/MCP-SERVER.md` માંથી ક્રોસ-લિંક કરેલ) |
+| પાથ                         | હેતુ                                                                             |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP સર્વર લાઇફસાઇકલ (stdio + HTTP ટ્રાન્સપોર્ટ્સ)                                |
+| `httpTransport.ts`          | HTTP Streamable + SSE ટ્રાન્સપોર્ટ્સ (`/api/mcp/sse`, `/api/mcp/stream`)         |
+| `audit.ts`                  | `mcp_tool_audit` ટેબલમાં ઑડિટ લૉગિંગ                                             |
+| `scopeEnforcement.ts`       | દરેક ટૂલ માટે સ્કોપ માન્યતા                                                      |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` પર હેલ્થ હાર્ટબીટ                          |
+| `descriptionCompressor.ts`  | કોન્ટેક્સ્ટ બચાવવા માટે ટૂલ વર્ણન મેટાડેટાને સંકુચિત કરે છે                      |
+| `schemas/tools.ts`          | 36 બેઝ ટૂલ વ્યાખ્યાઓ + સ્કોપ્સ                                                   |
+| `tools/advancedTools.ts`    | ઍડવાન્સ્ડ ટૂલ અમલીકરણો                                                           |
+| `tools/memoryTools.ts`      | 3 મેમરી ટૂલ્સ (શોધો/ઉમેરો/સાફ કરો)                                               |
+| `tools/skillTools.ts`       | 4 સ્કિલ ટૂલ્સ (સૂચિ/સક્ષમ કરો/એક્ઝિક્યુટ કરો/એક્ઝિક્યુશન્સ)                      |
+| `tools/compressionTools.ts` | 5 કમ્પ્રેશન ટૂલ્સ                                                                |
+| `README.md`                 | આંતરિક MCP સર્વર README (`docs/frameworks/MCP-SERVER.md`માંથી ક્રોસ-લિંક કરેલું) |
 
 ---
 

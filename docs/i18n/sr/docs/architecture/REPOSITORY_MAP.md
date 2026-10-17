@@ -257,18 +257,18 @@ src/
 
 ## `open-sse/` — Радни простор механизма за стримовање
 
-Засебан npm радни простор (`@omniroute/open-sse`). Управља обрадом захтева и извршавањем добављача.
+Засебан npm радни простор (`@omniroute/open-sse`). Обрађује захтеве и извршавање добављача.
 
 ```
 open-sse/
-├── handlers/            # 16 датотека (12 руковалаца + 4 помоћна модула): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, итд.
-├── executors/           # 67 извршилаца специфичних за добављаче (проширују BaseExecutor)
+├── handlers/            # 16 датотека (12 руковалаца + 4 помоћне датотеке): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search итд.
+├── executors/           # 150 модула извршилаца (класе које проширују BaseExecutor + помоћне датотеке за појединачне добављаче)
 ├── translator/          # Конвертори формата (9 за захтеве, 9 за одговоре, 9 помоћних)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ сервисних модула (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, итд.)
-├── mcp-server/          # MCP сервер (110 алата, 3 транспорта, 33 опсега)
+├── services/            # ~80+ сервисних модула (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM итд.)
+├── mcp-server/          # MCP сервер (110 алатки, 3 транспорта, 33 опсега)
 ├── config/              # Регистри добављача/модела, конфигурација заглавља, алијаси модела
-├── utils/               # TLS клијент, proxy fetch/dispatcher, мрежни помоћни модули
+├── utils/               # TLS клијент, proxy fetch/dispatcher, мрежне помоћне функције
 ├── index.ts             # Улазна тачка радног простора
 ├── package.json         # Манифест радног простора
 ├── tsconfig.json        # TS конфигурација радног простора
@@ -282,14 +282,14 @@ open-sse/
 | `server.ts`                 | Животни циклус MCP сервера (stdio + HTTP транспорти)                             |
 | `httpTransport.ts`          | HTTP Streamable + SSE транспорти (`/api/mcp/sse`, `/api/mcp/stream`)             |
 | `audit.ts`                  | Евидентирање ревизије у табелу `mcp_tool_audit`                                  |
-| `scopeEnforcement.ts`       | Валидација опсега за сваки алат                                                  |
-| `runtimeHeartbeat.ts`       | Сигнал стања у `DATA_DIR/runtime/mcp-heartbeat.json`                             |
-| `descriptionCompressor.ts`  | Компримује метаподатке описа алата ради уштеде контекста                         |
-| `schemas/tools.ts`          | 36 дефиниција основних алата + опсези                                            |
-| `tools/advancedTools.ts`    | Имплементације напредних алата                                                   |
-| `tools/memoryTools.ts`      | 3 алата за меморију (претрага/додавање/брисање)                                  |
-| `tools/skillTools.ts`       | 4 алата за вештине (листа/омогућавање/извршавање/извршења)                       |
-| `tools/compressionTools.ts` | 5 алата за компресију                                                            |
+| `scopeEnforcement.ts`       | Провера опсега за сваку алатку                                                   |
+| `runtimeHeartbeat.ts`       | Сигнал стања система у `DATA_DIR/runtime/mcp-heartbeat.json`                     |
+| `descriptionCompressor.ts`  | Компримује метаподатке описа алатки ради уштеде контекста                        |
+| `schemas/tools.ts`          | 36 основних дефиниција алатки + опсези                                           |
+| `tools/advancedTools.ts`    | Имплементације напредних алатки                                                  |
+| `tools/memoryTools.ts`      | 3 алатке за меморију (претрага/додавање/брисање)                                 |
+| `tools/skillTools.ts`       | 4 алатке за вештине (листа/омогућавање/извршавање/извршења)                      |
+| `tools/compressionTools.ts` | 5 алатки за компресију                                                           |
 | `README.md`                 | Интерни README MCP сервера (унакрсно повезан из `docs/frameworks/MCP-SERVER.md`) |
 
 ---

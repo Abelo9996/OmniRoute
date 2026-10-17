@@ -302,31 +302,31 @@ Content-Type: application/json
 
 उपलब्ध प्रदाताओं में OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (स्थानीय), ComfyUI (स्थानीय) शामिल हैं।
 
-`n`, `data[]` में `n` इमेज लौटाता है। जिन प्रदाताओं की अपस्ट्रीम API प्रति कॉल एक इमेज लौटाती है
+`n`, `data[]` में `n` इमेज लौटाता है। जिन प्रदाताओं का अपस्ट्रीम API प्रति कॉल एक इमेज लौटाता है
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), उनके लिए `n` अलग-अलग अपस्ट्रीम कॉल किए जाते हैं, जिनमें अधिकतम 4 एक साथ जारी रहते हैं। एक
-निश्चित `seed` को कॉल इंडेक्स के अनुसार ऑफ़सेट किया जाता है (`seed`, `seed + 1`, …), ताकि इमेज अलग-अलग हों लेकिन
+NVIDIA NIM, Cloudflare Workers AI), उनके लिए अधिकतम 4 कॉल एक साथ चलाते हुए `n` अलग-अलग अपस्ट्रीम कॉल किए जाते हैं। एक
+निश्चित `seed` को कॉल इंडेक्स के अनुसार ऑफ़सेट किया जाता है (`seed`, `seed + 1`, …), ताकि इमेज अलग हों लेकिन
 पुनरुत्पादित की जा सकें। `n` की अधिकतम सीमा 10 है। यदि कोई भी कॉल विफल होती है, तो पूरा अनुरोध
-विफल हो जाता है। फ़ैन-आउट फ़ॉर्मेट की सूची `SINGLE_IMAGE_FANOUT_FORMATS` में
-`open-sse/handlers/imageGeneration/fanOut.ts` पर है।
+विफल हो जाता है। फ़ैन-आउट फ़ॉर्मैट की सूची
+`open-sse/handlers/imageGeneration/fanOut.ts` में `SINGLE_IMAGE_FANOUT_FORMATS` है।
 
 ZenMux मौजूदा API-कुंजी कनेक्शन का पुनः उपयोग करता है और `zenmux/` या `zm/` प्रीफ़िक्स स्वीकार करता है:
 
-- `zenmux/openai/gpt-image-2`, ZenMux की OpenAI Images API का उपयोग करता है। विकल्पों में `size`,
+- `zenmux/openai/gpt-image-2`, ZenMux के OpenAI Images API का उपयोग करता है। विकल्पों में `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, और `response_format` शामिल हैं।
 - अन्य प्रकाशक, जैसे `zm/meta/muse-image-1.0`, ZenMux के Vertex AI `:predict`
-  एंडपॉइंट का उपयोग करते हैं। `n`, `sampleCount` पर; `aspect_ratio`, `aspectRatio` पर; और `image_size`
-  (`1K`, `2K`, `4K`), `sampleImageSize` पर मैप होता है। पिक्सेल `size` केवल आस्पेक्ट रेशियो प्रदान करता है,
-  पिक्सेल के सटीक आयामों की गारंटी नहीं। समर्थित अनुपात, रिज़ॉल्यूशन और संख्या मॉडल के अनुसार अलग-अलग होते हैं।
+  एंडपॉइंट का उपयोग करते हैं। `n`, `sampleCount` से, `aspect_ratio`, `aspectRatio` से, और `image_size`
+  (`1K`, `2K`, `4K`), `sampleImageSize` से मैप होता है। पिक्सेल `size` केवल आस्पेक्ट रेशियो प्रदान करता है,
+  सुनिश्चित पिक्सेल आयाम नहीं। समर्थित अनुपात, रिज़ॉल्यूशन और संख्याएँ मॉडल के अनुसार अलग-अलग होती हैं।
 - `zm/inclusionai/ming-image-0.1-design` अपने आयाम स्वयं चुनता है। `size`,
-  `aspect_ratio`, और `image_size` को छोड़ दें; स्पष्ट मान देने पर HTTP 400 लौटता है। `output_format` के साथ
-  PNG, JPEG, और WebP का अनुरोध किया जा सकता है।
+  `aspect_ratio`, और `image_size` को शामिल न करें; स्पष्ट मान देने पर HTTP 400 लौटता है। PNG, JPEG, और WebP
+  के लिए `output_format` के साथ अनुरोध किया जा सकता है।
 
-यह इंटीग्रेशन टेक्स्ट-टू-इमेज जनरेशन का समर्थन करता है, रेफ़रेंस-इमेज एडिटिंग का नहीं। Vertex
+यह इंटीग्रेशन टेक्स्ट-टू-इमेज जनरेशन का समर्थन करता है, रेफ़रेंस-इमेज संपादन का नहीं। Vertex
 आउटपुट को `data[].b64_json` में सामान्यीकृत किया जाता है; `response_format: "url"` एक अपस्ट्रीम
-HTTPS URL लौटाता है, या केवल इमेज बाइट्स उपलब्ध होने पर base64 डेटा URL लौटाता है। खाली/फ़िल्टर किए गए आउटपुट
-खाली सफलता के बजाय त्रुटि लौटाते हैं। मॉडल एक्सेस ZenMux खाते पर निर्भर करता है।
-[ZenMux की Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) और
+HTTPS URL लौटाता है, या जब केवल इमेज बाइट्स उपलब्ध हों तो एक base64 डेटा URL लौटाता है। खाली/फ़िल्टर किए गए आउटपुट
+खाली सफलता के बजाय त्रुटि लौटाते हैं। मॉडल तक पहुँच ZenMux खाते पर निर्भर करती है।
+[ZenMux का Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) और
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) देखें।
 
 ```bash
@@ -1098,6 +1098,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 संग्रहीत क्रेडेंशियल प्रदान करते हैं, इसलिए इनके लिए डैशबोर्ड सत्र या स्थानीय CLI (या अक्षम
 लॉगिन) आवश्यक है। किसी भी स्कोप की API कुंजियों और `oma_` एक्सेस टोकन को `403` मिलता है।
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### क्लाउड सिंक
 
 | Endpoint               | Method  | विवरण              |
@@ -1463,17 +1470,17 @@ OmniRoute इवेंट्स (अनुरोध पूर्ण होना
 
 ## पंजीकृत कुंजियाँ (स्वतः-प्रबंधन)
 
-दैनिक/प्रति-घंटा कोटा के साथ किसी बैकिंग प्रदाता/खाते के लिए API कुंजियाँ जारी और रोटेट करने हेतु स्वतः-कुंजी प्रबंधन उपतंत्र द्वारा उपयोग किया जाता है।
+दैनिक/प्रति-घंटा कोटा के साथ, किसी बैकिंग प्रदाता/खाते के लिए API कुंजियाँ जारी और रोटेट करने हेतु स्वतः-कुंजी प्रबंधन उप-प्रणाली द्वारा उपयोग किया जाता है।
 
-| विधि   | पथ                                    | विवरण                                                                                                                                                                                                   |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | पंजीकृत कुंजियों की सूची (केवल मास्क किया हुआ प्रीफ़िक्स)                                                                                                                                               |
-| POST   | `/api/v1/registered-keys`             | एक नई पंजीकृत कुंजी जारी करें — बॉडी: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। रॉ कुंजी **केवल एक बार** लौटाता है। कोटा अस्वीकृति पर `429` लौटाता है। |
-| GET    | `/api/v1/registered-keys/[id]`        | किसी पंजीकृत कुंजी का मेटाडेटा प्राप्त करें (रॉ सामग्री नहीं)                                                                                                                                           |
-| DELETE | `/api/v1/registered-keys/[id]`        | किसी पंजीकृत कुंजी को निरस्त करें                                                                                                                                                                       |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | स्पष्ट निरस्तीकरण एंडपॉइंट (DELETE के समान प्रभाव)                                                                                                                                                      |
+| विधि   | पथ                                    | विवरण                                                                                                                                                                                                |
+| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | पंजीकृत कुंजियों की सूची (केवल मास्क किया गया प्रीफ़िक्स)                                                                                                                                            |
+| POST   | `/api/v1/registered-keys`             | नई पंजीकृत कुंजी जारी करें — बॉडी: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। रॉ कुंजी **केवल एक बार** लौटाता है। कोटा अस्वीकृति पर `429` लौटाता है। |
+| GET    | `/api/v1/registered-keys/[id]`        | पंजीकृत कुंजी का मेटाडेटा प्राप्त करें (कोई रॉ सामग्री नहीं)                                                                                                                                         |
+| DELETE | `/api/v1/registered-keys/[id]`        | पंजीकृत कुंजी निरस्त करें                                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | स्पष्ट निरस्तीकरण एंडपॉइंट (DELETE के समान प्रभाव)                                                                                                                                                   |
 
-**प्रमाणीकरण:** प्रबंधन सत्र/API कुंजी (`requireManagementAuth`) — `/api/keys` के समान गार्ड: एक डैशबोर्ड सत्र, स्थानीय CLI टोकन, या `manage`/`admin` स्कोप वाली API कुंजी; केवल इनफ़रेंस वाली API कुंजियों को `403` मिलता है। `/v1/quotas/check` और `/v1/issues/report` भी देखें।
+**प्रमाणीकरण:** प्रबंधन सत्र/API कुंजी (`requireManagementAuth`) — `/api/keys` वाला ही गार्ड: एक डैशबोर्ड सत्र, स्थानीय CLI टोकन, या `manage`/`admin` स्कोप वाली API कुंजी; केवल-इन्फ़रेंस API कुंजियों को `403` मिलता है। `/v1/quotas/check` और `/v1/issues/report` भी देखें।
 
 ---
 

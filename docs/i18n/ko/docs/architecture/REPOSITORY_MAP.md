@@ -257,12 +257,12 @@ src/
 
 ## `open-sse/` — 스트리밍 엔진 워크스페이스
 
-별도의 npm 워크스페이스(`@omniroute/open-sse`)입니다. 요청 처리 및 공급자 실행을 담당합니다.
+별도의 npm 워크스페이스(`@omniroute/open-sse`)입니다. 요청 처리와 공급자 실행을 담당합니다.
 
 ```
 open-sse/
 ├── handlers/            # 16개 파일(핸들러 12개 + 헬퍼 4개): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search 등
-├── executors/           # 공급자별 실행기 67개(BaseExecutor 확장)
+├── executors/           # 실행기 모듈 150개(BaseExecutor를 확장하는 클래스 + 공급자별 헬퍼)
 ├── translator/          # 형식 변환기(요청 9개, 응답 9개, 헬퍼 9개)
 ├── transformer/         # Responses API ↔ Chat Completions(TransformStream)
 ├── services/            # 약 80개 이상의 서비스 모듈(combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM 등)
@@ -284,11 +284,11 @@ open-sse/
 | `audit.ts`                  | `mcp_tool_audit` 테이블에 감사 로그 기록                              |
 | `scopeEnforcement.ts`       | 도구별 범위 검증                                                      |
 | `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`에 상태 하트비트 기록            |
-| `descriptionCompressor.ts`  | 컨텍스트 절약을 위한 도구 설명 메타데이터 압축                        |
+| `descriptionCompressor.ts`  | 컨텍스트를 절약하기 위해 도구 설명 메타데이터 압축                    |
 | `schemas/tools.ts`          | 기본 도구 정의 36개 + 범위                                            |
 | `tools/advancedTools.ts`    | 고급 도구 구현                                                        |
-| `tools/memoryTools.ts`      | 메모리 도구 3개(search/add/clear)                                     |
-| `tools/skillTools.ts`       | 스킬 도구 4개(list/enable/execute/executions)                         |
+| `tools/memoryTools.ts`      | 메모리 도구 3개(검색/추가/지우기)                                     |
+| `tools/skillTools.ts`       | 스킬 도구 4개(목록/활성화/실행/실행 내역)                             |
 | `tools/compressionTools.ts` | 압축 도구 5개                                                         |
 | `README.md`                 | 내부 MCP 서버 README(`docs/frameworks/MCP-SERVER.md`에서 상호 링크됨) |
 

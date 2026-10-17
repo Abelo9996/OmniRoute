@@ -302,30 +302,30 @@ Content-Type: application/json
 
 دستیاب فراہم کنندگان میں OpenAI (GPT Image 2)، xAI (Grok Image)، Together AI (FLUX)، Fireworks AI، Nebius (FLUX)، Hyperbolic، NanoBanana، **OpenRouter**، **ZenMux**، SD WebUI (مقامی)، ComfyUI (مقامی) شامل ہیں۔
 
-`n`، `data[]` میں `n` تصاویر واپس کرتا ہے۔ وہ فراہم کنندگان جن کا upstream API ہر کال پر ایک تصویر واپس کرتا ہے
+`n`، `data[]` میں `n` تصاویر واپس کرتا ہے۔ جن فراہم کنندگان کا اپ اسٹریم API ہر کال پر ایک تصویر واپس کرتا ہے
 (Black Forest Labs، Stability AI، Leonardo، Ideogram، Haiper، Hyperbolic، Magnific/Freepik،
-NVIDIA NIM، Cloudflare Workers AI)، ان کے لیے `n` علیحدہ upstream کالز کی جاتی ہیں، جن میں ایک وقت میں زیادہ سے زیادہ 4 جاری رہتی ہیں۔ ایک
-مقررہ `seed` میں کال انڈیکس کے مطابق اضافہ کیا جاتا ہے (`seed`، `seed + 1`، …)، تاکہ تصاویر مختلف ہوں لیکن
-دوبارہ اسی طرح تیار کی جا سکیں۔ `n` کی زیادہ سے زیادہ حد 10 ہے۔ اگر کوئی بھی کال ناکام ہو تو پوری درخواست
-ناکام ہو جاتی ہے۔ fan-out فارمیٹس کی فہرست
-`open-sse/handlers/imageGeneration/fanOut.ts` میں `SINGLE_IMAGE_FANOUT_FORMATS` ہے۔
+NVIDIA NIM، Cloudflare Workers AI)، ان کے لیے `n` علیحدہ اپ اسٹریم کالز کی جاتی ہیں، جن میں بیک وقت زیادہ سے زیادہ 4 زیرِ عمل ہوتی ہیں۔ ایک
+مقررہ `seed` کو کال انڈیکس کے مطابق بڑھایا جاتا ہے (`seed`، `seed + 1`، …)، لہٰذا تصاویر مختلف ہوتی ہیں مگر
+دوبارہ قابلِ تخلیق رہتی ہیں۔ `n` کی زیادہ سے زیادہ حد 10 ہے۔ اگر کوئی بھی کال ناکام ہو جائے تو پوری درخواست
+ناکام ہو جاتی ہے۔ فین آؤٹ فارمیٹس کی فہرست `SINGLE_IMAGE_FANOUT_FORMATS` میں
+`open-sse/handlers/imageGeneration/fanOut.ts` پر موجود ہے۔
 
-ZenMux موجودہ API-key کنکشن کو دوبارہ استعمال کرتا ہے اور `zenmux/` یا `zm/` سابقے قبول کرتا ہے:
+ZenMux موجودہ API کلید کنکشن کو دوبارہ استعمال کرتا ہے اور `zenmux/` یا `zm/` سابقے قبول کرتا ہے:
 
 - `zenmux/openai/gpt-image-2`، ZenMux کا OpenAI Images API استعمال کرتا ہے۔ اختیارات میں `size`،
   `quality`، `n`، `output_format`، `output_compression`، `background`، اور `response_format` شامل ہیں۔
-- دیگر پبلشرز، جیسے `zm/meta/muse-image-1.0`، ZenMux کا Vertex AI `:predict`
-  endpoint استعمال کرتے ہیں۔ `n` کو `sampleCount`، `aspect_ratio` کو `aspectRatio`، اور `image_size`
-  (`1K`، `2K`، `4K`) کو `sampleImageSize` سے میپ کیا جاتا ہے۔ پکسل `size` صرف aspect ratio فراہم کرتا ہے،
-  پکسل کی یقینی dimensions نہیں۔ معاون ratios، resolutions، اور counts ماڈل کے لحاظ سے مختلف ہوتے ہیں۔
-- `zm/inclusionai/ming-image-0.1-design` اپنی dimensions خود منتخب کرتا ہے۔ `size`،
+- دیگر ناشرین، جیسے `zm/meta/muse-image-1.0`، ZenMux کا Vertex AI `:predict`
+  اینڈ پوائنٹ استعمال کرتے ہیں۔ `n` کو `sampleCount`، `aspect_ratio` کو `aspectRatio`، اور `image_size`
+  (`1K`، `2K`، `4K`) کو `sampleImageSize` سے میپ کیا جاتا ہے۔ پکسل پر مبنی `size` صرف پہلو کا تناسب فراہم کرتا ہے،
+  ضمانت شدہ پکسل ابعاد نہیں۔ معاونت یافتہ تناسب، ریزولوشنز، اور تعداد ماڈل کے لحاظ سے مختلف ہوتی ہیں۔
+- `zm/inclusionai/ming-image-0.1-design` اپنی ابعاد خود منتخب کرتا ہے۔ `size`،
   `aspect_ratio`، اور `image_size` شامل نہ کریں؛ واضح اقدار HTTP 400 واپس کرتی ہیں۔ PNG، JPEG، اور WebP
   کی درخواست `output_format` کے ذریعے کی جا سکتی ہے۔
 
-یہ integration متن سے تصویر بنانے کی سہولت فراہم کرتا ہے، reference-image editing کی نہیں۔ Vertex
-output کو `data[].b64_json` میں normalize کیا جاتا ہے؛ `response_format: "url"` ایک upstream
-HTTPS URL واپس کرتا ہے، یا جب صرف تصویری bytes دستیاب ہوں تو base64 data URL واپس کرتا ہے۔ خالی/فلٹر شدہ outputs
-خالی کامیاب جواب کے بجائے ایک خرابی واپس کرتے ہیں۔ ماڈل تک رسائی ZenMux اکاؤنٹ پر منحصر ہے۔
+یہ انٹیگریشن متن سے تصویر بنانے کی معاونت کرتا ہے، حوالہ جاتی تصویر میں ترمیم کی نہیں۔ Vertex
+آؤٹ پٹ کو `data[].b64_json` میں معمول پر لایا جاتا ہے؛ `response_format: "url"` ایک اپ اسٹریم
+HTTPS URL واپس کرتا ہے، یا جب صرف تصویری بائٹس دستیاب ہوں تو base64 ڈیٹا URL واپس کرتا ہے۔ خالی/فلٹر شدہ آؤٹ پٹس
+خالی کامیاب جواب کے بجائے خرابی واپس کرتے ہیں۔ ماڈل تک رسائی ZenMux اکاؤنٹ پر منحصر ہے۔
 [ZenMux کا Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) اور
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) دیکھیں۔
 
@@ -1101,6 +1101,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 اسناد فراہم کرتے ہیں، اس لیے انہیں ڈیش بورڈ سیشن یا مقامی CLI درکار ہے (یا لاگ اِن
 غیر فعال ہو)۔ کسی بھی دائرۂ کار کی API کلیدوں اور `oma_` رسائی ٹوکنز کو `403` ملتا ہے۔
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### کلاؤڈ ہم وقت سازی
 
 | اینڈ پوائنٹ            | طریقہ | تفصیل                           |
@@ -1467,17 +1474,17 @@ OmniRoute ایونٹس (درخواست کی تکمیل، کوٹہ ختم ہون�
 
 ## رجسٹرڈ کلیدیں (خودکار نظم)
 
-خودکار کلید نظم کے ذیلی نظام کے ذریعے کسی پسِ پشت فراہم کنندہ/اکاؤنٹ کے لیے یومیہ/فی گھنٹہ کوٹوں کے ساتھ API کلیدیں جاری کرنے اور تبدیل کرنے کے لیے استعمال ہوتا ہے۔
+خودکار کلید کے نظم کے ذیلی نظام کے ذریعے کسی پسِ پشت فراہم کنندہ/اکاؤنٹ کے لیے API کلیدیں جاری اور تبدیل کی جاتی ہیں، جن پر یومیہ/فی گھنٹہ کوٹے لاگو ہوتے ہیں۔
 
 | طریقہ  | راستہ                                 | تفصیل                                                                                                                                                                                                         |
 | ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | رجسٹرڈ کلیدوں کی فہرست (صرف مخفی کردہ سابقہ)                                                                                                                                                                  |
-| POST   | `/api/v1/registered-keys`             | نئی رجسٹرڈ کلید جاری کریں — باڈی: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`۔ خام کلید **صرف ایک بار** واپس کی جاتی ہے۔ کوٹا مسترد ہونے پر `429` واپس ہوتا ہے۔ |
-| GET    | `/api/v1/registered-keys/[id]`        | رجسٹرڈ کلید کا میٹا ڈیٹا حاصل کریں (خام مواد کے بغیر)                                                                                                                                                         |
+| GET    | `/api/v1/registered-keys`             | رجسٹرڈ کلیدوں کی فہرست (صرف مخفی سابقہ)                                                                                                                                                                       |
+| POST   | `/api/v1/registered-keys`             | نئی رجسٹرڈ کلید جاری کریں — باڈی: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`۔ اصل کلید **صرف ایک بار** واپس کی جاتی ہے۔ کوٹا مسترد ہونے پر `429` واپس ہوتا ہے۔ |
+| GET    | `/api/v1/registered-keys/[id]`        | رجسٹرڈ کلید کا میٹا ڈیٹا حاصل کریں (اصل کلید نہیں)                                                                                                                                                            |
 | DELETE | `/api/v1/registered-keys/[id]`        | رجسٹرڈ کلید منسوخ کریں                                                                                                                                                                                        |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | واضح منسوخی کا اینڈ پوائنٹ (DELETE جیسا ہی اثر)                                                                                                                                                               |
 
-**توثیق:** انتظامی سیشن/API کلید (`requireManagementAuth`) — وہی حفاظتی جانچ جو `/api/keys` کے لیے ہے: ڈیش بورڈ سیشن، مقامی CLI ٹوکن، یا `manage`/`admin` دائرۂ اختیار والی API کلید؛ صرف inference کے لیے API کلیدوں کو `403` ملتا ہے۔ `/v1/quotas/check` اور `/v1/issues/report` بھی دیکھیں۔
+**توثیق:** انتظامی سیشن/API کلید (`requireManagementAuth`) — وہی محافظ جو `/api/keys` کے لیے ہے: ڈیش بورڈ سیشن، مقامی CLI ٹوکن، یا `manage`/`admin` اسکوپ والی API کلید؛ صرف استنتاج کے لیے API کلیدوں کو `403` ملتا ہے۔ `/v1/quotas/check` اور `/v1/issues/report` بھی دیکھیں۔
 
 ---
 

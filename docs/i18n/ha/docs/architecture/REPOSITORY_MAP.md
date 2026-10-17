@@ -255,42 +255,42 @@ src/
 
 ---
 
-## `open-sse/` — Wurin Aikin Injin Yawo
+## `open-sse/` — Wurin Aikin Injin Streaming
 
-Wurin aikin npm na daban (`@omniroute/open-sse`). Yana sarrafa aiwatar da buƙatu + gudanar da masu samarwa.
+Keɓantaccen wurin aikin npm (`@omniroute/open-sse`). Yana gudanar da sarrafa buƙatu + aiwatar da masu samarwa.
 
 ```
 open-sse/
 ├── handlers/            # Fayiloli 16 (masu sarrafawa 12 + mataimaka 4): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, da sauransu.
-├── executors/           # Masu aiwatarwa 67 na musamman ga masu samarwa (suna faɗaɗa BaseExecutor)
-├── translator/          # Masu sauya tsari (buƙatu 9, amsoshi 9, mataimaka 9)
+├── executors/           # Modulolin aiwatarwa 150 (azuzuwan da ke faɗaɗa BaseExecutor + mataimaka na kowane mai samarwa)
+├── translator/          # Masu sauya tsari (buƙatu 9, martani 9, mataimaka 9)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ rukunin sabis (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, da sauransu.)
-├── mcp-server/          # Sabar MCP (kayan aiki 110, hanyoyin jigila 3, iyakokin izini 33)
-├── config/              # Rajistocin masu samarwa/samfura, saitin header, laƙaban samfura
-├── utils/               # Abokin cinikin TLS, proxy fetch/dispatcher, mataimakan hanyar sadarwa
+├── services/            # ~80+ modulolin sabis (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, da sauransu.)
+├── mcp-server/          # Sabar MCP (kayan aiki 110, hanyoyin sufuri 3, iyakokin izini 33)
+├── config/              # Rajistocin masu samarwa/samfura, daidaitawar header, sunayen laƙabi na samfurori
+├── utils/               # Abokin ciniki na TLS, proxy fetch/dispatcher, mataimakan hanyar sadarwa
 ├── index.ts             # Mashigar wurin aiki
 ├── package.json         # Bayanin wurin aiki
-├── tsconfig.json        # Saitin TS na wurin aiki
-└── types.d.ts           # Bayanin nau'ikan wurin aiki
+├── tsconfig.json        # Daidaitawar TS ta wurin aiki
+└── types.d.ts           # Bayanan nau'ikan wurin aiki
 ```
 
 ### `open-sse/mcp-server/`
 
-| Path                        | Manufa                                                                             |
-| --------------------------- | ---------------------------------------------------------------------------------- |
-| `server.ts`                 | Zagayowar rayuwar sabar MCP (hanyoyin jigilar stdio + HTTP)                        |
-| `httpTransport.ts`          | Hanyoyin jigilar HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)         |
-| `audit.ts`                  | Shigar da bayanan binciken sa ido cikin teburin `mcp_tool_audit`                   |
-| `scopeEnforcement.ts`       | Tabbatar da iyakar izini ga kowane kayan aiki                                      |
-| `runtimeHeartbeat.ts`       | Bugun lafiyar tsarin zuwa `DATA_DIR/runtime/mcp-heartbeat.json`                    |
-| `descriptionCompressor.ts`  | Matse metadata na bayanin kayan aiki don adana mahallin bayanai                    |
-| `schemas/tools.ts`          | Ma'anoni 36 na kayan aiki na asali + iyakokin izini                                |
-| `tools/advancedTools.ts`    | Aiwatarwar kayan aiki na ci-gaba                                                   |
-| `tools/memoryTools.ts`      | Kayan aikin ƙwaƙwalwa 3 (bincika/ƙara/share)                                       |
-| `tools/skillTools.ts`       | Kayan aikin ƙwarewa 4 (jera/kunna/aiwatar/aiwatarwa)                               |
-| `tools/compressionTools.ts` | Kayan aikin matsewa 5                                                              |
-| `README.md`                 | README na cikin gida na sabar MCP (an haɗa shi da `docs/frameworks/MCP-SERVER.md`) |
+| Path                        | Manufa                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------- |
+| `server.ts`                 | Zagayowar rayuwar sabar MCP (stdio + hanyoyin sufurin HTTP)                                       |
+| `httpTransport.ts`          | Hanyoyin sufurin HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                        |
+| `audit.ts`                  | Rubuta bayanan binciken ƙididdiga zuwa teburin `mcp_tool_audit`                                   |
+| `scopeEnforcement.ts`       | Tabbatar da iyakar izini ga kowane kayan aiki                                                     |
+| `runtimeHeartbeat.ts`       | Bugun zuciyar lafiya zuwa `DATA_DIR/runtime/mcp-heartbeat.json`                                   |
+| `descriptionCompressor.ts`  | Matse metadata na bayanin kayan aiki don rage amfani da mahallin                                  |
+| `schemas/tools.ts`          | Ma'anoni na asali 36 na kayan aiki + iyakokin izini                                               |
+| `tools/advancedTools.ts`    | Aiwatarwar kayan aiki na ci-gaba                                                                  |
+| `tools/memoryTools.ts`      | Kayan aikin ƙwaƙwalwa 3 (bincika/ƙara/share)                                                      |
+| `tools/skillTools.ts`       | Kayan aikin ƙwarewa 4 (jera/kunna/aiwatar/aiwatarwa)                                              |
+| `tools/compressionTools.ts` | Kayan aikin matsawa 5                                                                             |
+| `README.md`                 | README na cikin gida na sabar MCP (wanda aka haɗa ta giciye daga `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

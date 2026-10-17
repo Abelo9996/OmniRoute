@@ -255,42 +255,42 @@ src/
 
 ---
 
-## `open-sse/` — Werkruimte voor streamingengine
+## `open-sse/` — Werkruimte voor streaming-engine
 
 Afzonderlijke npm-werkruimte (`@omniroute/open-sse`). Verwerkt aanvragen en voert providers uit.
 
 ```
 open-sse/
 ├── handlers/            # 16 bestanden (12 handlers + 4 helpers): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, enz.
-├── executors/           # 67 providerspecifieke executors (breiden BaseExecutor uit)
+├── executors/           # 150 executormodules (klassen die BaseExecutor uitbreiden + helpers per provider)
 ├── translator/          # Formaatconverters (9 voor aanvragen, 9 voor antwoorden, 9 helpers)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ servicemodules (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, enz.)
-├── mcp-server/          # MCP-server (110 tools, 3 transporten, 33 scopes)
+├── mcp-server/          # MCP-server (110 tools, 3 transportmethoden, 33 scopes)
 ├── config/              # Provider-/modelregisters, headerconfiguratie, modelaliassen
-├── utils/               # TLS-client, proxy-fetch/dispatcher, netwerkhelpers
-├── index.ts             # Ingangspunt van werkruimte
+├── utils/               # TLS-client, proxy-fetch/-dispatcher, netwerkhelpers
+├── index.ts             # Ingangspunt van de werkruimte
 ├── package.json         # Werkruimtemanifest
-├── tsconfig.json        # TS-configuratie van werkruimte
-└── types.d.ts           # Typedeclaraties van werkruimte
+├── tsconfig.json        # TS-configuratie van de werkruimte
+└── types.d.ts           # Typedeclaraties van de werkruimte
 ```
 
 ### `open-sse/mcp-server/`
 
-| Pad                         | Doel                                                                              |
-| --------------------------- | --------------------------------------------------------------------------------- |
-| `server.ts`                 | Levenscyclus van MCP-server (stdio- + HTTP-transporten)                           |
-| `httpTransport.ts`          | HTTP Streamable- + SSE-transporten (`/api/mcp/sse`, `/api/mcp/stream`)            |
-| `audit.ts`                  | Auditlogboekregistratie in de tabel `mcp_tool_audit`                              |
-| `scopeEnforcement.ts`       | Scopevalidatie per tool                                                           |
-| `runtimeHeartbeat.ts`       | Statusheartbeat naar `DATA_DIR/runtime/mcp-heartbeat.json`                        |
-| `descriptionCompressor.ts`  | Comprimeert metadata van toolbeschrijvingen om context te besparen                |
-| `schemas/tools.ts`          | 36 basistooldefinities + scopes                                                   |
-| `tools/advancedTools.ts`    | Geavanceerde toolimplementaties                                                   |
-| `tools/memoryTools.ts`      | 3 geheugentools (zoeken/toevoegen/wissen)                                         |
-| `tools/skillTools.ts`       | 4 vaardigheidstools (weergeven/inschakelen/uitvoeren/uitvoeringen)                |
-| `tools/compressionTools.ts` | 5 compressietools                                                                 |
-| `README.md`                 | Interne README voor MCP-server (gekoppeld vanuit `docs/frameworks/MCP-SERVER.md`) |
+| Pad                         | Doel                                                                                |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| `server.ts`                 | Levenscyclus van de MCP-server (stdio- + HTTP-transportmethoden)                    |
+| `httpTransport.ts`          | HTTP Streamable- + SSE-transportmethoden (`/api/mcp/sse`, `/api/mcp/stream`)        |
+| `audit.ts`                  | Auditlogboekregistratie in de tabel `mcp_tool_audit`                                |
+| `scopeEnforcement.ts`       | Scopevalidatie per tool                                                             |
+| `runtimeHeartbeat.ts`       | Statusheartbeat naar `DATA_DIR/runtime/mcp-heartbeat.json`                          |
+| `descriptionCompressor.ts`  | Comprimeert metadata van toolbeschrijvingen om context te besparen                  |
+| `schemas/tools.ts`          | 36 basistooldefinities + scopes                                                     |
+| `tools/advancedTools.ts`    | Geavanceerde toolimplementaties                                                     |
+| `tools/memoryTools.ts`      | 3 geheugentools (zoeken/toevoegen/wissen)                                           |
+| `tools/skillTools.ts`       | 4 vaardigheidstools (weergeven/inschakelen/uitvoeren/uitvoeringen)                  |
+| `tools/compressionTools.ts` | 5 compressietools                                                                   |
+| `README.md`                 | Interne README van de MCP-server (gekoppeld vanuit `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

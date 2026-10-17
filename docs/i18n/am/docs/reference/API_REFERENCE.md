@@ -317,37 +317,36 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "በተራሮች ላይ የሚታይ ውብ የፀሐይ መጥለቂያ",
+  "prompt": "በተራሮች ላይ የሚታይ ውብ የፀሐይ መጥለቅ",
   "size": "1024x1024"
 }
 ```
 
-የሚገኙ አቅራቢዎች OpenAI (GPT Image 2)፣ xAI (Grok Image)፣ Together AI (FLUX)፣ Fireworks AI፣ Nebius (FLUX)፣ Hyperbolic፣ NanoBanana፣ **OpenRouter**፣ **ZenMux**፣ SD WebUI (አካባቢያዊ) እና ComfyUI (አካባቢያዊ) ያካትታሉ።
+የሚገኙ አቅራቢዎች OpenAI (GPT Image 2)፣ xAI (Grok Image)፣ Together AI (FLUX)፣ Fireworks AI፣ Nebius (FLUX)፣ Hyperbolic፣ NanoBanana፣ **OpenRouter**፣ **ZenMux**፣ SD WebUI (አካባቢያዊ)፣ ComfyUI (አካባቢያዊ) ያካትታሉ።
 
 `n` በ`data[]` ውስጥ `n` ምስሎችን ይመልሳል። የላይኛው API በእያንዳንዱ ጥሪ አንድ ምስል የሚመልስላቸው አቅራቢዎች
 (Black Forest Labs፣ Stability AI፣ Leonardo፣ Ideogram፣ Haiper፣ Hyperbolic፣ Magnific/Freepik፣
-NVIDIA NIM፣ Cloudflare Workers AI) ቢበዛ 4 በአንድ ጊዜ በሂደት ላይ በማድረግ `n` የተለያዩ የላይኛው ጥሪዎችን ያገኛሉ። ቋሚ
-`seed` በጥሪ መረጃ ጠቋሚ መጠን ይጨምራል (`seed`፣ `seed + 1`፣ …)፤ በዚህም ምስሎቹ የተለያዩ ሆነው
-እንደገና ሊመረቱ የሚችሉ ሆነው ይቆያሉ። `n` ከ10 እንዳይበልጥ ተገድቧል። ከጥሪዎቹ ማንኛውም ካልተሳካ፣ ጥያቄው በአጠቃላይ ይከሽፋል። የተከፋፈሉ
-ቅርጸቶች ዝርዝር በ
-`open-sse/handlers/imageGeneration/fanOut.ts` ውስጥ `SINGLE_IMAGE_FANOUT_FORMATS` ነው።
+NVIDIA NIM፣ Cloudflare Workers AI) `n` የተለያዩ የላይኛው ጥሪዎችን ያገኛሉ፣ በአንድ ጊዜ ቢበዛ 4 ጥሪዎች ይከናወናሉ።
+ቋሚ `seed` በጥሪው መረጃ ጠቋሚ መሠረት (`seed`፣ `seed + 1`፣ …) ይጨመርበታል፤ በዚህም ምስሎቹ የተለያዩ ሆነው
+እንደገና ሊመረቱ የሚችሉ ይሆናሉ። `n` ከ10 እንዳይበልጥ የተገደበ ነው። ማንኛውም ጥሪ ካልተሳካ ጥያቄው በአጠቃላይ ይከሽፋል። የተዘርጊ ቅርጸቶች ዝርዝር
+በ`open-sse/handlers/imageGeneration/fanOut.ts` ውስጥ `SINGLE_IMAGE_FANOUT_FORMATS` ነው።
 
 ZenMux ነባሩን የAPI ቁልፍ ግንኙነት እንደገና ይጠቀማል፣ እንዲሁም `zenmux/` ወይም `zm/` ቅድመ ቅጥያዎችን ይቀበላል፦
 
-- `zenmux/openai/gpt-image-2` የZenMuxን OpenAI Images API ይጠቀማል። አማራጮች `size`፣
-  `quality`፣ `n`፣ `output_format`፣ `output_compression`፣ `background` እና `response_format`ን ያካትታሉ።
-- እንደ `zm/meta/muse-image-1.0` ያሉ ሌሎች አታሚዎች የZenMuxን Vertex AI `:predict`
-  የመጨረሻ ነጥብ ይጠቀማሉ። `n` ወደ `sampleCount`፣ `aspect_ratio` ወደ `aspectRatio`፣ እንዲሁም `image_size`
-  (`1K`፣ `2K`፣ `4K`) ወደ `sampleImageSize` ይመደባሉ። በፒክሰል የተገለጸ `size` የምጥጥን ሬሾን ብቻ ያቀርባል፤
-  የተወሰኑ የፒክሰል ልኬቶችን አያረጋግጥም። የሚደገፉ ሬሾዎች፣ ጥራቶች እና ብዛቶች እንደ ሞዴሉ ይለያያሉ።
+- `zenmux/openai/gpt-image-2` የZenMuxን OpenAI Images API ይጠቀማል። አማራጮቹ `size`፣
+  `quality`፣ `n`፣ `output_format`፣ `output_compression`፣ `background` እና `response_format` ያካትታሉ።
+- እንደ `zm/meta/muse-image-1.0` ያሉ ሌሎች አሳታሚዎች የZenMuxን Vertex AI `:predict`
+  መጨረሻ ነጥብ ይጠቀማሉ። `n` ከ`sampleCount`፣ `aspect_ratio` ከ`aspectRatio`፣ እና `image_size`
+  (`1K`፣ `2K`፣ `4K`) ከ`sampleImageSize` ጋር ይዛመዳሉ። በፒክሰል የተገለጸ `size` የምጥጥን ሬሾን ብቻ ያቀርባል፣
+  የፒክሰል ልኬቶቹ ግን ዋስትና የላቸውም። የሚደገፉ ሬሾዎች፣ ጥራቶች እና ብዛቶች እንደ ሞዴሉ ይለያያሉ።
 - `zm/inclusionai/ming-image-0.1-design` የራሱን ልኬቶች ይመርጣል። `size`፣
-  `aspect_ratio` እና `image_size`ን አያካትቱ፤ በግልጽ የተሰጡ እሴቶች HTTP 400 ይመልሳሉ። PNG፣ JPEG እና WebP
+  `aspect_ratio` እና `image_size` አይካተቱ፤ በግልጽ የተሰጡ እሴቶች HTTP 400 ይመልሳሉ። PNG፣ JPEG እና WebP
   በ`output_format` ሊጠየቁ ይችላሉ።
 
-ይህ ውህደት ከጽሑፍ ወደ ምስል ማመንጨትን ይደግፋል፤ በማጣቀሻ ምስል ላይ ማርትዕን አይደግፍም። የVertex
-ውጤት ወደ `data[].b64_json` ደረጃውን የጠበቀ ቅርጽ ይቀየራል፤ `response_format: "url"` የላይኛውን
-HTTPS URL ወይም የምስል ባይቶች ብቻ ሲገኙ base64 data URL ይመልሳል። ባዶ/የተጣሩ ውጤቶች
-ከባዶ የስኬት ምላሽ ይልቅ ስህተት ይመልሳሉ። የሞዴል መዳረሻ በZenMux መለያው ላይ የተመሰረተ ነው።
+ይህ ውህደት ከጽሑፍ ወደ ምስል ማመንጨትን ይደግፋል፣ የማጣቀሻ ምስል ማርትዕን ግን አይደግፍም። የVertex
+ውጤት ወደ `data[].b64_json` መደበኛ ቅርጽ ይቀየራል፤ `response_format: "url"` የላይኛውን
+HTTPS URL ወይም የምስል ባይቶች ብቻ ሲኖሩ base64 data URL ይመልሳል። ባዶ/የተጣሩ ውጤቶች
+ባዶ ስኬትን ከመመለስ ይልቅ ስህተት ይመልሳሉ። የሞዴል መዳረሻ በZenMux መለያው ላይ የተመሠረተ ነው።
 [የZenMux Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) እና
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image)ን ይመልከቱ።
 
@@ -1122,6 +1121,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 የተከማቹ የመግቢያ ማረጋገጫዎች ይሰጣሉ፣ ስለዚህ የዳሽቦርድ ክፍለ-ጊዜ ወይም የአካባቢ CLI (ወይም መግባት
 የተሰናከለ መሆን) ያስፈልጋቸዋል። ማንኛውም ወሰን ያላቸው የAPI ቁልፎች እና `oma_` የመዳረሻ ቶከኖች `403` ያገኛሉ።
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### የደመና ማመሳሰል
 
 | Endpoint               | Method | Description      |
@@ -1406,7 +1412,7 @@ Content-Type: application/json
 }
 ```
 
-> **የስኪማ ማስታወሻዎች** (`setBudgetSchema`): `apiKeyId` ያስፈልጋል፤ ከ`dailyLimitUsd`፣ `weeklyLimitUsd` ወይም `monthlyLimitUsd` ቢያንስ አንዱ ከዜሮ መብለጥ አለበት። አማራጭ መስኮች፦ `warningThreshold` (0–1)፣ `resetInterval` (`daily` | `weekly` | `monthly`)፣ `resetTime` (`HH:MM`)። የቆየው `{keyId, limit, period}` ቅርጽ `400 Bad Request` ይመልሳል።
+> **የSchema ማስታወሻዎች** (`setBudgetSchema`)፦ `apiKeyId` ያስፈልጋል፤ ከ`dailyLimitUsd`፣ `weeklyLimitUsd` ወይም `monthlyLimitUsd` ቢያንስ አንዱ ከዜሮ መብለጥ አለበት። አማራጭ መስኮች፦ `warningThreshold` (0–1)፣ `resetInterval` (`daily` | `weekly` | `monthly`)፣ `resetTime` (`HH:MM`)። የቀድሞው `{keyId, limit, period}` ቅርጽ `400 Bad Request` ይመልሳል።
 
 ## የቶከን ገደቦች
 
@@ -1487,17 +1493,17 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## የተመዘገቡ ቁልፎች (ራስ-ሰር አስተዳደር)
 
-የራስ-ሰር ቁልፍ አስተዳደር ንዑስ ስርዓት የዕለታዊ/የሰዓት ኮታዎችን በመጠቀም፣ ከደጋፊ አቅራቢ/መለያ ጋር የAPI ቁልፎችን ለማውጣት እና ለማዞር ይጠቀምበታል።
+ዕለታዊ/በሰዓት ኮታዎችን በመጠቀም፣ ከድጋፍ ሰጪ አቅራቢ/መለያ ጋር የAPI ቁልፎችን ለመስጠት እና ለማዞር በራስ-ሰር የቁልፍ አስተዳደር ንዑስ ስርዓት ይጠቀምባቸዋል።
 
-| ዘዴ     | ዱካ                                    | መግለጫ                                                                                                                                                                                  |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | የተመዘገቡ ቁልፎችን ይዘረዝራል (የተሸፈነ ቅድመ ቅጥያ ብቻ)                                                                                                                                                |
-| POST   | `/api/v1/registered-keys`             | አዲስ የተመዘገበ ቁልፍ ያወጣል — የጥያቄ አካል፦ `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`። ጥሬውን ቁልፍ **አንድ ጊዜ** ይመልሳል። በኮታ ምክንያት ውድቅ ሲደረግ `429` ይመልሳል። |
-| GET    | `/api/v1/registered-keys/[id]`        | የተመዘገበ ቁልፍ ሜታዳታን ያገኛል (ጥሬ ቁልፉን አያካትትም)                                                                                                                                                |
-| DELETE | `/api/v1/registered-keys/[id]`        | የተመዘገበ ቁልፍን ይሽራል                                                                                                                                                                      |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | ግልጽ የመሻሪያ መጨረሻ ነጥብ (ከDELETE ጋር ተመሳሳይ ውጤት)                                                                                                                                             |
+| ዘዴ     | ዱካ                                    | መግለጫ                                                                                                                                                                                     |
+| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | የተመዘገቡ ቁልፎችን ይዘረዝራል (የተሸፈነውን ቅድመ ቅጥያ ብቻ)                                                                                                                                                 |
+| POST   | `/api/v1/registered-keys`             | አዲስ የተመዘገበ ቁልፍ ይሰጣል — የጥያቄ ይዘት፦ `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`። ጥሬውን ቁልፍ **አንድ ጊዜ** ብቻ ይመልሳል። በኮታ ምክንያት ውድቅ ሲደረግ `429` ይመልሳል። |
+| GET    | `/api/v1/registered-keys/[id]`        | የተመዘገበ ቁልፍን ሜታዳታ ያወጣል (ጥሬ የቁልፍ ይዘት አይኖርም)                                                                                                                                                |
+| DELETE | `/api/v1/registered-keys/[id]`        | የተመዘገበ ቁልፍን ይሽራል                                                                                                                                                                         |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | ግልጽ የስረዛ መዳረሻ (`DELETE` ከሚያስከትለው ጋር ተመሳሳይ ውጤት)                                                                                                                                           |
 
-**ማረጋገጫ፦** የአስተዳደር ክፍለ ጊዜ/API ቁልፍ (`requireManagementAuth`) — ከ`/api/keys` ጋር ተመሳሳይ ጥበቃ፦ የዳሽቦርድ ክፍለ ጊዜ፣ የአካባቢ CLI ቶከን፣ ወይም `manage`/`admin` ወሰን ያለው የAPI ቁልፍ፤ ለኢንፈረንስ ብቻ የሚያገለግሉ የAPI ቁልፎች `403` ያገኛሉ። እንዲሁም `/v1/quotas/check` እና `/v1/issues/report`ን ይመልከቱ።
+**ማረጋገጫ፦** የአስተዳደር ክፍለ-ጊዜ/API ቁልፍ (`requireManagementAuth`) — እንደ `/api/keys` ተመሳሳይ ጥበቃ፦ የዳሽቦርድ ክፍለ-ጊዜ፣ አካባቢያዊው የCLI ቶከን፣ ወይም `manage`/`admin` ወሰን ያለው የAPI ቁልፍ፤ ለግምት ብቻ የሚያገለግሉ የAPI ቁልፎች `403` ያገኛሉ። እንዲሁም `/v1/quotas/check` እና `/v1/issues/report`ን ይመልከቱ።
 
 ---
 

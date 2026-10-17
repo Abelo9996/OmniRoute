@@ -309,7 +309,7 @@ GET /v1/embeddings
 
 ---
 
-## Şəkil generasiyası
+## Şəkil Generasiyası
 
 ```bash
 POST /v1/images/generations
@@ -318,25 +318,25 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Dağlar üzərində gözəl gün batımı",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 Mövcud provayderlərə OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokal), ComfyUI (lokal) daxildir.
 
-`n`, `data[]` daxilində `n` sayda şəkil qaytarır. Yuxarı axın API-si hər çağırışda bir şəkil qaytaran provayderlər (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik, NVIDIA NIM, Cloudflare Workers AI) üçün maksimum 4-ü eyni vaxtda icra edilməklə `n` ayrı yuxarı axın çağırışı edilir. Sabit `seed` çağırış indeksinə görə artırılır (`seed`, `seed + 1`, …), beləliklə, şəkillər fərqli olur, lakin təkrar yaradıla bilir. `n` maksimum 10 ilə məhdudlaşdırılır. Hər hansı çağırış uğursuz olarsa, sorğu bütövlükdə uğursuz olur. Paralel çağırış formatlarının siyahısı `open-sse/handlers/imageGeneration/fanOut.ts` daxilindəki `SINGLE_IMAGE_FANOUT_FORMATS`-dur.
+`n`, `data[]` daxilində `n` şəkil qaytarır. Yuxarı axın API-si hər çağırışda bir şəkil qaytaran provayderlər (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik, NVIDIA NIM, Cloudflare Workers AI) üçün maksimum 4-ü eyni vaxtda olmaqla `n` ayrı yuxarı axın çağırışı edilir. Sabit `seed` çağırış indeksinə uyğun artırılır (`seed`, `seed + 1`, …), beləliklə şəkillər fərqli olur, lakin yenidən yaradıla bilir. `n` maksimum 10 ilə məhdudlaşdırılır. Çağırışlardan hər hansı biri uğursuz olarsa, sorğu bütövlükdə uğursuz sayılır. Paralel çağırış formatlarının siyahısı `open-sse/handlers/imageGeneration/fanOut.ts` faylındakı `SINGLE_IMAGE_FANOUT_FORMATS` daxilindədir.
 
-ZenMux mövcud API açarı bağlantısından təkrar istifadə edir və `zenmux/` və ya `zm/` prefikslərini qəbul edir:
+ZenMux mövcud API açarı bağlantısından yenidən istifadə edir və `zenmux/` və ya `zm/` prefikslərini qəbul edir:
 
 - `zenmux/openai/gpt-image-2` ZenMux-un OpenAI Images API-sindən istifadə edir. Seçimlərə `size`, `quality`, `n`, `output_format`, `output_compression`, `background` və `response_format` daxildir.
-- `zm/meta/muse-image-1.0` kimi digər nəşriyyatçıların modelləri ZenMux-un Vertex AI `:predict` son nöqtəsindən istifadə edir. `n`, `sampleCount` parametrinə, `aspect_ratio`, `aspectRatio` parametrinə, `image_size` (`1K`, `2K`, `4K`) isə `sampleImageSize` parametrinə uyğunlaşdırılır. Piksellə verilən `size` yalnız tərəflər nisbətini təmin edir, dəqiq piksel ölçülərinə zəmanət vermir. Dəstəklənən nisbətlər, təsvir ölçüləri və saylar modelə görə dəyişir.
-- `zm/inclusionai/ming-image-0.1-design` öz ölçülərini özü seçir. `size`, `aspect_ratio` və `image_size` parametrlərini buraxın; açıq şəkildə verilmiş dəyərlər HTTP 400 qaytarır. `output_format` vasitəsilə PNG, JPEG və WebP tələb edilə bilər.
+- `zm/meta/muse-image-1.0` kimi digər nəşriyyatçılar ZenMux-un Vertex AI `:predict` son nöqtəsindən istifadə edir. `n`, `sampleCount` ilə; `aspect_ratio`, `aspectRatio` ilə; `image_size` (`1K`, `2K`, `4K`) isə `sampleImageSize` ilə uyğunlaşdırılır. Piksel əsaslı `size` yalnız tərəflər nisbətini müəyyən edir, piksel ölçülərinə zəmanət vermir. Dəstəklənən nisbətlər, təsvir ölçüləri və saylar modelə görə dəyişir.
+- `zm/inclusionai/ming-image-0.1-design` öz ölçülərini özü seçir. `size`, `aspect_ratio` və `image_size` parametrlərini buraxın; açıq şəkildə verilən dəyərlər HTTP 400 qaytarır. PNG, JPEG və WebP formatları `output_format` vasitəsilə tələb edilə bilər.
 
-Bu inteqrasiya istinada əsaslanan şəkil redaktəsini deyil, mətndən şəkil generasiyasını dəstəkləyir. Vertex çıxışı `data[].b64_json` formatına normallaşdırılır; `response_format: "url"` yuxarı axın HTTPS URL-i və ya yalnız şəkil baytları mövcud olduqda base64 məlumat URL-i qaytarır. Boş/filtrlənmiş çıxışlar boş uğurlu cavab əvəzinə xəta qaytarır. Modelə giriş ZenMux hesabından asılıdır. [ZenMux-un Vertex API-sinə](https://docs.zenmux.ai/api/vertexai/generate-images) və [OpenAI Images API-sinə](https://docs.zenmux.ai/api/openai/generate-an-image) baxın.
+Bu inteqrasiya istinad şəklinin redaktəsini deyil, mətndən şəkil generasiyasını dəstəkləyir. Vertex çıxışı `data[].b64_json` formatına normallaşdırılır; `response_format: "url"` yuxarı axın HTTPS URL-i və ya yalnız şəkil baytları mövcud olduqda base64 məlumat URL-i qaytarır. Boş/filtrlənmiş çıxışlar boş uğurlu cavab əvəzinə xəta qaytarır. Modelə giriş ZenMux hesabından asılıdır. [ZenMux-un Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) və [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) sənədlərinə baxın.
 
 ```bash
-# Bütün şəkil modellərini sadalayın
+# Bütün şəkil modellərini siyahılayın
 GET /v1/images/generations
 ```
 
@@ -1456,17 +1456,17 @@ OmniRoute hadisələri (sorğunun tamamlanması, kvotanın tükənməsi, açarı
 
 ## Qeydiyyatdan Keçmiş Açarlar (Avtomatik İdarəetmə)
 
-Gündəlik/saatlıq kvotalarla dəstəkləyici provayder/hesab üzərindən API açarlarının verilməsi və rotasiyası üçün avtomatik açar idarəetmə alt sistemi tərəfindən istifadə olunur.
+Gündəlik/saatlıq kvotalarla, əsas təminatçı/hesab üzərindən API açarlarını yaratmaq və rotasiya etmək üçün avtomatik açar idarəetmə alt sistemi tərəfindən istifadə olunur.
 
-| Metod  | Yol                                   | Təsvir                                                                                                                                                                                                                          |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Qeydiyyatdan keçmiş açarları siyahıya alır (yalnız maskalanmış prefiks)                                                                                                                                                         |
-| POST   | `/api/v1/registered-keys`             | Yeni qeydiyyatdan keçmiş açar verir — gövdə: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Xam açarı **yalnız bir dəfə** qaytarır. Kvota səbəbilə imtina edildikdə `429` qaytarır. |
-| GET    | `/api/v1/registered-keys/[id]`        | Qeydiyyatdan keçmiş açarın metadatasını əldə edir (xam material olmadan)                                                                                                                                                        |
-| DELETE | `/api/v1/registered-keys/[id]`        | Qeydiyyatdan keçmiş açarı ləğv edir                                                                                                                                                                                             |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Aşkar ləğvetmə son nöqtəsi (DELETE ilə eyni təsirə malikdir)                                                                                                                                                                    |
+| Metod  | Yol                                   | Təsvir                                                                                                                                                                                                                                      |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Qeydiyyatdan keçmiş açarları siyahıya alır (yalnız maskalanmış prefiks)                                                                                                                                                                     |
+| POST   | `/api/v1/registered-keys`             | Yeni qeydiyyatdan keçmiş açar yaradır — sorğu gövdəsi: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Xam açarı **yalnız bir dəfə** qaytarır. Kvota səbəbindən imtina edildikdə `429` qaytarır. |
+| GET    | `/api/v1/registered-keys/[id]`        | Qeydiyyatdan keçmiş açarın metadatasını əldə edir (xam məlumat olmadan)                                                                                                                                                                     |
+| DELETE | `/api/v1/registered-keys/[id]`        | Qeydiyyatdan keçmiş açarı ləğv edir                                                                                                                                                                                                         |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Açıq şəkildə ləğvetmə son nöqtəsi (DELETE ilə eyni təsirə malikdir)                                                                                                                                                                         |
 
-**Autentifikasiya:** idarəetmə sessiyası/API açarı (`requireManagementAuth`) — `/api/keys` ilə eyni qoruma mexanizmi: idarəetmə paneli sessiyası, lokal CLI tokeni və ya `manage`/`admin` əhatə dairəsinə malik API açarı; yalnız inferensiya üçün nəzərdə tutulmuş API açarları `403` alır. Həmçinin `/v1/quotas/check` və `/v1/issues/report` bölmələrinə baxın.
+**Autentifikasiya:** idarəetmə sessiyası/API açarı (`requireManagementAuth`) — `/api/keys` ilə eyni qoruma mexanizmi: idarə paneli sessiyası, lokal CLI tokeni və ya `manage`/`admin` əhatə dairəsinə malik API açarı; yalnız inferensiya üçün nəzərdə tutulmuş API açarları `403` alır. Həmçinin `/v1/quotas/check` və `/v1/issues/report` bölmələrinə baxın.
 
 ---
 

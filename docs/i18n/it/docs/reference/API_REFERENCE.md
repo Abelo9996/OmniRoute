@@ -304,30 +304,30 @@ I provider disponibili includono OpenAI (GPT Image 2), xAI (Grok Image), Togethe
 
 `n` restituisce `n` immagini in `data[]`. Per i provider la cui API upstream restituisce un'immagine per chiamata
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), vengono effettuate `n` chiamate upstream separate, con al massimo 4 chiamate in corso. Un
+NVIDIA NIM, Cloudflare Workers AI), vengono effettuate `n` chiamate upstream separate, con un massimo di 4 simultanee. Un
 `seed` fisso viene incrementato in base all'indice della chiamata (`seed`, `seed + 1`, …), in modo che le immagini siano diverse ma rimangano
 riproducibili. `n` è limitato a 10. L'intera richiesta non riesce se una qualsiasi chiamata non riesce. L'elenco
-dei formati fan-out è `SINGLE_IMAGE_FANOUT_FORMATS` in
+dei formati con fan-out è `SINGLE_IMAGE_FANOUT_FORMATS` in
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux riutilizza la connessione esistente con chiave API e accetta i prefissi `zenmux/` o `zm/`:
 
 - `zenmux/openai/gpt-image-2` utilizza l'API OpenAI Images di ZenMux. Le opzioni includono `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` e `response_format`.
-- Altri publisher, come `zm/meta/muse-image-1.0`, utilizzano l'endpoint `:predict`
-  di Vertex AI di ZenMux. `n` corrisponde a `sampleCount`, `aspect_ratio` ad `aspectRatio` e `image_size`
+- Altri publisher, come `zm/meta/muse-image-1.0`, utilizzano l'endpoint `:predict` di Vertex AI di ZenMux.
+  `n` corrisponde a `sampleCount`, `aspect_ratio` a `aspectRatio` e `image_size`
   (`1K`, `2K`, `4K`) a `sampleImageSize`. Un valore `size` in pixel fornisce solo le proporzioni,
   non dimensioni in pixel garantite. Le proporzioni, le risoluzioni e il numero di immagini supportati variano in base al modello.
 - `zm/inclusionai/ming-image-0.1-design` sceglie autonomamente le proprie dimensioni. Omettere `size`,
   `aspect_ratio` e `image_size`; i valori espliciti restituiscono HTTP 400. È possibile richiedere PNG, JPEG e WebP
-  con `output_format`.
+  tramite `output_format`.
 
-Questa integrazione supporta la generazione di immagini da testo, non la modifica di immagini di riferimento. L'output di Vertex
+Questa integrazione supporta la generazione di immagini da testo, non la modifica basata su immagini di riferimento. L'output di Vertex
 viene normalizzato in `data[].b64_json`; `response_format: "url"` restituisce un URL HTTPS upstream
 o un URL di dati base64 quando sono disponibili solo i byte dell'immagine. Gli output vuoti/filtrati
-restituiscono un errore anziché un esito positivo vuoto. L'accesso ai modelli dipende dall'account ZenMux.
-Consultare [l'API Vertex di ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) e
-[l'API OpenAI Images](https://docs.zenmux.ai/api/openai/generate-an-image).
+restituiscono un errore anziché un risultato vuoto con esito positivo. L'accesso ai modelli dipende dall'account ZenMux.
+Consultare l'[API Vertex di ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) e
+l'[API OpenAI Images](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
 # Elenca tutti i modelli di immagini
@@ -1076,6 +1076,13 @@ tutte le credenziali archiviate, quindi richiedono la sessione della dashboard o
 (oppure l'accesso disabilitato). Le chiavi API di qualsiasi ambito e i token di accesso `oma_`
 ricevono `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Sincronizzazione cloud
 
 | Endpoint               | Metodo | Descrizione                          |
@@ -1443,15 +1450,15 @@ Sottoscrizioni webhook in uscita per gli eventi di OmniRoute (completamento dell
 
 Utilizzate dal sottosistema di gestione automatica delle chiavi per emettere e ruotare le chiavi API presso un provider/account sottostante, con quote giornaliere/orarie.
 
-| Metodo | Percorso                              | Descrizione                                                                                                                                                                                                                                                      |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Elenca le chiavi registrate (solo il prefisso mascherato)                                                                                                                                                                                                        |
-| POST   | `/api/v1/registered-keys`             | Emette una nuova chiave registrata — corpo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Restituisce la chiave non elaborata **una sola volta**. Restituisce `429` in caso di rifiuto per superamento della quota. |
-| GET    | `/api/v1/registered-keys/[id]`        | Recupera i metadati di una chiave registrata (senza il materiale grezzo della chiave)                                                                                                                                                                            |
-| DELETE | `/api/v1/registered-keys/[id]`        | Revoca una chiave registrata                                                                                                                                                                                                                                     |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint di revoca esplicita (stesso effetto di DELETE)                                                                                                                                                                                                          |
+| Metodo | Percorso                              | Descrizione                                                                                                                                                                                                                                                       |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Elenca le chiavi registrate (solo il prefisso mascherato)                                                                                                                                                                                                         |
+| POST   | `/api/v1/registered-keys`             | Emette una nuova chiave registrata — corpo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Restituisce la chiave non mascherata **una sola volta**. Restituisce `429` in caso di rifiuto per superamento della quota. |
+| GET    | `/api/v1/registered-keys/[id]`        | Recupera i metadati di una chiave registrata (senza il valore non mascherato)                                                                                                                                                                                     |
+| DELETE | `/api/v1/registered-keys/[id]`        | Revoca una chiave registrata                                                                                                                                                                                                                                      |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint di revoca esplicita (stesso effetto di DELETE)                                                                                                                                                                                                           |
 
-**Autenticazione:** sessione/chiave API di gestione (`requireManagementAuth`) — la stessa protezione di `/api/keys`: una sessione della dashboard, il token CLI locale oppure una chiave API con ambito `manage`/`admin`; le chiavi API destinate esclusivamente all'inferenza ricevono `403`. Vedere anche `/v1/quotas/check` e `/v1/issues/report`.
+**Autenticazione:** sessione/chiave API di gestione (`requireManagementAuth`) — la stessa protezione di `/api/keys`: una sessione della dashboard, il token della CLI locale o una chiave API con ambito `manage`/`admin`; le chiavi API destinate esclusivamente all'inferenza ricevono `403`. Vedere anche `/v1/quotas/check` e `/v1/issues/report`.
 
 ---
 

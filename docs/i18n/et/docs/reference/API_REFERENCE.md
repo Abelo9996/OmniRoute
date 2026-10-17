@@ -295,7 +295,7 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Kaunis päikeseloojang mägede kohal",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
@@ -304,33 +304,33 @@ Saadaolevate pakkujate hulka kuuluvad OpenAI (GPT Image 2), xAI (Grok Image), To
 
 `n` tagastab `data[]` massiivis `n` pilti. Pakkujate puhul, kelle ülesvoolu API tagastab ühe pildi kutse kohta
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), tehakse `n` eraldi ülesvoolukutset, millest korraga on töös kuni 4. Fikseeritud
-`seed` väärtusele lisatakse kutse indeks (`seed`, `seed + 1`, …), nii et pildid erinevad, kuid jäävad
-reprodutseeritavaks. `n` ülempiir on 10. Kui mõni kutse nurjub, nurjub kogu päring. Hargnevate
+NVIDIA NIM, Cloudflare Workers AI), tehakse ülesvoolu `n` eraldi kutset, millest korraga on töös kuni 4. Fikseeritud
+`seed` väärtust nihutatakse kutse indeksi võrra (`seed`, `seed + 1`, …), nii et pildid erinevad, kuid jäävad
+reprodutseeritavaks. `n` ülempiir on 10. Kui mõni kutse ebaõnnestub, ebaõnnestub kogu päring. Hargnevate
 vormingute loend on `SINGLE_IMAGE_FANOUT_FORMATS` failis
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux kasutab uuesti olemasolevat API-võtme ühendust ja aktsepteerib prefikseid `zenmux/` või `zm/`:
+ZenMux kasutab olemasolevat API-võtme ühendust ja aktsepteerib prefikseid `zenmux/` või `zm/`:
 
 - `zenmux/openai/gpt-image-2` kasutab ZenMuxi OpenAI Images API-t. Valikute hulka kuuluvad `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` ja `response_format`.
 - Teised avaldajad, näiteks `zm/meta/muse-image-1.0`, kasutavad ZenMuxi Vertex AI `:predict`
   lõpp-punkti. `n` vastab parameetrile `sampleCount`, `aspect_ratio` parameetrile `aspectRatio` ja `image_size`
   (`1K`, `2K`, `4K`) parameetrile `sampleImageSize`. Pikslites määratud `size` annab ainult kuvasuhte,
-  mitte garanteeritud pikslimõõtmed. Toetatud kuvasuhted, eraldusvõimed ja kogused erinevad mudeliti.
-- `zm/inclusionai/ming-image-0.1-design` valib mõõtmed ise. Jätke `size`,
-  `aspect_ratio` ja `image_size` määramata; selgesõnaliselt antud väärtused tagastavad HTTP 400. PNG-, JPEG- ja WebP-vormingut
+  mitte garanteeritud pikslimõõtmed. Toetatud kuvasuhted, eraldusvõimed ja kogused sõltuvad mudelist.
+- `zm/inclusionai/ming-image-0.1-design` valib ise oma mõõtmed. Jätke välja `size`,
+  `aspect_ratio` ja `image_size`; nende väärtuste sõnaselge määramine tagastab HTTP 400. PNG-, JPEG- ja WebP-vormingut
   saab taotleda parameetriga `output_format`.
 
-See integratsioon toetab teksti põhjal piltide genereerimist, mitte etalonpiltide redigeerimist. Vertexi
+See integratsioon toetab teksti põhjal piltide genereerimist, mitte võrdluspiltide redigeerimist. Vertexi
 väljund normaliseeritakse kujule `data[].b64_json`; `response_format: "url"` tagastab ülesvoolu
-HTTPS URL-i või base64-andme-URL-i, kui saadaval on ainult pildi baidid. Tühjad või filtreeritud väljundid
-tagastavad tühja eduka vastuse asemel vea. Juurdepääs mudelitele sõltub ZenMuxi kontost.
+HTTPS URL-i või base64-andme-URL-i, kui saadaval on ainult pildi baidid. Tühi või filtreeritud väljund
+tagastab tühja eduka vastuse asemel vea. Juurdepääs mudelitele sõltub ZenMuxi kontost.
 Vaadake [ZenMuxi Vertex API-t](https://docs.zenmux.ai/api/vertexai/generate-images) ja
 [OpenAI Images API-t](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Loetle kõik pildimudelid
+# Kuva kõik pildimudelid
 GET /v1/images/generations
 ```
 
@@ -1088,6 +1088,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 kõik salvestatud identimisteabe, mistõttu nõuavad need juhtpaneeli seanssi või kohalikku CLI-d (või
 keelatud sisselogimist). Mis tahes ulatusega API-võtmed ja `oma_` juurdepääsutõendid saavad vastuseks `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Pilvesünkroonimine
 
 | Lõpp-punkt             | Meetod   | Kirjeldus                    |
@@ -1451,17 +1458,17 @@ Väljuvad veebihaagi tellimused OmniRoute sündmuste jaoks (päringu lõpetamine
 
 ## Registreeritud võtmed (automaatne haldus)
 
-Automaatse võtmehalduse alamsüsteem kasutab neid API-võtmete väljastamiseks ja roteerimiseks taustteenuse pakkuja/konto kaudu, järgides päeva- ja tunnikvoote.
+Automaatse võtmehalduse alamsüsteem kasutab neid API-võtmete väljastamiseks ja roteerimiseks teenusepakkuja/konto kaudu, arvestades päeva- ja tunnikvoote.
 
-| Meetod | Tee                                   | Kirjeldus                                                                                                                                                                                                             |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Registreeritud võtmete loend (ainult maskitud prefiks)                                                                                                                                                                |
-| POST   | `/api/v1/registered-keys`             | Väljasta uus registreeritud võti — keha: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Tagastab töötlemata võtme **ühe korra**. Kvoodi tõttu keeldumisel tagastab `429`. |
-| GET    | `/api/v1/registered-keys/[id]`        | Hangi registreeritud võtme metaandmed (ilma töötlemata võtmematerjalita)                                                                                                                                              |
-| DELETE | `/api/v1/registered-keys/[id]`        | Tühista registreeritud võti                                                                                                                                                                                           |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Võtme selgesõnalise tühistamise lõpp-punkt (sama toime nagu DELETE-il)                                                                                                                                                |
+| Meetod | Tee                                   | Kirjeldus                                                                                                                                                                                                           |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Registreeritud võtmete loend (ainult maskitud prefiks)                                                                                                                                                              |
+| POST   | `/api/v1/registered-keys`             | Uue registreeritud võtme väljastamine — keha: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Tagastab toorvõtme **ühe korra**. Kvoodi tõttu keeldumisel tagastab `429`. |
+| GET    | `/api/v1/registered-keys/[id]`        | Registreeritud võtme metaandmete hankimine (ilma toorvõtmeta)                                                                                                                                                       |
+| DELETE | `/api/v1/registered-keys/[id]`        | Registreeritud võtme tühistamine                                                                                                                                                                                    |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Võtme selgesõnalise tühistamise lõpp-punkt (sama toime nagu DELETE)                                                                                                                                                 |
 
-**Autentimine:** haldusseanss/API-võti (`requireManagementAuth`) — sama kontroll nagu `/api/keys` puhul: töölaua seanss, kohalik CLI-luba või API-võti ulatusega `manage`/`admin`; ainult inferentsiks mõeldud API-võtmed saavad vastuseks `403`. Vaata ka `/v1/quotas/check` ja `/v1/issues/report`.
+**Autentimine:** haldusseanss/API-võti (`requireManagementAuth`) — sama kontroll nagu `/api/keys` puhul: juhtpaneeli seanss, kohalik CLI-token või API-võti ulatusega `manage`/`admin`; ainult inferentsiks mõeldud API-võtmed saavad vastuseks `403`. Vaata ka `/v1/quotas/check` ja `/v1/issues/report`.
 
 ---
 

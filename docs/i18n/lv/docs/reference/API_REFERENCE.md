@@ -319,18 +319,18 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "Skaists saulriets virs kalniem",
   "size": "1024x1024"
 }
 ```
 
-Pieejamie pakalpojumu sniedzēji ietver OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokāls), ComfyUI (lokāls).
+Pieejamie nodrošinātāji ietver OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokāli), ComfyUI (lokāli).
 
-`n` atgriež `n` attēlus masīvā `data[]`. Pakalpojumu sniedzējiem, kuru augšupstraumes API vienā izsaukumā atgriež vienu attēlu
+`n` atgriež `n` attēlus masīvā `data[]`. Nodrošinātājiem, kuru augšupstraumes API vienā izsaukumā atgriež vienu attēlu
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), tiek veikti `n` atsevišķi augšupstraumes izsaukumi, vienlaikus izpildot ne vairāk kā 4. Fiksētai
-`seed` vērtībai tiek pieskaitīts izsaukuma indekss (`seed`, `seed + 1`, …), tādēļ attēli atšķiras, taču saglabājas
-reproducējami. `n` maksimālā vērtība ir 10. Ja kāds izsaukums neizdodas, viss pieprasījums tiek uzskatīts par neizdevušos. Izvēršanas
+NVIDIA NIM, Cloudflare Workers AI), tiek veikti `n` atsevišķi augšupstraumes izsaukumi, vienlaikus izpildot ne vairāk kā 4. Fiksētā
+`seed` vērtība tiek palielināta par izsaukuma indeksu (`seed`, `seed + 1`, …), tādēļ attēli atšķiras, bet saglabājas
+reproducējami. `n` maksimālā vērtība ir 10. Ja kaut viens izsaukums neizdodas, viss pieprasījums tiek uzskatīts par neizdevušos. Izvēršanas
 formātu saraksts ir `SINGLE_IMAGE_FANOUT_FORMATS` failā
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
@@ -339,17 +339,17 @@ ZenMux atkārtoti izmanto esošo API atslēgas savienojumu un pieņem prefiksus 
 - `zenmux/openai/gpt-image-2` izmanto ZenMux OpenAI Images API. Opcijas ietver `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` un `response_format`.
 - Citi izdevēji, piemēram, `zm/meta/muse-image-1.0`, izmanto ZenMux Vertex AI `:predict`
-  galapunktu. `n` atbilst `sampleCount`, `aspect_ratio` — `aspectRatio`, bet `image_size`
-  (`1K`, `2K`, `4K`) — `sampleImageSize`. Pikseļos norādīts `size` nosaka tikai malu attiecību,
+  galapunktu. `n` tiek kartēts uz `sampleCount`, `aspect_ratio` uz `aspectRatio`, bet `image_size`
+  (`1K`, `2K`, `4K`) uz `sampleImageSize`. Pikseļos norādīts `size` nosaka tikai malu attiecību,
   nevis garantētus izmērus pikseļos. Atbalstītās malu attiecības, izšķirtspējas un skaits atšķiras atkarībā no modeļa.
-- `zm/inclusionai/ming-image-0.1-design` pats izvēlas attēla izmērus. Nenorādiet `size`,
-  `aspect_ratio` un `image_size`; skaidri norādītas vērtības izraisa HTTP 400 atbildi. PNG, JPEG un WebP
+- `zm/inclusionai/ming-image-0.1-design` pats izvēlas attēla izmērus. Izlaidiet `size`,
+  `aspect_ratio` un `image_size`; skaidri norādītas vērtības atgriež HTTP 400. PNG, JPEG un WebP
   var pieprasīt, izmantojot `output_format`.
 
 Šī integrācija atbalsta attēlu ģenerēšanu no teksta, nevis atsauces attēlu rediģēšanu. Vertex
 izvade tiek normalizēta uz `data[].b64_json`; `response_format: "url"` atgriež augšupstraumes
-HTTPS URL vai base64 datu URL, ja ir pieejami tikai attēla baiti. Tukšas vai filtrētas izvades
-izraisa kļūdu, nevis tukšu veiksmīgu atbildi. Piekļuve modeļiem ir atkarīga no ZenMux konta.
+HTTPS URL vai base64 datu URL, ja pieejami tikai attēla baiti. Tukša vai filtrēta izvade
+atgriež kļūdu, nevis tukšu veiksmīgu atbildi. Piekļuve modeļiem ir atkarīga no ZenMux konta.
 Skatiet [ZenMux Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) un
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1099,6 +1099,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 visus saglabātos akreditācijas datus, tādēļ tiem nepieciešama informācijas paneļa sesija vai lokālais CLI (vai arī atspējota
 pieteikšanās). Jebkura tvēruma API atslēgas un `oma_` piekļuves pilnvaras saņem `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Mākoņa sinhronizācija
 
 | Galapunkts             | Metode  | Apraksts                        |
@@ -1456,17 +1463,17 @@ Izejošo webhook abonementu apraksti OmniRoute notikumiem (pieprasījuma pabeig�
 
 ## Reģistrētās atslēgas (automātiskā pārvaldība)
 
-Izmanto automātiskās atslēgu pārvaldības apakšsistēma, lai izsniegtu un rotētu API atslēgas pie pamatā esoša nodrošinātāja/konta, ievērojot dienas/stundas kvotas.
+Izmanto automātiskās atslēgu pārvaldības apakšsistēma, lai izsniegtu un rotētu API atslēgas piesaistītā pakalpojumu sniedzēja/konta ietvaros, ievērojot dienas/stundas kvotas.
 
-| Metode | Ceļš                                  | Apraksts                                                                                                                                                                                                                                                                   |
-| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Uzskaita reģistrētās atslēgas (tikai maskēts prefikss)                                                                                                                                                                                                                     |
-| POST   | `/api/v1/registered-keys`             | Izsniedz jaunu reģistrētu atslēgu — pieprasījuma pamatteksts: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Neapstrādātā atslēga tiek atgriezta tikai **vienreiz**. Ja kvotas dēļ pieprasījums tiek noraidīts, atgriež `429`. |
-| GET    | `/api/v1/registered-keys/[id]`        | Izgūst reģistrētās atslēgas metadatus (bez neapstrādātās atslēgas)                                                                                                                                                                                                         |
-| DELETE | `/api/v1/registered-keys/[id]`        | Atsauc reģistrētu atslēgu                                                                                                                                                                                                                                                  |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Tiešs atsaukšanas galapunkts (tāds pats rezultāts kā DELETE)                                                                                                                                                                                                               |
+| Metode | Ceļš                                  | Apraksts                                                                                                                                                                                                                                              |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Uzskaitīt reģistrētās atslēgas (tikai maskēts prefikss)                                                                                                                                                                                               |
+| POST   | `/api/v1/registered-keys`             | Izsniegt jaunu reģistrētu atslēgu — pamatdaļa: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Neapstrādātā atslēga tiek atgriezta **vienreiz**. Ja kvotas dēļ pieprasījums tiek noraidīts, atgriež `429`. |
+| GET    | `/api/v1/registered-keys/[id]`        | Iegūt reģistrētas atslēgas metadatus (bez neapstrādātās atslēgas)                                                                                                                                                                                     |
+| DELETE | `/api/v1/registered-keys/[id]`        | Atsaukt reģistrētu atslēgu                                                                                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Atsevišķs atsaukšanas galapunkts (tāds pats efekts kā DELETE)                                                                                                                                                                                         |
 
-**Autentifikācija:** pārvaldības sesija/API atslēga (`requireManagementAuth`) — tā pati pārbaude, kas tiek izmantota `/api/keys`: informācijas paneļa sesija, lokālais CLI marķieris vai API atslēga ar `manage`/`admin` tvērumu; API atslēgas, kas paredzētas tikai izsecināšanai, saņem `403`. Skatiet arī `/v1/quotas/check` un `/v1/issues/report`.
+**Autentifikācija:** pārvaldības sesija/API atslēga (`requireManagementAuth`) — tā pati aizsardzība, kas `/api/keys`: informācijas paneļa sesija, lokālais CLI tokens vai API atslēga ar `manage`/`admin` tvērumu; API atslēgas, kas paredzētas tikai secinājumu veikšanai, saņem `403`. Skatiet arī `/v1/quotas/check` un `/v1/issues/report`.
 
 ---
 

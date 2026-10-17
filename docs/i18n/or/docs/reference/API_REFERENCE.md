@@ -301,30 +301,30 @@ Content-Type: application/json
 
 ଉପଲବ୍ଧ ପ୍ରଦାନକାରୀମାନଙ୍କ ମଧ୍ୟରେ OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (ସ୍ଥାନୀୟ), ComfyUI (ସ୍ଥାନୀୟ) ଅନ୍ତର୍ଭୁକ୍ତ।
 
-`n`, `data[]` ମଧ୍ୟରେ `n`ଟି ଛବି ଫେରାଏ। ଯେଉଁ ପ୍ରଦାନକାରୀମାନଙ୍କର ଅପ୍ଷ୍ଟ୍ରିମ୍ API ପ୍ରତି କଲ୍ରେ ଗୋଟିଏ ଛବି ଫେରାଏ
+`n`, `data[]`ରେ `n`ଟି ଛବି ଫେରାଏ। ଯେଉଁ ପ୍ରଦାନକାରୀଙ୍କ upstream API ପ୍ରତ୍ୟେକ କଲ୍ରେ ଗୋଟିଏ ଛବି ଫେରାଏ
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), ସେମାନଙ୍କ ପାଇଁ `n`ଟି ପୃଥକ ଅପ୍ଷ୍ଟ୍ରିମ୍ କଲ୍ କରାଯାଏ, ଯେଉଁଥିରୁ ଏକ ସମୟରେ ସର୍ବାଧିକ 4ଟି କଲ୍ ଚାଲିପାରେ। ଏକ
-ନିର୍ଦ୍ଦିଷ୍ଟ `seed`କୁ କଲ୍ର ସୂଚକାଙ୍କ ଅନୁସାରେ ଅଫ୍ସେଟ୍ କରାଯାଏ (`seed`, `seed + 1`, …), ଯାହାଦ୍ୱାରା ଛବିଗୁଡ଼ିକ ଭିନ୍ନ ହୁଏ କିନ୍ତୁ
+NVIDIA NIM, Cloudflare Workers AI), ସେମାନଙ୍କ ପାଇଁ ସର୍ବାଧିକ 4ଟି ଏକକାଳୀନ କଲ୍ ସହିତ `n`ଟି ପୃଥକ upstream କଲ୍ କରାଯାଏ। ଏକ
+ନିର୍ଦ୍ଧାରିତ `seed`କୁ କଲ୍ ସୂଚକାଙ୍କ ଅନୁସାରେ ବୃଦ୍ଧି କରାଯାଏ (`seed`, `seed + 1`, …), ଫଳରେ ଛବିଗୁଡ଼ିକ ଭିନ୍ନ ହେଲେ ମଧ୍ୟ
 ପୁନରୁତ୍ପାଦନଯୋଗ୍ୟ ରହେ। `n`ର ସର୍ବାଧିକ ସୀମା 10। କୌଣସି କଲ୍ ବିଫଳ ହେଲେ ସମଗ୍ର ଅନୁରୋଧ
-ବିଫଳ ହୁଏ। ଫ୍ୟାନ୍-ଆଉଟ୍ ଫର୍ମାଟ୍ଗୁଡ଼ିକର ତାଲିକା
+ବିଫଳ ହୁଏ। fan-out ଫର୍ମାଟ୍ଗୁଡ଼ିକର ତାଲିକା
 `open-sse/handlers/imageGeneration/fanOut.ts`ରେ ଥିବା `SINGLE_IMAGE_FANOUT_FORMATS` ଅଟେ।
 
-ZenMux ବିଦ୍ୟମାନ API-କି ସଂଯୋଗକୁ ପୁନଃବ୍ୟବହାର କରେ ଏବଂ `zenmux/` କିମ୍ବା `zm/` ଉପସର୍ଗ ଗ୍ରହଣ କରେ:
+ZenMux ବିଦ୍ୟମାନ API-key ସଂଯୋଗକୁ ପୁନଃବ୍ୟବହାର କରେ ଏବଂ `zenmux/` କିମ୍ବା `zm/` ଉପସର୍ଗ ଗ୍ରହଣ କରେ:
 
 - `zenmux/openai/gpt-image-2`, ZenMuxର OpenAI Images API ବ୍ୟବହାର କରେ। ବିକଳ୍ପଗୁଡ଼ିକ ମଧ୍ୟରେ `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, ଏବଂ `response_format` ଅନ୍ତର୍ଭୁକ୍ତ।
 - `zm/meta/muse-image-1.0` ପରି ଅନ୍ୟ ପ୍ରକାଶକମାନେ ZenMuxର Vertex AI `:predict`
-  ଏଣ୍ଡପଏଣ୍ଟ ବ୍ୟବହାର କରନ୍ତି। `n`, `sampleCount` ସହିତ; `aspect_ratio`, `aspectRatio` ସହିତ; ଏବଂ `image_size`
-  (`1K`, `2K`, `4K`), `sampleImageSize` ସହିତ ମ୍ୟାପ୍ ହୁଏ। ପିକ୍ସେଲ୍ `size` କେବଳ ଏକ ଦିଗାନୁପାତ ଯୋଗାଏ,
-  ନିଶ୍ଚିତ ପିକ୍ସେଲ୍ ପରିମାଣ ନୁହେଁ। ସମର୍ଥିତ ଅନୁପାତ, ରିଜୋଲ୍ୟୁସନ୍ ଏବଂ ସଂଖ୍ୟା ମଡେଲ୍ ଅନୁସାରେ ଭିନ୍ନ ହୁଏ।
-- `zm/inclusionai/ming-image-0.1-design` ନିଜର ପରିମାଣ ନିଜେ ଚୟନ କରେ। `size`,
-  `aspect_ratio`, ଏବଂ `image_size` ବାଦ ଦିଅନ୍ତୁ; ସ୍ପଷ୍ଟ ମୂଲ୍ୟଗୁଡ଼ିକ HTTP 400 ଫେରାଏ। `output_format` ସହିତ PNG, JPEG, ଏବଂ WebP
+  endpoint ବ୍ୟବହାର କରନ୍ତି। `n`, `sampleCount` ସହିତ, `aspect_ratio`, `aspectRatio` ସହିତ ଏବଂ `image_size`
+  (`1K`, `2K`, `4K`), `sampleImageSize` ସହିତ ମ୍ୟାପ୍ ହୁଏ। ଏକ pixel `size` କେବଳ ଗୋଟିଏ aspect ratio ପ୍ରଦାନ କରେ,
+  ନିଶ୍ଚିତ pixel dimensions ନୁହେଁ। ସମର୍ଥିତ ratio, resolution ଏବଂ count ମଡେଲ୍ ଅନୁସାରେ ଭିନ୍ନ ହୁଏ।
+- `zm/inclusionai/ming-image-0.1-design` ନିଜର dimensions ବାଛେ। `size`,
+  `aspect_ratio`, ଏବଂ `image_size`କୁ ଛାଡ଼ି ଦିଅନ୍ତୁ; ସ୍ପଷ୍ଟ ମୂଲ୍ୟଗୁଡ଼ିକ HTTP 400 ଫେରାଏ। `output_format` ସହିତ PNG, JPEG, ଏବଂ WebP
   ଅନୁରୋଧ କରାଯାଇପାରେ।
 
-ଏହି ଏକୀକରଣ ଟେକ୍ସଟ୍ରୁ-ଛବି ସୃଷ୍ଟିକୁ ସମର୍ଥନ କରେ, ସନ୍ଦର୍ଭ-ଛବି ସମ୍ପାଦନକୁ ନୁହେଁ। Vertex
-ଆଉଟ୍ପୁଟ୍କୁ `data[].b64_json` ଭାବେ ସାମାନ୍ୟୀକୃତ କରାଯାଏ; `response_format: "url"` ଏକ ଅପ୍ଷ୍ଟ୍ରିମ୍
-HTTPS URL ଫେରାଏ, କିମ୍ବା କେବଳ ଛବି ବାଇଟ୍ ଉପଲବ୍ଧ ଥିଲେ ଏକ base64 ଡାଟା URL ଫେରାଏ। ଖାଲି/ଫିଲ୍ଟର୍ ହୋଇଥିବା ଆଉଟ୍ପୁଟ୍
-ଏକ ଖାଲି ସଫଳ ପ୍ରତିକ୍ରିୟା ପରିବର୍ତ୍ତେ ତ୍ରୁଟି ଫେରାଏ। ମଡେଲ୍ ଆକ୍ସେସ୍ ZenMux ଆକାଉଣ୍ଟ ଉପରେ ନିର୍ଭର କରେ।
+ଏହି ସମନ୍ୱୟ text-to-image ସୃଷ୍ଟିକୁ ସମର୍ଥନ କରେ, reference-image ସମ୍ପାଦନାକୁ ନୁହେଁ। Vertex
+ଆଉଟପୁଟ୍କୁ `data[].b64_json`ରେ ସାମାନ୍ୟୀକୃତ କରାଯାଏ; `response_format: "url"` ଏକ upstream
+HTTPS URL ଫେରାଏ କିମ୍ବା କେବଳ image bytes ଉପଲବ୍ଧ ଥିଲେ ଏକ base64 data URL ଫେରାଏ। ଖାଲି/ଫିଲ୍ଟର୍ ହୋଇଥିବା ଆଉଟପୁଟ୍
+ଖାଲି ସଫଳତା ପରିବର୍ତ୍ତେ ଏକ ତ୍ରୁଟି ଫେରାଏ। ମଡେଲ୍ ଆକ୍ସେସ୍ ZenMux ଆକାଉଣ୍ଟ ଉପରେ ନିର୍ଭର କରେ।
 [ZenMuxର Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) ଏବଂ
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) ଦେଖନ୍ତୁ।
 
@@ -1031,6 +1031,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 ସମସ୍ତ ପ୍ରମାଣପତ୍ର ପ୍ରଦାନ କରେ, ତେଣୁ ସେଗୁଡ଼ିକ ପାଇଁ ଡ୍ୟାସ୍ବୋର୍ଡ ସେସନ୍ କିମ୍ବା ସ୍ଥାନୀୟ CLI (ଅଥବା ଲଗ୍ଇନ୍
 ଅକ୍ଷମ ଥିବା) ଆବଶ୍ୟକ। ଯେକୌଣସି ସ୍କୋପ୍ର API କୀ ଏବଂ `oma_` ଆକ୍ସେସ୍ ଟୋକନ୍ଗୁଡ଼ିକୁ `403` ମିଳେ।
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### କ୍ଲାଉଡ୍ ସିଙ୍କ୍
 
 | ଏଣ୍ଡପଏଣ୍ଟ              | ପଦ୍ଧତି  | ବର୍ଣ୍ଣନା                     |
@@ -1393,17 +1400,17 @@ OmniRouter ଇଭେଣ୍ଟ ପାଇଁ ବାହାରମୁଖୀ ୱେବ
 
 ## ପଞ୍ଜୀକୃତ କୀଗୁଡ଼ିକ (ସ୍ୱୟଂଚାଳିତ ପରିଚାଳନା)
 
-ଦୈନିକ/ଘଣ୍ଟାଭିତ୍ତିକ କୋଟା ସହିତ ଏକ ଅନ୍ତର୍ନିହିତ ପ୍ରଦାନକାରୀ/ଆକାଉଣ୍ଟ ବିପକ୍ଷରେ API କୀଗୁଡ଼ିକ ଜାରି ଏବଂ ରୋଟେଟ୍ କରିବା ପାଇଁ ସ୍ୱୟଂଚାଳିତ କୀ ପରିଚାଳନା ଉପପ୍ରଣାଳୀ ଦ୍ୱାରା ବ୍ୟବହୃତ ହୁଏ।
+ଦୈନିକ/ଘଣ୍ଟାଭିତ୍ତିକ କୋଟା ସହିତ ଏକ ଅନ୍ତର୍ନିହିତ ପ୍ରଦାନକାରୀ/ଆକାଉଣ୍ଟ ପାଇଁ API କୀଗୁଡ଼ିକ ଜାରି ଓ ରୋଟେଟ୍ କରିବାକୁ ସ୍ୱୟଂଚାଳିତ କୀ ପରିଚାଳନା ଉପପ୍ରଣାଳୀ ଦ୍ୱାରା ବ୍ୟବହୃତ ହୁଏ।
 
-| ପଦ୍ଧତି | ପଥ                                    | ବର୍ଣ୍ଣନା                                                                                                                                                                                                   |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | ପଞ୍ଜୀକୃତ କୀଗୁଡ଼ିକର ତାଲିକା ଦେଖାନ୍ତୁ (କେବଳ ମାସ୍କ କରାଯାଇଥିବା ପ୍ରିଫିକ୍ସ)                                                                                                                                       |
-| POST   | `/api/v1/registered-keys`             | ଏକ ନୂତନ ପଞ୍ଜୀକୃତ କୀ ଜାରି କରନ୍ତୁ — ବଡି: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। କଞ୍ଚା କୀକୁ **କେବଳ ଥରେ** ଫେରାଏ। କୋଟା ଯୋଗୁଁ ପ୍ରତ୍ୟାଖ୍ୟାନ ହେଲେ `429` ଫେରାଏ। |
-| GET    | `/api/v1/registered-keys/[id]`        | ଏକ ପଞ୍ଜୀକୃତ କୀର ମେଟାଡାଟା ପ୍ରାପ୍ତ କରନ୍ତୁ (କଞ୍ଚା କୀ ସାମଗ୍ରୀ ବିନା)                                                                                                                                            |
-| DELETE | `/api/v1/registered-keys/[id]`        | ଏକ ପଞ୍ଜୀକୃତ କୀ ପ୍ରତ୍ୟାହାର କରନ୍ତୁ                                                                                                                                                                           |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | ସ୍ପଷ୍ଟ ପ୍ରତ୍ୟାହାର ଏଣ୍ଡପଏଣ୍ଟ (DELETE ସହିତ ସମାନ ପ୍ରଭାବ)                                                                                                                                                      |
+| ପଦ୍ଧତି | ପଥ                                    | ବର୍ଣ୍ଣନା                                                                                                                                                                                        |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | ପଞ୍ଜୀକୃତ କୀଗୁଡ଼ିକର ତାଲିକା ଦେଖାଏ (କେବଳ ମାସ୍କ୍ କରାଯାଇଥିବା ପ୍ରିଫିକ୍ସ)                                                                                                                              |
+| POST   | `/api/v1/registered-keys`             | ଏକ ନୂତନ ପଞ୍ଜୀକୃତ କୀ ଜାରି କରେ — ବଡି: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। ଅସଂଶୋଧିତ କୀକୁ **ଥରେ ମାତ୍ର** ଫେରାଏ। କୋଟା ଅସ୍ୱୀକୃତିରେ `429` ଫେରାଏ। |
+| GET    | `/api/v1/registered-keys/[id]`        | ଏକ ପଞ୍ଜୀକୃତ କୀର ମେଟାଡାଟା ପ୍ରାପ୍ତ କରେ (କୌଣସି ଅସଂଶୋଧିତ କୀ ତଥ୍ୟ ନୁହେଁ)                                                                                                                             |
+| DELETE | `/api/v1/registered-keys/[id]`        | ଏକ ପଞ୍ଜୀକୃତ କୀକୁ ପ୍ରତ୍ୟାହାର କରେ                                                                                                                                                                 |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | ସ୍ପଷ୍ଟ ପ୍ରତ୍ୟାହାର ଏଣ୍ଡପଏଣ୍ଟ (`DELETE` ସହିତ ସମାନ ପ୍ରଭାବ)                                                                                                                                         |
 
-**ପ୍ରମାଣୀକରଣ:** ପରିଚାଳନା ସେସନ୍/API କୀ (`requireManagementAuth`) — `/api/keys` ପରି ସମାନ ଗାର୍ଡ: ଏକ ଡ୍ୟାସ୍ବୋର୍ଡ ସେସନ୍, ସ୍ଥାନୀୟ CLI ଟୋକନ୍, କିମ୍ବା `manage`/`admin` ସ୍କୋପ୍ ଥିବା ଏକ API କୀ; କେବଳ ଇନ୍ଫରେନ୍ସ ପାଇଁ ଥିବା API କୀଗୁଡ଼ିକ `403` ପାଆନ୍ତି। `/v1/quotas/check` ଏବଂ `/v1/issues/report` ମଧ୍ୟ ଦେଖନ୍ତୁ।
+**ପ୍ରାମାଣିକରଣ:** ପରିଚାଳନା ସେସନ୍/API କୀ (`requireManagementAuth`) — `/api/keys` ପରି ସମାନ ଗାର୍ଡ: ଏକ ଡ୍ୟାସ୍ବୋର୍ଡ ସେସନ୍, ସ୍ଥାନୀୟ CLI ଟୋକନ୍, କିମ୍ବା `manage`/`admin` ସ୍କୋପ୍ ସହିତ ଏକ API କୀ; କେବଳ ଇନ୍ଫରେନ୍ସ ପାଇଁ ଥିବା API କୀଗୁଡ଼ିକ `403` ପାଆନ୍ତି। `/v1/quotas/check` ଏବଂ `/v1/issues/report` ମଧ୍ୟ ଦେଖନ୍ତୁ।
 
 ---
 

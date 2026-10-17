@@ -257,18 +257,18 @@ src/
 
 ## `open-sse/` — Рабочее пространство потокового движка
 
-Отдельное рабочее пространство npm (`@omniroute/open-sse`). Обрабатывает запросы и выполнение операций провайдерами.
+Отдельное рабочее пространство npm (`@omniroute/open-sse`). Обрабатывает запросы и выполнение провайдерами.
 
 ```
 open-sse/
 ├── handlers/            # 16 файлов (12 обработчиков + 4 вспомогательных модуля): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search и т. д.
-├── executors/           # 67 исполнителей для конкретных провайдеров (расширяют BaseExecutor)
-├── translator/          # Конвертеры форматов (9 для запросов, 9 для ответов, 9 вспомогательных)
+├── executors/           # 150 модулей исполнителей (классы, расширяющие BaseExecutor, и вспомогательные модули для отдельных провайдеров)
+├── translator/          # Преобразователи форматов (9 для запросов, 9 для ответов, 9 вспомогательных)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ сервисных модулей (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM и т. д.)
 ├── mcp-server/          # Сервер MCP (110 инструментов, 3 транспорта, 33 области доступа)
 ├── config/              # Реестры провайдеров/моделей, конфигурация заголовков, псевдонимы моделей
-├── utils/               # Клиент TLS, proxy fetch/dispatcher, сетевые вспомогательные модули
+├── utils/               # Клиент TLS, получение данных/диспетчеризация через прокси, сетевые вспомогательные модули
 ├── index.ts             # Точка входа рабочего пространства
 ├── package.json         # Манифест рабочего пространства
 ├── tsconfig.json        # Конфигурация TS рабочего пространства
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Путь                        | Назначение                                                                                  |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| `server.ts`                 | Жизненный цикл сервера MCP (транспорты stdio + HTTP)                                        |
-| `httpTransport.ts`          | Транспорты HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                        |
-| `audit.ts`                  | Журналирование аудита в таблицу `mcp_tool_audit`                                            |
-| `scopeEnforcement.ts`       | Проверка области доступа для каждого инструмента                                            |
-| `runtimeHeartbeat.ts`       | Отправка сигнала работоспособности в `DATA_DIR/runtime/mcp-heartbeat.json`                  |
-| `descriptionCompressor.ts`  | Сжатие метаданных описаний инструментов для экономии контекста                              |
-| `schemas/tools.ts`          | 36 определений базовых инструментов + области доступа                                       |
-| `tools/advancedTools.ts`    | Реализации расширенных инструментов                                                         |
-| `tools/memoryTools.ts`      | 3 инструмента памяти (поиск/добавление/очистка)                                             |
-| `tools/skillTools.ts`       | 4 инструмента навыков (список/включение/выполнение/выполнения)                              |
-| `tools/compressionTools.ts` | 5 инструментов сжатия                                                                       |
-| `README.md`                 | Внутренний файл README сервера MCP (перекрёстная ссылка из `docs/frameworks/MCP-SERVER.md`) |
+| Путь                        | Назначение                                                                             |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| `server.ts`                 | Жизненный цикл сервера MCP (транспорты stdio + HTTP)                                   |
+| `httpTransport.ts`          | Транспорты HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                   |
+| `audit.ts`                  | Журналирование аудита в таблицу `mcp_tool_audit`                                       |
+| `scopeEnforcement.ts`       | Проверка области доступа для каждого инструмента                                       |
+| `runtimeHeartbeat.ts`       | Сигнал работоспособности в `DATA_DIR/runtime/mcp-heartbeat.json`                       |
+| `descriptionCompressor.ts`  | Сжатие метаданных описаний инструментов для экономии контекста                         |
+| `schemas/tools.ts`          | 36 базовых определений инструментов + области доступа                                  |
+| `tools/advancedTools.ts`    | Реализации расширенных инструментов                                                    |
+| `tools/memoryTools.ts`      | 3 инструмента памяти (поиск/добавление/очистка)                                        |
+| `tools/skillTools.ts`       | 4 инструмента навыков (список/включение/выполнение/выполнения)                         |
+| `tools/compressionTools.ts` | 5 инструментов сжатия                                                                  |
+| `README.md`                 | Внутренний README сервера MCP (перекрёстная ссылка из `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

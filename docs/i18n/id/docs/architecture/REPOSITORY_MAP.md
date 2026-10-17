@@ -255,24 +255,24 @@ src/
 
 ---
 
-## `open-sse/` — Workspace Mesin Streaming
+## `open-sse/` — Ruang Kerja Mesin Streaming
 
-Workspace npm terpisah (`@omniroute/open-sse`). Menangani pemrosesan permintaan + eksekusi penyedia.
+Ruang kerja npm terpisah (`@omniroute/open-sse`). Menangani pemrosesan permintaan + eksekusi penyedia.
 
 ```
 open-sse/
-├── handlers/            # 16 file (12 handler + 4 helper): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, dll.
-├── executors/           # 67 executor khusus penyedia (memperluas BaseExecutor)
+├── handlers/            # 16 berkas (12 handler + 4 helper): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, dll.
+├── executors/           # 150 modul eksekutor (kelas yang memperluas BaseExecutor + helper per penyedia)
 ├── translator/          # Konverter format (9 permintaan, 9 respons, 9 helper)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ modul layanan (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, dll.)
+├── services/            # ~80+ modul layanan (combo, accountFallback, autoCombo, reasoningCache, mode terselubung claude code/chatgpt, modelDeprecation, taskAwareRouter, workflowFSM, dll.)
 ├── mcp-server/          # Server MCP (110 alat, 3 transportasi, 33 cakupan)
 ├── config/              # Registri penyedia/model, konfigurasi header, alias model
-├── utils/               # Klien TLS, fetch/dispatcher proksi, helper jaringan
-├── index.ts             # Titik masuk workspace
-├── package.json         # Manifes workspace
-├── tsconfig.json        # Konfigurasi TS workspace
-└── types.d.ts           # Deklarasi tipe workspace
+├── utils/               # Klien TLS, pengambilan/dispatcher proksi, helper jaringan
+├── index.ts             # Titik masuk ruang kerja
+├── package.json         # Manifes ruang kerja
+├── tsconfig.json        # Konfigurasi TS ruang kerja
+└── types.d.ts           # Deklarasi tipe ruang kerja
 ```
 
 ### `open-sse/mcp-server/`
@@ -284,11 +284,11 @@ open-sse/
 | `audit.ts`                  | Pencatatan audit ke tabel `mcp_tool_audit`                                         |
 | `scopeEnforcement.ts`       | Validasi cakupan per alat                                                          |
 | `runtimeHeartbeat.ts`       | Heartbeat kesehatan ke `DATA_DIR/runtime/mcp-heartbeat.json`                       |
-| `descriptionCompressor.ts`  | Memampatkan metadata deskripsi alat untuk menghemat konteks                        |
+| `descriptionCompressor.ts`  | Mengompresi metadata deskripsi alat untuk menghemat konteks                        |
 | `schemas/tools.ts`          | 36 definisi alat dasar + cakupan                                                   |
 | `tools/advancedTools.ts`    | Implementasi alat tingkat lanjut                                                   |
 | `tools/memoryTools.ts`      | 3 alat memori (pencarian/penambahan/penghapusan)                                   |
-| `tools/skillTools.ts`       | 4 alat keterampilan (daftar/aktifkan/eksekusi/eksekusi yang telah dilakukan)       |
+| `tools/skillTools.ts`       | 4 alat keterampilan (daftar/aktifkan/jalankan/eksekusi)                            |
 | `tools/compressionTools.ts` | 5 alat kompresi                                                                    |
 | `README.md`                 | README server MCP internal (ditautkan silang dari `docs/frameworks/MCP-SERVER.md`) |
 

@@ -295,37 +295,37 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Un apus superb deasupra munților",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 Furnizorii disponibili includ OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (local), ComfyUI (local).
 
-`n` returnează `n` imagini în `data[]`. Pentru furnizorii al căror API din amonte returnează o imagine per apel
+`n` returnează `n` imagini în `data[]`. Pentru furnizorii al căror API din amonte returnează câte o imagine per apel
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), sunt efectuate `n` apeluri separate în amonte, cu cel mult 4 în execuție simultană. O
-valoare `seed` fixă este incrementată cu indexul apelului (`seed`, `seed + 1`, …), astfel încât imaginile să fie diferite, dar să rămână
+NVIDIA NIM, Cloudflare Workers AI), se efectuează `n` apeluri separate către serviciul din amonte, cu cel mult 4 apeluri simultane. O
+valoare `seed` fixă este decalată în funcție de indexul apelului (`seed`, `seed + 1`, …), astfel încât imaginile să difere, dar să rămână
 reproductibile. `n` este limitat la 10. Solicitarea eșuează în întregime dacă oricare dintre apeluri eșuează. Lista
 formatelor cu distribuire în apeluri separate este `SINGLE_IMAGE_FANOUT_FORMATS` din
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux reutilizează conexiunea existentă cu cheia API și acceptă prefixele `zenmux/` sau `zm/`:
+ZenMux reutilizează conexiunea existentă bazată pe cheia API și acceptă prefixele `zenmux/` sau `zm/`:
 
 - `zenmux/openai/gpt-image-2` utilizează API-ul OpenAI Images al ZenMux. Opțiunile includ `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` și `response_format`.
-- Alți editori, precum `zm/meta/muse-image-1.0`, utilizează endpointul `:predict` al Vertex AI prin ZenMux.
-  `n` corespunde cu `sampleCount`, `aspect_ratio` cu `aspectRatio`, iar `image_size`
-  (`1K`, `2K`, `4K`) cu `sampleImageSize`. O valoare `size` în pixeli specifică doar un raport de aspect,
+- Alți editori, precum `zm/meta/muse-image-1.0`, utilizează endpointul Vertex AI `:predict`
+  al ZenMux. `n` este mapat la `sampleCount`, `aspect_ratio` la `aspectRatio`, iar `image_size`
+  (`1K`, `2K`, `4K`) la `sampleImageSize`. O valoare `size` exprimată în pixeli furnizează doar un raport de aspect,
   nu dimensiuni garantate în pixeli. Rapoartele, rezoluțiile și numărul de imagini acceptate variază în funcție de model.
 - `zm/inclusionai/ming-image-0.1-design` își alege propriile dimensiuni. Omiteți `size`,
   `aspect_ratio` și `image_size`; valorile explicite returnează HTTP 400. Formatele PNG, JPEG și WebP
   pot fi solicitate prin `output_format`.
 
-Această integrare acceptă generarea de imagini din text, nu editarea pe baza unei imagini de referință. Rezultatul Vertex
+Această integrare acceptă generarea text-imagine, nu editarea imaginilor de referință. Rezultatul Vertex
 este normalizat în `data[].b64_json`; `response_format: "url"` returnează un URL HTTPS din amonte
 sau un URL de date base64 atunci când sunt disponibili doar octeții imaginii. Rezultatele goale/filtrate
-returnează o eroare, nu un răspuns de succes gol. Accesul la modele depinde de contul ZenMux.
+returnează o eroare în locul unui răspuns de succes gol. Accesul la modele depinde de contul ZenMux.
 Consultați [API-ul Vertex al ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) și
 [API-ul OpenAI Images](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1103,6 +1103,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 toate datele de autentificare stocate, deci necesită sesiunea tabloului de bord sau CLI-ul local (ori autentificarea
 dezactivată). Cheile API, indiferent de domeniul de aplicare, și tokenurile de acces `oma_` primesc `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Sincronizare în cloud
 
 | Endpoint               | Metodă  | Descriere                           |
@@ -1465,17 +1472,17 @@ Abonamente webhook de ieșire pentru evenimentele OmniRoute (finalizarea solicit
 
 ## Chei înregistrate (gestionare automată)
 
-Utilizat de subsistemul de gestionare automată a cheilor pentru a emite și roti chei API prin intermediul unui furnizor/cont subiacent, cu cote zilnice/orare.
+Utilizate de subsistemul de gestionare automată a cheilor pentru emiterea și rotirea cheilor API prin intermediul unui furnizor/cont subiacent, cu cote zilnice/orare.
 
-| Metodă | Cale                                  | Descriere                                                                                                                                                                                                                                      |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Listează cheile înregistrate (doar prefixul mascat)                                                                                                                                                                                            |
-| POST   | `/api/v1/registered-keys`             | Emite o nouă cheie înregistrată — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Returnează cheia brută **o singură dată**. Returnează `429` dacă solicitarea este refuzată din cauza cotei. |
-| GET    | `/api/v1/registered-keys/[id]`        | Preia metadatele unei chei înregistrate (fără materialul brut)                                                                                                                                                                                 |
-| DELETE | `/api/v1/registered-keys/[id]`        | Revocă o cheie înregistrată                                                                                                                                                                                                                    |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Punct final explicit pentru revocare (același efect ca DELETE)                                                                                                                                                                                 |
+| Metodă | Cale                                  | Descriere                                                                                                                                                                                                                          |
+| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Listează cheile înregistrate (doar prefixul mascat)                                                                                                                                                                                |
+| POST   | `/api/v1/registered-keys`             | Emite o cheie înregistrată nouă — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Returnează cheia brută **o singură dată**. Returnează `429` dacă acordarea cotei este refuzată. |
+| GET    | `/api/v1/registered-keys/[id]`        | Preia metadatele unei chei înregistrate (fără materialul brut)                                                                                                                                                                     |
+| DELETE | `/api/v1/registered-keys/[id]`        | Revocă o cheie înregistrată                                                                                                                                                                                                        |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint de revocare explicită (același efect ca DELETE)                                                                                                                                                                           |
 
-**Autentificare:** sesiune de administrare/cheie API (`requireManagementAuth`) — aceeași protecție ca pentru `/api/keys`: o sesiune din panoul de control, tokenul CLI local sau o cheie API cu domeniul de acces `manage`/`admin`; cheile API destinate exclusiv inferenței primesc `403`. Consultați și `/v1/quotas/check` și `/v1/issues/report`.
+**Autentificare:** sesiune/cheie API de administrare (`requireManagementAuth`) — același mecanism de protecție ca pentru `/api/keys`: o sesiune din panoul de control, tokenul CLI local sau o cheie API cu domeniul de acces `manage`/`admin`; cheile API destinate exclusiv inferenței primesc `403`. Consultați și `/v1/quotas/check` și `/v1/issues/report`.
 
 ---
 

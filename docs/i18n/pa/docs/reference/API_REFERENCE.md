@@ -286,7 +286,7 @@ GET /v1/embeddings
 
 ---
 
-## ਚਿੱਤਰ ਜਨਰੇਸ਼ਨ
+## ਚਿੱਤਰ ਬਣਾਉਣਾ
 
 ```bash
 POST /v1/images/generations
@@ -302,30 +302,30 @@ Content-Type: application/json
 
 ਉਪਲਬਧ ਪ੍ਰਦਾਤਾਵਾਂ ਵਿੱਚ OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (ਸਥਾਨਕ), ComfyUI (ਸਥਾਨਕ) ਸ਼ਾਮਲ ਹਨ।
 
-`n`, `data[]` ਵਿੱਚ `n` ਚਿੱਤਰ ਵਾਪਸ ਕਰਦਾ ਹੈ। ਉਹ ਪ੍ਰਦਾਤਾ ਜਿਨ੍ਹਾਂ ਦੀ ਅੱਪਸਟ੍ਰੀਮ API ਹਰ ਕਾਲ ਲਈ ਇੱਕ ਚਿੱਤਰ ਵਾਪਸ ਕਰਦੀ ਹੈ
+`n`, `data[]` ਵਿੱਚ `n` ਚਿੱਤਰ ਵਾਪਸ ਕਰਦਾ ਹੈ। ਜਿਨ੍ਹਾਂ ਪ੍ਰਦਾਤਾਵਾਂ ਦੀ ਅੱਪਸਟ੍ਰੀਮ API ਪ੍ਰਤੀ ਕਾਲ ਇੱਕ ਚਿੱਤਰ ਵਾਪਸ ਕਰਦੀ ਹੈ
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
-NVIDIA NIM, Cloudflare Workers AI), ਉਨ੍ਹਾਂ ਲਈ ਵੱਧ ਤੋਂ ਵੱਧ 4 ਕਾਲਾਂ ਇੱਕੋ ਸਮੇਂ ਚੱਲਦੀਆਂ ਹੋਈਆਂ `n` ਵੱਖਰੀਆਂ ਅੱਪਸਟ੍ਰੀਮ ਕਾਲਾਂ ਕੀਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ। ਇੱਕ
-ਨਿਸ਼ਚਿਤ `seed` ਨੂੰ ਕਾਲ ਇੰਡੈਕਸ ਅਨੁਸਾਰ ਬਦਲਿਆ ਜਾਂਦਾ ਹੈ (`seed`, `seed + 1`, …), ਤਾਂ ਜੋ ਚਿੱਤਰ ਵੱਖਰੇ ਹੋਣ ਪਰ
-ਮੁੜ-ਉਤਪਾਦਨਯੋਗ ਰਹਿਣ। `n` ਦੀ ਵੱਧ ਤੋਂ ਵੱਧ ਸੀਮਾ 10 ਹੈ। ਜੇ ਕੋਈ ਵੀ ਕਾਲ ਅਸਫਲ ਹੁੰਦੀ ਹੈ ਤਾਂ ਪੂਰੀ ਬੇਨਤੀ
+NVIDIA NIM, Cloudflare Workers AI), ਉਨ੍ਹਾਂ ਲਈ `n` ਵੱਖਰੀਆਂ ਅੱਪਸਟ੍ਰੀਮ ਕਾਲਾਂ ਕੀਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ, ਜਿਨ੍ਹਾਂ ਵਿੱਚ ਵੱਧ ਤੋਂ ਵੱਧ 4 ਇੱਕੋ ਸਮੇਂ ਚੱਲ ਸਕਦੀਆਂ ਹਨ। ਇੱਕ
+ਨਿਸ਼ਚਿਤ `seed` ਨੂੰ ਕਾਲ ਇੰਡੈਕਸ ਅਨੁਸਾਰ ਵਧਾਇਆ ਜਾਂਦਾ ਹੈ (`seed`, `seed + 1`, …), ਤਾਂ ਜੋ ਚਿੱਤਰ ਵੱਖਰੇ ਹੋਣ ਪਰ
+ਮੁੜ-ਉਤਪਾਦਨਯੋਗ ਰਹਿਣ। `n` ਦੀ ਵੱਧ ਤੋਂ ਵੱਧ ਸੀਮਾ 10 ਹੈ। ਜੇ ਕੋਈ ਵੀ ਕਾਲ ਅਸਫਲ ਹੁੰਦੀ ਹੈ, ਤਾਂ ਪੂਰੀ ਬੇਨਤੀ
 ਅਸਫਲ ਹੋ ਜਾਂਦੀ ਹੈ। ਫੈਨ-ਆਉਟ ਫਾਰਮੈਟਾਂ ਦੀ ਸੂਚੀ
 `open-sse/handlers/imageGeneration/fanOut.ts` ਵਿੱਚ `SINGLE_IMAGE_FANOUT_FORMATS` ਹੈ।
 
-ZenMux ਮੌਜੂਦਾ API-ਕੁੰਜੀ ਕਨੈਕਸ਼ਨ ਨੂੰ ਮੁੜ ਵਰਤਦਾ ਹੈ ਅਤੇ `zenmux/` ਜਾਂ `zm/` ਪ੍ਰੀਫਿਕਸ ਸਵੀਕਾਰ ਕਰਦਾ ਹੈ:
+ZenMux ਮੌਜੂਦਾ API-ਕੁੰਜੀ ਕਨੈਕਸ਼ਨ ਦੀ ਮੁੜ ਵਰਤੋਂ ਕਰਦਾ ਹੈ ਅਤੇ `zenmux/` ਜਾਂ `zm/` ਪ੍ਰੀਫਿਕਸ ਸਵੀਕਾਰ ਕਰਦਾ ਹੈ:
 
 - `zenmux/openai/gpt-image-2`, ZenMux ਦੀ OpenAI Images API ਵਰਤਦਾ ਹੈ। ਵਿਕਲਪਾਂ ਵਿੱਚ `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, ਅਤੇ `response_format` ਸ਼ਾਮਲ ਹਨ।
-- ਹੋਰ ਪ੍ਰਕਾਸ਼ਕ, ਜਿਵੇਂ ਕਿ `zm/meta/muse-image-1.0`, ZenMux ਦੇ Vertex AI `:predict`
-  ਐਂਡਪੌਇੰਟ ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਨ। `n`, `sampleCount` ਨਾਲ, `aspect_ratio`, `aspectRatio` ਨਾਲ, ਅਤੇ `image_size`
-  (`1K`, `2K`, `4K`), `sampleImageSize` ਨਾਲ ਮੈਪ ਹੁੰਦਾ ਹੈ। ਪਿਕਸਲ `size` ਸਿਰਫ਼ ਆਸਪੈਕਟ ਰੇਸ਼ੋ ਦਿੰਦਾ ਹੈ,
-  ਪਿਕਸਲ ਮਾਪਾਂ ਦੀ ਗਾਰੰਟੀ ਨਹੀਂ ਦਿੰਦਾ। ਸਮਰਥਿਤ ਰੇਸ਼ੋ, ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਅਤੇ ਗਿਣਤੀਆਂ ਮਾਡਲ ਮੁਤਾਬਕ ਵੱਖ-ਵੱਖ ਹੁੰਦੀਆਂ ਹਨ।
+- ਹੋਰ ਪ੍ਰਕਾਸ਼ਕ, ਜਿਵੇਂ ਕਿ `zm/meta/muse-image-1.0`, ZenMux ਦਾ Vertex AI `:predict`
+  ਐਂਡਪੌਇੰਟ ਵਰਤਦੇ ਹਨ। `n`, `sampleCount` ਨਾਲ; `aspect_ratio`, `aspectRatio` ਨਾਲ; ਅਤੇ `image_size`
+  (`1K`, `2K`, `4K`), `sampleImageSize` ਨਾਲ ਮੈਪ ਹੁੰਦਾ ਹੈ। ਪਿਕਸਲਾਂ ਵਿੱਚ ਦਿੱਤਾ `size` ਸਿਰਫ਼ ਪੱਖ ਅਨੁਪਾਤ ਪ੍ਰਦਾਨ ਕਰਦਾ ਹੈ,
+  ਪਿਕਸਲ ਮਾਪਾਂ ਦੀ ਗਾਰੰਟੀ ਨਹੀਂ। ਸਮਰਥਿਤ ਅਨੁਪਾਤ, ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਅਤੇ ਗਿਣਤੀਆਂ ਮਾਡਲ ਅਨੁਸਾਰ ਵੱਖ-ਵੱਖ ਹੁੰਦੀਆਂ ਹਨ।
 - `zm/inclusionai/ming-image-0.1-design` ਆਪਣੇ ਮਾਪ ਖੁਦ ਚੁਣਦਾ ਹੈ। `size`,
-  `aspect_ratio`, ਅਤੇ `image_size` ਨੂੰ ਨਾ ਦਿਓ; ਸਪਸ਼ਟ ਮੁੱਲ ਦੇਣ ’ਤੇ HTTP 400 ਵਾਪਸ ਆਉਂਦਾ ਹੈ। `output_format` ਨਾਲ
-  PNG, JPEG, ਅਤੇ WebP ਦੀ ਬੇਨਤੀ ਕੀਤੀ ਜਾ ਸਕਦੀ ਹੈ।
+  `aspect_ratio`, ਅਤੇ `image_size` ਨੂੰ ਛੱਡ ਦਿਓ; ਸਪਸ਼ਟ ਮੁੱਲ HTTP 400 ਵਾਪਸ ਕਰਦੇ ਹਨ। `output_format` ਨਾਲ PNG, JPEG, ਅਤੇ WebP
+  ਦੀ ਬੇਨਤੀ ਕੀਤੀ ਜਾ ਸਕਦੀ ਹੈ।
 
-ਇਹ ਇੰਟੀਗ੍ਰੇਸ਼ਨ ਟੈਕਸਟ-ਤੋਂ-ਚਿੱਤਰ ਜਨਰੇਸ਼ਨ ਦਾ ਸਮਰਥਨ ਕਰਦੀ ਹੈ, ਨਾ ਕਿ ਹਵਾਲਾ-ਚਿੱਤਰ ਸੰਪਾਦਨ ਦਾ। Vertex
-ਆਉਟਪੁੱਟ ਨੂੰ `data[].b64_json` ਵਿੱਚ ਸਧਾਰਨ ਕੀਤਾ ਜਾਂਦਾ ਹੈ; `response_format: "url"` ਇੱਕ ਅੱਪਸਟ੍ਰੀਮ
-HTTPS URL ਵਾਪਸ ਕਰਦਾ ਹੈ ਜਾਂ, ਜਦੋਂ ਸਿਰਫ਼ ਚਿੱਤਰ ਬਾਈਟਾਂ ਉਪਲਬਧ ਹੋਣ, ਤਾਂ ਇੱਕ base64 ਡਾਟਾ URL ਵਾਪਸ ਕਰਦਾ ਹੈ। ਖਾਲੀ/ਫਿਲਟਰ ਕੀਤੇ ਆਉਟਪੁੱਟ
-ਖਾਲੀ ਸਫਲਤਾ ਦੀ ਬਜਾਏ ਇੱਕ ਗਲਤੀ ਵਾਪਸ ਕਰਦੇ ਹਨ। ਮਾਡਲ ਤੱਕ ਪਹੁੰਚ ZenMux ਖਾਤੇ ’ਤੇ ਨਿਰਭਰ ਕਰਦੀ ਹੈ।
+ਇਹ ਇੰਟੀਗ੍ਰੇਸ਼ਨ ਟੈਕਸਟ-ਤੋਂ-ਚਿੱਤਰ ਬਣਾਉਣ ਦਾ ਸਮਰਥਨ ਕਰਦਾ ਹੈ, ਸੰਦਰਭ-ਚਿੱਤਰ ਸੰਪਾਦਨ ਦਾ ਨਹੀਂ। Vertex
+ਆਉਟਪੁੱਟ ਨੂੰ `data[].b64_json` ਵਿੱਚ ਮਿਆਰੀਕ੍ਰਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ; `response_format: "url"` ਇੱਕ ਅੱਪਸਟ੍ਰੀਮ
+HTTPS URL ਜਾਂ, ਜਦੋਂ ਸਿਰਫ਼ ਚਿੱਤਰ ਬਾਈਟ ਉਪਲਬਧ ਹੋਣ, ਇੱਕ base64 ਡਾਟਾ URL ਵਾਪਸ ਕਰਦਾ ਹੈ। ਖਾਲੀ/ਫਿਲਟਰ ਕੀਤੇ ਆਉਟਪੁੱਟ
+ਖਾਲੀ ਸਫਲਤਾ ਦੀ ਬਜਾਏ ਇੱਕ ਤਰੁੱਟੀ ਵਾਪਸ ਕਰਦੇ ਹਨ। ਮਾਡਲ ਤੱਕ ਪਹੁੰਚ ZenMux ਖਾਤੇ 'ਤੇ ਨਿਰਭਰ ਕਰਦੀ ਹੈ।
 [ZenMux ਦੀ Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) ਅਤੇ
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) ਵੇਖੋ।
 
@@ -1096,6 +1096,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 ਕ੍ਰੈਡੈਂਸ਼ੀਅਲ ਦਿੰਦੇ ਹਨ, ਇਸ ਲਈ ਇਨ੍ਹਾਂ ਲਈ ਡੈਸ਼ਬੋਰਡ ਸੈਸ਼ਨ ਜਾਂ ਸਥਾਨਕ CLI (ਜਾਂ ਲੌਗਇਨ
 ਅਯੋਗ ਹੋਣਾ) ਲੋੜੀਂਦਾ ਹੈ। ਕਿਸੇ ਵੀ ਸਕੋਪ ਦੀਆਂ API ਕੁੰਜੀਆਂ ਅਤੇ `oma_` ਐਕਸੈੱਸ ਟੋਕਨਾਂ ਨੂੰ `403` ਮਿਲਦਾ ਹੈ।
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### ਕਲਾਉਡ ਸਿੰਕ
 
 | ਐਂਡਪੌਇੰਟ               | ਵਿਧੀ    | ਵੇਰਵਾ               |
@@ -1459,19 +1466,19 @@ OmniRoute ਇਵੈਂਟਾਂ (ਬੇਨਤੀ ਦੀ ਪੂਰਤੀ, ਕੋ�
 
 ---
 
-## ਰਜਿਸਟਰ ਕੀਤੀਆਂ ਕੁੰਜੀਆਂ (ਆਟੋ-ਪ੍ਰਬੰਧਨ)
+## ਰਜਿਸਟਰ ਕੀਤੀਆਂ ਕੁੰਜੀਆਂ (ਆਟੋਮੈਟਿਕ ਪ੍ਰਬੰਧਨ)
 
-ਰੋਜ਼ਾਨਾ/ਪ੍ਰਤੀ-ਘੰਟਾ ਕੋਟਿਆਂ ਸਮੇਤ ਕਿਸੇ ਬੈਕਿੰਗ ਪ੍ਰਦਾਤਾ/ਖਾਤੇ ਲਈ API ਕੁੰਜੀਆਂ ਜਾਰੀ ਕਰਨ ਅਤੇ ਰੋਟੇਟ ਕਰਨ ਵਾਸਤੇ ਆਟੋ-ਕੁੰਜੀ ਪ੍ਰਬੰਧਨ ਉਪ-ਸਿਸਟਮ ਦੁਆਰਾ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।
+ਰੋਜ਼ਾਨਾ/ਪ੍ਰਤੀ-ਘੰਟਾ ਕੋਟਿਆਂ ਦੇ ਨਾਲ ਕਿਸੇ ਬੈਕਿੰਗ ਪ੍ਰਦਾਤਾ/ਖਾਤੇ ਲਈ API ਕੁੰਜੀਆਂ ਜਾਰੀ ਕਰਨ ਅਤੇ ਰੋਟੇਟ ਕਰਨ ਵਾਸਤੇ ਆਟੋਮੈਟਿਕ ਕੁੰਜੀ ਪ੍ਰਬੰਧਨ ਸਬਸਿਸਟਮ ਦੁਆਰਾ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।
 
 | ਵਿਧੀ   | ਪਾਥ                                   | ਵੇਰਵਾ                                                                                                                                                                                                                      |
 | ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | ਰਜਿਸਟਰ ਕੀਤੀਆਂ ਕੁੰਜੀਆਂ ਦੀ ਸੂਚੀ (ਕੇਵਲ ਮਾਸਕ ਕੀਤਾ ਪ੍ਰੀਫਿਕਸ)                                                                                                                                                                    |
+| GET    | `/api/v1/registered-keys`             | ਰਜਿਸਟਰ ਕੀਤੀਆਂ ਕੁੰਜੀਆਂ ਦੀ ਸੂਚੀ ਦਿਖਾਓ (ਕੇਵਲ ਮਾਸਕ ਕੀਤਾ ਪ੍ਰੀਫਿਕਸ)                                                                                                                                                              |
 | POST   | `/api/v1/registered-keys`             | ਇੱਕ ਨਵੀਂ ਰਜਿਸਟਰ ਕੀਤੀ ਕੁੰਜੀ ਜਾਰੀ ਕਰੋ — ਬਾਡੀ: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`। ਕੱਚੀ ਕੁੰਜੀ **ਸਿਰਫ਼ ਇੱਕ ਵਾਰ** ਵਾਪਸ ਕਰਦਾ ਹੈ। ਕੋਟਾ ਅਸਵੀਕਾਰ ਹੋਣ 'ਤੇ `429` ਵਾਪਸ ਕਰਦਾ ਹੈ। |
-| GET    | `/api/v1/registered-keys/[id]`        | ਰਜਿਸਟਰ ਕੀਤੀ ਕੁੰਜੀ ਦਾ ਮੈਟਾਡਾਟਾ ਪ੍ਰਾਪਤ ਕਰੋ (ਕੋਈ ਕੱਚੀ ਸਮੱਗਰੀ ਨਹੀਂ)                                                                                                                                                            |
+| GET    | `/api/v1/registered-keys/[id]`        | ਰਜਿਸਟਰ ਕੀਤੀ ਕੁੰਜੀ ਦਾ ਮੈਟਾਡਾਟਾ ਪ੍ਰਾਪਤ ਕਰੋ (ਕੱਚੀ ਸਮੱਗਰੀ ਤੋਂ ਬਿਨਾਂ)                                                                                                                                                           |
 | DELETE | `/api/v1/registered-keys/[id]`        | ਰਜਿਸਟਰ ਕੀਤੀ ਕੁੰਜੀ ਰੱਦ ਕਰੋ                                                                                                                                                                                                  |
 | POST   | `/api/v1/registered-keys/[id]/revoke` | ਸਪਸ਼ਟ ਰੱਦ ਕਰਨ ਵਾਲਾ ਐਂਡਪੌਇੰਟ (DELETE ਦੇ ਸਮਾਨ ਪ੍ਰਭਾਵ)                                                                                                                                                                        |
 
-**ਪ੍ਰਮਾਣੀਕਰਨ:** ਪ੍ਰਬੰਧਨ ਸੈਸ਼ਨ/API ਕੁੰਜੀ (`requireManagementAuth`) — `/api/keys` ਵਾਲਾ ਹੀ ਗਾਰਡ: ਇੱਕ ਡੈਸ਼ਬੋਰਡ ਸੈਸ਼ਨ, ਸਥਾਨਕ CLI ਟੋਕਨ, ਜਾਂ `manage`/`admin` ਸਕੋਪ ਵਾਲੀ API ਕੁੰਜੀ; ਸਿਰਫ਼ ਇਨਫ਼ਰੈਂਸ ਵਾਲੀਆਂ API ਕੁੰਜੀਆਂ ਨੂੰ `403` ਮਿਲਦਾ ਹੈ। `/v1/quotas/check` ਅਤੇ `/v1/issues/report` ਵੀ ਵੇਖੋ।
+**ਪ੍ਰਮਾਣੀਕਰਨ:** ਪ੍ਰਬੰਧਨ ਸੈਸ਼ਨ/API ਕੁੰਜੀ (`requireManagementAuth`) — `/api/keys` ਵਾਲਾ ਹੀ ਗਾਰਡ: ਇੱਕ ਡੈਸ਼ਬੋਰਡ ਸੈਸ਼ਨ, ਲੋਕਲ CLI ਟੋਕਨ, ਜਾਂ `manage`/`admin` ਸਕੋਪ ਵਾਲੀ API ਕੁੰਜੀ; ਸਿਰਫ਼ ਇਨਫ਼ਰੈਂਸ ਲਈ API ਕੁੰਜੀਆਂ ਨੂੰ `403` ਮਿਲਦਾ ਹੈ। `/v1/quotas/check` ਅਤੇ `/v1/issues/report` ਵੀ ਵੇਖੋ।
 
 ---
 

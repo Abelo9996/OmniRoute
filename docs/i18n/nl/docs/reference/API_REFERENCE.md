@@ -295,7 +295,7 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Een prachtige zonsondergang boven de bergen",
+  "prompt": "Een prachtige zonsondergang boven bergen",
   "size": "1024x1024"
 }
 ```
@@ -305,28 +305,28 @@ Beschikbare providers zijn onder andere OpenAI (GPT Image 2), xAI (Grok Image), 
 `n` retourneert `n` afbeeldingen in `data[]`. Voor providers waarvan de upstream-API één afbeelding per aanroep retourneert
 (Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
 NVIDIA NIM, Cloudflare Workers AI), worden `n` afzonderlijke upstream-aanroepen uitgevoerd, met maximaal 4 gelijktijdige aanroepen. Een
-vaste `seed` wordt verhoogd met de aanroepindex (`seed`, `seed + 1`, …), zodat de afbeeldingen van elkaar verschillen, maar
+vaste `seed` wordt verhoogd met de aanroepindex (`seed`, `seed + 1`, …), zodat de afbeeldingen verschillen maar
 reproduceerbaar blijven. `n` is beperkt tot 10. De aanvraag mislukt in zijn geheel als een van de aanroepen mislukt. De lijst
-met fan-out-indelingen is `SINGLE_IMAGE_FANOUT_FORMATS` in
+met fan-outindelingen staat in `SINGLE_IMAGE_FANOUT_FORMATS` in
 `open-sse/handlers/imageGeneration/fanOut.ts`.
 
-ZenMux hergebruikt de bestaande API-sleutelverbinding en accepteert de voorvoegsels `zenmux/` en `zm/`:
+ZenMux hergebruikt de bestaande API-sleutelverbinding en accepteert de voorvoegsels `zenmux/` of `zm/`:
 
-- `zenmux/openai/gpt-image-2` gebruikt de OpenAI Images API van ZenMux. Opties omvatten `size`,
+- `zenmux/openai/gpt-image-2` gebruikt de OpenAI Images API van ZenMux. Opties zijn onder andere `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` en `response_format`.
 - Andere uitgevers, zoals `zm/meta/muse-image-1.0`, gebruiken ZenMux' Vertex AI-`:predict`-
-  endpoint. `n` wordt toegewezen aan `sampleCount`, `aspect_ratio` aan `aspectRatio` en `image_size`
-  (`1K`, `2K`, `4K`) aan `sampleImageSize`. Een `size` in pixels levert alleen een beeldverhouding op,
-  geen gegarandeerde pixelafmetingen. Ondersteunde verhoudingen, resoluties en aantallen verschillen per model.
+  endpoint. `n` wordt gekoppeld aan `sampleCount`, `aspect_ratio` aan `aspectRatio` en `image_size`
+  (`1K`, `2K`, `4K`) aan `sampleImageSize`. Een `size` in pixels bepaalt alleen een beeldverhouding,
+  niet gegarandeerde pixelafmetingen. Ondersteunde verhoudingen, resoluties en aantallen verschillen per model.
 - `zm/inclusionai/ming-image-0.1-design` kiest zijn eigen afmetingen. Laat `size`,
   `aspect_ratio` en `image_size` weg; expliciete waarden retourneren HTTP 400. PNG, JPEG en WebP
   kunnen worden aangevraagd met `output_format`.
 
-Deze integratie ondersteunt tekst-naar-afbeeldinggeneratie, niet het bewerken van referentieafbeeldingen. Vertex-
+Deze integratie ondersteunt het genereren van tekst naar afbeelding, niet het bewerken van referentieafbeeldingen. Vertex-
 uitvoer wordt genormaliseerd naar `data[].b64_json`; `response_format: "url"` retourneert een upstream-
 HTTPS-URL of een base64-data-URL wanneer alleen afbeeldingsbytes beschikbaar zijn. Lege/gefilterde uitvoer
-retourneert een fout in plaats van een leeg succesresultaat. Toegang tot modellen is afhankelijk van het ZenMux-account.
-Zie [ZenMux' Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) en
+retourneert een fout in plaats van een leeg succesvol resultaat. Toegang tot modellen is afhankelijk van het ZenMux-account.
+Zie [de Vertex API van ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) en
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
@@ -1104,6 +1104,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 alle opgeslagen aanmeldgegevens vrij en vereisen daarom de dashboardsessie of de lokale CLI (of dat aanmelden
 is uitgeschakeld). API-sleutels van elk bereik en `oma_`-toegangstokens krijgen `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Cloudsynchronisatie
 
 | Endpoint               | Methode      | Beschrijving                   |
@@ -1471,15 +1478,15 @@ Uitgaande webhookabonnementen voor OmniRoute-gebeurtenissen (voltooiing van verz
 
 Wordt gebruikt door het subsysteem voor automatisch sleutelbeheer om API-sleutels uit te geven en te roteren bij een achterliggende provider/account, met dagelijkse/uurlijkse quota.
 
-| Methode | Pad                                   | Beschrijving                                                                                                                                                                                                                                          |
-| ------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET     | `/api/v1/registered-keys`             | Geregistreerde sleutels weergeven (alleen gemaskeerd voorvoegsel)                                                                                                                                                                                     |
-| POST    | `/api/v1/registered-keys`             | Een nieuwe geregistreerde sleutel uitgeven — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Retourneert de onbewerkte sleutel **eenmalig**. Retourneert `429` wanneer het quotum dit niet toestaat. |
-| GET     | `/api/v1/registered-keys/[id]`        | De metadata van een geregistreerde sleutel ophalen (geen onbewerkt sleutelmateriaal)                                                                                                                                                                  |
-| DELETE  | `/api/v1/registered-keys/[id]`        | Een geregistreerde sleutel intrekken                                                                                                                                                                                                                  |
-| POST    | `/api/v1/registered-keys/[id]/revoke` | Expliciet endpoint voor intrekking (zelfde effect als DELETE)                                                                                                                                                                                         |
+| Methode | Pad                                   | Beschrijving                                                                                                                                                                                                                                 |
+| ------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET     | `/api/v1/registered-keys`             | Geregistreerde sleutels weergeven (alleen gemaskeerd voorvoegsel)                                                                                                                                                                            |
+| POST    | `/api/v1/registered-keys`             | Een nieuwe geregistreerde sleutel uitgeven — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Retourneert de onbewerkte sleutel **eenmalig**. Retourneert `429` bij weigering vanwege quota. |
+| GET     | `/api/v1/registered-keys/[id]`        | De metadata van een geregistreerde sleutel ophalen (geen onbewerkt sleutelmateriaal)                                                                                                                                                         |
+| DELETE  | `/api/v1/registered-keys/[id]`        | Een geregistreerde sleutel intrekken                                                                                                                                                                                                         |
+| POST    | `/api/v1/registered-keys/[id]/revoke` | Expliciet endpoint voor intrekking (zelfde effect als DELETE)                                                                                                                                                                                |
 
-**Authenticatie:** beheersessie/API-sleutel (`requireManagementAuth`) — dezelfde beveiliging als voor `/api/keys`: een dashboardsessie, het lokale CLI-token of een API-sleutel met het bereik `manage`/`admin`; API-sleutels die uitsluitend voor inferentie zijn bedoeld, krijgen `403`. Zie ook `/v1/quotas/check` en `/v1/issues/report`.
+**Authenticatie:** beheersessie/API-sleutel (`requireManagementAuth`) — dezelfde toegangscontrole als `/api/keys`: een dashboardsessie, het lokale CLI-token of een API-sleutel met het bereik `manage`/`admin`; API-sleutels die uitsluitend voor inferentie bestemd zijn, krijgen `403`. Zie ook `/v1/quotas/check` en `/v1/issues/report`.
 
 ---
 
