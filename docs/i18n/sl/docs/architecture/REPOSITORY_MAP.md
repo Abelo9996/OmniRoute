@@ -257,16 +257,16 @@ src/
 
 ## `open-sse/` — Delovni prostor pretočnega mehanizma
 
-Ločen delovni prostor npm (`@omniroute/open-sse`). Obravnava obdelavo zahtev in izvajanje ponudnikov.
+Ločen delovni prostor npm (`@omniroute/open-sse`). Skrbi za obdelavo zahtev + izvajanje ponudnikov.
 
 ```
 open-sse/
-├── handlers/            # 16 datotek (12 obravnavalnikov + 4 pomožne datoteke): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search itd.
-├── executors/           # 67 izvajalnikov, specifičnih za ponudnike (razširjajo BaseExecutor)
+├── handlers/            # 16 datotek (12 obdelovalnikov + 4 pomožne datoteke): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search itd.
+├── executors/           # 150 izvajalnih modulov (razredi, ki razširjajo BaseExecutor, + pomožne datoteke za posamezne ponudnike)
 ├── translator/          # Pretvorniki formatov (9 za zahteve, 9 za odgovore, 9 pomožnih)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ storitvenih modulov (combo, accountFallback, autoCombo, reasoningCache, prikriti način claude code/chatgpt, modelDeprecation, taskAwareRouter, workflowFSM itd.)
-├── mcp-server/          # Strežnik MCP (110 orodij, 3 transporti, 33 obsegov)
+├── services/            # ~80+ storitvenih modulov (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM itd.)
+├── mcp-server/          # Strežnik MCP (110 orodij, 3 prenosi, 33 obsegov)
 ├── config/              # Registri ponudnikov/modelov, konfiguracija glav, vzdevki modelov
 ├── utils/               # Odjemalec TLS, pridobivanje/razpošiljanje prek posredniškega strežnika, omrežne pomožne funkcije
 ├── index.ts             # Vstopna točka delovnega prostora
@@ -279,14 +279,14 @@ open-sse/
 
 | Pot                         | Namen                                                                                |
 | --------------------------- | ------------------------------------------------------------------------------------ |
-| `server.ts`                 | Življenjski cikel strežnika MCP (transporta stdio + HTTP)                            |
-| `httpTransport.ts`          | Transporta HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                 |
+| `server.ts`                 | Življenjski cikel strežnika MCP (prenosi stdio + HTTP)                               |
+| `httpTransport.ts`          | Prenosi HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                    |
 | `audit.ts`                  | Beleženje revizijskih dogodkov v tabelo `mcp_tool_audit`                             |
 | `scopeEnforcement.ts`       | Preverjanje obsega za posamezno orodje                                               |
-| `runtimeHeartbeat.ts`       | Signal stanja delovanja v `DATA_DIR/runtime/mcp-heartbeat.json`                      |
+| `runtimeHeartbeat.ts`       | Signal delovanja v `DATA_DIR/runtime/mcp-heartbeat.json`                             |
 | `descriptionCompressor.ts`  | Stiskanje metapodatkov opisov orodij za prihranek konteksta                          |
 | `schemas/tools.ts`          | 36 osnovnih definicij orodij + obsegi                                                |
-| `tools/advancedTools.ts`    | Implementacije naprednih orodij                                                      |
+| `tools/advancedTools.ts`    | Napredne implementacije orodij                                                       |
 | `tools/memoryTools.ts`      | 3 pomnilniška orodja (iskanje/dodajanje/brisanje)                                    |
 | `tools/skillTools.ts`       | 4 orodja za veščine (seznam/omogočanje/izvajanje/izvedbe)                            |
 | `tools/compressionTools.ts` | 5 orodij za stiskanje                                                                |

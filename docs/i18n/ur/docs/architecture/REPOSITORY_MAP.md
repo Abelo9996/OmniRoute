@@ -257,40 +257,40 @@ src/
 
 ## `open-sse/` — اسٹریمنگ انجن ورک اسپیس
 
-علیحدہ npm ورک اسپیس (`@omniroute/open-sse`)۔ درخواستوں کی پروسیسنگ اور پرووائیڈر پر عمل درآمد سنبھالتا ہے۔
+علیحدہ npm ورک اسپیس (`@omniroute/open-sse`)۔ درخواستوں کی پروسیسنگ اور فراہم کنندہ کے نفاذ کو سنبھالتا ہے۔
 
 ```
 open-sse/
-├── handlers/            # 16 فائلیں (12 ہینڈلرز + 4 معاون): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search، وغیرہ۔
-├── executors/           # پرووائیڈر سے مخصوص 67 ایگزیکیوٹرز (BaseExecutor کو توسیع دیتے ہیں)
-├── translator/          # فارمیٹ کنورٹرز (9 درخواست، 9 جواب، 9 معاون)
+├── handlers/            # 16 فائلیں (12 ہینڈلرز + 4 معاونین): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search، وغیرہ۔
+├── executors/           # 150 ایگزیکیوٹر ماڈیولز (BaseExecutor کو توسیع دینے والی کلاسیں + ہر فراہم کنندہ کے لیے معاونین)
+├── translator/          # فارمیٹ کنورٹرز (9 درخواست، 9 جواب، 9 معاونین)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ سروس ماڈیولز (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM، وغیرہ)
 ├── mcp-server/          # MCP سرور (110 ٹولز، 3 ٹرانسپورٹس، 33 اسکوپس)
-├── config/              # پرووائیڈر/ماڈل رجسٹریاں، ہیڈر کنفیگ، ماڈل عرفیات
+├── config/              # فراہم کنندہ/ماڈل رجسٹریاں، ہیڈر کنفیگریشن، ماڈل عرف
 ├── utils/               # TLS کلائنٹ، پراکسی fetch/dispatcher، نیٹ ورک معاونین
 ├── index.ts             # ورک اسپیس کا داخلی نقطہ
 ├── package.json         # ورک اسپیس مینی فیسٹ
-├── tsconfig.json        # ورک اسپیس TS کنفیگ
-└── types.d.ts           # ورک اسپیس کی ٹائپ ڈیکلریشنز
+├── tsconfig.json        # ورک اسپیس TS کنفیگریشن
+└── types.d.ts           # ورک اسپیس کی قسموں کے اعلانات
 ```
 
 ### `open-sse/mcp-server/`
 
-| راستہ                       | مقصد                                                                    |
-| --------------------------- | ----------------------------------------------------------------------- |
-| `server.ts`                 | MCP سرور لائف سائیکل (stdio + HTTP ٹرانسپورٹس)                          |
-| `httpTransport.ts`          | HTTP Streamable + SSE ٹرانسپورٹس (`/api/mcp/sse`, `/api/mcp/stream`)    |
-| `audit.ts`                  | `mcp_tool_audit` ٹیبل میں آڈٹ لاگنگ                                     |
-| `scopeEnforcement.ts`       | ہر ٹول کے لیے اسکوپ کی توثیق                                            |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` پر صحت کی ہارٹ بیٹ                |
-| `descriptionCompressor.ts`  | سیاق بچانے کے لیے ٹول کی تفصیل کا میٹا ڈیٹا کمپریس کرتا ہے              |
-| `schemas/tools.ts`          | 36 بنیادی ٹول تعریفات + اسکوپس                                          |
-| `tools/advancedTools.ts`    | جدید ٹول کے نفاذ                                                        |
-| `tools/memoryTools.ts`      | 3 میموری ٹولز (تلاش/شامل کرنا/صاف کرنا)                                 |
-| `tools/skillTools.ts`       | 4 اسکل ٹولز (فہرست/فعال کرنا/چلانا/عمل درآمدات)                         |
-| `tools/compressionTools.ts` | 5 کمپریشن ٹولز                                                          |
-| `README.md`                 | داخلی MCP سرور README (`docs/frameworks/MCP-SERVER.md` سے کراس لنک شدہ) |
+| راستہ                       | مقصد                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP سرور لائف سائیکل (stdio + HTTP ٹرانسپورٹس)                                  |
+| `httpTransport.ts`          | HTTP Streamable + SSE ٹرانسپورٹس (`/api/mcp/sse`, `/api/mcp/stream`)            |
+| `audit.ts`                  | `mcp_tool_audit` ٹیبل میں آڈٹ لاگنگ                                             |
+| `scopeEnforcement.ts`       | ہر ٹول کے لیے اسکوپ کی توثیق                                                    |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` میں صحت کی ہارٹ بیٹ                       |
+| `descriptionCompressor.ts`  | سیاق بچانے کے لیے ٹول کی تفصیل کا میٹا ڈیٹا کمپریس کرتا ہے                      |
+| `schemas/tools.ts`          | 36 بنیادی ٹول تعریفیں + اسکوپس                                                  |
+| `tools/advancedTools.ts`    | جدید ٹولز کے نفاذ                                                               |
+| `tools/memoryTools.ts`      | 3 میموری ٹولز (تلاش/شامل کرنا/صاف کرنا)                                         |
+| `tools/skillTools.ts`       | 4 اسکل ٹولز (فہرست/فعال کرنا/چلانا/نفاذات)                                      |
+| `tools/compressionTools.ts` | 5 کمپریشن ٹولز                                                                  |
+| `README.md`                 | اندرونی MCP سرور README (`docs/frameworks/MCP-SERVER.md` سے باہمی طور پر منسلک) |
 
 ---
 

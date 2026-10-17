@@ -262,12 +262,12 @@ src/
 ```
 open-sse/
 ├── handlers/            # 16 ఫైళ్లు (12 హ్యాండ్లర్లు + 4 సహాయకాలు): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search మొదలైనవి.
-├── executors/           # 67 ప్రొవైడర్-నిర్దిష్ట ఎగ్జిక్యూటర్లు (BaseExecutorను విస్తరిస్తాయి)
+├── executors/           # 150 ఎగ్జిక్యూటర్ మాడ్యూళ్లు (BaseExecutorను విస్తరించే క్లాసులు + ప్రతి ప్రొవైడర్కు సహాయకాలు)
 ├── translator/          # ఫార్మాట్ కన్వర్టర్లు (9 అభ్యర్థన, 9 ప్రతిస్పందన, 9 సహాయకాలు)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ సర్వీస్ మాడ్యూళ్లు (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM మొదలైనవి)
+├── services/            # ~80+ సర్వీస్ మాడ్యూళ్లు (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM మొదలైనవి.)
 ├── mcp-server/          # MCP సర్వర్ (110 సాధనాలు, 3 ట్రాన్స్పోర్ట్లు, 33 స్కోప్లు)
-├── config/              # ప్రొవైడర్/మోడల్ రిజిస్ట్రీలు, హెడర్ కాన్ఫిగ్, మోడల్ మారుపేర్లు
+├── config/              # ప్రొవైడర్/మోడల్ రిజిస్ట్రీలు, హెడర్ కాన్ఫిగ్, మోడల్ అలియాస్లు
 ├── utils/               # TLS క్లయింట్, ప్రాక్సీ fetch/dispatcher, నెట్వర్క్ సహాయకాలు
 ├── index.ts             # వర్క్స్పేస్ ఎంట్రీ
 ├── package.json         # వర్క్స్పేస్ మానిఫెస్ట్
@@ -281,16 +281,16 @@ open-sse/
 | --------------------------- | ---------------------------------------------------------------------------------------- |
 | `server.ts`                 | MCP సర్వర్ జీవితచక్రం (stdio + HTTP ట్రాన్స్పోర్ట్లు)                                    |
 | `httpTransport.ts`          | HTTP Streamable + SSE ట్రాన్స్పోర్ట్లు (`/api/mcp/sse`, `/api/mcp/stream`)               |
-| `audit.ts`                  | `mcp_tool_audit` పట్టికలో ఆడిట్ లాగింగ్                                                  |
+| `audit.ts`                  | `mcp_tool_audit` పట్టికకు ఆడిట్ లాగింగ్                                                  |
 | `scopeEnforcement.ts`       | ప్రతి సాధనానికి స్కోప్ ధ్రువీకరణ                                                         |
 | `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`కు ఆరోగ్య హార్ట్బీట్                                |
-| `descriptionCompressor.ts`  | సందర్భాన్ని ఆదా చేయడానికి సాధన వివరణ మెటాడేటాను కుదిస్తుంది                              |
+| `descriptionCompressor.ts`  | సందర్భాన్ని ఆదా చేయడానికి సాధన వివరణ మెటాడేటాను కంప్రెస్ చేస్తుంది                       |
 | `schemas/tools.ts`          | 36 ప్రాథమిక సాధన నిర్వచనాలు + స్కోప్లు                                                   |
 | `tools/advancedTools.ts`    | అధునాతన సాధన అమలులు                                                                      |
-| `tools/memoryTools.ts`      | 3 మెమరీ సాధనాలు (శోధన/జోడింపు/తొలగింపు)                                                  |
+| `tools/memoryTools.ts`      | 3 మెమరీ సాధనాలు (శోధన/జోడింపు/క్లియర్)                                                   |
 | `tools/skillTools.ts`       | 4 నైపుణ్య సాధనాలు (జాబితా/ప్రారంభం/అమలు/అమలు వివరాలు)                                    |
 | `tools/compressionTools.ts` | 5 కంప్రెషన్ సాధనాలు                                                                      |
-| `README.md`                 | అంతర్గత MCP సర్వర్ README (`docs/frameworks/MCP-SERVER.md` నుండి పరస్పర లింక్ చేయబడింది) |
+| `README.md`                 | అంతర్గత MCP సర్వర్ README (`docs/frameworks/MCP-SERVER.md` నుండి క్రాస్-లింక్ చేయబడింది) |
 
 ---
 

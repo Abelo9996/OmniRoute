@@ -257,12 +257,12 @@ src/
 
 ## `open-sse/` — Oqimli uzatish mexanizmi ish maydoni
 
-Alohida npm ish maydoni (`@omniroute/open-sse`). Soʻrovlarni qayta ishlash va provayder ijrosini boshqaradi.
+Alohida npm ish maydoni (`@omniroute/open-sse`). Soʻrovlarni qayta ishlash va provayder bajarilishini boshqaradi.
 
 ```
 open-sse/
 ├── handlers/            # 16 ta fayl (12 ta ishlov beruvchi + 4 ta yordamchi): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search va boshqalar.
-├── executors/           # Provayderga xos 67 ta ijrochi (BaseExecutor imkoniyatlarini kengaytiradi)
+├── executors/           # 150 ta bajaruvchi modul (BaseExecutor sinfini kengaytiruvchi sinflar + har bir provayder uchun yordamchilar)
 ├── translator/          # Format konvertorlari (9 ta soʻrov, 9 ta javob, 9 ta yordamchi)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ ta xizmat moduli (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM va boshqalar)
@@ -277,18 +277,18 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Yoʻl                        | Vazifasi                                                                                 |
+| Yoʻl                        | Maqsad                                                                                   |
 | --------------------------- | ---------------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP serverining hayotiy sikli (stdio + HTTP transportlari)                               |
+| `server.ts`                 | MCP serverining hayot sikli (stdio + HTTP transportlari)                                 |
 | `httpTransport.ts`          | HTTP Streamable + SSE transportlari (`/api/mcp/sse`, `/api/mcp/stream`)                  |
 | `audit.ts`                  | `mcp_tool_audit` jadvaliga audit jurnalini yozish                                        |
 | `scopeEnforcement.ts`       | Har bir vosita uchun qamrovni tekshirish                                                 |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` fayliga holat signalini yozish                     |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` fayliga salomatlik yurak urishi maʼlumoti          |
 | `descriptionCompressor.ts`  | Kontekstni tejash uchun vosita tavsifi metamaʼlumotlarini siqish                         |
 | `schemas/tools.ts`          | 36 ta asosiy vosita taʼrifi + qamrovlar                                                  |
 | `tools/advancedTools.ts`    | Kengaytirilgan vositalar implementatsiyalari                                             |
-| `tools/memoryTools.ts`      | 3 ta xotira vositasi (qidirish/qoʻshish/tozalash)                                        |
-| `tools/skillTools.ts`       | 4 ta koʻnikma vositasi (roʻyxat/yoqish/bajarish/bajarilishlar)                           |
+| `tools/memoryTools.ts`      | 3 ta xotira vositasi (search/add/clear)                                                  |
+| `tools/skillTools.ts`       | 4 ta koʻnikma vositasi (list/enable/execute/executions)                                  |
 | `tools/compressionTools.ts` | 5 ta siqish vositasi                                                                     |
 | `README.md`                 | Ichki MCP serveri README fayli (`docs/frameworks/MCP-SERVER.md` bilan oʻzaro bogʻlangan) |
 

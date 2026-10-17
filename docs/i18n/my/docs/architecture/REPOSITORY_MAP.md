@@ -257,22 +257,22 @@ src/
 
 ## `open-sse/` — Streaming Engine Workspace
 
-သီးခြား npm workspace (`@omniroute/open-sse`) ဖြစ်သည်။ Request processing နှင့် provider execution တို့ကို ကိုင်တွယ်သည်။
+သီးခြား npm workspace (`@omniroute/open-sse`) ဖြစ်သည်။ တောင်းဆိုမှု လုပ်ဆောင်ခြင်းနှင့် provider များကို အကောင်အထည်ဖော် လည်ပတ်ခြင်းတို့ကို ကိုင်တွယ်သည်။
 
 ```
 open-sse/
 ├── handlers/            # ဖိုင် 16 ခု (handler 12 ခု + helper 4 ခု): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search စသည်တို့
-├── executors/           # Provider အလိုက် executor 67 ခု (BaseExecutor ကို extend လုပ်သည်)
-├── translator/          # Format converter များ (request 9 ခု၊ response 9 ခု၊ helper 9 ခု)
+├── executors/           # executor module 150 ခု (BaseExecutor ကို တိုးချဲ့ထားသော class များ + provider တစ်ခုချင်းစီအတွက် helper များ)
+├── translator/          # format converter များ (request 9 ခု၊ response 9 ခု၊ helper 9 ခု)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # Service module ~80+ ခု (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM စသည်တို့)
+├── services/            # service module ~80+ ခု (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM စသည်တို့)
 ├── mcp-server/          # MCP server (tool 110 ခု၊ transport 3 ခု၊ scope 33 ခု)
-├── config/              # Provider/model registry များ၊ header config၊ model alias များ
+├── config/              # provider/model registry များ၊ header config၊ model alias များ
 ├── utils/               # TLS client၊ proxy fetch/dispatcher၊ network helper များ
-├── index.ts             # Workspace entry
+├── index.ts             # Workspace ဝင်ပေါက်
 ├── package.json         # Workspace manifest
 ├── tsconfig.json        # Workspace TS config
-└── types.d.ts           # Workspace type declaration များ
+└── types.d.ts           # Workspace type ကြေညာချက်များ
 ```
 
 ### `open-sse/mcp-server/`
@@ -281,16 +281,16 @@ open-sse/
 | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | `server.ts`                 | MCP server lifecycle (stdio + HTTP transport များ)                                              |
 | `httpTransport.ts`          | HTTP Streamable + SSE transport များ (`/api/mcp/sse`, `/api/mcp/stream`)                        |
-| `audit.ts`                  | `mcp_tool_audit` table သို့ audit log ရေးသားခြင်း                                               |
-| `scopeEnforcement.ts`       | Tool တစ်ခုချင်းစီအလိုက် scope validation                                                        |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` သို့ health heartbeat ပေးပို့ခြင်း                        |
-| `descriptionCompressor.ts`  | Context ချွေတာရန် tool description metadata ကို ချုံ့ခြင်း                                      |
-| `schemas/tools.ts`          | အခြေခံ tool definition 36 ခု + scope များ                                                       |
-| `tools/advancedTools.ts`    | အဆင့်မြင့် tool implementation များ                                                             |
-| `tools/memoryTools.ts`      | Memory tool 3 ခု (ရှာဖွေခြင်း/ထည့်သွင်းခြင်း/ရှင်းလင်းခြင်း)                                    |
-| `tools/skillTools.ts`       | Skill tool 4 ခု (စာရင်းပြုစုခြင်း/ဖွင့်ခြင်း/လုပ်ဆောင်ခြင်း/လုပ်ဆောင်မှုများ)                   |
-| `tools/compressionTools.ts` | Compression tool 5 ခု                                                                           |
-| `README.md`                 | အတွင်းပိုင်း MCP server README (`docs/frameworks/MCP-SERVER.md` မှ အပြန်အလှန်လင့်ခ်ချိတ်ထားသည်) |
+| `audit.ts`                  | `mcp_tool_audit` table သို့ audit မှတ်တမ်းတင်ခြင်း                                              |
+| `scopeEnforcement.ts`       | tool တစ်ခုချင်းစီအလိုက် scope စစ်ဆေးအတည်ပြုခြင်း                                                |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` သို့ ကျန်းမာရေးအခြေအနေ heartbeat ပေးပို့ခြင်း             |
+| `descriptionCompressor.ts`  | context ချွေတာရန် tool ဖော်ပြချက် metadata ကို ချုံ့ခြင်း                                       |
+| `schemas/tools.ts`          | အခြေခံ tool သတ်မှတ်ချက် 36 ခု + scope များ                                                      |
+| `tools/advancedTools.ts`    | အဆင့်မြင့် tool အကောင်အထည်ဖော်မှုများ                                                           |
+| `tools/memoryTools.ts`      | memory tool 3 ခု (search/add/clear)                                                             |
+| `tools/skillTools.ts`       | skill tool 4 ခု (list/enable/execute/executions)                                                |
+| `tools/compressionTools.ts` | compression tool 5 ခု                                                                           |
+| `README.md`                 | အတွင်းပိုင်း MCP server README (`docs/frameworks/MCP-SERVER.md` မှ အပြန်အလှန် link ချိတ်ထားသည်) |
 
 ---
 

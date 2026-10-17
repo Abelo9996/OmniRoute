@@ -255,20 +255,20 @@ src/
 
 ---
 
-## `open-sse/` — סביבת עבודה למנוע הזרמה
+## `open-sse/` — סביבת העבודה של מנוע הסטרימינג
 
 סביבת עבודה נפרדת של npm (`@omniroute/open-sse`). מטפלת בעיבוד בקשות ובהפעלת ספקים.
 
 ```
 open-sse/
-├── handlers/            # 16 קבצים (12 מטפלים + 4 פונקציות עזר): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search וכו׳
-├── executors/           # 67 רכיבי הפעלה ייעודיים לספקים (מרחיבים את BaseExecutor)
+├── handlers/            # 16 קבצים (12 מטפלים + 4 פונקציות עזר): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search וכו'.
+├── executors/           # 150 מודולי ביצוע (מחלקות המרחיבות את BaseExecutor + פונקציות עזר לכל ספק)
 ├── translator/          # ממירי פורמטים (9 לבקשות, 9 לתגובות, 9 פונקציות עזר)
-├── transformer/         # Responses API ↔ Chat Completions ‏(TransformStream)
-├── services/            # יותר מ־~80 מודולי שירות (combo, accountFallback, autoCombo, reasoningCache, קוד/צ׳אט חשאי של claude, modelDeprecation, taskAwareRouter, workflowFSM וכו׳)
-├── mcp-server/          # שרת MCP ‏(110 כלים, 3 תעבורות, 33 תחומים)
+├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
+├── services/            # יותר מ־~80 מודולי שירות (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM וכו').
+├── mcp-server/          # שרת MCP‏ (110 כלים, 3 תעבורות, 33 תחומי הרשאה)
 ├── config/              # מאגרי ספקים/מודלים, תצורת כותרות, כינויים למודלים
-├── utils/               # לקוח TLS, אחזור/מנתב פרוקסי, כלי עזר לרשת
+├── utils/               # לקוח TLS,‏ fetch/dispatcher דרך proxy, פונקציות עזר לרשת
 ├── index.ts             # נקודת הכניסה של סביבת העבודה
 ├── package.json         # מניפסט סביבת העבודה
 ├── tsconfig.json        # תצורת TS של סביבת העבודה
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| נתיב                        | מטרה                                                                       |
-| --------------------------- | -------------------------------------------------------------------------- |
-| `server.ts`                 | מחזור החיים של שרת MCP ‏(תעבורות stdio + HTTP)                             |
-| `httpTransport.ts`          | תעבורות HTTP Streamable + SSE ‏(`/api/mcp/sse`, `/api/mcp/stream`)         |
-| `audit.ts`                  | רישום ביקורת לטבלת `mcp_tool_audit`                                        |
-| `scopeEnforcement.ts`       | אימות תחום עבור כל כלי                                                     |
-| `runtimeHeartbeat.ts`       | פעימת תקינות אל `DATA_DIR/runtime/mcp-heartbeat.json`                      |
-| `descriptionCompressor.ts`  | דחיסת מטא־נתונים של תיאורי כלים כדי לחסוך בהקשר                            |
-| `schemas/tools.ts`          | 36 הגדרות בסיסיות של כלים + תחומים                                         |
-| `tools/advancedTools.ts`    | מימושים של כלים מתקדמים                                                    |
-| `tools/memoryTools.ts`      | 3 כלי זיכרון (חיפוש/הוספה/ניקוי)                                           |
-| `tools/skillTools.ts`       | 4 כלי מיומנות (רשימה/הפעלה/ביצוע/ביצועים)                                  |
-| `tools/compressionTools.ts` | 5 כלי דחיסה                                                                |
-| `README.md`                 | README פנימי של שרת MCP (מקושר הדדית מתוך `docs/frameworks/MCP-SERVER.md`) |
+| נתיב                        | מטרה                                                                                    |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| `server.ts`                 | מחזור החיים של שרת MCP‏ (תעבורות stdio + HTTP)                                          |
+| `httpTransport.ts`          | תעבורות HTTP Streamable + SSE‏ (`/api/mcp/sse`, `/api/mcp/stream`)                      |
+| `audit.ts`                  | רישום ביקורת בטבלה `mcp_tool_audit`                                                     |
+| `scopeEnforcement.ts`       | אימות תחום הרשאה לכל כלי                                                                |
+| `runtimeHeartbeat.ts`       | פעימת תקינות אל `DATA_DIR/runtime/mcp-heartbeat.json`                                   |
+| `descriptionCompressor.ts`  | דחיסת מטא־נתונים של תיאורי כלים כדי לחסוך בהקשר                                         |
+| `schemas/tools.ts`          | 36 הגדרות בסיסיות של כלים + תחומי הרשאה                                                 |
+| `tools/advancedTools.ts`    | מימושים של כלים מתקדמים                                                                 |
+| `tools/memoryTools.ts`      | 3 כלי זיכרון (חיפוש/הוספה/ניקוי)                                                        |
+| `tools/skillTools.ts`       | 4 כלי מיומנות (רשימה/הפעלה/ביצוע/ביצועים)                                               |
+| `tools/compressionTools.ts` | 5 כלי דחיסה                                                                             |
+| `README.md`                 | קובץ README פנימי של שרת MCP‏ (מקושר בהפניה צולבת מתוך `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

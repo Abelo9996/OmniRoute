@@ -257,18 +257,18 @@ src/
 
 ## `open-sse/` — Χώρος εργασίας μηχανής ροής
 
-Ξεχωριστός χώρος εργασίας npm (`@omniroute/open-sse`). Διαχειρίζεται την επεξεργασία αιτημάτων + την εκτέλεση παρόχων.
+Ξεχωριστός χώρος εργασίας npm (`@omniroute/open-sse`). Χειρίζεται την επεξεργασία αιτημάτων και την εκτέλεση παρόχων.
 
 ```
 open-sse/
-├── handlers/            # 16 αρχεία (12 χειριστές + 4 βοηθητικά): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, κ.λπ.
-├── executors/           # 67 εκτελεστές ειδικοί ανά πάροχο (επεκτείνουν το BaseExecutor)
+├── handlers/            # 16 αρχεία (12 χειριστές + 4 βοηθητικά): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search κ.λπ.
+├── executors/           # 150 μονάδες εκτέλεσης (κλάσεις που επεκτείνουν το BaseExecutor + βοηθητικά ανά πάροχο)
 ├── translator/          # Μετατροπείς μορφής (9 αιτημάτων, 9 αποκρίσεων, 9 βοηθητικά)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ λειτουργικές μονάδες υπηρεσιών (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, κ.λπ.)
+├── services/            # ~80+ μονάδες υπηρεσιών (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM κ.λπ.)
 ├── mcp-server/          # Διακομιστής MCP (110 εργαλεία, 3 μεταφορές, 33 πεδία πρόσβασης)
 ├── config/              # Μητρώα παρόχων/μοντέλων, ρυθμίσεις κεφαλίδων, ψευδώνυμα μοντέλων
-├── utils/               # Πελάτης TLS, ανάκτηση/διεκπεραιωτής μέσω διαμεσολαβητή, βοηθητικά δικτύου
+├── utils/               # Πελάτης TLS, proxy fetch/dispatcher, βοηθητικά δικτύου
 ├── index.ts             # Σημείο εισόδου χώρου εργασίας
 ├── package.json         # Μανιφέστο χώρου εργασίας
 ├── tsconfig.json        # Ρυθμίσεις TS χώρου εργασίας
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Διαδρομή                    | Σκοπός                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------- |
-| `server.ts`                 | Κύκλος ζωής διακομιστή MCP (μεταφορές stdio + HTTP)                                   |
-| `httpTransport.ts`          | Μεταφορές HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                   |
-| `audit.ts`                  | Καταγραφή ελέγχου στον πίνακα `mcp_tool_audit`                                        |
-| `scopeEnforcement.ts`       | Επικύρωση πεδίου πρόσβασης ανά εργαλείο                                               |
-| `runtimeHeartbeat.ts`       | Παλμός υγείας στο `DATA_DIR/runtime/mcp-heartbeat.json`                               |
-| `descriptionCompressor.ts`  | Συμπίεση μεταδεδομένων περιγραφής εργαλείων για εξοικονόμηση περιεχομένου             |
-| `schemas/tools.ts`          | 36 βασικοί ορισμοί εργαλείων + πεδία πρόσβασης                                        |
-| `tools/advancedTools.ts`    | Υλοποιήσεις προηγμένων εργαλείων                                                      |
-| `tools/memoryTools.ts`      | 3 εργαλεία μνήμης (αναζήτηση/προσθήκη/εκκαθάριση)                                     |
-| `tools/skillTools.ts`       | 4 εργαλεία δεξιοτήτων (λίστα/ενεργοποίηση/εκτέλεση/εκτελέσεις)                        |
-| `tools/compressionTools.ts` | 5 εργαλεία συμπίεσης                                                                  |
-| `README.md`                 | Εσωτερικό README διακομιστή MCP (με παραπομπή από το `docs/frameworks/MCP-SERVER.md`) |
+| Διαδρομή                    | Σκοπός                                                                                              |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| `server.ts`                 | Κύκλος ζωής διακομιστή MCP (μεταφορές stdio + HTTP)                                                 |
+| `httpTransport.ts`          | Μεταφορές HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                                 |
+| `audit.ts`                  | Καταγραφή ελέγχου στον πίνακα `mcp_tool_audit`                                                      |
+| `scopeEnforcement.ts`       | Επικύρωση πεδίου πρόσβασης ανά εργαλείο                                                             |
+| `runtimeHeartbeat.ts`       | Παλμός υγείας στο `DATA_DIR/runtime/mcp-heartbeat.json`                                             |
+| `descriptionCompressor.ts`  | Συμπίεση μεταδεδομένων περιγραφής εργαλείων για εξοικονόμηση περιβάλλοντος                          |
+| `schemas/tools.ts`          | 36 βασικοί ορισμοί εργαλείων + πεδία πρόσβασης                                                      |
+| `tools/advancedTools.ts`    | Προηγμένες υλοποιήσεις εργαλείων                                                                    |
+| `tools/memoryTools.ts`      | 3 εργαλεία μνήμης (αναζήτηση/προσθήκη/εκκαθάριση)                                                   |
+| `tools/skillTools.ts`       | 4 εργαλεία δεξιοτήτων (λίστα/ενεργοποίηση/εκτέλεση/εκτελέσεις)                                      |
+| `tools/compressionTools.ts` | 5 εργαλεία συμπίεσης                                                                                |
+| `README.md`                 | Εσωτερικό README διακομιστή MCP (με διασταυρούμενο σύνδεσμο από το `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

@@ -255,42 +255,42 @@ src/
 
 ---
 
-## `open-sse/` — ஸ்ட்ரீமிங் எஞ்சின் பணிப்பரப்பு
+## `open-sse/` — ஸ்ட்ரீமிங் எஞ்சின் பணியிடம்
 
-தனியான npm பணிப்பரப்பு (`@omniroute/open-sse`). கோரிக்கை செயலாக்கம் + வழங்குநர் இயக்கத்தை நிர்வகிக்கிறது.
+தனியான npm பணியிடம் (`@omniroute/open-sse`). கோரிக்கை செயலாக்கம் + வழங்குநர் இயக்கத்தை கையாளுகிறது.
 
 ```
 open-sse/
-├── handlers/            # 16 கோப்புகள் (12 கையாளிகள் + 4 உதவிகள்): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search போன்றவை.
-├── executors/           # வழங்குநர் சார்ந்த 67 இயக்கிகள் (BaseExecutor-ஐ நீட்டிப்பவை)
-├── translator/          # வடிவமைப்பு மாற்றிகள் (9 கோரிக்கை, 9 பதில், 9 உதவிகள்)
+├── handlers/            # 16 கோப்புகள் (12 கையாளிகள் + 4 துணைநிரல்கள்): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search போன்றவை.
+├── executors/           # 150 இயக்கி தொகுதிகள் (BaseExecutor-ஐ நீட்டிக்கும் வகுப்புகள் + ஒவ்வொரு வழங்குநருக்குமான துணைநிரல்கள்)
+├── translator/          # வடிவமைப்பு மாற்றிகள் (9 கோரிக்கை, 9 பதில், 9 துணைநிரல்கள்)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ சேவைத் தொகுதிகள் (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM போன்றவை)
-├── mcp-server/          # MCP சேவையகம் (110 கருவிகள், 3 போக்குவரத்துகள், 33 வரம்புகள்)
-├── config/              # வழங்குநர்/மாதிரி பதிவகங்கள், தலைப்பு உள்ளமைவு, மாதிரி மாற்றுப்பெயர்கள்
-├── utils/               # TLS கிளையகம், ப்ராக்ஸி fetch/dispatcher, பிணைய உதவிகள்
-├── index.ts             # பணிப்பரப்பு நுழைவுப்புள்ளி
-├── package.json         # பணிப்பரப்பு விவரக்கோப்பு
-├── tsconfig.json        # பணிப்பரப்பு TS உள்ளமைவு
-└── types.d.ts           # பணிப்பரப்பு வகை அறிவிப்புகள்
+├── services/            # ~80+ சேவை தொகுதிகள் (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM போன்றவை)
+├── mcp-server/          # MCP சேவையகம் (110 கருவிகள், 3 போக்குவரத்து முறைகள், 33 வரம்புகள்)
+├── config/              # வழங்குநர்/மாதிரி பதிவேடுகள், தலைப்புப் புல கட்டமைப்பு, மாதிரி மாற்றுப்பெயர்கள்
+├── utils/               # TLS கிளையன்ட், ப்ராக்ஸி fetch/dispatcher, பிணைய துணைநிரல்கள்
+├── index.ts             # பணியிட நுழைவுப் புள்ளி
+├── package.json         # பணியிட அறிக்கை
+├── tsconfig.json        # பணியிட TS கட்டமைப்பு
+└── types.d.ts           # பணியிட வகை அறிவிப்புகள்
 ```
 
 ### `open-sse/mcp-server/`
 
-| பாதை                        | நோக்கம்                                                                                         |
-| --------------------------- | ----------------------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP சேவையக வாழ்க்கைச் சுழற்சி (stdio + HTTP போக்குவரத்துகள்)                                    |
-| `httpTransport.ts`          | HTTP Streamable + SSE போக்குவரத்துகள் (`/api/mcp/sse`, `/api/mcp/stream`)                       |
-| `audit.ts`                  | `mcp_tool_audit` அட்டவணையில் தணிக்கைப் பதிவேற்றம்                                               |
-| `scopeEnforcement.ts`       | ஒவ்வொரு கருவிக்குமான வரம்புச் சரிபார்ப்பு                                                       |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`-க்கு ஆரோக்கிய நிலை இதயத்துடிப்பை அனுப்புதல்               |
-| `descriptionCompressor.ts`  | சூழல் இடத்தைச் சேமிக்க கருவி விளக்க மெட்டாதரவைச் சுருக்குதல்                                    |
-| `schemas/tools.ts`          | 36 அடிப்படைக் கருவி வரையறைகள் + வரம்புகள்                                                       |
-| `tools/advancedTools.ts`    | மேம்பட்ட கருவிச் செயலாக்கங்கள்                                                                  |
-| `tools/memoryTools.ts`      | 3 நினைவகக் கருவிகள் (தேடல்/சேர்த்தல்/அழித்தல்)                                                  |
-| `tools/skillTools.ts`       | 4 திறன் கருவிகள் (பட்டியலிடுதல்/இயக்குதல்/செயல்படுத்துதல்/செயல்பாடுகள்)                         |
-| `tools/compressionTools.ts` | 5 சுருக்கக் கருவிகள்                                                                            |
-| `README.md`                 | அக MCP சேவையக README (`docs/frameworks/MCP-SERVER.md`-இலிருந்து குறுக்கு இணைப்பு செய்யப்பட்டது) |
+| பாதை                        | நோக்கம்                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP சேவையக வாழ்நிலைச் சுழற்சி (stdio + HTTP போக்குவரத்து முறைகள்)                         |
+| `httpTransport.ts`          | HTTP ஸ்ட்ரீம் செய்யக்கூடிய + SSE போக்குவரத்து முறைகள் (`/api/mcp/sse`, `/api/mcp/stream`) |
+| `audit.ts`                  | `mcp_tool_audit` அட்டவணைக்கான தணிக்கைப் பதிவேற்றம்                                        |
+| `scopeEnforcement.ts`       | ஒவ்வொரு கருவிக்குமான வரம்புச் சரிபார்ப்பு                                                 |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`-க்கான ஆரோக்கிய இதயத்துடிப்பு                        |
+| `descriptionCompressor.ts`  | சூழல் பயன்பாட்டைக் குறைக்க கருவி விளக்க மெட்டாதரவைச் சுருக்குகிறது                        |
+| `schemas/tools.ts`          | 36 அடிப்படைக் கருவி வரையறைகள் + வரம்புகள்                                                 |
+| `tools/advancedTools.ts`    | மேம்பட்ட கருவிச் செயலாக்கங்கள்                                                            |
+| `tools/memoryTools.ts`      | 3 நினைவகக் கருவிகள் (தேடல்/சேர்த்தல்/அழித்தல்)                                            |
+| `tools/skillTools.ts`       | 4 திறன் கருவிகள் (பட்டியலிடுதல்/இயக்குதல்/செயல்படுத்துதல்/செயலாக்கங்கள்)                  |
+| `tools/compressionTools.ts` | 5 சுருக்கக் கருவிகள்                                                                      |
+| `README.md`                 | உள் MCP சேவையக README (`docs/frameworks/MCP-SERVER.md`-இலிருந்து குறுக்கு-இணைக்கப்பட்டது) |
 
 ---
 

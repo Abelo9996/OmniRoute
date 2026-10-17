@@ -257,40 +257,40 @@ src/
 
 ## `open-sse/` — مساحة عمل محرك البث
 
-مساحة عمل npm منفصلة (`@omniroute/open-sse`). تتولى معالجة الطلبات وتنفيذ المزوّدين.
+مساحة عمل npm مستقلة (`@omniroute/open-sse`). تتولى معالجة الطلبات + تنفيذ موفّري الخدمة.
 
 ```
 open-sse/
 ├── handlers/            # 16 ملفًا (12 معالجًا + 4 أدوات مساعدة): chatCore، responsesHandler، embeddings، audio، image، video، music، rerank، moderations، search، إلخ.
-├── executors/           # 67 منفّذًا خاصًا بالمزوّدين (تمتد من BaseExecutor)
+├── executors/           # 150 وحدة تنفيذ (فئات توسّع BaseExecutor + أدوات مساعدة خاصة بكل موفّر)
 ├── translator/          # محوّلات التنسيق (9 للطلبات، و9 للاستجابات، و9 أدوات مساعدة)
-├── transformer/         # Responses API ↔ Chat Completions‏ (TransformStream)
-├── services/            # أكثر من ~80 وحدة خدمة (combo، accountFallback، autoCombo، reasoningCache، claude code/chatgpt stealth، modelDeprecation، taskAwareRouter، workflowFSM، إلخ.)
-├── mcp-server/          # خادم MCP‏ (110 أدوات، و3 وسائل نقل، و33 نطاقًا)
-├── config/              # سجلات المزوّدين/النماذج، وإعدادات الترويسات، والأسماء البديلة للنماذج
+├── transformer/         # Responses API ↔ Chat Completions ‏(TransformStream)
+├── services/            # نحو 80+ وحدة خدمة (combo، وaccountFallback، وautoCombo، وreasoningCache، وclaude code/chatgpt stealth، وmodelDeprecation، وtaskAwareRouter، وworkflowFSM، إلخ.)
+├── mcp-server/          # خادم MCP ‏(110 أدوات، و3 وسائل نقل، و33 نطاقًا)
+├── config/              # سجلات الموفّرين/النماذج، وإعدادات الترويسات، وأسماء النماذج البديلة
 ├── utils/               # عميل TLS، وجلب/موزّع الوكيل، وأدوات الشبكة المساعدة
 ├── index.ts             # نقطة دخول مساحة العمل
 ├── package.json         # بيان مساحة العمل
 ├── tsconfig.json        # إعدادات TS لمساحة العمل
-└── types.d.ts           # تعريفات الأنواع لمساحة العمل
+└── types.d.ts           # إعلانات أنواع مساحة العمل
 ```
 
 ### `open-sse/mcp-server/`
 
-| المسار                      | الغرض                                                                           |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| `server.ts`                 | دورة حياة خادم MCP‏ (وسائل نقل stdio وHTTP)                                     |
-| `httpTransport.ts`          | وسائل نقل HTTP Streamable وSSE‏ (`/api/mcp/sse`، `/api/mcp/stream`)             |
-| `audit.ts`                  | تسجيل التدقيق في جدول `mcp_tool_audit`                                          |
-| `scopeEnforcement.ts`       | التحقق من النطاق لكل أداة                                                       |
-| `runtimeHeartbeat.ts`       | نبض الحالة الصحية إلى `DATA_DIR/runtime/mcp-heartbeat.json`                     |
-| `descriptionCompressor.ts`  | ضغط بيانات وصف الأدوات الوصفية لتوفير السياق                                    |
-| `schemas/tools.ts`          | 36 تعريفًا أساسيًا للأدوات + النطاقات                                           |
-| `tools/advancedTools.ts`    | تطبيقات الأدوات المتقدمة                                                        |
-| `tools/memoryTools.ts`      | 3 أدوات للذاكرة (البحث/الإضافة/المسح)                                           |
-| `tools/skillTools.ts`       | 4 أدوات للمهارات (السرد/التمكين/التنفيذ/عمليات التنفيذ)                         |
-| `tools/compressionTools.ts` | 5 أدوات للضغط                                                                   |
-| `README.md`                 | ملف README داخلي لخادم MCP‏ (مرتبط تبادليًا من `docs/frameworks/MCP-SERVER.md`) |
+| المسار                      | الغرض                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| `server.ts`                 | دورة حياة خادم MCP ‏(stdio + وسائل نقل HTTP)                                   |
+| `httpTransport.ts`          | وسائل نقل HTTP Streamable + SSE ‏(`/api/mcp/sse`، `/api/mcp/stream`)           |
+| `audit.ts`                  | تسجيل التدقيق في جدول `mcp_tool_audit`                                         |
+| `scopeEnforcement.ts`       | التحقق من النطاق لكل أداة                                                      |
+| `runtimeHeartbeat.ts`       | نبضات سلامة إلى `DATA_DIR/runtime/mcp-heartbeat.json`                          |
+| `descriptionCompressor.ts`  | ضغط بيانات وصف الأدوات الوصفية لتوفير السياق                                   |
+| `schemas/tools.ts`          | 36 تعريفًا أساسيًا للأدوات + النطاقات                                          |
+| `tools/advancedTools.ts`    | تطبيقات الأدوات المتقدمة                                                       |
+| `tools/memoryTools.ts`      | 3 أدوات للذاكرة (البحث/الإضافة/المسح)                                          |
+| `tools/skillTools.ts`       | 4 أدوات للمهارات (السرد/التمكين/التنفيذ/عمليات التنفيذ)                        |
+| `tools/compressionTools.ts` | 5 أدوات للضغط                                                                  |
+| `README.md`                 | ملف README داخلي لخادم MCP (مرتبط تبادليًا من `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

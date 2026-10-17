@@ -257,40 +257,40 @@ src/
 
 ## `open-sse/` — Axın Mühərriki İş Sahəsi
 
-Ayrı npm iş sahəsi (`@omniroute/open-sse`). Sorğuların emalını və provayder icrasını idarə edir.
+Ayrıca npm iş sahəsi (`@omniroute/open-sse`). Sorğuların emalını və provayder icrasını idarə edir.
 
 ```
 open-sse/
-├── handlers/            # 16 fayl (12 emalçı + 4 köməkçi): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search və s.
-├── executors/           # Provayderə xas 67 icraçı (BaseExecutor sinfini genişləndirir)
+├── handlers/            # 16 fayl (12 emaledici + 4 köməkçi): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search və s.
+├── executors/           # 150 icraçı modul (BaseExecutor sinfini genişləndirən siniflər + hər provayder üçün köməkçilər)
 ├── translator/          # Format çeviriciləri (9 sorğu, 9 cavab, 9 köməkçi)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ xidmət modulu (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM və s.)
-├── mcp-server/          # MCP serveri (110 alət, 3 nəqliyyat mexanizmi, 33 əhatə dairəsi)
+├── mcp-server/          # MCP serveri (110 alət, 3 nəqliyyat, 33 əhatə dairəsi)
 ├── config/              # Provayder/model reyestrləri, başlıq konfiqurasiyası, model ləqəbləri
 ├── utils/               # TLS klienti, proksi fetch/dispatcher, şəbəkə köməkçiləri
 ├── index.ts             # İş sahəsinin giriş nöqtəsi
-├── package.json         # İş sahəsinin manifesti
+├── package.json         # İş sahəsi manifesti
 ├── tsconfig.json        # İş sahəsinin TS konfiqurasiyası
-└── types.d.ts           # İş sahəsinin tip bəyannamələri
+└── types.d.ts           # İş sahəsinin tip bəyanları
 ```
 
 ### `open-sse/mcp-server/`
 
-| Yol                         | Məqsəd                                                                                                          |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP serverinin həyat dövrü (stdio + HTTP nəqliyyat mexanizmləri)                                                |
-| `httpTransport.ts`          | HTTP Streamable + SSE nəqliyyat mexanizmləri (`/api/mcp/sse`, `/api/mcp/stream`)                                |
-| `audit.ts`                  | Audit qeydlərinin `mcp_tool_audit` cədvəlinə yazılması                                                          |
-| `scopeEnforcement.ts`       | Hər alət üzrə əhatə dairəsinin yoxlanması                                                                       |
-| `runtimeHeartbeat.ts`       | Sağlamlıq siqnalının `DATA_DIR/runtime/mcp-heartbeat.json` faylına yazılması                                    |
-| `descriptionCompressor.ts`  | Kontekstə qənaət etmək üçün alət təsviri metadatasını sıxır                                                     |
-| `schemas/tools.ts`          | 36 əsas alət tərifi + əhatə dairələri                                                                           |
-| `tools/advancedTools.ts`    | Təkmil alət realizasiyaları                                                                                     |
-| `tools/memoryTools.ts`      | 3 yaddaş aləti (axtarış/əlavə etmə/təmizləmə)                                                                   |
-| `tools/skillTools.ts`       | 4 bacarıq aləti (siyahı/aktivləşdirmə/icra/icralar)                                                             |
-| `tools/compressionTools.ts` | 5 sıxılma aləti                                                                                                 |
-| `README.md`                 | Daxili MCP serveri README faylı (`docs/frameworks/MCP-SERVER.md` sənədindən qarşılıqlı keçidlə əlaqələndirilib) |
+| Yol                         | Təyinatı                                                                                                 |
+| --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP serverinin həyat dövrü (stdio + HTTP nəqliyyatları)                                                  |
+| `httpTransport.ts`          | HTTP Streamable + SSE nəqliyyatları (`/api/mcp/sse`, `/api/mcp/stream`)                                  |
+| `audit.ts`                  | `mcp_tool_audit` cədvəlinə audit jurnallaşdırması                                                        |
+| `scopeEnforcement.ts`       | Hər alət üzrə əhatə dairəsinin doğrulanması                                                              |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` faylına sağlamlıq nəbzi                                            |
+| `descriptionCompressor.ts`  | Kontekstə qənaət etmək üçün alət təsviri metadatasını sıxışdırır                                         |
+| `schemas/tools.ts`          | 36 əsas alət tərifi + əhatə dairələri                                                                    |
+| `tools/advancedTools.ts`    | Qabaqcıl alət reallaşdırmaları                                                                           |
+| `tools/memoryTools.ts`      | 3 yaddaş aləti (axtarış/əlavə etmə/təmizləmə)                                                            |
+| `tools/skillTools.ts`       | 4 bacarıq aləti (siyahı/aktivləşdirmə/icra/iclalar)                                                      |
+| `tools/compressionTools.ts` | 5 sıxışdırma aləti                                                                                       |
+| `README.md`                 | Daxili MCP serveri README-si (`docs/frameworks/MCP-SERVER.md` sənədindən çarpaz keçidlə əlaqələndirilib) |
 
 ---
 

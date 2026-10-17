@@ -261,12 +261,12 @@ src/
 
 ```
 open-sse/
-├── handlers/            # 16 فایل (12 کنترلگر + 4 تابع کمکی): chatCore، responsesHandler، embeddings، audio، image، video، music، rerank، moderations، search و غیره
-├── executors/           # 67 اجراکننده مختص ارائهدهندگان (از BaseExecutor ارثبری میکنند)
-├── translator/          # مبدلهای قالب (9 درخواست، 9 پاسخ، 9 تابع کمکی)
-├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # بیش از ~80 ماژول سرویس (combo، accountFallback، autoCombo، reasoningCache، claude code/chatgpt stealth، modelDeprecation، taskAwareRouter، workflowFSM و غیره)
-├── mcp-server/          # سرور MCP (110 ابزار، 3 انتقال، 33 محدوده)
+├── handlers/            # ۱۶ فایل (۱۲ هندلر + ۴ تابع کمکی): chatCore، responsesHandler، embeddings، audio، image، video، music، rerank، moderations، search و غیره
+├── executors/           # ۱۵۰ ماژول اجراکننده (کلاسهای توسعهدهنده BaseExecutor + توابع کمکی مختص هر ارائهدهنده)
+├── translator/          # مبدلهای قالب (۹ درخواست، ۹ پاسخ، ۹ تابع کمکی)
+├── transformer/         # Responses API ↔ Chat Completions ‏(TransformStream)
+├── services/            # بیش از حدود ۸۰ ماژول سرویس (combo، accountFallback، autoCombo، reasoningCache، حالت مخفی claude code/chatgpt، modelDeprecation، taskAwareRouter، workflowFSM و غیره)
+├── mcp-server/          # سرور MCP (۱۱۰ ابزار، ۳ انتقال، ۳۳ محدوده)
 ├── config/              # رجیستریهای ارائهدهنده/مدل، پیکربندی هدر، نامهای مستعار مدل
 ├── utils/               # کلاینت TLS، واکشی/توزیعکننده پروکسی، توابع کمکی شبکه
 ├── index.ts             # نقطه ورود فضای کاری
@@ -279,17 +279,17 @@ open-sse/
 
 | مسیر                        | هدف                                                                        |
 | --------------------------- | -------------------------------------------------------------------------- |
-| `server.ts`                 | چرخه حیات سرور MCP (انتقالهای stdio و HTTP)                                |
-| `httpTransport.ts`          | انتقالهای HTTP Streamable و SSE (`/api/mcp/sse`، `/api/mcp/stream`)        |
+| `server.ts`                 | چرخه حیات سرور MCP (انتقالهای stdio + HTTP)                                |
+| `httpTransport.ts`          | انتقالهای HTTP Streamable + SSE ‏(`/api/mcp/sse`، `/api/mcp/stream`)       |
 | `audit.ts`                  | ثبت گزارش ممیزی در جدول `mcp_tool_audit`                                   |
 | `scopeEnforcement.ts`       | اعتبارسنجی محدوده برای هر ابزار                                            |
-| `runtimeHeartbeat.ts`       | ضربان سلامت در `DATA_DIR/runtime/mcp-heartbeat.json`                       |
-| `descriptionCompressor.ts`  | فشردهسازی فراداده توضیحات ابزار برای صرفهجویی در زمینه                     |
-| `schemas/tools.ts`          | 36 تعریف پایه ابزار + محدودهها                                             |
+| `runtimeHeartbeat.ts`       | ارسال ضربان سلامت به `DATA_DIR/runtime/mcp-heartbeat.json`                 |
+| `descriptionCompressor.ts`  | فشردهسازی فراداده توضیحات ابزار برای صرفهجویی در فضای زمینه                |
+| `schemas/tools.ts`          | ۳۶ تعریف ابزار پایه + محدودهها                                             |
 | `tools/advancedTools.ts`    | پیادهسازی ابزارهای پیشرفته                                                 |
-| `tools/memoryTools.ts`      | 3 ابزار حافظه (جستوجو/افزودن/پاکسازی)                                      |
-| `tools/skillTools.ts`       | 4 ابزار مهارت (فهرست/فعالسازی/اجرا/اجراها)                                 |
-| `tools/compressionTools.ts` | 5 ابزار فشردهسازی                                                          |
+| `tools/memoryTools.ts`      | ۳ ابزار حافظه (جستوجو/افزودن/پاکسازی)                                      |
+| `tools/skillTools.ts`       | ۴ ابزار مهارت (فهرست/فعالسازی/اجرا/اجراها)                                 |
+| `tools/compressionTools.ts` | ۵ ابزار فشردهسازی                                                          |
 | `README.md`                 | README داخلی سرور MCP (با پیوند متقابل از `docs/frameworks/MCP-SERVER.md`) |
 
 ---

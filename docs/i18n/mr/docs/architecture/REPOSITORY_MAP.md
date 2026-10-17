@@ -261,36 +261,36 @@ src/
 
 ```
 open-sse/
-├── handlers/            # 16 फाइल्स (12 हँडलर्स + 4 सहाय्यक): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, इ.
-├── executors/           # 67 प्रदाता-विशिष्ट एक्झिक्युटर्स (BaseExecutor विस्तारित करतात)
-├── translator/          # स्वरूप रूपांतरक (9 विनंती, 9 प्रतिसाद, 9 सहाय्यक)
+├── handlers/            # 16 फाइल्स (12 हँडलर्स + 4 सहाय्यके): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, इ.
+├── executors/           # 150 एक्झिक्युटर मॉड्यूल्स (BaseExecutor विस्तारित करणारे क्लासेस + प्रत्येक प्रदात्यासाठी सहाय्यके)
+├── translator/          # स्वरूप रूपांतरके (9 विनंती, 9 प्रतिसाद, 9 सहाय्यके)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ सेवा मॉड्यूल्स (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, इ.)
 ├── mcp-server/          # MCP सर्व्हर (110 साधने, 3 ट्रान्सपोर्ट्स, 33 स्कोप्स)
-├── config/              # प्रदाता/मॉडेल रजिस्ट्रीज, हेडर कॉन्फिग, मॉडेल उपनावे
-├── utils/               # TLS क्लायंट, प्रॉक्सी fetch/dispatcher, नेटवर्क सहाय्यक
+├── config/              # प्रदाता/मॉडेल रजिस्ट्र्या, हेडर कॉन्फिगरेशन, मॉडेल उपनावे
+├── utils/               # TLS क्लायंट, प्रॉक्सी fetch/dispatcher, नेटवर्क सहाय्यके
 ├── index.ts             # वर्कस्पेस प्रवेशबिंदू
 ├── package.json         # वर्कस्पेस मॅनिफेस्ट
-├── tsconfig.json        # वर्कस्पेस TS कॉन्फिग
+├── tsconfig.json        # वर्कस्पेस TS कॉन्फिगरेशन
 └── types.d.ts           # वर्कस्पेस प्रकार घोषणा
 ```
 
 ### `open-sse/mcp-server/`
 
-| पाथ                         | उद्देश                                                                           |
-| --------------------------- | -------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP सर्व्हर जीवनचक्र (stdio + HTTP ट्रान्सपोर्ट्स)                               |
-| `httpTransport.ts`          | HTTP Streamable + SSE ट्रान्सपोर्ट्स (`/api/mcp/sse`, `/api/mcp/stream`)         |
-| `audit.ts`                  | `mcp_tool_audit` टेबलमध्ये ऑडिट लॉगिंग                                           |
-| `scopeEnforcement.ts`       | प्रत्येक साधनासाठी स्कोप प्रमाणीकरण                                              |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` मध्ये आरोग्य हार्टबीट                      |
-| `descriptionCompressor.ts`  | संदर्भ वाचवण्यासाठी साधन वर्णन मेटाडेटा संकुचित करते                             |
-| `schemas/tools.ts`          | 36 मूलभूत साधन व्याख्या + स्कोप्स                                                |
-| `tools/advancedTools.ts`    | प्रगत साधन अंमलबजावण्या                                                          |
-| `tools/memoryTools.ts`      | 3 मेमरी साधने (शोधा/जोडा/साफ करा)                                                |
-| `tools/skillTools.ts`       | 4 कौशल्य साधने (सूची/सक्षम करा/कार्यान्वित करा/कार्यान्वयने)                     |
-| `tools/compressionTools.ts` | 5 संकुचन साधने                                                                   |
-| `README.md`                 | अंतर्गत MCP सर्व्हर README (`docs/frameworks/MCP-SERVER.md` मधून परस्पर-जोडलेले) |
+| पथ                          | उद्देश                                                                              |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP सर्व्हर जीवनचक्र (stdio + HTTP ट्रान्सपोर्ट्स)                                  |
+| `httpTransport.ts`          | HTTP Streamable + SSE ट्रान्सपोर्ट्स (`/api/mcp/sse`, `/api/mcp/stream`)            |
+| `audit.ts`                  | `mcp_tool_audit` तक्त्यामध्ये ऑडिट लॉगिंग                                           |
+| `scopeEnforcement.ts`       | प्रत्येक साधनासाठी स्कोप प्रमाणीकरण                                                 |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` येथे आरोग्य हार्टबीट                          |
+| `descriptionCompressor.ts`  | संदर्भ वाचवण्यासाठी साधन वर्णनाचा मेटाडेटा संकुचित करते                             |
+| `schemas/tools.ts`          | 36 मूलभूत साधन व्याख्या + स्कोप्स                                                   |
+| `tools/advancedTools.ts`    | प्रगत साधन अंमलबजावण्या                                                             |
+| `tools/memoryTools.ts`      | 3 मेमरी साधने (शोधा/जोडा/साफ करा)                                                   |
+| `tools/skillTools.ts`       | 4 कौशल्य साधने (सूची/सक्षम करा/कार्यान्वित करा/अंमलबजावण्या)                        |
+| `tools/compressionTools.ts` | 5 संकुचन साधने                                                                      |
+| `README.md`                 | अंतर्गत MCP सर्व्हर README (`docs/frameworks/MCP-SERVER.md` मधून क्रॉस-लिंक केलेले) |
 
 ---
 

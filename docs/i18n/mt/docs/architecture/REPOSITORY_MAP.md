@@ -257,16 +257,16 @@ src/
 
 ## `open-sse/` — Spazju tax-Xogħol tal-Magna tal-Istreaming
 
-Spazju tax-xogħol npm separat (`@omniroute/open-sse`). Jimmaniġġja l-ipproċessar tat-talbiet u l-eżekuzzjoni tal-fornituri.
+Spazju tax-xogħol npm separat (`@omniroute/open-sse`). Jieħu ħsieb l-ipproċessar tat-talbiet u l-eżekuzzjoni tal-fornituri.
 
 ```
 open-sse/
 ├── handlers/            # 16-il fajl (12-il handler + 4 helpers): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, eċċ.
-├── executors/           # 67 eżekutur speċifiku għall-fornituri (jestendu BaseExecutor)
+├── executors/           # 150 modulu ta’ eżekuzzjoni (klassijiet li jestendu BaseExecutor + helpers għal kull fornitur)
 ├── translator/          # Konvertituri tal-format (9 għat-talbiet, 9 għat-tweġibiet, 9 helpers)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ modulu tas-servizzi (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, eċċ.)
-├── mcp-server/          # Server MCP (110 għodod, 3 trasporti, 33 ambitu)
+├── mcp-server/          # Server MCP (110 għodod, 3 transports, 33 scopes)
 ├── config/              # Reġistri tal-fornituri/mudelli, konfigurazzjoni tal-headers, psewdonimi tal-mudelli
 ├── utils/               # Klijent TLS, fetch/dispatcher tal-proxy, helpers tan-network
 ├── index.ts             # Punt tad-dħul tal-ispazju tax-xogħol
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Mogħdija                    | Għan                                                                                      |
-| --------------------------- | ----------------------------------------------------------------------------------------- |
-| `server.ts`                 | Ċiklu tal-ħajja tas-server MCP (trasporti stdio + HTTP)                                   |
-| `httpTransport.ts`          | Trasporti HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                       |
-| `audit.ts`                  | Reġistrazzjoni tal-awditjar fit-tabella `mcp_tool_audit`                                  |
-| `scopeEnforcement.ts`       | Validazzjoni tal-ambitu għal kull għodda                                                  |
-| `runtimeHeartbeat.ts`       | Sinjal tas-saħħa lejn `DATA_DIR/runtime/mcp-heartbeat.json`                               |
-| `descriptionCompressor.ts`  | Jikkompressa l-metadata tad-deskrizzjonijiet tal-għodod biex jiffranka l-kuntest          |
-| `schemas/tools.ts`          | 36 definizzjoni bażika tal-għodod + ambiti                                                |
-| `tools/advancedTools.ts`    | Implimentazzjonijiet avvanzati tal-għodod                                                 |
-| `tools/memoryTools.ts`      | 3 għodod tal-memorja (tiftix/żieda/tneħħija)                                              |
-| `tools/skillTools.ts`       | 4 għodod tal-ħiliet (lista/attivazzjoni/eżekuzzjoni/eżekuzzjonijiet)                      |
-| `tools/compressionTools.ts` | 5 għodod tal-kompressjoni                                                                 |
-| `README.md`                 | README intern tas-server MCP (b’referenza reċiproka minn `docs/frameworks/MCP-SERVER.md`) |
+| Mogħdija                    | Għan                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------ |
+| `server.ts`                 | Ċiklu tal-ħajja tas-server MCP (transports stdio + HTTP)                             |
+| `httpTransport.ts`          | Transports HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                 |
+| `audit.ts`                  | Reġistrazzjoni tal-awditjar fit-tabella `mcp_tool_audit`                             |
+| `scopeEnforcement.ts`       | Validazzjoni tal-scope għal kull għodda                                              |
+| `runtimeHeartbeat.ts`       | Sinjal perjodiku tas-saħħa lil `DATA_DIR/runtime/mcp-heartbeat.json`                 |
+| `descriptionCompressor.ts`  | Jikkompressa l-metadata tad-deskrizzjoni tal-għodod biex jiffranka l-kuntest         |
+| `schemas/tools.ts`          | 36 definizzjoni bażika tal-għodod + scopes                                           |
+| `tools/advancedTools.ts`    | Implimentazzjonijiet avvanzati tal-għodod                                            |
+| `tools/memoryTools.ts`      | 3 għodod tal-memorja (tiftix/żieda/tħassir)                                          |
+| `tools/skillTools.ts`       | 4 għodod tal-ħiliet (elenkar/attivazzjoni/eżekuzzjoni/eżekuzzjonijiet)               |
+| `tools/compressionTools.ts` | 5 għodod tal-kompressjoni                                                            |
+| `README.md`                 | README intern tas-server MCP (b’link inkroċjat minn `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

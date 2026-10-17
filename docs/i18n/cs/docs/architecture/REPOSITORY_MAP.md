@@ -257,18 +257,18 @@ src/
 
 ## `open-sse/` — Pracovní prostor streamovacího enginu
 
-Samostatný pracovní prostor npm (`@omniroute/open-sse`). Zajišťuje zpracování požadavků a provádění operací poskytovatelů.
+Samostatný pracovní prostor npm (`@omniroute/open-sse`). Zajišťuje zpracování požadavků a spouštění poskytovatelů.
 
 ```
 open-sse/
-├── handlers/            # 16 souborů (12 handlerů + 4 pomocné moduly): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search atd.
-├── executors/           # 67 executorů specifických pro jednotlivé poskytovatele (rozšiřují BaseExecutor)
+├── handlers/            # 16 souborů (12 obslužných rutin + 4 pomocné moduly): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search atd.
+├── executors/           # 150 modulů vykonavatelů (třídy rozšiřující BaseExecutor + pomocné moduly pro jednotlivé poskytovatele)
 ├── translator/          # Převodníky formátů (9 pro požadavky, 9 pro odpovědi, 9 pomocných modulů)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ modulů služeb (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM atd.)
-├── mcp-server/          # Server MCP (110 nástrojů, 3 transporty, 33 rozsahů)
+├── mcp-server/          # Server MCP (110 nástrojů, 3 transporty, 33 rozsahů oprávnění)
 ├── config/              # Registry poskytovatelů/modelů, konfigurace hlaviček, aliasy modelů
-├── utils/               # Klient TLS, proxy fetch/dispatcher, síťové pomocné moduly
+├── utils/               # Klient TLS, načítání/dispečer proxy, síťové pomocné moduly
 ├── index.ts             # Vstupní bod pracovního prostoru
 ├── package.json         # Manifest pracovního prostoru
 ├── tsconfig.json        # Konfigurace TS pracovního prostoru
@@ -282,10 +282,10 @@ open-sse/
 | `server.ts`                 | Životní cyklus serveru MCP (transporty stdio + HTTP)                              |
 | `httpTransport.ts`          | Transporty HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)              |
 | `audit.ts`                  | Protokolování auditu do tabulky `mcp_tool_audit`                                  |
-| `scopeEnforcement.ts`       | Ověřování rozsahu pro jednotlivé nástroje                                         |
-| `runtimeHeartbeat.ts`       | Prezenční signál stavu do `DATA_DIR/runtime/mcp-heartbeat.json`                   |
-| `descriptionCompressor.ts`  | Komprese metadat popisů nástrojů za účelem úspory kontextu                        |
-| `schemas/tools.ts`          | 36 definic základních nástrojů + rozsahy                                          |
+| `scopeEnforcement.ts`       | Ověřování rozsahu oprávnění pro jednotlivé nástroje                               |
+| `runtimeHeartbeat.ts`       | Signál stavu do `DATA_DIR/runtime/mcp-heartbeat.json`                             |
+| `descriptionCompressor.ts`  | Komprimuje metadata popisů nástrojů za účelem úspory kontextu                     |
+| `schemas/tools.ts`          | 36 definic základních nástrojů + rozsahy oprávnění                                |
 | `tools/advancedTools.ts`    | Implementace pokročilých nástrojů                                                 |
 | `tools/memoryTools.ts`      | 3 paměťové nástroje (vyhledání/přidání/vymazání)                                  |
 | `tools/skillTools.ts`       | 4 nástroje dovedností (seznam/povolení/spuštění/provedení)                        |

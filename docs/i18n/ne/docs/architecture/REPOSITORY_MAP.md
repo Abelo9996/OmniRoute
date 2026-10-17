@@ -257,19 +257,19 @@ src/
 
 ## `open-sse/` — स्ट्रिमिङ इन्जिन कार्यक्षेत्र
 
-छुट्टै npm कार्यक्षेत्र (`@omniroute/open-sse`)। अनुरोध प्रशोधन र प्रदायक कार्यान्वयन सम्हाल्छ।
+छुट्टै npm कार्यक्षेत्र (`@omniroute/open-sse`)। अनुरोध प्रशोधन + प्रदायक कार्यान्वयन सम्हाल्छ।
 
 ```
 open-sse/
 ├── handlers/            # 16 फाइलहरू (12 ह्यान्डलर + 4 सहायक): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, आदि।
-├── executors/           # 67 प्रदायक-विशिष्ट एक्जिक्युटरहरू (BaseExecutor विस्तार गर्छन्)
-├── translator/          # ढाँचा रूपान्तरणकर्ताहरू (9 अनुरोध, 9 प्रतिक्रिया, 9 सहायक)
+├── executors/           # 150 एक्जिक्युटर मोड्युलहरू (BaseExecutor विस्तार गर्ने क्लासहरू + प्रत्येक प्रदायकका सहायकहरू)
+├── translator/          # ढाँचा रूपान्तरकहरू (9 अनुरोध, 9 प्रतिक्रिया, 9 सहायक)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ सेवा मोड्युलहरू (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, आदि)
+├── services/            # ~80+ सेवा मोड्युलहरू (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, आदि।)
 ├── mcp-server/          # MCP सर्भर (110 उपकरण, 3 ट्रान्सपोर्ट, 33 स्कोप)
 ├── config/              # प्रदायक/मोडेल रजिस्ट्रीहरू, हेडर कन्फिगरेसन, मोडेल उपनामहरू
 ├── utils/               # TLS क्लाइन्ट, प्रोक्सी fetch/dispatcher, नेटवर्क सहायकहरू
-├── index.ts             # कार्यक्षेत्र प्रवेशबिन्दु
+├── index.ts             # कार्यक्षेत्र प्रवेश बिन्दु
 ├── package.json         # कार्यक्षेत्र म्यानिफेस्ट
 ├── tsconfig.json        # कार्यक्षेत्र TS कन्फिगरेसन
 └── types.d.ts           # कार्यक्षेत्र प्रकार घोषणाहरू
@@ -282,9 +282,9 @@ open-sse/
 | `server.ts`                 | MCP सर्भर जीवनचक्र (stdio + HTTP ट्रान्सपोर्टहरू)                                |
 | `httpTransport.ts`          | HTTP Streamable + SSE ट्रान्सपोर्टहरू (`/api/mcp/sse`, `/api/mcp/stream`)        |
 | `audit.ts`                  | `mcp_tool_audit` तालिकामा अडिट लगिङ                                              |
-| `scopeEnforcement.ts`       | प्रत्येक उपकरणको स्कोप प्रमाणीकरण                                                |
+| `scopeEnforcement.ts`       | प्रत्येक उपकरणका लागि स्कोप प्रमाणीकरण                                           |
 | `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` मा स्वास्थ्य हार्टबिट                      |
-| `descriptionCompressor.ts`  | कन्टेक्स्ट बचत गर्न उपकरण विवरण मेटाडेटा कम्प्रेस गर्छ                           |
+| `descriptionCompressor.ts`  | कन्टेक्स्ट बचत गर्न उपकरण विवरणको मेटाडेटा कम्प्रेस गर्छ                         |
 | `schemas/tools.ts`          | 36 आधारभूत उपकरण परिभाषाहरू + स्कोपहरू                                           |
 | `tools/advancedTools.ts`    | उन्नत उपकरण कार्यान्वयनहरू                                                       |
 | `tools/memoryTools.ts`      | 3 मेमोरी उपकरणहरू (खोज्ने/थप्ने/खाली गर्ने)                                      |

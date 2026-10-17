@@ -257,40 +257,40 @@ src/
 
 ## `open-sse/` — Akış Motoru Çalışma Alanı
 
-Ayrı npm çalışma alanı (`@omniroute/open-sse`). İstek işlemeyi ve sağlayıcı yürütmesini yönetir.
+Ayrı npm çalışma alanı (`@omniroute/open-sse`). İstek işleme ve sağlayıcı yürütme işlemlerini gerçekleştirir.
 
 ```
 open-sse/
 ├── handlers/            # 16 dosya (12 işleyici + 4 yardımcı): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search vb.
-├── executors/           # Sağlayıcıya özgü 67 yürütücü (BaseExecutor sınıfını genişletir)
-├── translator/          # Biçim dönüştürücüler (9 istek, 9 yanıt, 9 yardımcı)
+├── executors/           # 150 yürütücü modülü (BaseExecutor sınıfını genişleten sınıflar + sağlayıcı başına yardımcılar)
+├── translator/          # Biçim dönüştürücüleri (9 istek, 9 yanıt, 9 yardımcı)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ hizmet modülü (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM vb.)
 ├── mcp-server/          # MCP sunucusu (110 araç, 3 aktarım, 33 kapsam)
 ├── config/              # Sağlayıcı/model kayıtları, başlık yapılandırması, model takma adları
 ├── utils/               # TLS istemcisi, proxy fetch/dispatcher, ağ yardımcıları
 ├── index.ts             # Çalışma alanı giriş noktası
-├── package.json         # Çalışma alanı manifesti
+├── package.json         # Çalışma alanı bildirimi
 ├── tsconfig.json        # Çalışma alanı TS yapılandırması
 └── types.d.ts           # Çalışma alanı tür bildirimleri
 ```
 
 ### `open-sse/mcp-server/`
 
-| Yol                         | Amaç                                                                            |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP sunucusu yaşam döngüsü (stdio + HTTP aktarımları)                           |
-| `httpTransport.ts`          | HTTP Streamable + SSE aktarımları (`/api/mcp/sse`, `/api/mcp/stream`)           |
-| `audit.ts`                  | `mcp_tool_audit` tablosuna denetim günlüğü kaydı                                |
-| `scopeEnforcement.ts`       | Araç başına kapsam doğrulaması                                                  |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` konumuna sistem durumu sinyali            |
-| `descriptionCompressor.ts`  | Bağlamdan tasarruf etmek için araç açıklaması meta verilerini sıkıştırır        |
-| `schemas/tools.ts`          | 36 temel araç tanımı + kapsamlar                                                |
-| `tools/advancedTools.ts`    | Gelişmiş araç uygulamaları                                                      |
-| `tools/memoryTools.ts`      | 3 bellek aracı (arama/ekleme/temizleme)                                         |
-| `tools/skillTools.ts`       | 4 beceri aracı (listeleme/etkinleştirme/yürütme/yürütmeler)                     |
-| `tools/compressionTools.ts` | 5 sıkıştırma aracı                                                              |
-| `README.md`                 | Dahili MCP sunucusu README'si (`docs/frameworks/MCP-SERVER.md` üzerinden bağlı) |
+| Yol                         | Amaç                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------ |
+| `server.ts`                 | MCP sunucusu yaşam döngüsü (stdio + HTTP aktarımları)                                            |
+| `httpTransport.ts`          | HTTP Streamable + SSE aktarımları (`/api/mcp/sse`, `/api/mcp/stream`)                            |
+| `audit.ts`                  | `mcp_tool_audit` tablosuna denetim günlükleme                                                    |
+| `scopeEnforcement.ts`       | Araç başına kapsam doğrulaması                                                                   |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` dosyasına sistem durumu sinyali                            |
+| `descriptionCompressor.ts`  | Bağlamdan tasarruf etmek için araç açıklaması meta verilerini sıkıştırır                         |
+| `schemas/tools.ts`          | 36 temel araç tanımı + kapsamlar                                                                 |
+| `tools/advancedTools.ts`    | Gelişmiş araç uygulamaları                                                                       |
+| `tools/memoryTools.ts`      | 3 bellek aracı (arama/ekleme/temizleme)                                                          |
+| `tools/skillTools.ts`       | 4 beceri aracı (listeleme/etkinleştirme/yürütme/yürütmeler)                                      |
+| `tools/compressionTools.ts` | 5 sıkıştırma aracı                                                                               |
+| `README.md`                 | Dahili MCP sunucusu README dosyası (`docs/frameworks/MCP-SERVER.md` üzerinden çapraz bağlantılı) |
 
 ---
 

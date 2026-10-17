@@ -255,15 +255,15 @@ src/
 
 ---
 
-## `open-sse/` — Arbeidsområde for strømmemotor
+## `open-sse/` — Arbeidsområde for strømmemotoren
 
 Separat npm-arbeidsområde (`@omniroute/open-sse`). Håndterer behandling av forespørsler og kjøring mot leverandører.
 
 ```
 open-sse/
-├── handlers/            # 16 filer (12 håndterere + 4 hjelpefunksjoner): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search osv.
-├── executors/           # 67 leverandørspesifikke eksekverere (utvider BaseExecutor)
-├── translator/          # Formatkonverterere (9 for forespørsler, 9 for svar, 9 hjelpefunksjoner)
+├── handlers/            # 16 filer (12 behandlere + 4 hjelpefiler): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search osv.
+├── executors/           # 150 kjøringsmoduler (klasser som utvider BaseExecutor + leverandørspesifikke hjelpefiler)
+├── translator/          # Formatkonverterere (9 for forespørsler, 9 for svar, 9 hjelpefiler)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ tjenestemoduler (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM osv.)
 ├── mcp-server/          # MCP-server (110 verktøy, 3 transporter, 33 omfang)
@@ -279,8 +279,8 @@ open-sse/
 
 | Bane                        | Formål                                                                           |
 | --------------------------- | -------------------------------------------------------------------------------- |
-| `server.ts`                 | Livssyklus for MCP-serveren (stdio- + HTTP-transporter)                          |
-| `httpTransport.ts`          | HTTP Streamable- + SSE-transporter (`/api/mcp/sse`, `/api/mcp/stream`)           |
+| `server.ts`                 | Livssyklus for MCP-serveren (stdio- og HTTP-transporter)                         |
+| `httpTransport.ts`          | HTTP Streamable- og SSE-transporter (`/api/mcp/sse`, `/api/mcp/stream`)          |
 | `audit.ts`                  | Revisjonslogging til tabellen `mcp_tool_audit`                                   |
 | `scopeEnforcement.ts`       | Omfangsvalidering per verktøy                                                    |
 | `runtimeHeartbeat.ts`       | Helsepuls til `DATA_DIR/runtime/mcp-heartbeat.json`                              |

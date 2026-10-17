@@ -255,20 +255,20 @@ src/
 
 ---
 
-## `open-sse/` — Srautinio apdorojimo variklio darbo sritis
+## `open-sse/` — Srautinio perdavimo variklio darbo sritis
 
 Atskira npm darbo sritis (`@omniroute/open-sse`). Apdoroja užklausas ir vykdo teikėjų operacijas.
 
 ```
 open-sse/
-├── handlers/            # 16 failų (12 apdorojimo programų + 4 pagalbiniai moduliai): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search ir kt.
-├── executors/           # 67 konkretiems teikėjams skirtos vykdymo programos (išplečia BaseExecutor)
+├── handlers/            # 16 failų (12 apdorojimo modulių + 4 pagalbiniai moduliai): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search ir kt.
+├── executors/           # 150 vykdymo modulių (klasės, išplečiančios BaseExecutor, ir kiekvienam teikėjui skirti pagalbiniai moduliai)
 ├── translator/          # Formatų keitikliai (9 užklausų, 9 atsakymų, 9 pagalbiniai)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ paslaugų modulių (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM ir kt.)
 ├── mcp-server/          # MCP serveris (110 įrankių, 3 perdavimo būdai, 33 aprėptys)
 ├── config/              # Teikėjų / modelių registrai, antraščių konfigūracija, modelių alternatyvūs pavadinimai
-├── utils/               # TLS klientas, proxy užklausų vykdymas / dispečeris, tinklo pagalbiniai moduliai
+├── utils/               # TLS klientas, tarpinio serverio fetch / dispatcher, tinklo pagalbiniai moduliai
 ├── index.ts             # Darbo srities pradinis taškas
 ├── package.json         # Darbo srities manifestas
 ├── tsconfig.json        # Darbo srities TS konfigūracija
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| Kelias                      | Paskirtis                                                                 |
-| --------------------------- | ------------------------------------------------------------------------- |
-| `server.ts`                 | MCP serverio gyvavimo ciklas (stdio + HTTP perdavimo būdai)               |
-| `httpTransport.ts`          | HTTP Streamable + SSE perdavimo būdai (`/api/mcp/sse`, `/api/mcp/stream`) |
-| `audit.ts`                  | Audito įrašymas į `mcp_tool_audit` lentelę                                |
-| `scopeEnforcement.ts`       | Kiekvieno įrankio aprėpties tikrinimas                                    |
-| `runtimeHeartbeat.ts`       | Veikimo būklės signalas į `DATA_DIR/runtime/mcp-heartbeat.json`           |
-| `descriptionCompressor.ts`  | Įrankių aprašų metaduomenų glaudinimas siekiant taupyti kontekstą         |
-| `schemas/tools.ts`          | 36 bazinių įrankių apibrėžtys + aprėptys                                  |
-| `tools/advancedTools.ts`    | Išplėstinių įrankių realizacijos                                          |
-| `tools/memoryTools.ts`      | 3 atminties įrankiai (paieška / pridėjimas / išvalymas)                   |
-| `tools/skillTools.ts`       | 4 įgūdžių įrankiai (sąrašas / įjungimas / vykdymas / vykdymai)            |
-| `tools/compressionTools.ts` | 5 glaudinimo įrankiai                                                     |
-| `README.md`                 | Vidinis MCP serverio README (susietas su `docs/frameworks/MCP-SERVER.md`) |
+| Kelias                      | Paskirtis                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| `server.ts`                 | MCP serverio gyvavimo ciklas (stdio + HTTP perdavimo būdai)                                |
+| `httpTransport.ts`          | HTTP Streamable + SSE perdavimo būdai (`/api/mcp/sse`, `/api/mcp/stream`)                  |
+| `audit.ts`                  | Audito žurnalų įrašymas į lentelę `mcp_tool_audit`                                         |
+| `scopeEnforcement.ts`       | Kiekvieno įrankio aprėpties tikrinimas                                                     |
+| `runtimeHeartbeat.ts`       | Būklės periodinis signalas į `DATA_DIR/runtime/mcp-heartbeat.json`                         |
+| `descriptionCompressor.ts`  | Įrankių aprašų metaduomenų glaudinimas kontekstui taupyti                                  |
+| `schemas/tools.ts`          | 36 bazinių įrankių apibrėžtys + aprėptys                                                   |
+| `tools/advancedTools.ts`    | Išplėstinių įrankių realizacijos                                                           |
+| `tools/memoryTools.ts`      | 3 atminties įrankiai (paieška / pridėjimas / išvalymas)                                    |
+| `tools/skillTools.ts`       | 4 gebėjimų įrankiai (sąrašas / įjungimas / vykdymas / vykdymai)                            |
+| `tools/compressionTools.ts` | 5 glaudinimo įrankiai                                                                      |
+| `README.md`                 | Vidinis MCP serverio README (susietas kryžmine nuoroda iš `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

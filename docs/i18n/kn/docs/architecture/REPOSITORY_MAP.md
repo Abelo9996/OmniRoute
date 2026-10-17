@@ -255,24 +255,24 @@ src/
 
 ---
 
-## `open-sse/` — ಸ್ಟ್ರೀಮಿಂಗ್ ಎಂಜಿನ್ ಕಾರ್ಯಕ್ಷೇತ್ರ
+## `open-sse/` — ಸ್ಟ್ರೀಮಿಂಗ್ ಎಂಜಿನ್ ವರ್ಕ್ಸ್ಪೇಸ್
 
-ಪ್ರತ್ಯೇಕ npm ಕಾರ್ಯಕ್ಷೇತ್ರ (`@omniroute/open-sse`). ವಿನಂತಿ ಸಂಸ್ಕರಣೆ + ಪೂರೈಕೆದಾರ ಕಾರ್ಯಗತಗೊಳಿಸುವಿಕೆಯನ್ನು ನಿರ್ವಹಿಸುತ್ತದೆ.
+ಪ್ರತ್ಯೇಕ npm ವರ್ಕ್ಸ್ಪೇಸ್ (`@omniroute/open-sse`). ವಿನಂತಿ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸುವಿಕೆ + ಪೂರೈಕೆದಾರ ಕಾರ್ಯಗತಗೊಳಿಸುವಿಕೆಯನ್ನು ನಿರ್ವಹಿಸುತ್ತದೆ.
 
 ```
 open-sse/
 ├── handlers/            # 16 ಫೈಲ್ಗಳು (12 ಹ್ಯಾಂಡ್ಲರ್ಗಳು + 4 ಸಹಾಯಕಗಳು): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ಇತ್ಯಾದಿ.
-├── executors/           # 67 ಪೂರೈಕೆದಾರ-ನಿರ್ದಿಷ್ಟ ಎಕ್ಸಿಕ್ಯೂಟರ್ಗಳು (BaseExecutor ಅನ್ನು ವಿಸ್ತರಿಸುತ್ತವೆ)
+├── executors/           # 150 ಎಕ್ಸಿಕ್ಯೂಟರ್ ಮಾಡ್ಯೂಲ್ಗಳು (BaseExecutor ಅನ್ನು ವಿಸ್ತರಿಸುವ ಕ್ಲಾಸ್ಗಳು + ಪ್ರತಿ-ಪೂರೈಕೆದಾರ ಸಹಾಯಕಗಳು)
 ├── translator/          # ಸ್ವರೂಪ ಪರಿವರ್ತಕಗಳು (9 ವಿನಂತಿ, 9 ಪ್ರತಿಕ್ರಿಯೆ, 9 ಸಹಾಯಕಗಳು)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ ಸೇವಾ ಮಾಡ್ಯೂಲ್ಗಳು (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ಇತ್ಯಾದಿ.)
-├── mcp-server/          # MCP ಸರ್ವರ್ (110 ಪರಿಕರಗಳು, 3 ಟ್ರಾನ್ಸ್ಪೋರ್ಟ್ಗಳು, 33 ವ್ಯಾಪ್ತಿಗಳು)
+├── mcp-server/          # MCP ಸರ್ವರ್ (110 ಪರಿಕರಗಳು, 3 ಟ್ರಾನ್ಸ್ಪೋರ್ಟ್ಗಳು, 33 ಸ್ಕೋಪ್ಗಳು)
 ├── config/              # ಪೂರೈಕೆದಾರ/ಮಾದರಿ ರಿಜಿಸ್ಟ್ರಿಗಳು, ಹೆಡರ್ ಸಂರಚನೆ, ಮಾದರಿ ಅಲಿಯಾಸ್ಗಳು
 ├── utils/               # TLS ಕ್ಲೈಂಟ್, ಪ್ರಾಕ್ಸಿ fetch/dispatcher, ನೆಟ್ವರ್ಕ್ ಸಹಾಯಕಗಳು
-├── index.ts             # ಕಾರ್ಯಕ್ಷೇತ್ರದ ಪ್ರವೇಶ ಬಿಂದು
-├── package.json         # ಕಾರ್ಯಕ್ಷೇತ್ರದ ಮ್ಯಾನಿಫೆಸ್ಟ್
-├── tsconfig.json        # ಕಾರ್ಯಕ್ಷೇತ್ರದ TS ಸಂರಚನೆ
-└── types.d.ts           # ಕಾರ್ಯಕ್ಷೇತ್ರದ ಪ್ರಕಾರ ಘೋಷಣೆಗಳು
+├── index.ts             # ವರ್ಕ್ಸ್ಪೇಸ್ ಪ್ರವೇಶ ಬಿಂದು
+├── package.json         # ವರ್ಕ್ಸ್ಪೇಸ್ ಮ್ಯಾನಿಫೆಸ್ಟ್
+├── tsconfig.json        # ವರ್ಕ್ಸ್ಪೇಸ್ TS ಸಂರಚನೆ
+└── types.d.ts           # ವರ್ಕ್ಸ್ಪೇಸ್ ಪ್ರಕಾರ ಘೋಷಣೆಗಳು
 ```
 
 ### `open-sse/mcp-server/`
@@ -280,16 +280,16 @@ open-sse/
 | ಪಥ                          | ಉದ್ದೇಶ                                                                               |
 | --------------------------- | ------------------------------------------------------------------------------------ |
 | `server.ts`                 | MCP ಸರ್ವರ್ ಜೀವನಚಕ್ರ (stdio + HTTP ಟ್ರಾನ್ಸ್ಪೋರ್ಟ್ಗಳು)                                 |
-| `httpTransport.ts`          | HTTP Streamable + SSE ಟ್ರಾನ್ಸ್ಪೋರ್ಟ್ಗಳು (`/api/mcp/sse`, `/api/mcp/stream`)          |
-| `audit.ts`                  | `mcp_tool_audit` ಕೋಷ್ಟಕಕ್ಕೆ ಆಡಿಟ್ ಲಾಗಿಂಗ್                                            |
-| `scopeEnforcement.ts`       | ಪ್ರತಿ-ಪರಿಕರ ವ್ಯಾಪ್ತಿ ಮೌಲ್ಯೀಕರಣ                                                       |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` ಗೆ ಆರೋಗ್ಯ ಹಾರ್ಟ್ಬೀಟ್                           |
-| `descriptionCompressor.ts`  | ಸಂದರ್ಭವನ್ನು ಉಳಿಸಲು ಪರಿಕರ ವಿವರಣೆಯ ಮೆಟಾಡೇಟಾವನ್ನು ಸಂಕುಚಿತಗೊಳಿಸುತ್ತದೆ                    |
-| `schemas/tools.ts`          | 36 ಮೂಲ ಪರಿಕರ ವ್ಯಾಖ್ಯಾನಗಳು + ವ್ಯಾಪ್ತಿಗಳು                                              |
+| `httpTransport.ts`          | HTTP ಸ್ಟ್ರೀಮಬಲ್ + SSE ಟ್ರಾನ್ಸ್ಪೋರ್ಟ್ಗಳು (`/api/mcp/sse`, `/api/mcp/stream`)          |
+| `audit.ts`                  | `mcp_tool_audit` ಟೇಬಲ್ಗೆ ಆಡಿಟ್ ಲಾಗಿಂಗ್                                               |
+| `scopeEnforcement.ts`       | ಪ್ರತಿ-ಪರಿಕರ ಸ್ಕೋಪ್ ಮೌಲ್ಯೀಕರಣ                                                         |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` ಗೆ ಆರೋಗ್ಯ ಹೃದಯಬಡಿತ                             |
+| `descriptionCompressor.ts`  | ಸಂದರ್ಭವನ್ನು ಉಳಿಸಲು ಪರಿಕರ ವಿವರಣೆ ಮೆಟಾಡೇಟಾವನ್ನು ಸಂಕುಚಿತಗೊಳಿಸುತ್ತದೆ                     |
+| `schemas/tools.ts`          | 36 ಮೂಲ ಪರಿಕರ ವ್ಯಾಖ್ಯಾನಗಳು + ಸ್ಕೋಪ್ಗಳು                                                |
 | `tools/advancedTools.ts`    | ಸುಧಾರಿತ ಪರಿಕರ ಅನುಷ್ಠಾನಗಳು                                                            |
-| `tools/memoryTools.ts`      | 3 ಮೆಮೊರಿ ಪರಿಕರಗಳು (ಹುಡುಕಾಟ/ಸೇರಿಸುವಿಕೆ/ತೆರವುಗೊಳಿಸುವಿಕೆ)                               |
-| `tools/skillTools.ts`       | 4 ಕೌಶಲ್ಯ ಪರಿಕರಗಳು (ಪಟ್ಟಿ/ಸಕ್ರಿಯಗೊಳಿಸುವಿಕೆ/ಕಾರ್ಯಗತಗೊಳಿಸುವಿಕೆ/ಕಾರ್ಯಗತಗೊಳಿಸುವಿಕೆಗಳು)    |
-| `tools/compressionTools.ts` | 5 ಸಂಕುಚನ ಪರಿಕರಗಳು                                                                    |
+| `tools/memoryTools.ts`      | 3 ಮೆಮೊರಿ ಪರಿಕರಗಳು (ಹುಡುಕು/ಸೇರಿಸು/ತೆರವುಗೊಳಿಸು)                                        |
+| `tools/skillTools.ts`       | 4 ಕೌಶಲ್ಯ ಪರಿಕರಗಳು (ಪಟ್ಟಿ/ಸಕ್ರಿಯಗೊಳಿಸು/ಕಾರ್ಯಗತಗೊಳಿಸು/ಕಾರ್ಯಗತಗೊಳಿಸುವಿಕೆಗಳು)            |
+| `tools/compressionTools.ts` | 5 ಸಂಕೋಚನ ಪರಿಕರಗಳು                                                                    |
 | `README.md`                 | ಆಂತರಿಕ MCP ಸರ್ವರ್ README (`docs/frameworks/MCP-SERVER.md` ನಿಂದ ಅಡ್ಡ-ಲಿಂಕ್ ಮಾಡಲಾಗಿದೆ) |
 
 ---

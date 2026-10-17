@@ -261,36 +261,36 @@ src/
 
 ```
 open-sse/
-├── handlers/            # 16ファイル（12個のハンドラー + 4個のヘルパー）：chatCore、responsesHandler、embeddings、audio、image、video、music、rerank、moderations、searchなど
-├── executors/           # プロバイダー固有の executor 67個（BaseExecutorを拡張）
+├── handlers/            # 16ファイル（12個のハンドラー + 4個のヘルパー）：chatCore、responsesHandler、embeddings、audio、image、video、music、rerank、moderations、search など
+├── executors/           # 150個の executor モジュール（BaseExecutor を継承するクラス + プロバイダーごとのヘルパー）
 ├── translator/          # フォーマットコンバーター（リクエスト用9個、レスポンス用9個、ヘルパー9個）
 ├── transformer/         # Responses API ↔ Chat Completions（TransformStream）
-├── services/            # 約80以上のサービスモジュール（combo、accountFallback、autoCombo、reasoningCache、claude code/chatgpt stealth、modelDeprecation、taskAwareRouter、workflowFSMなど）
-├── mcp-server/          # MCPサーバー（110個のツール、3個のトランスポート、33個のスコープ）
+├── services/            # 約80個以上のサービスモジュール（combo、accountFallback、autoCombo、reasoningCache、claude code/chatgpt stealth、modelDeprecation、taskAwareRouter、workflowFSM など）
+├── mcp-server/          # MCP サーバー（110個のツール、3種類のトランスポート、33個のスコープ）
 ├── config/              # プロバイダー／モデルレジストリ、ヘッダー設定、モデルエイリアス
-├── utils/               # TLSクライアント、プロキシfetch／dispatcher、ネットワークヘルパー
-├── index.ts             # ワークスペースのエントリーポイント
+├── utils/               # TLS クライアント、プロキシ fetch／dispatcher、ネットワークヘルパー
+├── index.ts             # ワークスペースのエントリ
 ├── package.json         # ワークスペースマニフェスト
-├── tsconfig.json        # ワークスペースのTS設定
+├── tsconfig.json        # ワークスペースの TS 設定
 └── types.d.ts           # ワークスペースの型宣言
 ```
 
 ### `open-sse/mcp-server/`
 
-| パス                        | 目的                                                                     |
-| --------------------------- | ------------------------------------------------------------------------ |
-| `server.ts`                 | MCPサーバーのライフサイクル（stdio + HTTPトランスポート）                |
-| `httpTransport.ts`          | HTTP Streamable + SSEトランスポート（`/api/mcp/sse`、`/api/mcp/stream`） |
-| `audit.ts`                  | `mcp_tool_audit`テーブルへの監査ログ記録                                 |
-| `scopeEnforcement.ts`       | ツールごとのスコープ検証                                                 |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`へのヘルスハートビート              |
-| `descriptionCompressor.ts`  | コンテキストを節約するためにツール説明メタデータを圧縮                   |
-| `schemas/tools.ts`          | 36個の基本ツール定義 + スコープ                                          |
-| `tools/advancedTools.ts`    | 高度なツールの実装                                                       |
-| `tools/memoryTools.ts`      | 3個のメモリツール（検索／追加／クリア）                                  |
-| `tools/skillTools.ts`       | 4個のスキルツール（一覧／有効化／実行／実行履歴）                        |
-| `tools/compressionTools.ts` | 5個の圧縮ツール                                                          |
-| `README.md`                 | 内部MCPサーバーREADME（`docs/frameworks/MCP-SERVER.md`から相互リンク）   |
+| パス                        | 目的                                                                        |
+| --------------------------- | --------------------------------------------------------------------------- |
+| `server.ts`                 | MCP サーバーのライフサイクル（stdio + HTTP トランスポート）                 |
+| `httpTransport.ts`          | HTTP Streamable + SSE トランスポート（`/api/mcp/sse`、`/api/mcp/stream`）   |
+| `audit.ts`                  | `mcp_tool_audit` テーブルへの監査ログ記録                                   |
+| `scopeEnforcement.ts`       | ツールごとのスコープ検証                                                    |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` へのヘルスハートビート                |
+| `descriptionCompressor.ts`  | コンテキストを節約するためのツール説明メタデータ圧縮                        |
+| `schemas/tools.ts`          | 36個の基本ツール定義 + スコープ                                             |
+| `tools/advancedTools.ts`    | 高度なツールの実装                                                          |
+| `tools/memoryTools.ts`      | 3個のメモリツール（検索／追加／クリア）                                     |
+| `tools/skillTools.ts`       | 4個のスキルツール（一覧／有効化／実行／実行履歴）                           |
+| `tools/compressionTools.ts` | 5個の圧縮ツール                                                             |
+| `README.md`                 | MCP サーバーの内部 README（`docs/frameworks/MCP-SERVER.md` から相互リンク） |
 
 ---
 

@@ -262,13 +262,13 @@ src/
 ```
 open-sse/
 ├── handlers/            # 16 ਫ਼ਾਈਲਾਂ (12 ਹੈਂਡਲਰ + 4 ਸਹਾਇਕ): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ਆਦਿ।
-├── executors/           # 67 ਪ੍ਰਦਾਤਾ-ਵਿਸ਼ੇਸ਼ ਐਗਜ਼ੀਕਿਊਟਰ (BaseExecutor ਨੂੰ ਵਿਸਤਾਰਦੇ ਹਨ)
+├── executors/           # 150 ਐਗਜ਼ੀਕਿਊਟਰ ਮੋਡੀਊਲ (BaseExecutor ਨੂੰ ਵਿਸਤਾਰ ਕਰਨ ਵਾਲੀਆਂ ਕਲਾਸਾਂ + ਪ੍ਰਤੀ-ਪ੍ਰਦਾਤਾ ਸਹਾਇਕ)
 ├── translator/          # ਫਾਰਮੈਟ ਕਨਵਰਟਰ (9 ਬੇਨਤੀ, 9 ਜਵਾਬ, 9 ਸਹਾਇਕ)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ ਸੇਵਾ ਮੋਡੀਊਲ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ਆਦਿ।)
+├── services/            # ~80+ ਸਰਵਿਸ ਮੋਡੀਊਲ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ਆਦਿ)
 ├── mcp-server/          # MCP ਸਰਵਰ (110 ਟੂਲ, 3 ਟ੍ਰਾਂਸਪੋਰਟ, 33 ਸਕੋਪ)
 ├── config/              # ਪ੍ਰਦਾਤਾ/ਮਾਡਲ ਰਜਿਸਟਰੀਆਂ, ਹੈਡਰ ਸੰਰਚਨਾ, ਮਾਡਲ ਉਪਨਾਮ
-├── utils/               # TLS ਕਲਾਇੰਟ, ਪ੍ਰੌਕਸੀ fetch/dispatcher, ਨੈੱਟਵਰਕ ਸਹਾਇਕ
+├── utils/               # TLS ਕਲਾਇੰਟ, ਪ੍ਰਾਕਸੀ fetch/dispatcher, ਨੈੱਟਵਰਕ ਸਹਾਇਕ
 ├── index.ts             # ਵਰਕਸਪੇਸ ਐਂਟਰੀ
 ├── package.json         # ਵਰਕਸਪੇਸ ਮੈਨੀਫੈਸਟ
 ├── tsconfig.json        # ਵਰਕਸਪੇਸ TS ਸੰਰਚਨਾ
@@ -277,20 +277,20 @@ open-sse/
 
 ### `open-sse/mcp-server/`
 
-| ਪਾਥ                         | ਉਦੇਸ਼                                                                         |
-| --------------------------- | ----------------------------------------------------------------------------- |
-| `server.ts`                 | MCP ਸਰਵਰ ਜੀਵਨ-ਚੱਕਰ (stdio + HTTP ਟ੍ਰਾਂਸਪੋਰਟ)                                  |
-| `httpTransport.ts`          | HTTP Streamable + SSE ਟ੍ਰਾਂਸਪੋਰਟ (`/api/mcp/sse`, `/api/mcp/stream`)          |
-| `audit.ts`                  | `mcp_tool_audit` ਟੇਬਲ ਵਿੱਚ ਆਡਿਟ ਲੌਗਿੰਗ                                        |
-| `scopeEnforcement.ts`       | ਪ੍ਰਤੀ-ਟੂਲ ਸਕੋਪ ਪ੍ਰਮਾਣੀਕਰਨ                                                     |
-| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` ਲਈ ਸਿਹਤ ਹਾਰਟਬੀਟ                         |
-| `descriptionCompressor.ts`  | ਸੰਦਰਭ ਬਚਾਉਣ ਲਈ ਟੂਲ ਵਰਣਨ ਮੈਟਾਡਾਟਾ ਸੰਕੁਚਿਤ ਕਰਦਾ ਹੈ                              |
-| `schemas/tools.ts`          | 36 ਬੁਨਿਆਦੀ ਟੂਲ ਪਰਿਭਾਸ਼ਾਵਾਂ + ਸਕੋਪ                                             |
-| `tools/advancedTools.ts`    | ਉੱਨਤ ਟੂਲ ਲਾਗੂਕਰਨ                                                              |
-| `tools/memoryTools.ts`      | 3 ਮੈਮੋਰੀ ਟੂਲ (ਖੋਜ/ਜੋੜਨਾ/ਸਾਫ਼ ਕਰਨਾ)                                            |
-| `tools/skillTools.ts`       | 4 ਹੁਨਰ ਟੂਲ (ਸੂਚੀ/ਸਮਰੱਥ/ਚਲਾਉਣਾ/ਐਗਜ਼ੀਕਿਊਸ਼ਨ)                                    |
-| `tools/compressionTools.ts` | 5 ਸੰਕੁਚਨ ਟੂਲ                                                                  |
-| `README.md`                 | ਅੰਦਰੂਨੀ MCP ਸਰਵਰ README (`docs/frameworks/MCP-SERVER.md` ਤੋਂ ਕ੍ਰਾਸ-ਲਿੰਕ ਕੀਤਾ) |
+| ਪਾਥ                         | ਉਦੇਸ਼                                                                            |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP ਸਰਵਰ ਜੀਵਨ-ਚੱਕਰ (stdio + HTTP ਟ੍ਰਾਂਸਪੋਰਟ)                                     |
+| `httpTransport.ts`          | HTTP Streamable + SSE ਟ੍ਰਾਂਸਪੋਰਟ (`/api/mcp/sse`, `/api/mcp/stream`)             |
+| `audit.ts`                  | `mcp_tool_audit` ਟੇਬਲ ਵਿੱਚ ਆਡਿਟ ਲੌਗਿੰਗ                                           |
+| `scopeEnforcement.ts`       | ਪ੍ਰਤੀ-ਟੂਲ ਸਕੋਪ ਪ੍ਰਮਾਣੀਕਰਨ                                                        |
+| `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json` ਵਿੱਚ ਸਿਹਤ ਹਾਰਟਬੀਟ                          |
+| `descriptionCompressor.ts`  | ਸੰਦਰਭ ਬਚਾਉਣ ਲਈ ਟੂਲ ਵੇਰਵਾ ਮੈਟਾਡੇਟਾ ਸੰਕੁਚਿਤ ਕਰਦਾ ਹੈ                                |
+| `schemas/tools.ts`          | 36 ਮੂਲ ਟੂਲ ਪਰਿਭਾਸ਼ਾਵਾਂ + ਸਕੋਪ                                                    |
+| `tools/advancedTools.ts`    | ਉੱਨਤ ਟੂਲ ਲਾਗੂਕਰਨ                                                                 |
+| `tools/memoryTools.ts`      | 3 ਮੈਮੋਰੀ ਟੂਲ (ਖੋਜੋ/ਜੋੜੋ/ਸਾਫ਼ ਕਰੋ)                                                |
+| `tools/skillTools.ts`       | 4 ਹੁਨਰ ਟੂਲ (ਸੂਚੀ/ਸਮਰੱਥ ਕਰੋ/ਚਲਾਓ/ਐਗਜ਼ੀਕਿਊਸ਼ਨ)                                     |
+| `tools/compressionTools.ts` | 5 ਸੰਕੁਚਨ ਟੂਲ                                                                     |
+| `README.md`                 | ਅੰਦਰੂਨੀ MCP ਸਰਵਰ README (`docs/frameworks/MCP-SERVER.md` ਤੋਂ ਕਰਾਸ-ਲਿੰਕ ਕੀਤਾ ਗਿਆ) |
 
 ---
 

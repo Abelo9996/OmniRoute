@@ -261,11 +261,11 @@ Ruang kerja npm berasingan (`@omniroute/open-sse`). Mengendalikan pemprosesan pe
 
 ```
 open-sse/
-├── handlers/            # 16 fail (12 pengendali + 4 pembantu): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, dsb.
-├── executors/           # 67 pelaksana khusus penyedia (melanjutkan BaseExecutor)
+├── handlers/            # 16 fail (12 pengendali + 4 pembantu): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, dll.
+├── executors/           # 150 modul pelaksana (kelas yang melanjutkan BaseExecutor + pembantu khusus penyedia)
 ├── translator/          # Penukar format (9 permintaan, 9 respons, 9 pembantu)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ modul perkhidmatan (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, dsb.)
+├── services/            # ~80+ modul perkhidmatan (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, dll.)
 ├── mcp-server/          # Pelayan MCP (110 alat, 3 pengangkutan, 33 skop)
 ├── config/              # Daftar penyedia/model, konfigurasi pengepala, alias model
 ├── utils/               # Klien TLS, pengambilan/penghantar proksi, pembantu rangkaian
@@ -283,9 +283,9 @@ open-sse/
 | `httpTransport.ts`          | Pengangkutan HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)              |
 | `audit.ts`                  | Pengelogan audit ke jadual `mcp_tool_audit`                                         |
 | `scopeEnforcement.ts`       | Pengesahan skop bagi setiap alat                                                    |
-| `runtimeHeartbeat.ts`       | Denyut nadi kesihatan ke `DATA_DIR/runtime/mcp-heartbeat.json`                      |
+| `runtimeHeartbeat.ts`       | Denyutan kesihatan ke `DATA_DIR/runtime/mcp-heartbeat.json`                         |
 | `descriptionCompressor.ts`  | Memampatkan metadata perihalan alat untuk menjimatkan konteks                       |
-| `schemas/tools.ts`          | 36 takrif alat asas + skop                                                          |
+| `schemas/tools.ts`          | 36 definisi alat asas + skop                                                        |
 | `tools/advancedTools.ts`    | Pelaksanaan alat lanjutan                                                           |
 | `tools/memoryTools.ts`      | 3 alat memori (carian/tambah/kosongkan)                                             |
 | `tools/skillTools.ts`       | 4 alat kemahiran (senarai/dayakan/laksanakan/pelaksanaan)                           |

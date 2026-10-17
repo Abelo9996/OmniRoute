@@ -257,22 +257,22 @@ src/
 
 ## `open-sse/` — ଷ୍ଟ୍ରିମିଂ ଇଞ୍ଜିନ୍ ୱର୍କସ୍ପେସ୍
 
-ପୃଥକ npm ୱର୍କସ୍ପେସ୍ (`@omniroute/open-sse`)। ଅନୁରୋଧ ପ୍ରକ୍ରିୟାକରଣ + ପ୍ରଦାତା ନିଷ୍ପାଦନ ପରିଚାଳନା କରେ।
+ପୃଥକ npm ୱର୍କସ୍ପେସ୍ (`@omniroute/open-sse`)। ଅନୁରୋଧ ପ୍ରକ୍ରିୟାକରଣ + ପ୍ରଦାନକାରୀ ନିଷ୍ପାଦନ ପରିଚାଳନା କରେ।
 
 ```
 open-sse/
-├── handlers/            # 16ଟି ଫାଇଲ୍ (12ଟି ହ୍ୟାଣ୍ଡଲର୍ + 4ଟି ସହାୟକ): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ଇତ୍ୟାଦି।
-├── executors/           # 67ଟି ପ୍ରଦାତା-ନିର୍ଦ୍ଦିଷ୍ଟ ଏକ୍ସିକ୍ୟୁଟର୍ (BaseExecutorକୁ ବିସ୍ତାର କରେ)
-├── translator/          # ଫର୍ମାଟ୍ ରୂପାନ୍ତରକାରୀ (9ଟି ଅନୁରୋଧ, 9ଟି ପ୍ରତିକ୍ରିୟା, 9ଟି ସହାୟକ)
+├── handlers/            # 16ଟି ଫାଇଲ୍ (12ଟି ହ୍ୟାଣ୍ଡଲର୍ + 4ଟି ହେଲ୍ପର୍): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, ଇତ୍ୟାଦି।
+├── executors/           # 150ଟି ଏକ୍ସିକ୍ୟୁଟର୍ ମଡ୍ୟୁଲ୍ (BaseExecutorକୁ ବିସ୍ତାର କରୁଥିବା କ୍ଲାସ୍ + ପ୍ରତି-ପ୍ରଦାନକାରୀ ହେଲ୍ପର୍)
+├── translator/          # ଫର୍ମାଟ୍ କନଭର୍ଟର୍ (9ଟି ଅନୁରୋଧ, 9ଟି ପ୍ରତିକ୍ରିୟା, 9ଟି ହେଲ୍ପର୍)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ଟି ସେବା ମଡ୍ୟୁଲ୍ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ଇତ୍ୟାଦି)
+├── services/            # ~80+ଟି ସେବା ମଡ୍ୟୁଲ୍ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, ଇତ୍ୟାଦି।)
 ├── mcp-server/          # MCP ସର୍ଭର୍ (110ଟି ଟୁଲ୍, 3ଟି ଟ୍ରାନ୍ସପୋର୍ଟ, 33ଟି ସ୍କୋପ୍)
-├── config/              # ପ୍ରଦାତା/ମଡେଲ୍ ରେଜିଷ୍ଟ୍ରି, ହେଡର୍ କନଫିଗ୍, ମଡେଲ୍ ଉପନାମ
-├── utils/               # TLS କ୍ଲାଏଣ୍ଟ, ପ୍ରକ୍ସି ଫେଚ୍/ଡିସ୍ପାଚର୍, ନେଟୱର୍କ ସହାୟକ
+├── config/              # ପ୍ରଦାନକାରୀ/ମଡେଲ୍ ରେଜିଷ୍ଟ୍ରି, ହେଡର୍ କନଫିଗ୍, ମଡେଲ୍ ଉପନାମ
+├── utils/               # TLS କ୍ଲାଏଣ୍ଟ୍, ପ୍ରକ୍ସି ଫେଚ୍/ଡିସ୍ପାଚର୍, ନେଟୱର୍କ ହେଲ୍ପର୍
 ├── index.ts             # ୱର୍କସ୍ପେସ୍ ପ୍ରବେଶ ବିନ୍ଦୁ
-├── package.json         # ୱର୍କସ୍ପେସ୍ ମାନିଫେଷ୍ଟ
+├── package.json         # ୱର୍କସ୍ପେସ୍ ମାନିଫେଷ୍ଟ୍
 ├── tsconfig.json        # ୱର୍କସ୍ପେସ୍ TS କନଫିଗ୍
-└── types.d.ts           # ୱର୍କସ୍ପେସ୍ ଟାଇପ୍ ଘୋଷଣା
+└── types.d.ts           # ୱର୍କସ୍ପେସ୍ ପ୍ରକାର ଘୋଷଣା
 ```
 
 ### `open-sse/mcp-server/`
@@ -280,16 +280,16 @@ open-sse/
 | ପଥ                          | ଉଦ୍ଦେଶ୍ୟ                                                                               |
 | --------------------------- | -------------------------------------------------------------------------------------- |
 | `server.ts`                 | MCP ସର୍ଭର୍ ଜୀବନଚକ୍ର (stdio + HTTP ଟ୍ରାନ୍ସପୋର୍ଟ)                                        |
-| `httpTransport.ts`          | HTTP ଷ୍ଟ୍ରିମଯୋଗ୍ୟ + SSE ଟ୍ରାନ୍ସପୋର୍ଟ (`/api/mcp/sse`, `/api/mcp/stream`)               |
+| `httpTransport.ts`          | HTTP ଷ୍ଟ୍ରିମେବଲ୍ + SSE ଟ୍ରାନ୍ସପୋର୍ଟ (`/api/mcp/sse`, `/api/mcp/stream`)                |
 | `audit.ts`                  | `mcp_tool_audit` ଟେବୁଲ୍ରେ ଅଡିଟ୍ ଲଗିଂ                                                   |
 | `scopeEnforcement.ts`       | ପ୍ରତି-ଟୁଲ୍ ସ୍କୋପ୍ ବୈଧତା ଯାଞ୍ଚ                                                          |
 | `runtimeHeartbeat.ts`       | `DATA_DIR/runtime/mcp-heartbeat.json`କୁ ସ୍ୱାସ୍ଥ୍ୟ ହାର୍ଟବିଟ୍                            |
-| `descriptionCompressor.ts`  | କଣ୍ଟେକ୍ସ୍ଟ ସଞ୍ଚୟ କରିବା ପାଇଁ ଟୁଲ୍ ବର୍ଣ୍ଣନା ମେଟାଡାଟା ସଙ୍କୁଚିତ କରେ                        |
+| `descriptionCompressor.ts`  | କଣ୍ଟେକ୍ସ୍ଟ ସଞ୍ଚୟ ପାଇଁ ଟୁଲ୍ ବର୍ଣ୍ଣନା ମେଟାଡାଟାକୁ ସଂକୁଚିତ କରେ                             |
 | `schemas/tools.ts`          | 36ଟି ମୂଳ ଟୁଲ୍ ସଂଜ୍ଞା + ସ୍କୋପ୍                                                          |
 | `tools/advancedTools.ts`    | ଉନ୍ନତ ଟୁଲ୍ କାର୍ଯ୍ୟାନ୍ୱୟନ                                                               |
-| `tools/memoryTools.ts`      | 3ଟି ମେମୋରି ଟୁଲ୍ (ସନ୍ଧାନ/ଯୋଗ/ସଫା)                                                       |
-| `tools/skillTools.ts`       | 4ଟି ସ୍କିଲ୍ ଟୁଲ୍ (ତାଲିକା/ସକ୍ଷମ/ନିଷ୍ପାଦନ/ନିଷ୍ପାଦନଗୁଡ଼ିକ)                                 |
-| `tools/compressionTools.ts` | 5ଟି ସଙ୍କୋଚନ ଟୁଲ୍                                                                       |
+| `tools/memoryTools.ts`      | 3ଟି ମେମୋରି ଟୁଲ୍ (ସନ୍ଧାନ/ଯୋଡ଼ିବା/ସଫା କରିବା)                                             |
+| `tools/skillTools.ts`       | 4ଟି ସ୍କିଲ୍ ଟୁଲ୍ (ତାଲିକା/ସକ୍ଷମ କରିବା/ନିଷ୍ପାଦନ/ନିଷ୍ପାଦନଗୁଡ଼ିକ)                           |
+| `tools/compressionTools.ts` | 5ଟି ସଂକୋଚନ ଟୁଲ୍                                                                        |
 | `README.md`                 | ଆଭ୍ୟନ୍ତରୀଣ MCP ସର୍ଭର୍ README (`docs/frameworks/MCP-SERVER.md`ରୁ କ୍ରସ୍-ଲିଙ୍କ୍ କରାଯାଇଛି) |
 
 ---

@@ -257,40 +257,40 @@ src/
 
 ## `open-sse/` — Spás Oibre an Innill Sruthaithe
 
-Spás oibre npm ar leith (`@omniroute/open-sse`). Láimhseálann sé próiseáil iarratas agus rith soláthraithe.
+Spás oibre npm ar leith (`@omniroute/open-sse`). Láimhseálann sé próiseáil iarratas + forghníomhú soláthraithe.
 
 ```
 open-sse/
 ├── handlers/            # 16 chomhad (12 láimhseálaí + 4 chúntóir): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search, etc.
-├── executors/           # 67 riteoir a bhaineann go sonrach le soláthraithe (leathnaíonn siad BaseExecutor)
+├── executors/           # 150 modúl forghníomhaithe (aicmí a leathnaíonn BaseExecutor + cúntóirí de réir soláthraí)
 ├── translator/          # Tiontairí formáide (9 n-iarratas, 9 bhfreagra, 9 gcúntóir)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ modúl seirbhíse (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM, etc.)
-├── mcp-server/          # Freastalaí MCP (110 uirlis, 3 chineál iompair, 33 scóip)
+├── mcp-server/          # Freastalaí MCP (110 uirlis, 3 iompar, 33 scóip)
 ├── config/              # Clárlanna soláthraithe/samhlacha, cumraíocht ceanntásca, ailiasanna samhlacha
-├── utils/               # Cliant TLS, fetch/dispatcher seachfhreastalaí, cúntóirí líonra
+├── utils/               # Cliant TLS, aisghabháil/seoltóir seachfhreastalaí, cúntóirí líonra
 ├── index.ts             # Pointe iontrála an spáis oibre
-├── package.json         # Lastliosta an spáis oibre
+├── package.json         # Forléargas an spáis oibre
 ├── tsconfig.json        # Cumraíocht TS an spáis oibre
 └── types.d.ts           # Dearbhuithe cineáil an spáis oibre
 ```
 
 ### `open-sse/mcp-server/`
 
-| Conair                      | Cuspóir                                                                              |
-| --------------------------- | ------------------------------------------------------------------------------------ |
-| `server.ts`                 | Saolré an fhreastalaí MCP (cineálacha iompair stdio + HTTP)                          |
-| `httpTransport.ts`          | Cineálacha iompair HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)         |
-| `audit.ts`                  | Logáil iniúchta sa tábla `mcp_tool_audit`                                            |
-| `scopeEnforcement.ts`       | Bailíochtú scóipe de réir uirlise                                                    |
-| `runtimeHeartbeat.ts`       | Cuisle sláinte chuig `DATA_DIR/runtime/mcp-heartbeat.json`                           |
-| `descriptionCompressor.ts`  | Comhbhrú meiteashonraí tuairiscí uirlisí chun comhthéacs a shábháil                  |
-| `schemas/tools.ts`          | 36 sainmhíniú bonnuirlise + scóip                                                    |
-| `tools/advancedTools.ts`    | Cur chun feidhme arduirlisí                                                          |
-| `tools/memoryTools.ts`      | 3 uirlis chuimhne (cuardach/cur leis/glanadh)                                        |
-| `tools/skillTools.ts`       | 4 uirlis scile (liostú/cumasú/rith/riteanna)                                         |
-| `tools/compressionTools.ts` | 5 uirlis chomhbhrúite                                                                |
-| `README.md`                 | README inmheánach an fhreastalaí MCP (trasnasctha ó `docs/frameworks/MCP-SERVER.md`) |
+| Conair                      | Cuspóir                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| `server.ts`                 | Saolré fhreastalaí MCP (iompair stdio + HTTP)                                     |
+| `httpTransport.ts`          | Iompair HTTP Streamable + SSE (`/api/mcp/sse`, `/api/mcp/stream`)                 |
+| `audit.ts`                  | Logáil iniúchta chuig an tábla `mcp_tool_audit`                                   |
+| `scopeEnforcement.ts`       | Bailíochtú scóipe de réir uirlise                                                 |
+| `runtimeHeartbeat.ts`       | Cuisle sláinte chuig `DATA_DIR/runtime/mcp-heartbeat.json`                        |
+| `descriptionCompressor.ts`  | Comhbhrú meiteashonraí thuairiscí uirlisí chun comhthéacs a shábháil              |
+| `schemas/tools.ts`          | 36 sainmhíniú bonnuirlise + scóip                                                 |
+| `tools/advancedTools.ts`    | Feidhmiúcháin arduirlisí                                                          |
+| `tools/memoryTools.ts`      | 3 uirlis chuimhne (cuardach/cur leis/glanadh)                                     |
+| `tools/skillTools.ts`       | 4 uirlis scile (liostú/cumasú/forghníomhú/forghníomhuithe)                        |
+| `tools/compressionTools.ts` | 5 uirlis chomhbhrúite                                                             |
+| `README.md`                 | README inmheánach fhreastalaí MCP (trasnasctha ó `docs/frameworks/MCP-SERVER.md`) |
 
 ---
 

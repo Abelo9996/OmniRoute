@@ -262,13 +262,13 @@ src/
 ```
 open-sse/
 ├── handlers/            # 16 个文件（12 个处理器 + 4 个辅助模块）：chatCore、responsesHandler、embeddings、audio、image、video、music、rerank、moderations、search 等
-├── executors/           # 67 个提供者专用执行器（继承 BaseExecutor）
+├── executors/           # 150 个执行器模块（扩展 BaseExecutor 的类 + 各提供者的辅助模块）
 ├── translator/          # 格式转换器（9 个请求转换器、9 个响应转换器、9 个辅助模块）
 ├── transformer/         # Responses API ↔ Chat Completions（TransformStream）
 ├── services/            # 约 80+ 个服务模块（combo、accountFallback、autoCombo、reasoningCache、claude code/chatgpt stealth、modelDeprecation、taskAwareRouter、workflowFSM 等）
 ├── mcp-server/          # MCP 服务器（110 个工具、3 种传输方式、33 个作用域）
 ├── config/              # 提供者/模型注册表、请求头配置、模型别名
-├── utils/               # TLS 客户端、代理 fetch/dispatcher、网络辅助工具
+├── utils/               # TLS 客户端、代理 fetch/dispatcher、网络辅助模块
 ├── index.ts             # 工作区入口
 ├── package.json         # 工作区清单
 ├── tsconfig.json        # 工作区 TS 配置
@@ -283,16 +283,14 @@ open-sse/
 | `httpTransport.ts`          | HTTP Streamable + SSE 传输（`/api/mcp/sse`、`/api/mcp/stream`）       |
 | `audit.ts`                  | 将审计日志记录到 `mcp_tool_audit` 表                                  |
 | `scopeEnforcement.ts`       | 按工具进行作用域验证                                                  |
-| `runtimeHeartbeat.ts`       | 将健康状态心跳写入 `DATA_DIR/runtime/mcp-heartbeat.json`              |
+| `runtimeHeartbeat.ts`       | 将健康心跳写入 `DATA_DIR/runtime/mcp-heartbeat.json`                  |
 | `descriptionCompressor.ts`  | 压缩工具描述元数据以节省上下文                                        |
-| `schemas/tools.ts`          | 36 个基础工具定义及其作用域                                           |
+| `schemas/tools.ts`          | 36 个基础工具定义 + 作用域                                            |
 | `tools/advancedTools.ts`    | 高级工具实现                                                          |
 | `tools/memoryTools.ts`      | 3 个记忆工具（搜索/添加/清除）                                        |
-| `tools/skillTools.ts`       | 4 个技能工具（列出/启用/执行/执行记录）                               |
+| `tools/skillTools.ts`       | 4 个技能工具（列表/启用/执行/执行记录）                               |
 | `tools/compressionTools.ts` | 5 个压缩工具                                                          |
 | `README.md`                 | 内部 MCP 服务器 README（与 `docs/frameworks/MCP-SERVER.md` 交叉链接） |
-
----
 
 ## `electron/` — 桌面封装程序
 

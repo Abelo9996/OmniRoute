@@ -257,18 +257,18 @@ src/
 
 ## `open-sse/` — voogedastusmootori tööruum
 
-Eraldi npm-i tööruum (`@omniroute/open-sse`). Töötleb päringuid ja käivitab teenusepakkujaid.
+Eraldiseisev npm-i tööruum (`@omniroute/open-sse`). Tegeleb päringute töötlemise ja pakkujapoolse täitmisega.
 
 ```
 open-sse/
 ├── handlers/            # 16 faili (12 töötlejat + 4 abimoodulit): chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search jne.
-├── executors/           # 67 teenusepakkuja-põhist täiturit (laiendavad BaseExecutorit)
+├── executors/           # 150 täitmismoodulit (klassid, mis laiendavad klassi BaseExecutor, ja pakkujapõhised abimoodulid)
 ├── translator/          # Vorminguteisendajad (9 päringu-, 9 vastuse- ja 9 abimoodulit)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
-├── services/            # ~80+ teenusemoodulit (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM jne)
-├── mcp-server/          # MCP-server (110 tööriista, 3 transporti, 33 ulatust)
-├── config/              # Teenusepakkujate/mudelite registrid, päiste konfiguratsioon, mudelite aliased
-├── utils/               # TLS-klient, puhverserveri fetch/dispatcher, võrgu abimoodulid
+├── services/            # ~80+ teenusemoodulit (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM jne.)
+├── mcp-server/          # MCP-server (110 tööriista, 3 transporti, 33 skoobi)
+├── config/              # Pakkujate/mudelite registrid, päiste konfiguratsioon, mudelite aliased
+├── utils/               # TLS-klient, puhverserveri fetch/dispatcher, võrguabimoodulid
 ├── index.ts             # Tööruumi sisenemispunkt
 ├── package.json         # Tööruumi manifest
 ├── tsconfig.json        # Tööruumi TS-i konfiguratsioon
@@ -282,13 +282,13 @@ open-sse/
 | `server.ts`                 | MCP-serveri elutsükkel (stdio- ja HTTP-transpordid)                                |
 | `httpTransport.ts`          | HTTP Streamable- ja SSE-transpordid (`/api/mcp/sse`, `/api/mcp/stream`)            |
 | `audit.ts`                  | Auditilogimine tabelisse `mcp_tool_audit`                                          |
-| `scopeEnforcement.ts`       | Tööriistapõhine ulatuse valideerimine                                              |
+| `scopeEnforcement.ts`       | Tööriistapõhine skoobi valideerimine                                               |
 | `runtimeHeartbeat.ts`       | Tervise olekusignaal faili `DATA_DIR/runtime/mcp-heartbeat.json`                   |
 | `descriptionCompressor.ts`  | Tööriistakirjelduste metaandmete tihendamine konteksti säästmiseks                 |
-| `schemas/tools.ts`          | 36 põhitööriista definitsiooni + ulatused                                          |
+| `schemas/tools.ts`          | 36 põhitööriista definitsiooni + skoobid                                           |
 | `tools/advancedTools.ts`    | Täiustatud tööriistade teostused                                                   |
-| `tools/memoryTools.ts`      | 3 mälutööriista (otsing/lisamine/tühjendamine)                                     |
-| `tools/skillTools.ts`       | 4 oskusetööriista (loend/lubamine/käivitamine/käivitused)                          |
+| `tools/memoryTools.ts`      | 3 mälutööriista (otsimine/lisamine/tühjendamine)                                   |
+| `tools/skillTools.ts`       | 4 oskustööriista (loendamine/lubamine/käivitamine/käivitused)                      |
 | `tools/compressionTools.ts` | 5 tihendustööriista                                                                |
 | `README.md`                 | MCP-serveri sisemine README (ristviidatud failist `docs/frameworks/MCP-SERVER.md`) |
 

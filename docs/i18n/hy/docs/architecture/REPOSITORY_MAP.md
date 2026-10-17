@@ -255,44 +255,42 @@ src/
 
 ---
 
-## `open-sse/` — Հոսքային շարժիչի աշխատանքային տարածք
+## `open-sse/` — Հոսքային մշակման շարժիչի աշխատանքային տարածք
 
-Առանձին npm աշխատանքային տարածք (`@omniroute/open-sse`)։ Կառավարում է հարցումների մշակումը և մատակարարների կատարումը։
+Առանձին npm աշխատանքային տարածք (`@omniroute/open-sse`)։ Մշակում է հարցումները և իրականացնում մատակարարների գործարկումը։
 
 ```
 open-sse/
-├── handlers/            # 16 ֆայլ (12 մշակիչ + 4 օժանդակ բաղադրիչ)՝ chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search և այլն։
-├── executors/           # Մատակարարներին հատուկ 67 կատարիչ (ընդլայնում են BaseExecutor-ը)
-├── translator/          # Ձևաչափի փոխարկիչներ (9 հարցման, 9 պատասխանի, 9 օժանդակ)
+├── handlers/            # 16 ֆայլ (12 մշակիչ + 4 օժանդակ բաղադրիչ)՝ chatCore, responsesHandler, embeddings, audio, image, video, music, rerank, moderations, search և այլն
+├── executors/           # Գործարկիչների 150 մոդուլ (BaseExecutor-ն ընդլայնող դասեր + յուրաքանչյուր մատակարարի համար նախատեսված օժանդակ բաղադրիչներ)
+├── translator/          # Ձևաչափի փոխարկիչներ (9 հարցման, 9 պատասխանի, 9 օժանդակ բաղադրիչ)
 ├── transformer/         # Responses API ↔ Chat Completions (TransformStream)
 ├── services/            # ~80+ ծառայության մոդուլ (combo, accountFallback, autoCombo, reasoningCache, claude code/chatgpt stealth, modelDeprecation, taskAwareRouter, workflowFSM և այլն)
-├── mcp-server/          # MCP սերվեր (110 գործիք, 3 փոխադրամիջոց, 33 տիրույթ)
-├── config/              # Մատակարարների/մոդելների գրանցամատյաններ, վերնագրերի կազմաձևում, մոդելների այլանուններ
-├── utils/               # TLS հաճախորդ, պրոքսի հարցում/դիսպետչեր, ցանցային օժանդակ բաղադրիչներ
-├── index.ts             # Աշխատանքային տարածքի մուտքային կետ
+├── mcp-server/          # MCP սերվեր (110 գործիք, 3 փոխադրամիջոց, 33 թույլտվության տիրույթ)
+├── config/              # Մատակարարների/մոդելների ռեեստրներ, վերնագրերի կազմաձևում, մոդելների այլանուններ
+├── utils/               # TLS հաճախորդ, պրոքսիով հարցումների ուղարկում/դիսպետչեր, ցանցային օժանդակ բաղադրիչներ
+├── index.ts             # Աշխատանքային տարածքի մուտքի կետ
 ├── package.json         # Աշխատանքային տարածքի մանիֆեստ
 ├── tsconfig.json        # Աշխատանքային տարածքի TS կազմաձևում
-└── types.d.ts           # Աշխատանքային տարածքի տիպերի հայտարարություններ
+└── types.d.ts           # Աշխատանքային տարածքի տիպերի հայտարարագրեր
 ```
 
 ### `open-sse/mcp-server/`
 
-| Ուղի                        | Նպատակ                                                                           |
-| --------------------------- | -------------------------------------------------------------------------------- |
-| `server.ts`                 | MCP սերվերի կենսացիկլ (stdio + HTTP փոխադրամիջոցներ)                             |
-| `httpTransport.ts`          | HTTP Streamable + SSE փոխադրամիջոցներ (`/api/mcp/sse`, `/api/mcp/stream`)        |
-| `audit.ts`                  | Աուդիտի գրանցում `mcp_tool_audit` աղյուսակում                                    |
-| `scopeEnforcement.ts`       | Տիրույթի վավերացում՝ ըստ գործիքի                                                 |
-| `runtimeHeartbeat.ts`       | Առողջության պարբերական ազդանշան դեպի `DATA_DIR/runtime/mcp-heartbeat.json`       |
-| `descriptionCompressor.ts`  | Գործիքի նկարագրության մետատվյալների սեղմում՝ համատեքստը խնայելու համար           |
-| `schemas/tools.ts`          | 36 հիմնական գործիքի սահմանում + տիրույթներ                                       |
-| `tools/advancedTools.ts`    | Ընդլայնված գործիքների իրականացումներ                                             |
-| `tools/memoryTools.ts`      | Հիշողության 3 գործիք (որոնում/ավելացում/մաքրում)                                 |
-| `tools/skillTools.ts`       | Հմտությունների 4 գործիք (ցանկ/միացում/կատարում/կատարումներ)                      |
-| `tools/compressionTools.ts` | Սեղմման 5 գործիք                                                                 |
-| `README.md`                 | Ներքին MCP սերվերի README (փոխադարձ հղումով՝ `docs/frameworks/MCP-SERVER.md`-ից) |
-
----
+| Ուղի                        | Նպատակ                                                                              |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| `server.ts`                 | MCP սերվերի կենսացիկլ (stdio + HTTP փոխադրամիջոցներ)                                |
+| `httpTransport.ts`          | HTTP Streamable + SSE փոխադրամիջոցներ (`/api/mcp/sse`, `/api/mcp/stream`)           |
+| `audit.ts`                  | Աուդիտի գրանցում `mcp_tool_audit` աղյուսակում                                       |
+| `scopeEnforcement.ts`       | Յուրաքանչյուր գործիքի թույլտվության տիրույթի վավերացում                             |
+| `runtimeHeartbeat.ts`       | Առողջական վիճակի պարբերական ազդանշան՝ `DATA_DIR/runtime/mcp-heartbeat.json` ֆայլում |
+| `descriptionCompressor.ts`  | Գործիքի նկարագրության մետատվյալների սեղմում՝ համատեքստ խնայելու համար               |
+| `schemas/tools.ts`          | 36 հիմնական գործիքի սահմանում + թույլտվության տիրույթներ                            |
+| `tools/advancedTools.ts`    | Ընդլայնված գործիքների իրականացումներ                                                |
+| `tools/memoryTools.ts`      | Հիշողության 3 գործիք (որոնում/ավելացում/մաքրում)                                    |
+| `tools/skillTools.ts`       | Հմտությունների 4 գործիք (ցուցակագրում/միացում/կատարում/կատարումներ)                 |
+| `tools/compressionTools.ts` | Սեղմման 5 գործիք                                                                    |
+| `README.md`                 | Ներքին MCP սերվերի README (`docs/frameworks/MCP-SERVER.md`-ից խաչաձև հղումով)       |
 
 ## `electron/` — Սեղանադիր հավելվածի փաթեթ
 
