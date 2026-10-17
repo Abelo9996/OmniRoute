@@ -42,7 +42,8 @@ Socket.prototype.connect = function (...args: unknown[]) {
   const host = options?.host ?? normalized[1];
   const port = Number(options?.port ?? first);
   assert(
-    allowedPort > 0 && host === "127.0.0.1" && port === allowedPort,
+    // Node gives an IPC path precedence over TCP host/port when both are supplied.
+    options?.path === undefined && allowedPort > 0 && host === "127.0.0.1" && port === allowedPort,
     "retention fixture blocks sockets outside its HTTP server"
   );
   return Reflect.apply(originalConnect, this, args);
