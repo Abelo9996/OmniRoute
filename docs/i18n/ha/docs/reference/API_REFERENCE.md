@@ -275,7 +275,7 @@ GET /v1/embeddings
 
 ---
 
-## Samar da Hoto
+## Ƙirƙirar Hoto
 
 ```bash
 POST /v1/images/generations
@@ -284,29 +284,37 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Kyakkyawan faɗuwar rana a kan duwatsu",
+  "prompt": "Kyakkyawar faɗuwar rana a kan tsaunuka",
   "size": "1024x1024"
 }
 ```
 
-Masu samar da sabis da ake da su sun haɗa da OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (na cikin gida), ComfyUI (na cikin gida).
+Masu samar da sabis da ake da su sun haɗa da OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (na gida), ComfyUI (na gida).
 
-ZenMux yana sake amfani da haɗin API-key da ake da shi kuma yana karɓar prefix na `zenmux/` ko `zm/`:
+`n` yana dawo da hotuna `n` a cikin `data[]`. Masu samar da sabis waɗanda API ɗinsu na upstream ke dawo da hoto ɗaya a kowane kira
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) suna samun kiraye-kirayen upstream daban-daban guda `n`, tare da mafi yawa 4 masu gudana a lokaci guda. Ana
+ƙara wa tsayayyen `seed` gwargwadon fihirisar kira (`seed`, `seed + 1`, …), don haka hotunan za su bambanta amma su kasance
+masu iya sake samarwa iri ɗaya. An iyakance `n` zuwa 10. Buƙatar gaba ɗaya za ta gaza idan kowane kira ya gaza. Jerin
+tsare-tsaren fan-out yana cikin `SINGLE_IMAGE_FANOUT_FORMATS` a
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
+ZenMux yana sake amfani da haɗin maɓallin API da ake da shi kuma yana karɓar prefix `zenmux/` ko `zm/`:
 
 - `zenmux/openai/gpt-image-2` yana amfani da OpenAI Images API na ZenMux. Zaɓuɓɓuka sun haɗa da `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, da `response_format`.
-- Sauran masu wallafawa, kamar `zm/meta/muse-image-1.0`, suna amfani da endpoint na ZenMux Vertex AI `:predict`.
-  `n` yana daidaituwa da `sampleCount`, `aspect_ratio` da `aspectRatio`, sannan `image_size`
-  (`1K`, `2K`, `4K`) da `sampleImageSize`. `size` na pixel yana samar da rabon faɗi da tsawo ne kawai,
-  ba tabbatattun girman pixel ba. Rabon girma, ƙuduri, da adadin da ake tallafawa suna bambanta bisa ga model.
-- `zm/inclusionai/ming-image-0.1-design` yana zaɓar girmansa da kansa. A cire `size`,
-  `aspect_ratio`, da `image_size`; ƙimomin da aka fayyace suna dawo da HTTP 400. Ana iya
+- Sauran masu wallafawa, kamar `zm/meta/muse-image-1.0`, suna amfani da endpoint na Vertex AI `:predict`
+  na ZenMux. `n` yana daidaituwa da `sampleCount`, `aspect_ratio` da `aspectRatio`, sannan `image_size`
+  (`1K`, `2K`, `4K`) da `sampleImageSize`. `size` na pixel yana samar da rabon faɗi da tsayi ne kawai,
+  ba tabbatattun girman pixel ba. Rabon, ƙudurin hoto, da adadin da ake tallafawa sun bambanta bisa ga model.
+- `zm/inclusionai/ming-image-0.1-design` yana zaɓar girmansa da kansa. Kada a saka `size`,
+  `aspect_ratio`, da `image_size`; ƙimomin da aka fayyace a sarari suna dawo da HTTP 400. Ana iya
   buƙatar PNG, JPEG, da WebP ta amfani da `output_format`.
 
-Wannan haɗin yana tallafawa samar da hoto daga rubutu, ba gyaran hoto na tunani ba. Ana daidaita
-fitowar Vertex zuwa `data[].b64_json`; `response_format: "url"` yana dawo da URL na HTTPS
-daga sabis na sama ko URL na bayanan base64 idan bytes na hoto ne kawai ake da su. Fitowar da babu komai ko aka tace
-tana dawo da kuskure maimakon nasara mara komai. Samun damar model ya dogara da asusun ZenMux.
+Wannan haɗin gwiwar yana tallafawa ƙirƙirar hoto daga rubutu, ba gyaran hoto na tunani ba. Ana daidaita
+fitowar Vertex zuwa `data[].b64_json`; `response_format: "url"` yana dawo da URL na HTTPS daga upstream
+ko URL na bayanan base64 idan bytes na hoto ne kawai ake da su. Fitowar da babu komai ko aka tace
+tana dawo da kuskure maimakon nasara mara komai. Samun dama ga model ya dogara da asusun ZenMux.
 Duba [Vertex API na ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) da
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1451,17 +1459,17 @@ Biyan kuɗin webhook masu fita don abubuwan da suka faru na OmniRoute (kammala b
 
 ## Maɓallan da Aka Yi Rajista (Gudanarwa ta Atomatik)
 
-Tsarin gudanar da maɓalli ta atomatik yana amfani da su don fitarwa da sauya maɓallan API ta hanyar mai samarwa/asusu na baya, tare da ƙayyadaddun amfani na kullum/awa-awa.
+Tsarin gudanar da maɓallai ta atomatik yana amfani da su don bayarwa da sauya maɓallan API ta hanyar mai samarwa/asusu na baya, tare da ƙayyadaddun amfani na yau da kullum/sa'a-sa'a.
 
-| Hanya  | Path                                  | Bayani                                                                                                                                                                                                                                           |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GET    | `/api/v1/registered-keys`             | Jera maɓallan da aka yi rajista (prefix da aka ɓoye kawai)                                                                                                                                                                                       |
-| POST   | `/api/v1/registered-keys`             | Fitar da sabon maɓalli da aka yi rajista — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Yana dawo da ainihin maɓallin **sau ɗaya**. Yana dawo da `429` idan an ƙi saboda ƙayyadadden amfani. |
-| GET    | `/api/v1/registered-keys/[id]`        | Dawo da metadata na maɓallin da aka yi rajista (ba tare da ainihin maɓallin ba)                                                                                                                                                                  |
-| DELETE | `/api/v1/registered-keys/[id]`        | Soke maɓallin da aka yi rajista                                                                                                                                                                                                                  |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Keɓaɓɓen endpoint na sokewa (tasirinsa ɗaya ne da DELETE)                                                                                                                                                                                        |
+| Hanya  | Tafarki                               | Bayani                                                                                                                                                                                                                                             |
+| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Jera maɓallan da aka yi rajista (ɓangaren farko da aka ɓoye kawai)                                                                                                                                                                                 |
+| POST   | `/api/v1/registered-keys`             | Bayar da sabon maɓalli da aka yi rajista — jiki: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Yana mayar da ainihin maɓallin **sau ɗaya**. Yana mayar da `429` idan an ƙi saboda ƙayyadaddun amfani. |
+| GET    | `/api/v1/registered-keys/[id]`        | Karɓo metadata na maɓallin da aka yi rajista (ba tare da ainihin maɓallin ba)                                                                                                                                                                      |
+| DELETE | `/api/v1/registered-keys/[id]`        | Soke maɓallin da aka yi rajista                                                                                                                                                                                                                    |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Wurin ƙarshe na sokewa kai tsaye (tasirinsa ɗaya ne da DELETE)                                                                                                                                                                                     |
 
-**Tabbatar da izini:** maɓallin Bearer API (`isAuthenticated`). Duba kuma `/v1/quotas/check` da `/v1/issues/report`.
+**Tabbatar da izini:** zaman gudanarwa/maɓallin API (`requireManagementAuth`) — kariya iri ɗaya da ta `/api/keys`: zaman dashboard, token na CLI na gida, ko maɓallin API mai izinin `manage`/`admin`; maɓallan API na inference kawai suna samun `403`. Duba kuma `/v1/quotas/check` da `/v1/issues/report`.
 
 ---
 

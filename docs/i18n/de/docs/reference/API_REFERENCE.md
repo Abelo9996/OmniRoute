@@ -320,27 +320,35 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "Ein wunderschöner Sonnenuntergang über Bergen",
   "size": "1024x1024"
 }
 ```
 
 Zu den verfügbaren Anbietern gehören OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokal), ComfyUI (lokal).
 
-ZenMux verwendet die vorhandene API-Schlüssel-Verbindung erneut und akzeptiert die Präfixe `zenmux/` oder `zm/`:
+`n` gibt `n` Bilder in `data[]` zurück. Bei Anbietern, deren Upstream-API pro Aufruf ein Bild zurückgibt
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), werden `n` separate Upstream-Aufrufe ausgeführt, von denen höchstens 4 gleichzeitig aktiv sind. Ein
+fester `seed` wird um den Aufrufindex erhöht (`seed`, `seed + 1`, …), sodass sich die Bilder unterscheiden, aber
+reproduzierbar bleiben. `n` ist auf 10 begrenzt. Die gesamte Anfrage schlägt fehl, wenn ein Aufruf fehlschlägt. Die Liste
+der Fan-out-Formate befindet sich als `SINGLE_IMAGE_FANOUT_FORMATS` in
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
+ZenMux verwendet die bestehende API-Schlüssel-Verbindung wieder und akzeptiert die Präfixe `zenmux/` oder `zm/`:
 
 - `zenmux/openai/gpt-image-2` verwendet die OpenAI Images API von ZenMux. Zu den Optionen gehören `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` und `response_format`.
-- Andere Herausgeber, wie etwa `zm/meta/muse-image-1.0`, verwenden den Vertex-AI-Endpunkt `:predict`
+- Andere Herausgeber, etwa `zm/meta/muse-image-1.0`, verwenden den Vertex-AI-Endpunkt `:predict`
   von ZenMux. `n` wird `sampleCount`, `aspect_ratio` wird `aspectRatio` und `image_size`
-  (`1K`, `2K`, `4K`) wird `sampleImageSize` zugeordnet. Ein pixelbasierter `size`-Wert gibt nur ein Seitenverhältnis vor,
-  keine garantierten Pixelabmessungen. Unterstützte Seitenverhältnisse, Auflösungen und Anzahlen variieren je nach Modell.
+  (`1K`, `2K`, `4K`) wird `sampleImageSize` zugeordnet. Eine Pixelangabe für `size` legt nur ein Seitenverhältnis fest,
+  nicht jedoch garantierte Pixelabmessungen. Unterstützte Seitenverhältnisse, Auflösungen und Anzahlen variieren je nach Modell.
 - `zm/inclusionai/ming-image-0.1-design` wählt seine Abmessungen selbst. Lassen Sie `size`,
   `aspect_ratio` und `image_size` weg; explizite Werte führen zu HTTP 400. PNG, JPEG und WebP
   können mit `output_format` angefordert werden.
 
-Diese Integration unterstützt die Text-zu-Bild-Erzeugung, jedoch nicht die Bearbeitung von Referenzbildern. Die Vertex-
-Ausgabe wird auf `data[].b64_json` normalisiert; `response_format: "url"` gibt eine vorgelagerte
+Diese Integration unterstützt die Text-zu-Bild-Erzeugung, nicht die Bearbeitung von Referenzbildern. Die Vertex-
+Ausgabe wird zu `data[].b64_json` normalisiert; `response_format: "url"` gibt eine Upstream-
 HTTPS-URL oder eine Base64-Daten-URL zurück, wenn nur Bilddaten verfügbar sind. Leere/gefilterte Ausgaben
 führen zu einem Fehler statt zu einer leeren Erfolgsmeldung. Der Modellzugriff hängt vom ZenMux-Konto ab.
 Siehe [Vertex API von ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) und
@@ -1470,7 +1478,7 @@ Ausgehende Webhook-Abonnements für OmniRoute-Ereignisse (Abschluss von Anfragen
 
 ## Registrierte Schlüssel (automatische Verwaltung)
 
-Wird vom Subsystem zur automatischen Schlüsselverwaltung verwendet, um API-Schlüssel für einen zugrunde liegenden Anbieter bzw. ein zugrunde liegendes Konto auszustellen und zu rotieren, einschließlich täglicher und stündlicher Kontingente.
+Wird vom Subsystem zur automatischen Schlüsselverwaltung verwendet, um API-Schlüssel bei einem zugrunde liegenden Anbieter/Konto unter Einhaltung täglicher/stündlicher Kontingente auszustellen und zu rotieren.
 
 | Methode | Pfad                                  | Beschreibung                                                                                                                                                                                                                                                     |
 | ------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1480,7 +1488,7 @@ Wird vom Subsystem zur automatischen Schlüsselverwaltung verwendet, um API-Schl
 | DELETE  | `/api/v1/registered-keys/[id]`        | Einen registrierten Schlüssel widerrufen                                                                                                                                                                                                                         |
 | POST    | `/api/v1/registered-keys/[id]/revoke` | Expliziter Endpunkt zum Widerrufen (gleiche Wirkung wie DELETE)                                                                                                                                                                                                  |
 
-**Authentifizierung:** Bearer-API-Schlüssel (`isAuthenticated`). Siehe auch `/v1/quotas/check` und `/v1/issues/report`.
+**Authentifizierung:** Verwaltungssitzung/API-Schlüssel (`requireManagementAuth`) — derselbe Zugriffsschutz wie bei `/api/keys`: eine Dashboard-Sitzung, das lokale CLI-Token oder ein API-Schlüssel mit dem Geltungsbereich `manage`/`admin`; reine Inferenz-API-Schlüssel erhalten `403`. Siehe auch `/v1/quotas/check` und `/v1/issues/report`.
 
 ---
 

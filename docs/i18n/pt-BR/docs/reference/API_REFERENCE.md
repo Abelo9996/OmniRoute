@@ -295,28 +295,36 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Um belo pôr do sol sobre as montanhas",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 Os provedores disponíveis incluem OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (local), ComfyUI (local).
 
-O ZenMux reutiliza a conexão existente com a chave de API e aceita os prefixos `zenmux/` ou `zm/`:
+`n` retorna `n` imagens em `data[]`. Para provedores cuja API upstream retorna uma imagem por chamada
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), são feitas `n` chamadas upstream separadas, com no máximo 4 em execução simultânea. Um
+`seed` fixo é incrementado de acordo com o índice da chamada (`seed`, `seed + 1`, …), para que as imagens sejam diferentes, mas permaneçam
+reproduzíveis. `n` é limitado a 10. A solicitação inteira falha se qualquer chamada falhar. A lista
+de formatos com fan-out é `SINGLE_IMAGE_FANOUT_FORMATS` em
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
+O ZenMux reutiliza a conexão existente por chave de API e aceita os prefixos `zenmux/` ou `zm/`:
 
 - `zenmux/openai/gpt-image-2` usa a API de imagens da OpenAI do ZenMux. As opções incluem `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` e `response_format`.
-- Outros fornecedores, como `zm/meta/muse-image-1.0`, usam o endpoint `:predict` do Vertex AI
-  do ZenMux. `n` corresponde a `sampleCount`, `aspect_ratio` a `aspectRatio` e `image_size`
-  (`1K`, `2K`, `4K`) a `sampleImageSize`. Um `size` em pixels fornece apenas uma proporção,
-  não dimensões garantidas em pixels. As proporções, resoluções e quantidades compatíveis variam conforme o modelo.
+- Outros publicadores, como `zm/meta/muse-image-1.0`, usam o endpoint `:predict`
+  do Vertex AI do ZenMux. `n` é mapeado para `sampleCount`, `aspect_ratio` para `aspectRatio` e `image_size`
+  (`1K`, `2K`, `4K`) para `sampleImageSize`. Um `size` em pixels fornece apenas uma proporção,
+  não dimensões garantidas em pixels. As proporções, resoluções e quantidades compatíveis variam de acordo com o modelo.
 - `zm/inclusionai/ming-image-0.1-design` escolhe suas próprias dimensões. Omita `size`,
   `aspect_ratio` e `image_size`; valores explícitos retornam HTTP 400. PNG, JPEG e WebP
   podem ser solicitados com `output_format`.
 
-Esta integração oferece geração de texto para imagem, mas não edição com imagem de referência. A saída do Vertex
-é normalizada para `data[].b64_json`; `response_format: "url"` retorna uma URL HTTPS do provedor
-ou uma URL de dados em base64 quando somente os bytes da imagem estão disponíveis. Saídas vazias/filtradas
+Esta integração oferece suporte à geração de texto para imagem, mas não à edição com imagem de referência. A saída do Vertex
+é normalizada para `data[].b64_json`; `response_format: "url"` retorna uma URL HTTPS upstream
+ou uma URL de dados em base64 quando apenas os bytes da imagem estão disponíveis. Saídas vazias/filtradas
 retornam um erro em vez de uma resposta de sucesso vazia. O acesso aos modelos depende da conta do ZenMux.
 Consulte a [API Vertex do ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) e a
 [API de imagens da OpenAI](https://docs.zenmux.ai/api/openai/generate-an-image).
@@ -1458,17 +1466,17 @@ Assinaturas de webhooks de saída para eventos do OmniRoute (conclusão de solic
 
 ## Chaves registradas (gerenciamento automático)
 
-Usadas pelo subsistema de gerenciamento automático de chaves para emitir e rotacionar chaves de API em um provedor/uma conta subjacente, com cotas diárias/horárias.
+Usado pelo subsistema de gerenciamento automático de chaves para emitir e rotacionar chaves de API em um provedor/uma conta subjacente, com cotas diárias/por hora.
 
-| Método | Caminho                               | Descrição                                                                                                                                                                                                                            |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GET    | `/api/v1/registered-keys`             | Lista as chaves registradas (somente o prefixo mascarado)                                                                                                                                                                            |
-| POST   | `/api/v1/registered-keys`             | Emite uma nova chave registrada — corpo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Retorna a chave bruta **uma única vez**. Retorna `429` quando a solicitação é recusada por cota. |
-| GET    | `/api/v1/registered-keys/[id]`        | Recupera os metadados de uma chave registrada (sem o material bruto)                                                                                                                                                                 |
-| DELETE | `/api/v1/registered-keys/[id]`        | Revoga uma chave registrada                                                                                                                                                                                                          |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint de revogação explícita (mesmo efeito que DELETE)                                                                                                                                                                            |
+| Método | Caminho                               | Descrição                                                                                                                                                                                                          |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/v1/registered-keys`             | Lista as chaves registradas (somente o prefixo mascarado)                                                                                                                                                          |
+| POST   | `/api/v1/registered-keys`             | Emite uma nova chave registrada — corpo: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Retorna a chave bruta **uma única vez**. Retorna `429` se a cota for recusada. |
+| GET    | `/api/v1/registered-keys/[id]`        | Recupera os metadados de uma chave registrada (sem o material bruto)                                                                                                                                               |
+| DELETE | `/api/v1/registered-keys/[id]`        | Revoga uma chave registrada                                                                                                                                                                                        |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint de revogação explícita (mesmo efeito que DELETE)                                                                                                                                                          |
 
-**Autenticação:** chave de API Bearer (`isAuthenticated`). Consulte também `/v1/quotas/check` e `/v1/issues/report`.
+**Autenticação:** sessão/chave de API de gerenciamento (`requireManagementAuth`) — a mesma proteção usada por `/api/keys`: uma sessão do painel, o token da CLI local ou uma chave de API com escopo `manage`/`admin`; chaves de API exclusivas para inferência recebem `403`. Consulte também `/v1/quotas/check` e `/v1/issues/report`.
 
 ---
 

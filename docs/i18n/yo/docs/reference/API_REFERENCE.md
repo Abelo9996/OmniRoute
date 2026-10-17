@@ -300,29 +300,37 @@ Content-Type: application/json
 }
 ```
 
-Àwọn olupèsè tó wà ní OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (agbegbe), ComfyUI (agbegbe).
+Àwọn olùpèsè tó wà ní OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (abẹ́lé), ComfyUI (abẹ́lé).
 
-ZenMux tún máa ń lo àsopọ̀ API-key tó ti wà tẹ́lẹ̀, ó sì gba àwọn ìpele `zenmux/` tàbí `zm/`:
+`n` ń dá àwọn àwòrán `n` padà nínú `data[]`. Àwọn olùpèsè tí API orísun wọn ń dá àwòrán kan padà fún ìpè kọ̀ọ̀kan
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) máa gba àwọn ìpè orísun ọ̀tọ̀ọ̀tọ̀ `n`, pẹ̀lú iye tó pọ̀jù 4 tí ń ṣiṣẹ́ lẹ́ẹ̀kan náà. A
+máa ṣàfikún nọ́ńbà atọ́ka ìpè sí `seed` tí a ti pinnu (`seed`, `seed + 1`, …), kí àwọn àwòrán náà lè yàtọ̀ ṣùgbọ́n kí
+ó ṣì ṣeé tún ṣe lọ́nà kan náà. Iye tó pọ̀jù fún `n` ni 10. Gbogbo ìbéèrè náà yóò kùnà bí ìpè èyíkéyìí bá kùnà. Àkójọ
+àwọn fọ́ọ̀mù fan-out wà nínú `SINGLE_IMAGE_FANOUT_FORMATS` ní
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
-- `zenmux/openai/gpt-image-2` máa ń lo OpenAI Images API ti ZenMux. Àwọn àṣàyàn rẹ̀ ní `size`,
+ZenMux tún ń lo àsopọ̀ kọ́kọ́rọ́ API tó ti wà, ó sì ń gba àwọn ìṣáájú `zenmux/` tàbí `zm/`:
+
+- `zenmux/openai/gpt-image-2` ń lo OpenAI Images API ti ZenMux. Àwọn àṣàyàn ní `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, àti `response_format`.
-- Àwọn atẹ̀jáde mìíràn, bíi `zm/meta/muse-image-1.0`, máa ń lo ibi-ìparí Vertex AI `:predict`
-  ti ZenMux. `n` ṣe ìbámu pẹ̀lú `sampleCount`, `aspect_ratio` pẹ̀lú `aspectRatio`, àti `image_size`
-  (`1K`, `2K`, `4K`) pẹ̀lú `sampleImageSize`. `size` pẹ̀lú àwọn píksẹ́lì ń pèsè ìpín ìrísí nìkan,
-  kì í ṣe àwọn ìwọ̀n píksẹ́lì tí a lè ṣe ìdánilójú. Àwọn ìpín, àwọn ìpinnu, àti àwọn iye tí a ṣe àtìlẹ́yìn fún yàtọ̀ síra gẹ́gẹ́ bí àwòṣe.
-- `zm/inclusionai/ming-image-0.1-design` máa ń yan àwọn ìwọ̀n tirẹ̀. Má ṣe fi `size`,
-  `aspect_ratio`, àti `image_size` sínú rẹ̀; àwọn iye tí a sọ ní kedere máa dá HTTP 400 padà. A lè béèrè fún PNG, JPEG, àti WebP
+- Àwọn atẹ̀jáde míì, bíi `zm/meta/muse-image-1.0`, ń lo òpin-ọ̀nà ZenMux Vertex AI `:predict`.
+  `n` bá `sampleCount` mu, `aspect_ratio` bá `aspectRatio` mu, àti `image_size`
+  (`1K`, `2K`, `4K`) bá `sampleImageSize` mu. `size` píkísẹ́lì kan ń pèsè ìpín ìrísí nìkan,
+  kì í ṣe àwọn ìwọ̀n píkísẹ́lì tí a fi dájú. Àwọn ìpín, ìyọ̀nda àwòrán, àti iye tí a ṣètìlẹ́yìn fún yàtọ̀ síra gẹ́gẹ́ bí model.
+- `zm/inclusionai/ming-image-0.1-design` ń yan àwọn ìwọ̀n tirẹ̀. Má ṣe fi `size`,
+  `aspect_ratio`, àti `image_size` sínú ìbéèrè; àwọn iye tí a sọ ní pàtó máa dá HTTP 400 padà. A lè béèrè fún PNG, JPEG, àti WebP
   pẹ̀lú `output_format`.
 
-Àkópọ̀ yìí ṣe àtìlẹ́yìn fún ṣíṣẹ̀dá àwòrán láti inú ọ̀rọ̀, kì í ṣe ṣiṣàtúnṣe àwòrán ìtọ́kasí. Àbájáde Vertex
-ni a máa ń ṣe déédé sí `data[].b64_json`; `response_format: "url"` máa ń dá URL HTTPS
-láti orísun òkè padà, tàbí URL dátà base64 nígbà tí àwọn báìtì àwòrán nìkan bá wà. Àwọn àbájáde òfìfo/tí a ti ṣe àsẹ̀
-máa ń dá àṣìṣe padà dípò àṣeyọrí òfìfo. Ìráyè sí àwòṣe sinmi lórí àkọọ́lẹ̀ ZenMux.
+Ìṣọ̀kan yìí ń ṣètìlẹ́yìn fún ṣíṣẹ̀dá àwòrán láti inú ọ̀rọ̀, kì í ṣe ṣíṣe àtúnṣe àwòrán ìtọ́kasí. A máa mú àbájáde Vertex
+wá sí ìlànà `data[].b64_json`; `response_format: "url"` ń dá URL HTTPS orísun kan padà
+tàbí URL dátà base64 nígbà tí àwọn báìtì àwòrán nìkan bá wà. Àwọn àbájáde òfìfo/tí a ti ṣe àlẹ̀mọ́
+máa dá àṣìṣe padà dípò àṣeyọrí òfìfo. Ìráyè sí model dá lórí àkọọ́lẹ̀ ZenMux.
 Wo [Vertex API ti ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) àti
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Ṣe àtòjọ gbogbo àwọn àwòṣe àwòrán
+# Ṣàkójọ gbogbo àwọn model àwòrán
 GET /v1/images/generations
 ```
 
@@ -1460,19 +1468,19 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ---
 
-## Àwọn Kọ́kọ́rọ́ Tí A Forúkọ Sílẹ̀ (Ìṣàkóso Aládàáṣe)
+## Àwọn Kọ́kọ́rọ́ Tí A Forúkọsílẹ̀ (Ìṣàkóso Aifọwọ́yí)
 
-Ètò abẹ́lẹ̀ ìṣàkóso kọ́kọ́rọ́ aládàáṣe ń lò ó láti pèsè àti yí àwọn kọ́kọ́rọ́ API padà pẹ̀lú olupèsè/àkọọ́lẹ̀ alátìlẹ́yìn, pẹ̀lú àwọn ìpín ojoojúmọ́/wákàtí.
+Ètò abẹ́nú ìṣàkóso kọ́kọ́rọ́ aifọwọ́yí ń lò ó láti fúnni àti láti yí àwọn kọ́kọ́rọ́ API padà pẹ̀lú olùpèsè/àkọọ́lẹ̀ alátìlẹ́yìn, ní ìbámu pẹ̀lú àwọn ààlà ojoojúmọ́ àti ti wákàtí.
 
-| Ọ̀nà    | Ipa-ọ̀nà                               | Àpèjúwe                                                                                                                                                                                                                |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Ṣàtòjọ àwọn kọ́kọ́rọ́ tí a forúkọ sílẹ̀ (prefix tí a bo nìkan)                                                                                                                                                             |
-| POST   | `/api/v1/registered-keys`             | Pèsè kọ́kọ́rọ́ tuntun tí a forúkọ sílẹ̀ — ara: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Ó dá kọ́kọ́rọ́ gidi padà **lẹ́ẹ̀kan ṣoṣo**. Ó dá `429` padà bí a bá kọ̀ ọ́ nítorí ìpín. |
-| GET    | `/api/v1/registered-keys/[id]`        | Gba metadata kọ́kọ́rọ́ tí a forúkọ sílẹ̀ (láìsí ohun èlò gidi)                                                                                                                                                             |
-| DELETE | `/api/v1/registered-keys/[id]`        | Fagilé kọ́kọ́rọ́ tí a forúkọ sílẹ̀                                                                                                                                                                                         |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint ìfagilé tààrà (ipa kan náà bí DELETE)                                                                                                                                                                         |
+| Ọ̀nà    | Ipa-ọ̀nà                               | Àpèjúwe                                                                                                                                                                                                                    |
+| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Ṣàfihàn àwọn kọ́kọ́rọ́ tí a forúkọsílẹ̀ (ìbẹ̀rẹ̀ tí a ti bo mọ́lẹ̀ nìkan)                                                                                                                                                          |
+| POST   | `/api/v1/registered-keys`             | Fúnni ní kọ́kọ́rọ́ tuntun tí a forúkọsílẹ̀ — ara: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Ó dá kọ́kọ́rọ́ gidi padà **lẹ́ẹ̀kan ṣoṣo**. Ó dá `429` padà nígbà tí ààlà kò bá gbà á. |
+| GET    | `/api/v1/registered-keys/[id]`        | Gba metadata kọ́kọ́rọ́ tí a forúkọsílẹ̀ (kò ní ohun èlò kọ́kọ́rọ́ gidi)                                                                                                                                                           |
+| DELETE | `/api/v1/registered-keys/[id]`        | Fagilé kọ́kọ́rọ́ tí a forúkọsílẹ̀                                                                                                                                                                                              |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Ibi ìdáhùn fún ìfagilé ní tààrà (ipa kan náà bí DELETE)                                                                                                                                                                    |
 
-**Ìfàṣẹsí:** Kọ́kọ́rọ́ API Bearer (`isAuthenticated`). Tún wo `/v1/quotas/check` àti `/v1/issues/report`.
+**Ìfàṣẹ̀sí:** session ìṣàkóso/kọ́kọ́rọ́ API (`requireManagementAuth`) — olùṣọ́ kan náà bí `/api/keys`: session dashboard kan, token CLI abẹ́lé, tàbí kọ́kọ́rọ́ API kan tó ní scope `manage`/`admin`; àwọn kọ́kọ́rọ́ API fún inference nìkan máa gba `403`. Tún wo `/v1/quotas/check` àti `/v1/issues/report`.
 
 ---
 

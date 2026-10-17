@@ -320,31 +320,39 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "Gražus saulėlydis virš kalnų",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
-Galimi teikėjai: OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (vietinis), ComfyUI (vietinis).
+Galimi paslaugų teikėjai: OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (vietinis), ComfyUI (vietinis).
+
+`n` grąžina `n` vaizdų masyve `data[]`. Paslaugų teikėjams, kurių aukštesnio lygio API per vieną užklausą grąžina vieną vaizdą
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), atliekama `n` atskirų aukštesnio lygio užklausų, vienu metu vykdant ne daugiau kaip 4. Fiksuota
+`seed` reikšmė pakeičiama pagal užklausos indeksą (`seed`, `seed + 1`, …), todėl vaizdai skiriasi, tačiau juos galima
+atkurti. Didžiausia `n` reikšmė yra 10. Jei kuri nors užklausa nepavyksta, visa užklausa laikoma nepavykusia. Išskleidimo
+formatų sąrašas yra `SINGLE_IMAGE_FANOUT_FORMATS` faile
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
 ZenMux pakartotinai naudoja esamą API rakto ryšį ir priima `zenmux/` arba `zm/` prefiksus:
 
-- `zenmux/openai/gpt-image-2` naudoja ZenMux OpenAI vaizdų API. Galimos parinktys: `size`,
+- `zenmux/openai/gpt-image-2` naudoja ZenMux OpenAI Images API. Galimos parinktys: `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` ir `response_format`.
-- Kiti leidėjai, pavyzdžiui, `zm/meta/muse-image-1.0`, naudoja ZenMux Vertex AI `:predict`
+- Kiti leidėjai, pvz., `zm/meta/muse-image-1.0`, naudoja ZenMux Vertex AI `:predict`
   galinį tašką. `n` susiejamas su `sampleCount`, `aspect_ratio` – su `aspectRatio`, o `image_size`
   (`1K`, `2K`, `4K`) – su `sampleImageSize`. Pikseliais nurodytas `size` pateikia tik kraštinių santykį,
-  o ne garantuotus matmenis pikseliais. Palaikomi santykiai, raiškos ir kiekių reikšmės priklauso nuo modelio.
-- `zm/inclusionai/ming-image-0.1-design` matmenis pasirenka savarankiškai. Nenurodykite `size`,
+  o ne garantuotus matmenis pikseliais. Palaikomi santykiai, skiriamosios gebos ir kiekiai priklauso nuo modelio.
+- `zm/inclusionai/ming-image-0.1-design` pats pasirenka savo matmenis. Nenurodykite `size`,
   `aspect_ratio` ir `image_size`; aiškiai nurodžius reikšmes grąžinamas HTTP 400. PNG, JPEG ir WebP
   galima užklausti naudojant `output_format`.
 
-Ši integracija palaiko vaizdų generavimą iš teksto, bet ne redagavimą pagal pavyzdinį vaizdą. Vertex
-išvestis normalizuojama į `data[].b64_json`; `response_format: "url"` grąžina pirminį
-HTTPS URL arba base64 duomenų URL, kai prieinami tik vaizdo baitai. Tuščios arba išfiltruotos išvestys
-grąžina klaidą, o ne tuščią sėkmingą atsaką. Prieiga prie modelių priklauso nuo ZenMux paskyros.
+Ši integracija palaiko vaizdų generavimą iš teksto, bet ne vaizdų redagavimą pagal etaloninį vaizdą. Vertex
+išvestis normalizuojama į `data[].b64_json`; `response_format: "url"` grąžina aukštesnio lygio
+HTTPS URL arba base64 duomenų URL, kai pasiekiami tik vaizdo baitai. Esant tuščiai ar išfiltruotai išvesčiai,
+grąžinama klaida, o ne tuščias sėkmingas atsakas. Prieiga prie modelių priklauso nuo ZenMux paskyros.
 Žr. [ZenMux Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) ir
-[OpenAI vaizdų API](https://docs.zenmux.ai/api/openai/generate-an-image).
+[OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
 # Išvardyti visus vaizdų modelius
@@ -1488,19 +1496,19 @@ Siunčiamų „OmniRoute“ įvykių (užklausos užbaigimo, kvotos išnaudojimo
 
 ---
 
-## Užregistruoti raktai (automatinis valdymas)
+## Registruoti raktai (automatinis valdymas)
 
-Naudojama automatinio raktų valdymo posistemėje, kad būtų išduodami ir pasukami API raktai, susieti su pagrindiniu teikėju / paskyra ir turintys dienos bei valandos kvotas.
+Naudojama automatinio raktų valdymo posistemės API raktams išduoti ir keisti pasitelkiant susietą paslaugų teikėją / paskyrą, taikant dienos ir valandos kvotas.
 
-| Metodas | Kelias                                | Aprašymas                                                                                                                                                                                                                      |
-| ------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GET     | `/api/v1/registered-keys`             | Pateikti užregistruotų raktų sąrašą (rodomas tik užmaskuotas prefiksas)                                                                                                                                                        |
-| POST    | `/api/v1/registered-keys`             | Išduoti naują užregistruotą raktą — turinys: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Neužmaskuotas raktas grąžinamas **vieną kartą**. Atmetus dėl kvotos, grąžinamas `429`. |
-| GET     | `/api/v1/registered-keys/[id]`        | Gauti užregistruoto rakto metaduomenis (be neužmaskuoto rakto duomenų)                                                                                                                                                         |
-| DELETE  | `/api/v1/registered-keys/[id]`        | Atšaukti užregistruotą raktą                                                                                                                                                                                                   |
-| POST    | `/api/v1/registered-keys/[id]/revoke` | Aiškiai nurodyta atšaukimo galinė prieiga (poveikis toks pats kaip DELETE)                                                                                                                                                     |
+| Metodas | Kelias                                | Aprašymas                                                                                                                                                                                                                    |
+| ------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET     | `/api/v1/registered-keys`             | Pateikia registruotų raktų sąrašą (rodomas tik užmaskuotas prefiksas)                                                                                                                                                        |
+| POST    | `/api/v1/registered-keys`             | Išduoda naują registruotą raktą — turinys: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Neužmaskuotas raktas grąžinamas **vieną kartą**. Atmetus dėl kvotos, grąžinamas `429`. |
+| GET     | `/api/v1/registered-keys/[id]`        | Gauna registruoto rakto metaduomenis (be neužmaskuoto rakto duomenų)                                                                                                                                                         |
+| DELETE  | `/api/v1/registered-keys/[id]`        | Atšaukia registruotą raktą                                                                                                                                                                                                   |
+| POST    | `/api/v1/registered-keys/[id]/revoke` | Aiškiai nurodyta atšaukimo galinė prieiga (poveikis toks pat kaip DELETE)                                                                                                                                                    |
 
-**Autentifikavimas:** „Bearer“ API raktas (`isAuthenticated`). Taip pat žr. `/v1/quotas/check` ir `/v1/issues/report`.
+**Autentifikavimas:** valdymo seansas / API raktas (`requireManagementAuth`) — taikoma ta pati apsauga kaip ir `/api/keys`: valdymo skydelio seansas, vietinis CLI prieigos raktas arba API raktas, turintis `manage` / `admin` aprėptį; tik išvadoms generuoti skirti API raktai gauna `403`. Taip pat žr. `/v1/quotas/check` ir `/v1/issues/report`.
 
 ---
 

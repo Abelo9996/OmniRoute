@@ -283,22 +283,30 @@ Content-Type: application/json
 
 Penyedia yang tersedia mencakup OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokal), ComfyUI (lokal).
 
+`n` mengembalikan `n` gambar dalam `data[]`. Penyedia yang API upstream-nya mengembalikan satu gambar per panggilan
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) akan mendapatkan `n` panggilan upstream terpisah, dengan maksimal 4 panggilan berlangsung bersamaan. Nilai
+`seed` yang tetap digeser berdasarkan indeks panggilan (`seed`, `seed + 1`, …), sehingga gambar yang dihasilkan berbeda tetapi tetap
+dapat direproduksi. `n` dibatasi hingga 10. Permintaan akan gagal secara keseluruhan jika salah satu panggilan gagal. Daftar
+format fan-out adalah `SINGLE_IMAGE_FANOUT_FORMATS` dalam
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
 ZenMux menggunakan kembali koneksi kunci API yang ada dan menerima awalan `zenmux/` atau `zm/`:
 
-- `zenmux/openai/gpt-image-2` menggunakan OpenAI Images API milik ZenMux. Opsi mencakup `size`,
+- `zenmux/openai/gpt-image-2` menggunakan OpenAI Images API milik ZenMux. Opsi yang tersedia mencakup `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, dan `response_format`.
-- Penerbit lain, seperti `zm/meta/muse-image-1.0`, menggunakan endpoint `:predict`
-  Vertex AI milik ZenMux. `n` dipetakan ke `sampleCount`, `aspect_ratio` ke `aspectRatio`, dan `image_size`
+- Penerbit lain, seperti `zm/meta/muse-image-1.0`, menggunakan endpoint `:predict` Vertex AI milik ZenMux.
+  `n` dipetakan ke `sampleCount`, `aspect_ratio` ke `aspectRatio`, dan `image_size`
   (`1K`, `2K`, `4K`) ke `sampleImageSize`. `size` berbasis piksel hanya menentukan rasio aspek,
   bukan dimensi piksel yang dijamin. Rasio, resolusi, dan jumlah yang didukung berbeda-beda menurut model.
-- `zm/inclusionai/ming-image-0.1-design` memilih dimensinya sendiri. Jangan sertakan `size`,
+- `zm/inclusionai/ming-image-0.1-design` menentukan dimensinya sendiri. Jangan sertakan `size`,
   `aspect_ratio`, dan `image_size`; nilai eksplisit akan menghasilkan HTTP 400. PNG, JPEG, dan WebP
-  dapat diminta dengan `output_format`.
+  dapat diminta melalui `output_format`.
 
 Integrasi ini mendukung pembuatan gambar dari teks, bukan pengeditan gambar referensi. Output Vertex
-dinormalisasi menjadi `data[].b64_json`; `response_format: "url"` mengembalikan URL HTTPS
-dari upstream atau URL data base64 ketika hanya byte gambar yang tersedia. Output kosong/terfilter
-akan menghasilkan kesalahan, bukan keberhasilan kosong. Akses model bergantung pada akun ZenMux.
+dinormalisasi menjadi `data[].b64_json`; `response_format: "url"` mengembalikan URL HTTPS upstream
+atau URL data base64 ketika hanya byte gambar yang tersedia. Output kosong/terfilter
+akan menghasilkan kesalahan alih-alih respons sukses kosong. Akses model bergantung pada akun ZenMux.
 Lihat [Vertex API ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) dan
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1436,17 +1444,17 @@ Langganan webhook keluar untuk peristiwa OmniRoute (penyelesaian permintaan, hab
 
 ## Kunci Terdaftar (Pengelolaan Otomatis)
 
-Digunakan oleh subsistem pengelolaan kunci otomatis untuk menerbitkan dan merotasi kunci API melalui penyedia/akun pendukung, dengan kuota harian/per jam.
+Digunakan oleh subsistem pengelolaan kunci otomatis untuk menerbitkan dan merotasi kunci API pada penyedia/akun pendukung, dengan kuota harian/per jam.
 
-| Metode | Path                                  | Deskripsi                                                                                                                                                                                                                    |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Mencantumkan kunci terdaftar (hanya prefiks yang disamarkan)                                                                                                                                                                 |
-| POST   | `/api/v1/registered-keys`             | Menerbitkan kunci terdaftar baru — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Mengembalikan kunci mentah **satu kali**. Mengembalikan `429` jika ditolak karena kuota. |
-| GET    | `/api/v1/registered-keys/[id]`        | Mengambil metadata kunci terdaftar (tanpa materi kunci mentah)                                                                                                                                                               |
-| DELETE | `/api/v1/registered-keys/[id]`        | Mencabut kunci terdaftar                                                                                                                                                                                                     |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint pencabutan eksplisit (efeknya sama dengan DELETE)                                                                                                                                                                   |
+| Metode | Jalur                                 | Deskripsi                                                                                                                                                                                                            |
+| ------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Menampilkan daftar kunci terdaftar (hanya prefiks yang disamarkan)                                                                                                                                                   |
+| POST   | `/api/v1/registered-keys`             | Menerbitkan kunci terdaftar baru — isi: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Mengembalikan kunci mentah **satu kali**. Mengembalikan `429` jika kuota ditolak. |
+| GET    | `/api/v1/registered-keys/[id]`        | Mengambil metadata kunci terdaftar (tanpa materi kunci mentah)                                                                                                                                                       |
+| DELETE | `/api/v1/registered-keys/[id]`        | Mencabut kunci terdaftar                                                                                                                                                                                             |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Endpoint pencabutan eksplisit (efeknya sama dengan DELETE)                                                                                                                                                           |
 
-**Autentikasi:** Kunci API Bearer (`isAuthenticated`). Lihat juga `/v1/quotas/check` dan `/v1/issues/report`.
+**Autentikasi:** sesi manajemen/kunci API (`requireManagementAuth`) — menggunakan mekanisme perlindungan yang sama seperti `/api/keys`: sesi dasbor, token CLI lokal, atau kunci API dengan cakupan `manage`/`admin`; kunci API khusus inferensi akan mendapatkan `403`. Lihat juga `/v1/quotas/check` dan `/v1/issues/report`.
 
 ---
 

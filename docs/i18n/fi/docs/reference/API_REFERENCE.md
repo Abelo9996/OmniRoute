@@ -320,29 +320,37 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "A beautiful sunset over mountains",
+  "prompt": "Kaunis auringonlasku vuorten yllä",
   "size": "1024x1024"
 }
 ```
 
-Saatavilla olevia palveluntarjoajia ovat OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (paikallinen) ja ComfyUI (paikallinen).
+Saatavilla oleviin palveluntarjoajiin kuuluvat OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (paikallinen) ja ComfyUI (paikallinen).
 
-ZenMux käyttää olemassa olevaa API-avainyhteyttä ja hyväksyy etuliitteet `zenmux/` tai `zm/`:
+`n` palauttaa `n` kuvaa taulukossa `data[]`. Palveluntarjoajille, joiden ylävirran API palauttaa yhden kuvan kutsua kohden
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), tehdään `n` erillistä ylävirran kutsua, joista enintään neljä on käynnissä samanaikaisesti. Kiinteää
+`seed`-arvoa kasvatetaan kutsun indeksillä (`seed`, `seed + 1`, …), joten kuvat eroavat toisistaan mutta pysyvät
+toistettavina. `n` on rajattu enintään arvoon 10. Pyyntö epäonnistuu kokonaisuudessaan, jos yksikin kutsu epäonnistuu. Rinnakkaistettavien
+muotojen luettelo on `SINGLE_IMAGE_FANOUT_FORMATS` tiedostossa
+`open-sse/handlers/imageGeneration/fanOut.ts`.
 
-- `zenmux/openai/gpt-image-2` käyttää ZenMuxin OpenAI Images API -rajapintaa. Vaihtoehtoja ovat `size`,
+ZenMux käyttää uudelleen olemassa olevaa API-avainyhteyttä ja hyväksyy etuliitteet `zenmux/` tai `zm/`:
+
+- `zenmux/openai/gpt-image-2` käyttää ZenMuxin OpenAI Images API:a. Valintoihin kuuluvat `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` ja `response_format`.
-- Muut julkaisijat, kuten `zm/meta/muse-image-1.0`, käyttävät ZenMuxin Vertex AI `:predict`
-  -päätepistettä. `n` vastaa parametria `sampleCount`, `aspect_ratio` parametria `aspectRatio` ja `image_size`
+- Muut julkaisijat, kuten `zm/meta/muse-image-1.0`, käyttävät ZenMuxin Vertex AI:n `:predict`-päätepistettä.
+  `n` vastaa parametria `sampleCount`, `aspect_ratio` parametria `aspectRatio` ja `image_size`
   (`1K`, `2K`, `4K`) parametria `sampleImageSize`. Pikseleinä annettu `size` määrittää vain kuvasuhteen,
   ei taattuja pikselimittoja. Tuetut kuvasuhteet, resoluutiot ja määrät vaihtelevat malleittain.
-- `zm/inclusionai/ming-image-0.1-design` valitsee mittansa itse. Jätä `size`,
-  `aspect_ratio` ja `image_size` pois; eksplisiittiset arvot palauttavat HTTP 400 -virheen. PNG-, JPEG- ja WebP-muotoa
-  voidaan pyytää parametrilla `output_format`.
+- `zm/inclusionai/ming-image-0.1-design` valitsee mitat itse. Jätä pois `size`,
+  `aspect_ratio` ja `image_size`; eksplisiittiset arvot palauttavat HTTP 400 -vastauksen. PNG-, JPEG- ja WebP-muotoa
+  voi pyytää parametrilla `output_format`.
 
-Tämä integraatio tukee tekstistä kuvaksi -generointia, ei viitekuvien muokkaamista. Vertexin
-tuloste normalisoidaan muotoon `data[].b64_json`; `response_format: "url"` palauttaa alkuperäisen
-HTTPS-URL-osoitteen tai base64-data-URL-osoitteen, kun saatavilla on vain kuvan tavut. Tyhjät tai suodatetut tulosteet
-palauttavat virheen tyhjän onnistumisvastauksen sijaan. Mallien käyttöoikeus riippuu ZenMux-tilistä.
+Tämä integraatio tukee kuvien generointia tekstistä, ei viitekuvien muokkausta. Vertexin
+tuloste normalisoidaan muotoon `data[].b64_json`; `response_format: "url"` palauttaa ylävirran
+HTTPS-URL-osoitteen tai base64-data-URL-osoitteen, kun saatavilla ovat vain kuvan tavut. Tyhjä tai suodatettu tuloste
+palauttaa virheen tyhjän onnistumisvastauksen sijaan. Mallien käyttöoikeudet riippuvat ZenMux-tilistä.
 Katso [ZenMuxin Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) ja
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
@@ -1495,17 +1503,17 @@ Lähtevien webhookien tilaukset OmniRoute-tapahtumille (pyynnön valmistuminen, 
 
 ## Rekisteröidyt avaimet (automaattinen hallinta)
 
-Automaattinen avaintenhallinnan alijärjestelmä käyttää näitä API-avainten myöntämiseen ja kierrättämiseen taustalla olevan palveluntarjoajan/tilin kautta päivä- ja tuntikiintiöitä noudattaen.
+Automaattinen avaintenhallinnan alijärjestelmä käyttää näitä pääsypalveluntarjoajan/-tilin API-avainten myöntämiseen ja kierrättämiseen päivä- ja tuntikiintiöiden mukaisesti.
 
-| Menetelmä | Polku                                 | Kuvaus                                                                                                                                                                                                                         |
-| --------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GET       | `/api/v1/registered-keys`             | Luettele rekisteröidyt avaimet (vain peitetty etuliite)                                                                                                                                                                        |
-| POST      | `/api/v1/registered-keys`             | Myönnä uusi rekisteröity avain — runko: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Palauttaa käsittelemättömän avaimen **kerran**. Palauttaa `429`, jos kiintiö estää pyynnön. |
-| GET       | `/api/v1/registered-keys/[id]`        | Hae rekisteröidyn avaimen metatiedot (ei käsittelemätöntä avainmateriaalia)                                                                                                                                                    |
-| DELETE    | `/api/v1/registered-keys/[id]`        | Peruuta rekisteröity avain                                                                                                                                                                                                     |
-| POST      | `/api/v1/registered-keys/[id]/revoke` | Erillinen peruutuspäätepiste (sama vaikutus kuin DELETE-komennolla)                                                                                                                                                            |
+| Metodi | Polku                                 | Kuvaus                                                                                                                                                                                                                |
+| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Luettele rekisteröidyt avaimet (vain peitetty etuliite)                                                                                                                                                               |
+| POST   | `/api/v1/registered-keys`             | Myönnä uusi rekisteröity avain — runko: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Palauttaa käsittelemättömän avaimen **kerran**. Kiintiön estäessä palauttaa `429`. |
+| GET    | `/api/v1/registered-keys/[id]`        | Hae rekisteröidyn avaimen metatiedot (ei käsittelemätöntä avainta)                                                                                                                                                    |
+| DELETE | `/api/v1/registered-keys/[id]`        | Peruuta rekisteröity avain                                                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Erillinen peruutuspäätepiste (sama vaikutus kuin DELETE-toiminnolla)                                                                                                                                                  |
 
-**Todennus:** Bearer API -avain (`isAuthenticated`). Katso myös `/v1/quotas/check` ja `/v1/issues/report`.
+**Todennus:** hallintaistunto/API-avain (`requireManagementAuth`) — sama suojaus kuin reitillä `/api/keys`: hallintapaneeli-istunto, paikallinen CLI-tunnus tai API-avain, jonka käyttöalue on `manage`/`admin`; vain päättelyyn tarkoitetut API-avaimet saavat vastauksen `403`. Katso myös `/v1/quotas/check` ja `/v1/issues/report`.
 
 ---
 

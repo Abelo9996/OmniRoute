@@ -295,29 +295,37 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "ទិដ្ឋភាពថ្ងៃលិចដ៏ស្រស់ស្អាតនៅលើភ្នំ",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
-អ្នកផ្តល់សេវាដែលអាចប្រើបានរួមមាន OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (មូលដ្ឋាន), ComfyUI (មូលដ្ឋាន)។
+អ្នកផ្តល់សេវាដែលមានរួមមាន OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (មូលដ្ឋាន), ComfyUI (មូលដ្ឋាន)។
 
-ZenMux ប្រើការតភ្ជាប់ API key ដែលមានស្រាប់ឡើងវិញ និងទទួលយកបុព្វបទ `zenmux/` ឬ `zm/`៖
+`n` ត្រឡប់រូបភាពចំនួន `n` នៅក្នុង `data[]`។ អ្នកផ្តល់សេវាដែល upstream API របស់ពួកគេត្រឡប់រូបភាពមួយក្នុងមួយការហៅ
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI) នឹងទទួលបានការហៅ upstream ដាច់ដោយឡែកចំនួន `n` ដោយមានការហៅកំពុងដំណើរការក្នុងពេលតែមួយច្រើនបំផុត 4។ តម្លៃ
+`seed` ថេរមួយត្រូវបានបង្កើនតាមលិបិក្រមនៃការហៅ (`seed`, `seed + 1`, …) ដូច្នេះរូបភាពមានភាពខុសគ្នា ប៉ុន្តែនៅតែ
+អាចបង្កើតឡើងវិញបាន។ `n` ត្រូវបានកំណត់អតិបរមាត្រឹម 10។ សំណើទាំងមូលនឹងបរាជ័យ ប្រសិនបើការហៅណាមួយបរាជ័យ។ បញ្ជី
+នៃទម្រង់ fan-out គឺ `SINGLE_IMAGE_FANOUT_FORMATS` នៅក្នុង
+`open-sse/handlers/imageGeneration/fanOut.ts`។
+
+ZenMux ប្រើការតភ្ជាប់ API-key ដែលមានស្រាប់ឡើងវិញ ហើយទទួលយកបុព្វបទ `zenmux/` ឬ `zm/`៖
 
 - `zenmux/openai/gpt-image-2` ប្រើ OpenAI Images API របស់ ZenMux។ ជម្រើសរួមមាន `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` និង `response_format`។
-- អ្នកបោះពុម្ពផ្សាយផ្សេងទៀត ដូចជា `zm/meta/muse-image-1.0` ប្រើចំណុចបញ្ចប់ `:predict`
-  របស់ Vertex AI នៃ ZenMux។ `n` ផ្គូផ្គងទៅនឹង `sampleCount`, `aspect_ratio` ផ្គូផ្គងទៅនឹង `aspectRatio` និង `image_size`
-  (`1K`, `2K`, `4K`) ផ្គូផ្គងទៅនឹង `sampleImageSize`។ `size` ជាភីកសែលផ្តល់តែសមាមាត្ររូបភាពប៉ុណ្ណោះ
-  មិនធានាវិមាត្រជាភីកសែលទេ។ សមាមាត្រ គុណភាពបង្ហាញ និងចំនួនដែលគាំទ្រ ប្រែប្រួលតាមម៉ូដែល។
-- `zm/inclusionai/ming-image-0.1-design` ជ្រើសរើសវិមាត្ររបស់វាដោយខ្លួនឯង។ សូមកុំបញ្ចូល `size`,
-  `aspect_ratio` និង `image_size`; តម្លៃដែលបានកំណត់ជាក់លាក់នឹងត្រឡប់ HTTP 400។ អាចស្នើសុំ PNG, JPEG និង WebP
+- អ្នកបោះពុម្ពផ្សាយផ្សេងទៀត ដូចជា `zm/meta/muse-image-1.0` ប្រើ endpoint `:predict`
+  របស់ Vertex AI នៃ ZenMux។ `n` ផ្គូផ្គងទៅនឹង `sampleCount`, `aspect_ratio` ទៅនឹង `aspectRatio` និង `image_size`
+  (`1K`, `2K`, `4K`) ទៅនឹង `sampleImageSize`។ `size` ជាភីកសែលផ្តល់តែសមាមាត្រទំហំប៉ុណ្ណោះ
+  មិនមែនវិមាត្រភីកសែលដែលត្រូវបានធានានោះទេ។ សមាមាត្រ គុណភាពបង្ហាញ និងចំនួនដែលគាំទ្រ មានភាពខុសគ្នាតាមម៉ូដែល។
+- `zm/inclusionai/ming-image-0.1-design` ជ្រើសរើសវិមាត្រដោយខ្លួនឯង។ កុំបញ្ចូល `size`,
+  `aspect_ratio` និង `image_size`; តម្លៃដែលបញ្ជាក់ជាក់លាក់នឹងត្រឡប់ HTTP 400។ អាចស្នើសុំ PNG, JPEG និង WebP
   ដោយប្រើ `output_format`។
 
-ការរួមបញ្ចូលនេះគាំទ្រការបង្កើតរូបភាពពីអត្ថបទ មិនមែនការកែសម្រួលរូបភាពយោងទេ។ លទ្ធផលពី Vertex
-ត្រូវបានធ្វើឱ្យមានទម្រង់ស្តង់ដារទៅជា `data[].b64_json`; `response_format: "url"` ត្រឡប់ URL HTTPS
-ពីប្រភពដើម ឬ URL ទិន្នន័យ base64 នៅពេលមានតែទិន្នន័យបៃនៃរូបភាពប៉ុណ្ណោះ។ លទ្ធផលទទេ/ដែលត្រូវបានត្រង
-នឹងត្រឡប់កំហុស ជាជាងជោគជ័យទទេ។ សិទ្ធិចូលប្រើម៉ូដែលអាស្រ័យលើគណនី ZenMux។
+ការរួមបញ្ចូលនេះគាំទ្រការបង្កើតរូបភាពពីអត្ថបទ មិនមែនការកែសម្រួលរូបភាពយោងទេ។ លទ្ធផល Vertex
+ត្រូវបានធ្វើឱ្យមានទម្រង់ស្តង់ដារជា `data[].b64_json`; `response_format: "url"` ត្រឡប់ URL
+HTTPS ពី upstream ឬ base64 data URL នៅពេលមានតែបៃរូបភាពប៉ុណ្ណោះ។ លទ្ធផលទទេ/ដែលត្រូវបានត្រង
+នឹងត្រឡប់កំហុស ជាជាងជោគជ័យដែលទទេ។ សិទ្ធិចូលប្រើម៉ូដែលអាស្រ័យលើគណនី ZenMux។
 សូមមើល [Vertex API របស់ ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) និង
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image)។
 
@@ -1451,19 +1459,19 @@ Routing combos កម្រិតខ្ពស់ (ដែលបានសង្ខ
 
 ---
 
-## សោដែលបានចុះបញ្ជី (ការគ្រប់គ្រងស្វ័យប្រវត្តិ)
+## សោដែលបានចុះឈ្មោះ (ការគ្រប់គ្រងស្វ័យប្រវត្តិ)
 
-ត្រូវបានប្រើដោយប្រព័ន្ធរងគ្រប់គ្រងសោស្វ័យប្រវត្តិ ដើម្បីចេញ និងប្ដូរ API keys ជាមួយ provider/account គាំទ្រ ដោយមានកូតាប្រចាំថ្ងៃ/ប្រចាំម៉ោង។
+ប្រើដោយប្រព័ន្ធរងគ្រប់គ្រងសោស្វ័យប្រវត្តិ ដើម្បីចេញ និងប្ដូរ API keys ជាប្រចាំជាមួយ provider/account គាំទ្រ ដោយមានកូតាប្រចាំថ្ងៃ/ប្រចាំម៉ោង។
 
-| វិធីសាស្ត្រ | ផ្លូវ                                 | សេចក្ដីពិពណ៌នា                                                                                                                                                                           |
-| ----------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET         | `/api/v1/registered-keys`             | រាយបញ្ជីសោដែលបានចុះបញ្ជី (បង្ហាញតែ prefix ដែលបានបិទបាំង)                                                                                                                                 |
-| POST        | `/api/v1/registered-keys`             | ចេញសោដែលបានចុះបញ្ជីថ្មី — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`។ ត្រឡប់សោដើមតែ **ម្តងប៉ុណ្ណោះ**។ ត្រឡប់ `429` នៅពេលកូតាបដិសេធ។ |
-| GET         | `/api/v1/registered-keys/[id]`        | ទាញយក metadata របស់សោដែលបានចុះបញ្ជី (គ្មានទិន្នន័យសោដើម)                                                                                                                                 |
-| DELETE      | `/api/v1/registered-keys/[id]`        | ដកហូតសោដែលបានចុះបញ្ជី                                                                                                                                                                    |
-| POST        | `/api/v1/registered-keys/[id]/revoke` | endpoint សម្រាប់ដកហូតដោយជាក់លាក់ (មានប្រសិទ្ធភាពដូច DELETE)                                                                                                                              |
+| វិធីសាស្ត្រ | Path                                  | ការពិពណ៌នា                                                                                                                                                                        |
+| ----------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET         | `/api/v1/registered-keys`             | រាយបញ្ជីសោដែលបានចុះឈ្មោះ (បង្ហាញតែ prefix ដែលបានបិទបាំង)                                                                                                                          |
+| POST        | `/api/v1/registered-keys`             | ចេញសោដែលបានចុះឈ្មោះថ្មី — body: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`។ ត្រឡប់សោដើមតែ **មួយដង**។ ត្រឡប់ `429` នៅពេលកូតាបដិសេធ។ |
+| GET         | `/api/v1/registered-keys/[id]`        | ទាញយក metadata របស់សោដែលបានចុះឈ្មោះ (មិនមានសោដើម)                                                                                                                                 |
+| DELETE      | `/api/v1/registered-keys/[id]`        | ដកហូតសោដែលបានចុះឈ្មោះ                                                                                                                                                             |
+| POST        | `/api/v1/registered-keys/[id]/revoke` | endpoint សម្រាប់ដកហូតដោយជាក់លាក់ (មានប្រសិទ្ធភាពដូចគ្នានឹង DELETE)                                                                                                                |
 
-**ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណ:** Bearer API key (`isAuthenticated`)។ សូមមើលផងដែរ `/v1/quotas/check` និង `/v1/issues/report`។
+**ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណ:** management session/API key (`requireManagementAuth`) — guard ដូចគ្នានឹង `/api/keys`៖ dashboard session, local CLI token ឬ API key ដែលមាន scope `manage`/`admin`; API keys សម្រាប់តែ inference ទទួលបាន `403`។ សូមមើលផងដែរ `/v1/quotas/check` និង `/v1/issues/report`។
 
 ---
 

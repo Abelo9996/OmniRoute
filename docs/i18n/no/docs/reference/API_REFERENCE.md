@@ -314,35 +314,43 @@ GET /v1/embeddings
 
 ```bash
 POST /v1/images/generations
-Authorization: Bearer din-api-nøkkel
+Authorization: Bearer your-api-key
 Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "En vakker solnedgang over fjell",
+  "prompt": "A beautiful sunset over mountains",
   "size": "1024x1024"
 }
 ```
 
 Tilgjengelige leverandører inkluderer OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (lokal), ComfyUI (lokal).
 
+`n` returnerer `n` bilder i `data[]`. Leverandører der det overordnede API-et returnerer ett bilde per kall
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), får `n` separate kall til det overordnede API-et, med maksimalt 4 samtidige kall. En
+fast `seed` forskyves med kallindeksen (`seed`, `seed + 1`, …), slik at bildene er forskjellige, men forblir
+reproduserbare. `n` er begrenset til 10. Hele forespørselen mislykkes hvis ett av kallene mislykkes. Listen
+over formater for parallellisering er `SINGLE_IMAGE_FANOUT_FORMATS` i
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
 ZenMux gjenbruker den eksisterende API-nøkkeltilkoblingen og godtar prefiksene `zenmux/` eller `zm/`:
 
-- `zenmux/openai/gpt-image-2` bruker ZenMux sin OpenAI Images API. Alternativene inkluderer `size`,
+- `zenmux/openai/gpt-image-2` bruker ZenMux sitt OpenAI Images API. Alternativene inkluderer `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background` og `response_format`.
 - Andre utgivere, som `zm/meta/muse-image-1.0`, bruker ZenMux sitt Vertex AI-`:predict`-
-  endepunkt. `n` tilsvarer `sampleCount`, `aspect_ratio` tilsvarer `aspectRatio`, og `image_size`
-  (`1K`, `2K`, `4K`) tilsvarer `sampleImageSize`. En pikselbasert `size` angir bare et sideforhold,
-  ikke garanterte pikseldimensjoner. Støttede sideforhold, oppløsninger og antall varierer etter modell.
+  endepunkt. `n` tilordnes til `sampleCount`, `aspect_ratio` til `aspectRatio` og `image_size`
+  (`1K`, `2K`, `4K`) til `sampleImageSize`. En `size` angitt i piksler angir bare et sideforhold,
+  ikke garanterte pikseldimensjoner. Støttede sideforhold, oppløsninger og antall varierer fra modell til modell.
 - `zm/inclusionai/ming-image-0.1-design` velger dimensjonene selv. Utelat `size`,
   `aspect_ratio` og `image_size`; eksplisitte verdier returnerer HTTP 400. PNG, JPEG og WebP
   kan forespørres med `output_format`.
 
-Denne integrasjonen støtter generering av bilder fra tekst, ikke redigering basert på referansebilder. Utdata fra Vertex
-normaliseres til `data[].b64_json`; `response_format: "url"` returnerer en oppstrøms
+Denne integrasjonen støtter generering fra tekst til bilde, ikke redigering basert på referansebilder. Utdata fra Vertex
+normaliseres til `data[].b64_json`; `response_format: "url"` returnerer en overordnet
 HTTPS-URL eller en base64-data-URL når bare bildedata er tilgjengelige. Tomme/filtrerte utdata
 returnerer en feil i stedet for en tom vellykket respons. Modelltilgang avhenger av ZenMux-kontoen.
-Se [ZenMux sin Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) og
+Se [ZenMux sitt Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) og
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
@@ -1438,19 +1446,19 @@ Utgående webhook-abonnementer for OmniRoute-hendelser (forespørsel fullført, 
 
 ---
 
-## Registrerte nøkler (autobehandling)
+## Registrerte nøkler (automatisk administrasjon)
 
-Brukes av delsystemet for automatisk nøkkelbehandling for å utstede og rotere API-nøkler mot en underliggende leverandør/konto, med daglige/timebaserte kvoter.
+Brukes av delsystemet for automatisk nøkkeladministrasjon til å utstede og rotere API-nøkler hos en underliggende leverandør/konto, med daglige/timesbaserte kvoter.
 
-| Metode | Sti                                   | Beskrivelse                                                                                                                                                                                                   |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | List registrerte nøkler (kun maskert prefiks)                                                                                                                                                                 |
-| POST   | `/api/v1/registered-keys`             | Utsted en ny registrert nøkkel — kropp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Returnerer den rå nøkkelen **én gang**. Returnerer `429` ved kvotefrafall. |
-| GET    | `/api/v1/registered-keys/[id]`        | Hent en registrert nøkkels metadata (ingen rådata)                                                                                                                                                            |
-| DELETE | `/api/v1/registered-keys/[id]`        | Tilbakekall en registrert nøkkel                                                                                                                                                                              |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Eksplisitt tilbakekallingsendepunkt (samme effekt som DELETE)                                                                                                                                                 |
+| Metode | Bane                                  | Beskrivelse                                                                                                                                                                                                             |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | Vis registrerte nøkler (kun maskert prefiks)                                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys`             | Utsted en ny registrert nøkkel — innhold: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Returnerer den ubehandlede nøkkelen **én gang**. Returnerer `429` ved kvoteavslag. |
+| GET    | `/api/v1/registered-keys/[id]`        | Hent metadataene til en registrert nøkkel (uten ubehandlet nøkkelmateriale)                                                                                                                                             |
+| DELETE | `/api/v1/registered-keys/[id]`        | Tilbakekall en registrert nøkkel                                                                                                                                                                                        |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Eksplisitt endepunkt for tilbakekalling (samme effekt som DELETE)                                                                                                                                                       |
 
-**Autentisering:** Bearer API-nøkkel (`isAuthenticated`). Se også `/v1/quotas/check` og `/v1/issues/report`.
+**Autentisering:** administrasjonsøkt/API-nøkkel (`requireManagementAuth`) — samme tilgangskontroll som for `/api/keys`: en kontrollpaneløkt, det lokale CLI-tokenet eller en API-nøkkel med omfanget `manage`/`admin`; API-nøkler som kun tillater inferens, får `403`. Se også `/v1/quotas/check` og `/v1/issues/report`.
 
 ---
 

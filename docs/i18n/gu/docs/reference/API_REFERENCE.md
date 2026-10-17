@@ -286,7 +286,7 @@ GET /v1/embeddings
 
 ---
 
-## છબી જનરેશન
+## ઇમેજ જનરેશન
 
 ```bash
 POST /v1/images/generations
@@ -295,34 +295,42 @@ Content-Type: application/json
 
 {
   "model": "openai/gpt-image-2",
-  "prompt": "પર્વતો ઉપરનો સુંદર સૂર્યાસ્ત",
+  "prompt": "પર્વતો પરનો સુંદર સૂર્યાસ્ત",
   "size": "1024x1024"
 }
 ```
 
 ઉપલબ્ધ પ્રદાતાઓમાં OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (સ્થાનિક), ComfyUI (સ્થાનિક) સામેલ છે.
 
-ZenMux હાલના API-key કનેક્શનનો ફરીથી ઉપયોગ કરે છે અને `zenmux/` અથવા `zm/` ઉપસર્ગો સ્વીકારે છે:
+`n`, `data[]`માં `n` ઇમેજ પરત કરે છે. જે પ્રદાતાઓની અપસ્ટ્રીમ API દરેક કૉલ દીઠ એક ઇમેજ પરત કરે છે
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), તેમને વધુમાં વધુ 4 કૉલ એકસાથે ચાલુ રાખીને `n` અલગ અપસ્ટ્રીમ કૉલ મળે છે. નિશ્ચિત
+`seed`ને કૉલ ઇન્ડેક્સ પ્રમાણે સરકાવવામાં આવે છે (`seed`, `seed + 1`, …), જેથી ઇમેજ અલગ હોય પરંતુ
+પુનરુત્પાદિત કરી શકાય તેવી રહે. `n`ની મહત્તમ મર્યાદા 10 છે. કોઈપણ કૉલ નિષ્ફળ જાય તો આખી વિનંતી
+નિષ્ફળ જાય છે. ફૅન-આઉટ ફોર્મેટની સૂચિ
+`open-sse/handlers/imageGeneration/fanOut.ts`માં `SINGLE_IMAGE_FANOUT_FORMATS` છે.
 
-- `zenmux/openai/gpt-image-2`, ZenMuxના OpenAI Images APIનો ઉપયોગ કરે છે. વિકલ્પોમાં `size`,
+ZenMux હાલના API-key કનેક્શનનો ફરી ઉપયોગ કરે છે અને `zenmux/` અથવા `zm/` પ્રીફિક્સ સ્વીકારે છે:
+
+- `zenmux/openai/gpt-image-2`, ZenMuxની OpenAI Images APIનો ઉપયોગ કરે છે. વિકલ્પોમાં `size`,
   `quality`, `n`, `output_format`, `output_compression`, `background`, અને `response_format` સામેલ છે.
 - અન્ય પ્રકાશકો, જેમ કે `zm/meta/muse-image-1.0`, ZenMuxના Vertex AI `:predict`
-  એન્ડપોઇન્ટનો ઉપયોગ કરે છે. `n`, `sampleCount` સાથે, `aspect_ratio`, `aspectRatio` સાથે, અને `image_size`
-  (`1K`, `2K`, `4K`), `sampleImageSize` સાથે મેપ થાય છે. પિક્સેલ `size` માત્ર આસ્પેક્ટ રેશિયો પૂરો પાડે છે,
-  ખાતરીપૂર્વકના પિક્સેલ પરિમાણો નહીં. સમર્થિત રેશિયો, રિઝોલ્યુશન અને સંખ્યાઓ મોડેલ પ્રમાણે બદલાય છે.
-- `zm/inclusionai/ming-image-0.1-design` તેના પોતાના પરિમાણો પસંદ કરે છે. `size`,
+  એન્ડપોઇન્ટનો ઉપયોગ કરે છે. `n`, `sampleCount` સાથે, `aspect_ratio`, `aspectRatio` સાથે અને `image_size`
+  (`1K`, `2K`, `4K`), `sampleImageSize` સાથે મેપ થાય છે. પિક્સેલ `size` ફક્ત આસ્પેક્ટ રેશિયો આપે છે,
+  ખાતરીપૂર્વકનાં પિક્સેલ પરિમાણો નહીં. સમર્થિત રેશિયો, રિઝોલ્યુશન અને ગણતરી મોડેલ પ્રમાણે બદલાય છે.
+- `zm/inclusionai/ming-image-0.1-design` પોતાનાં પરિમાણો પસંદ કરે છે. `size`,
   `aspect_ratio`, અને `image_size`ને છોડો; સ્પષ્ટ મૂલ્યો HTTP 400 પરત કરે છે. PNG, JPEG અને WebPની
   `output_format` વડે વિનંતી કરી શકાય છે.
 
-આ ઇન્ટિગ્રેશન ટેક્સ્ટ-ટુ-ઇમેજ જનરેશનને સમર્થન આપે છે, સંદર્ભ-છબી સંપાદનને નહીં. Vertex
+આ ઇન્ટિગ્રેશન ટેક્સ્ટ-ટુ-ઇમેજ જનરેશનને સમર્થન આપે છે, રેફરન્સ-ઇમેજ એડિટિંગને નહીં. Vertex
 આઉટપુટને `data[].b64_json`માં સામાન્યકૃત કરવામાં આવે છે; `response_format: "url"` અપસ્ટ્રીમ
-HTTPS URL અથવા જ્યારે માત્ર છબી બાઇટ્સ ઉપલબ્ધ હોય ત્યારે base64 ડેટા URL પરત કરે છે. ખાલી/ફિલ્ટર થયેલા આઉટપુટ
-ખાલી સફળતાને બદલે ભૂલ પરત કરે છે. મોડેલ ઍક્સેસ ZenMux એકાઉન્ટ પર આધારિત છે.
-[ZenMuxનું Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) અને
+HTTPS URL અથવા ફક્ત ઇમેજ બાઇટ્સ ઉપલબ્ધ હોય ત્યારે base64 ડેટા URL પરત કરે છે. ખાલી/ફિલ્ટર કરેલા આઉટપુટ
+ખાલી સફળતા બદલે ભૂલ પરત કરે છે. મોડેલ ઍક્સેસ ZenMux એકાઉન્ટ પર આધારિત છે.
+[ZenMuxની Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) અને
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) જુઓ.
 
 ```bash
-# બધા છબી મોડેલોની સૂચિ બનાવો
+# બધા ઇમેજ મોડેલની સૂચિ બનાવો
 GET /v1/images/generations
 ```
 
@@ -1453,19 +1461,19 @@ OmniRoute ઇવેન્ટ્સ (વિનંતી પૂર્ણ થવી
 
 ---
 
-## નોંધાયેલ કીઝ (સ્વચાલિત સંચાલન)
+## નોંધાયેલ કીઓ (સ્વચાલિત વ્યવસ્થાપન)
 
-દૈનિક/કલાકદીઠ ક્વોટા સાથે, બૅકિંગ પ્રોવાઇડર/એકાઉન્ટ માટે API કીઝ જારી કરવા અને રોટેટ કરવા સ્વચાલિત કી સંચાલન સબસિસ્ટમ દ્વારા ઉપયોગમાં લેવાય છે.
+દૈનિક/કલાકદીઠ ક્વોટા સાથે, આધારભૂત પ્રદાતા/એકાઉન્ટ સામે API કીઓ જારી કરવા અને રોટેટ કરવા માટે સ્વચાલિત કી વ્યવસ્થાપન સબસિસ્ટમ દ્વારા ઉપયોગમાં લેવાય છે.
 
-| પદ્ધતિ | પાથ                                   | વર્ણન                                                                                                                                                                                                           |
-| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | નોંધાયેલ કીઝની સૂચિ આપે છે (માત્ર માસ્ક કરેલ પ્રીફિક્સ)                                                                                                                                                         |
-| POST   | `/api/v1/registered-keys`             | નવી નોંધાયેલ કી જારી કરે છે — બોડી: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. મૂળ કી **માત્ર એક વાર** પરત કરે છે. ક્વોટા અસ્વીકાર થાય ત્યારે `429` પરત કરે છે. |
-| GET    | `/api/v1/registered-keys/[id]`        | નોંધાયેલ કીની મેટાડેટા મેળવે છે (મૂળ કી સામગ્રી વિના)                                                                                                                                                           |
-| DELETE | `/api/v1/registered-keys/[id]`        | નોંધાયેલ કી રદ કરે છે                                                                                                                                                                                           |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | સ્પષ્ટ રદબાતલ એન્ડપોઇન્ટ (DELETE જેવી જ અસર)                                                                                                                                                                    |
+| પદ્ધતિ | પાથ                                   | વર્ણન                                                                                                                                                                                                            |
+| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | નોંધાયેલ કીઓની સૂચિ બતાવે છે (માત્ર માસ્ક કરેલો પ્રીફિક્સ)                                                                                                                                                       |
+| POST   | `/api/v1/registered-keys`             | નવી નોંધાયેલ કી જારી કરે છે — બોડી: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. મૂળ કી **માત્ર એક વખત** પરત કરે છે. ક્વોટાને કારણે ઇનકાર થવા પર `429` પરત કરે છે. |
+| GET    | `/api/v1/registered-keys/[id]`        | નોંધાયેલ કીનું મેટાડેટા મેળવે છે (મૂળ સામગ્રી વિના)                                                                                                                                                              |
+| DELETE | `/api/v1/registered-keys/[id]`        | નોંધાયેલ કી રદ કરે છે                                                                                                                                                                                            |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | સ્પષ્ટ રદબાતલ એન્ડપોઇન્ટ (DELETE જેવી જ અસર)                                                                                                                                                                     |
 
-**પ્રમાણીકરણ:** Bearer API કી (`isAuthenticated`). `/v1/quotas/check` અને `/v1/issues/report` પણ જુઓ.
+**પ્રમાણીકરણ:** વ્યવસ્થાપન સત્ર/API કી (`requireManagementAuth`) — `/api/keys` જેવું જ સુરક્ષા નિયંત્રણ: ડૅશબોર્ડ સત્ર, સ્થાનિક CLI ટોકન અથવા `manage`/`admin` સ્કોપ ધરાવતી API કી; માત્ર ઇન્ફરન્સ માટેની API કીઓને `403` મળે છે. `/v1/quotas/check` અને `/v1/issues/report` પણ જુઓ.
 
 ---
 

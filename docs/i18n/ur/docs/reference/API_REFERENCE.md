@@ -302,23 +302,31 @@ Content-Type: application/json
 
 دستیاب فراہم کنندگان میں OpenAI (GPT Image 2)، xAI (Grok Image)، Together AI (FLUX)، Fireworks AI، Nebius (FLUX)، Hyperbolic، NanoBanana، **OpenRouter**، **ZenMux**، SD WebUI (مقامی)، ComfyUI (مقامی) شامل ہیں۔
 
-ZenMux موجودہ API کلید کے کنکشن کو دوبارہ استعمال کرتا ہے اور `zenmux/` یا `zm/` سابقے قبول کرتا ہے:
+`n`، `data[]` میں `n` تصاویر واپس کرتا ہے۔ جن فراہم کنندگان کا اپ اسٹریم API ہر کال پر ایک تصویر واپس کرتا ہے
+(Black Forest Labs، Stability AI، Leonardo، Ideogram، Haiper، Hyperbolic، Magnific/Freepik،
+NVIDIA NIM، Cloudflare Workers AI)، ان کے لیے `n` علیحدہ اپ اسٹریم کالز کی جاتی ہیں، جن میں بیک وقت زیادہ سے زیادہ 4 زیرِ عمل ہوتی ہیں۔ ایک
+مقررہ `seed` کو کال انڈیکس کے مطابق بڑھایا جاتا ہے (`seed`، `seed + 1`، …)، لہٰذا تصاویر مختلف ہوتی ہیں مگر
+دوبارہ قابلِ تخلیق رہتی ہیں۔ `n` کی زیادہ سے زیادہ حد 10 ہے۔ اگر کوئی بھی کال ناکام ہو جائے تو پوری درخواست
+ناکام ہو جاتی ہے۔ فین آؤٹ فارمیٹس کی فہرست `SINGLE_IMAGE_FANOUT_FORMATS` میں
+`open-sse/handlers/imageGeneration/fanOut.ts` پر موجود ہے۔
 
-- `zenmux/openai/gpt-image-2`، ZenMux کی OpenAI Images API استعمال کرتا ہے۔ اختیارات میں `size`،
+ZenMux موجودہ API کلید کنکشن کو دوبارہ استعمال کرتا ہے اور `zenmux/` یا `zm/` سابقے قبول کرتا ہے:
+
+- `zenmux/openai/gpt-image-2`، ZenMux کا OpenAI Images API استعمال کرتا ہے۔ اختیارات میں `size`،
   `quality`، `n`، `output_format`، `output_compression`، `background`، اور `response_format` شامل ہیں۔
 - دیگر ناشرین، جیسے `zm/meta/muse-image-1.0`، ZenMux کا Vertex AI `:predict`
-  اینڈ پوائنٹ استعمال کرتے ہیں۔ `n` کی نقشہ بندی `sampleCount` سے، `aspect_ratio` کی `aspectRatio` سے، اور `image_size`
-  (`1K`، `2K`، `4K`) کی `sampleImageSize` سے ہوتی ہے۔ پکسل `size` صرف تناسبِ ابعاد فراہم کرتا ہے،
-  یقینی پکسل ابعاد نہیں۔ معاون تناسب، ریزولیوشنز، اور تعداد ماڈل کے لحاظ سے مختلف ہوتی ہیں۔
-- `zm/inclusionai/ming-image-0.1-design` اپنی جہتوں کا خود انتخاب کرتا ہے۔ `size`،
-  `aspect_ratio`، اور `image_size` کو شامل نہ کریں؛ واضح اقدار HTTP 400 لوٹاتی ہیں۔ `output_format` کے ساتھ PNG، JPEG، اور WebP
-  کی درخواست کی جا سکتی ہے۔
+  اینڈ پوائنٹ استعمال کرتے ہیں۔ `n` کو `sampleCount`، `aspect_ratio` کو `aspectRatio`، اور `image_size`
+  (`1K`، `2K`، `4K`) کو `sampleImageSize` سے میپ کیا جاتا ہے۔ پکسل پر مبنی `size` صرف پہلو کا تناسب فراہم کرتا ہے،
+  ضمانت شدہ پکسل ابعاد نہیں۔ معاونت یافتہ تناسب، ریزولوشنز، اور تعداد ماڈل کے لحاظ سے مختلف ہوتی ہیں۔
+- `zm/inclusionai/ming-image-0.1-design` اپنی ابعاد خود منتخب کرتا ہے۔ `size`،
+  `aspect_ratio`، اور `image_size` شامل نہ کریں؛ واضح اقدار HTTP 400 واپس کرتی ہیں۔ PNG، JPEG، اور WebP
+  کی درخواست `output_format` کے ذریعے کی جا سکتی ہے۔
 
-یہ انضمام متن سے تصویر بنانے کی سہولت فراہم کرتا ہے، نہ کہ حوالہ جاتی تصویر میں ترمیم کی۔ Vertex
-آؤٹ پٹ کو `data[].b64_json` میں معیاری بنایا جاتا ہے؛ `response_format: "url"` ایک اپ اسٹریم
-HTTPS URL لوٹاتا ہے، یا جب صرف تصویری بائٹس دستیاب ہوں تو base64 ڈیٹا URL۔ خالی/فلٹر شدہ آؤٹ پٹس
-خالی کامیاب جواب کے بجائے خرابی لوٹاتے ہیں۔ ماڈل تک رسائی ZenMux اکاؤنٹ پر منحصر ہے۔
-[ZenMux کی Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) اور
+یہ انٹیگریشن متن سے تصویر بنانے کی معاونت کرتا ہے، حوالہ جاتی تصویر میں ترمیم کی نہیں۔ Vertex
+آؤٹ پٹ کو `data[].b64_json` میں معمول پر لایا جاتا ہے؛ `response_format: "url"` ایک اپ اسٹریم
+HTTPS URL واپس کرتا ہے، یا جب صرف تصویری بائٹس دستیاب ہوں تو base64 ڈیٹا URL واپس کرتا ہے۔ خالی/فلٹر شدہ آؤٹ پٹس
+خالی کامیاب جواب کے بجائے خرابی واپس کرتے ہیں۔ ماڈل تک رسائی ZenMux اکاؤنٹ پر منحصر ہے۔
+[ZenMux کا Vertex API](https://docs.zenmux.ai/api/vertexai/generate-images) اور
 [OpenAI Images API](https://docs.zenmux.ai/api/openai/generate-an-image) دیکھیں۔
 
 ```bash
@@ -1457,19 +1465,19 @@ OmniRoute ایونٹس (درخواست کی تکمیل، کوٹہ ختم ہون�
 
 ---
 
-## رجسٹرڈ کلیدیں (خودکار انتظام)
+## رجسٹرڈ کلیدیں (خودکار نظم)
 
-روزانہ/فی گھنٹہ کوٹے کے ساتھ، بیکنگ فراہم کنندہ/اکاؤنٹ کے ذریعے API کلیدیں جاری کرنے اور تبدیل کرنے کے لیے خودکار کلید مینجمنٹ ذیلی نظام استعمال کرتا ہے۔
+خودکار کلید کے نظم کے ذیلی نظام کے ذریعے کسی پسِ پشت فراہم کنندہ/اکاؤنٹ کے لیے API کلیدیں جاری اور تبدیل کی جاتی ہیں، جن پر یومیہ/فی گھنٹہ کوٹے لاگو ہوتے ہیں۔
 
-| طریقہ  | پاتھ                                  | تفصیل                                                                                                                                                                                                               |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | رجسٹرڈ کلیدوں کی فہرست حاصل کریں (صرف مخفی سابقہ)                                                                                                                                                                   |
-| POST   | `/api/v1/registered-keys`             | نئی رجسٹرڈ کلید جاری کریں — باڈی: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`۔ خام کلید **صرف ایک مرتبہ** واپس کی جاتی ہے۔ کوٹہ مسترد ہونے پر `429` واپس کیا جاتا ہے۔ |
-| GET    | `/api/v1/registered-keys/[id]`        | رجسٹرڈ کلید کا میٹا ڈیٹا حاصل کریں (خام مواد کے بغیر)                                                                                                                                                               |
-| DELETE | `/api/v1/registered-keys/[id]`        | رجسٹرڈ کلید منسوخ کریں                                                                                                                                                                                              |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | واضح منسوخی کا اینڈ پوائنٹ (DELETE جیسا ہی اثر)                                                                                                                                                                     |
+| طریقہ  | راستہ                                 | تفصیل                                                                                                                                                                                                         |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/v1/registered-keys`             | رجسٹرڈ کلیدوں کی فہرست (صرف مخفی سابقہ)                                                                                                                                                                       |
+| POST   | `/api/v1/registered-keys`             | نئی رجسٹرڈ کلید جاری کریں — باڈی: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`۔ اصل کلید **صرف ایک بار** واپس کی جاتی ہے۔ کوٹا مسترد ہونے پر `429` واپس ہوتا ہے۔ |
+| GET    | `/api/v1/registered-keys/[id]`        | رجسٹرڈ کلید کا میٹا ڈیٹا حاصل کریں (اصل کلید نہیں)                                                                                                                                                            |
+| DELETE | `/api/v1/registered-keys/[id]`        | رجسٹرڈ کلید منسوخ کریں                                                                                                                                                                                        |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | واضح منسوخی کا اینڈ پوائنٹ (DELETE جیسا ہی اثر)                                                                                                                                                               |
 
-**تصدیق:** Bearer API کلید (`isAuthenticated`)۔ `/v1/quotas/check` اور `/v1/issues/report` بھی دیکھیں۔
+**توثیق:** انتظامی سیشن/API کلید (`requireManagementAuth`) — وہی محافظ جو `/api/keys` کے لیے ہے: ڈیش بورڈ سیشن، مقامی CLI ٹوکن، یا `manage`/`admin` اسکوپ والی API کلید؛ صرف استنتاج کے لیے API کلیدوں کو `403` ملتا ہے۔ `/v1/quotas/check` اور `/v1/issues/report` بھی دیکھیں۔
 
 ---
 
