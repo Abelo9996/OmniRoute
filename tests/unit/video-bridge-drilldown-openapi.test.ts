@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import * as yaml from "js-yaml";
 
+import { buildApiOperationExample } from "../../src/lib/agentSkills/apiOperationExample.ts";
 import { parseOpenapi } from "../../src/lib/agentSkills/openapiParser.ts";
 
 type Operation = {
@@ -40,3 +41,16 @@ test("drill-down publishes one parseable authenticated GET/DELETE contract", () 
     description: "Unknown, expired or cross-key handle",
   });
 });
+
+for (const method of ["GET", "DELETE"]) {
+  test(`published drill-down ${method} example supplies its required opaque handle`, () => {
+    const example = buildApiOperationExample(
+      { method, path: "/api/v1/video-bridge/drilldown" },
+      false
+    ).join("\n");
+    assert.match(example, /curl --get /);
+    assert.ok(example.includes('--data-urlencode "handle=$OMNIROUTE_VIDEO_HANDLE"'));
+    assert.ok(example.includes("Authorization: Bearer $OMNIROUTE_TOKEN"));
+    assert.equal(example.includes("-X DELETE"), method === "DELETE");
+  });
+}
