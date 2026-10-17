@@ -9,7 +9,14 @@
  *
  * Never dropped: tools the conversation already called, a forced `tool_choice` tool,
  * `alwaysInclude`, `ToolSearch` (Claude Code's deferred-schema tool), unnamed hosted tools
- * and anything the caller pins (`isPinnedTool`). Kept tools stay in their original order.
+ * anything the caller pins (`isPinnedTool`) and any tool whose full name appears in the query.
+ * Kept tools stay in their original order.
+ *
+ * `mode: "zeroOverlap"` swaps the top-K budget for a conservative pass: only tools that share
+ * no word with the last few messages are dropped, largest first, and only on sets of at least
+ * `minTools`, keeping at least `keepRatio` of the tools and dropping at most `dropCap` of them.
+ *
+ * Fail-open: any error while selecting returns the body untouched (reported via `onError`).
  *
  * Prompt-cache caveat: providers cache the tools block as part of the prompt prefix, so a
  * tool subset that changes between turns misses that cache. Measure before enabling.
@@ -24,6 +31,14 @@ export interface ToolDisclosureConfig {
   maxTools: number;
   /** Tool names never dropped. */
   alwaysInclude: string[];
+  /** Selection policy; absent = top-K by relevance (`maxTools`). */
+  mode?: "zeroOverlap";
+  /** zeroOverlap: smallest tool set the pass runs on. */
+  minTools?: number;
+  /** zeroOverlap: fraction of the tool set always kept. */
+  keepRatio?: number;
+  /** zeroOverlap: largest fraction of the tool set that may be dropped. */
+  dropCap?: number;
 }
 
 export interface ToolDisclosureOptions {
@@ -33,6 +48,8 @@ export interface ToolDisclosureOptions {
   toolNamePrefix?: string;
   /** Extra caller-owned pins (e.g. the router's own fallback tools). */
   isPinnedTool?: (tool: unknown) => boolean;
+  /** Called when selection throws; the body is then returned untouched. */
+  onError?: (error: unknown) => void;
 }
 
 export interface ToolDisclosureStats {
@@ -43,7 +60,31 @@ export interface ToolDisclosureStats {
 
 export const DEFAULT_TOOL_DISCLOSURE_MAX_TOOLS = 20;
 export const TOOL_DISCLOSURE_MAX_TOOLS_LIMIT = 500;
+export const DEFAULT_ZERO_OVERLAP_MIN_TOOLS = 16;
+export const DEFAULT_ZERO_OVERLAP_KEEP_RATIO = 0.5;
+export const DEFAULT_ZERO_OVERLAP_DROP_CAP = 0.4;
+const ZERO_OVERLAP_QUERY_ITEMS = 3;
+const ZERO_OVERLAP_QUERY_MAX_CHARS = 8000;
 const ALWAYS_PINNED = ["ToolSearch"];
+
+function clampRatio(value: unknown, fallback: number): number {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.min(1, Math.max(0, numeric)) : fallback;
+}
+
+function resolveZeroOverlap(record: Record<string, unknown>) {
+  const numeric = Number(record.minTools);
+  const minTools =
+    Number.isFinite(numeric) && numeric >= 1
+      ? Math.min(TOOL_DISCLOSURE_MAX_TOOLS_LIMIT, Math.floor(numeric))
+      : DEFAULT_ZERO_OVERLAP_MIN_TOOLS;
+  return {
+    mode: "zeroOverlap" as const,
+    minTools,
+    keepRatio: clampRatio(record.keepRatio, DEFAULT_ZERO_OVERLAP_KEEP_RATIO),
+    dropCap: clampRatio(record.dropCap, DEFAULT_ZERO_OVERLAP_DROP_CAP),
+  };
+}
 
 /** Read `settings.toolDisclosure`; returns null unless explicitly enabled. */
 export function resolveToolDisclosureConfig(
@@ -61,7 +102,8 @@ export function resolveToolDisclosureConfig(
   const alwaysInclude = Array.isArray(record.alwaysInclude)
     ? record.alwaysInclude.filter((n): n is string => typeof n === "string" && n.length > 0)
     : [];
-  return { enabled: true, maxTools, alwaysInclude };
+  const base = { enabled: true, maxTools, alwaysInclude };
+  return record.mode === "zeroOverlap" ? { ...base, ...resolveZeroOverlap(record) } : base;
 }
 
 // ── BM25 ───────────────────────────────────────────────────────────────────
@@ -225,6 +267,29 @@ function lastUserText(body: unknown): string {
   return "";
 }
 
+// zeroOverlap query: text of the last few conversation items of any role, capped.
+function recentText(body: unknown): string {
+  return conversationItems(body)
+    .slice(-ZERO_OVERLAP_QUERY_ITEMS)
+    .map((item) => textOf((item as ToolRecord | null)?.content))
+    .join(" ")
+    .slice(0, ZERO_OVERLAP_QUERY_MAX_CHARS);
+}
+
+const NAME_CHAR = /[a-z0-9_]/;
+
+// True when `name` appears in `query` as a whole token (not inside a longer identifier).
+function mentionsName(query: string, name: string): boolean {
+  const needle = name.toLowerCase();
+  if (needle.length < 2) return false;
+  for (let at = query.indexOf(needle); at !== -1; at = query.indexOf(needle, at + 1)) {
+    const before = at > 0 ? query[at - 1] : "";
+    const after = query[at + needle.length] ?? "";
+    if (!NAME_CHAR.test(before) && !NAME_CHAR.test(after)) return true;
+  }
+  return false;
+}
+
 function collectHistoryToolNames(body: unknown, into: Set<string>): void {
   for (const raw of conversationItems(body)) {
     if (!raw || typeof raw !== "object") continue;
@@ -271,22 +336,45 @@ function withAnchorMoved(original: unknown[], kept: unknown[]): unknown[] {
   });
 }
 
+type Selection = { body: Body; stats: ToolDisclosureStats | null };
+
 /**
  * Apply relevance-based tool disclosure to an upstream body. Returns the body by reference
- * (and `stats: null`) when disabled or when nothing needs dropping.
+ * (and `stats: null`) when disabled, when nothing needs dropping, or when selection fails.
  */
 export function applyToolDisclosure(
   body: Body,
   config: ToolDisclosureConfig | null | undefined,
   options: ToolDisclosureOptions = {}
-): { body: Body; stats: ToolDisclosureStats | null } {
-  const tools = body.tools;
-  if (!config?.enabled || !Array.isArray(tools) || tools.length <= config.maxTools) {
+): Selection {
+  if (!config?.enabled) return { body, stats: null };
+  try {
+    return selectTools(body, config, options);
+  } catch (error) {
+    options.onError?.(error);
     return { body, stats: null };
   }
+}
+
+function selectTools(
+  body: Body,
+  config: ToolDisclosureConfig,
+  options: ToolDisclosureOptions
+): Selection {
+  const tools = body.tools;
+  const zeroOverlap = config.mode === "zeroOverlap";
+  const minTools = zeroOverlap
+    ? (config.minTools ?? DEFAULT_ZERO_OVERLAP_MIN_TOOLS)
+    : config.maxTools + 1;
+  if (!Array.isArray(tools) || tools.length < minTools) return { body, stats: null };
+
   const prefix = options.toolNamePrefix ?? "";
   const normalize = (name: string) =>
     prefix && name.startsWith(prefix) ? name.slice(prefix.length) : name;
+  const query = zeroOverlap
+    ? recentText(body) || recentText(options.rawBody)
+    : lastUserText(body) || lastUserText(options.rawBody);
+  const queryLower = query.toLowerCase();
 
   const pinnedNames = new Set<string>([...ALWAYS_PINNED, ...config.alwaysInclude]);
   collectHistoryToolNames(body, pinnedNames);
@@ -297,22 +385,22 @@ export function applyToolDisclosure(
   const candidates: number[] = [];
   tools.forEach((tool, i) => {
     const name = readToolName(tool);
-    if (name === null || pinned.has(normalize(name)) || options.isPinnedTool?.(tool)) {
+    if (
+      name === null ||
+      pinned.has(normalize(name)) ||
+      options.isPinnedTool?.(tool) ||
+      mentionsName(queryLower, normalize(name))
+    ) {
       keep[i] = true;
     } else {
       candidates.push(i);
     }
   });
 
-  const pinnedCount = tools.length - candidates.length;
-  const budget = Math.max(0, config.maxTools - pinnedCount);
-  if (budget >= candidates.length) return { body, stats: null };
-
-  const query = lastUserText(body) || lastUserText(options.rawBody);
-  const scores = scoreDocs(getIndex(tools), tokenize(query));
-  // Highest score first; ties keep declaration order (stable sort).
-  const ranked = [...candidates].sort((a, b) => scores[b] - scores[a]);
-  for (const i of ranked.slice(0, budget)) keep[i] = true;
+  const dropCount = zeroOverlap
+    ? markZeroOverlapKeeps(tools, candidates, keep, query, config)
+    : markTopKeeps(tools, candidates, keep, query, config.maxTools);
+  if (dropCount === 0) return { body, stats: null };
 
   const kept = tools.filter((_, i) => keep[i]);
   const dropped = tools
@@ -323,4 +411,49 @@ export function applyToolDisclosure(
     body: { ...body, tools: withAnchorMoved(tools, kept) },
     stats: { before: tools.length, after: kept.length, dropped },
   };
+}
+
+// Top-K: keep the `maxTools - pinned` best-scoring candidates. Returns how many are dropped.
+function markTopKeeps(
+  tools: unknown[],
+  candidates: number[],
+  keep: boolean[],
+  query: string,
+  maxTools: number
+): number {
+  const pinnedCount = tools.length - candidates.length;
+  const budget = Math.max(0, maxTools - pinnedCount);
+  if (budget >= candidates.length) return 0;
+  const scores = scoreDocs(getIndex(tools), tokenize(query));
+  // Highest score first; ties keep declaration order (stable sort).
+  const ranked = [...candidates].sort((a, b) => scores[b] - scores[a]);
+  for (const i of ranked.slice(0, budget)) keep[i] = true;
+  return candidates.length - budget;
+}
+
+// zeroOverlap: drop zero-score candidates, largest first, within the floor and the cap.
+function markZeroOverlapKeeps(
+  tools: unknown[],
+  candidates: number[],
+  keep: boolean[],
+  query: string,
+  config: ToolDisclosureConfig
+): number {
+  const queryTokens = tokenize(query);
+  const n = tools.length;
+  const keepRatio = config.keepRatio ?? DEFAULT_ZERO_OVERLAP_KEEP_RATIO;
+  const dropCap = config.dropCap ?? DEFAULT_ZERO_OVERLAP_DROP_CAP;
+  const allowable = Math.min(Math.floor(n * dropCap), n - Math.ceil(n * keepRatio));
+  if (queryTokens.length === 0 || allowable <= 0) return 0;
+  const scores = scoreDocs(getIndex(tools), queryTokens);
+  const drops = new Set(
+    candidates
+      .filter((i) => scores[i] === 0)
+      .map((i) => ({ i, size: JSON.stringify(tools[i]).length }))
+      .sort((a, b) => b.size - a.size)
+      .slice(0, allowable)
+      .map((entry) => entry.i)
+  );
+  for (const i of candidates) if (!drops.has(i)) keep[i] = true;
+  return drops.size;
 }

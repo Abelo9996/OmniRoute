@@ -284,3 +284,178 @@ test("prepareUpstreamBody applies disclosure before the provider cap only when c
   assert.ok(kept.includes("mcp__github__create_pull_request"));
   assert.equal(translatedBody.tools.length, 40);
 });
+
+// ── Safety rails + optional conservative mode ───────────────────────────────
+
+test("fail-open: a tool that throws while being read returns the body untouched", () => {
+  const tools = buildOpenAiTools(40);
+  const poisoned: Tool = {};
+  Object.defineProperty(poisoned, "name", {
+    enumerable: true,
+    get() {
+      throw new Error("boom");
+    },
+  });
+  tools.splice(3, 0, poisoned);
+  const body = { messages: [{ role: "user", content: "open a pull request on github" }], tools };
+  const errors: unknown[] = [];
+  const result = applyToolDisclosure(body, ENABLED, { onError: (err) => errors.push(err) });
+  assert.equal(result.body, body);
+  assert.equal(result.stats, null);
+  assert.equal(errors.length, 1);
+  assert.equal(body.tools.length, 41);
+});
+
+test("a tool whose name appears in the user turn is kept even with a zero score", () => {
+  const tools = [...buildOpenAiTools(40), openAiTool("b_c", "gamma frobnicate")];
+  const body = {
+    messages: [
+      { role: "user", content: "load the b_c config, then open a pull request on github" },
+    ],
+    tools,
+  };
+  const kept = (applyToolDisclosure(body, ENABLED).body.tools as Tool[]).map(toolName);
+  assert.ok(kept.includes("b_c"));
+  assert.ok(kept.includes("mcp__github__create_pull_request"));
+  assert.equal(kept.length, 5);
+
+  // Only a whole-name match pins: "xb_cx" must not pin "b_c".
+  const partial = {
+    messages: [{ role: "user", content: "load xb_cx, then open a pull request on github" }],
+    tools,
+  };
+  const partialKept = (applyToolDisclosure(partial, ENABLED).body.tools as Tool[]).map(toolName);
+  assert.equal(partialKept.includes("b_c"), false);
+});
+
+const ZERO = {
+  enabled: true,
+  maxTools: 20,
+  alwaysInclude: [] as string[],
+  mode: "zeroOverlap" as const,
+  minTools: 16,
+  keepRatio: 0.5,
+  dropCap: 0.4,
+};
+const relTool = (i: number): Tool => ({
+  name: `RunTask${i}`,
+  description: "run project build commands via shell server deploy",
+});
+const irrelTool = (i: number): Tool => ({
+  name: `ZoneTask${i}`,
+  description: "quantum zigzag widget frobnicate",
+});
+const range = (n: number) => Array.from({ length: n }, (_, i) => i);
+const SHELL_MSGS = [
+  {
+    role: "user",
+    content: [{ type: "text", text: "please use the shell to run project build commands" }],
+  },
+];
+const FRUIT_MSGS = [{ role: "user", content: "zebra mango pineapple upside down cake" }];
+
+test("zeroOverlap mode drops only zero-overlap tools and keeps the original order", () => {
+  const tools = [...range(16).map(relTool), irrelTool(0), irrelTool(1)];
+  const result = applyToolDisclosure({ messages: SHELL_MSGS, tools }, ZERO);
+  const kept = result.body.tools as Tool[];
+  assert.deepEqual(
+    kept.map(toolName),
+    range(16).map((i) => `RunTask${i}`)
+  );
+  assert.deepEqual([...(result.stats?.dropped ?? [])].sort(), ["ZoneTask0", "ZoneTask1"]);
+  assert.equal(result.stats?.before, 18);
+  assert.equal(result.stats?.after, 16);
+});
+
+test("zeroOverlap mode honors the keep floor and the drop cap, largest tools first", () => {
+  const twenty = range(20).map(irrelTool);
+  const floor = applyToolDisclosure({ messages: FRUIT_MSGS, tools: twenty }, ZERO);
+  assert.equal((floor.body.tools as Tool[]).length, 12);
+  assert.equal(floor.stats?.dropped.length, 8);
+
+  const thirty = range(30).map(irrelTool);
+  const cap = applyToolDisclosure({ messages: FRUIT_MSGS, tools: thirty }, ZERO);
+  assert.equal((cap.body.tools as Tool[]).length, 18);
+  assert.equal(cap.stats?.dropped.length, 12);
+
+  // The biggest zero-overlap definitions go first.
+  const sized = range(20).map((i) =>
+    i < 8 ? { ...irrelTool(i), description: `${"frobnicate ".repeat(20)}quantum` } : irrelTool(i)
+  );
+  const bySize = applyToolDisclosure({ messages: FRUIT_MSGS, tools: sized }, ZERO);
+  assert.deepEqual(
+    [...(bySize.stats?.dropped ?? [])].sort(),
+    range(8)
+      .map((i) => `ZoneTask${i}`)
+      .sort()
+  );
+});
+
+test("zeroOverlap mode leaves small tool sets and empty queries alone", () => {
+  const small = { messages: FRUIT_MSGS, tools: range(15).map(irrelTool) };
+  assert.equal(applyToolDisclosure(small, ZERO).body, small);
+  const tools = range(20).map(irrelTool);
+  for (const messages of [[], [{ role: "user" }], [{ role: "user", content: "" }]]) {
+    const body = { messages, tools };
+    assert.equal(applyToolDisclosure(body, ZERO).body, body);
+  }
+});
+
+test("zeroOverlap mode keeps pinned and name-mentioned tools", () => {
+  const tools = range(20).map(irrelTool);
+  const body = {
+    messages: [{ role: "user", content: "zebra mango cake, maybe ZoneTask5 later" }],
+    tools,
+    tool_choice: { type: "tool", name: "ZoneTask9" },
+  };
+  const result = applyToolDisclosure(body, ZERO);
+  const kept = (result.body.tools as Tool[]).map(toolName);
+  assert.ok(kept.includes("ZoneTask5"));
+  assert.ok(kept.includes("ZoneTask9"));
+  assert.equal(result.stats?.dropped.includes("ZoneTask5"), false);
+  assert.equal(result.stats?.dropped.length, 8);
+});
+
+test("resolveToolDisclosureConfig adds zeroOverlap defaults only when that mode is chosen", () => {
+  assert.deepEqual(
+    resolveToolDisclosureConfig({ toolDisclosure: { enabled: true, mode: "zeroOverlap" } }),
+    { ...ZERO }
+  );
+  assert.deepEqual(
+    resolveToolDisclosureConfig({
+      toolDisclosure: {
+        enabled: true,
+        mode: "zeroOverlap",
+        minTools: 4.7,
+        keepRatio: 2,
+        dropCap: -1,
+      },
+    }),
+    { ...ZERO, minTools: 4, keepRatio: 1, dropCap: 0 }
+  );
+  const topK = resolveToolDisclosureConfig({ toolDisclosure: { enabled: true, mode: "topK" } });
+  assert.equal(topK?.mode, undefined);
+});
+
+test("the settings schema accepts the zeroOverlap knobs and rejects bad ones", () => {
+  assert.equal(
+    updateSettingsSchema.safeParse({
+      toolDisclosure: {
+        enabled: true,
+        mode: "zeroOverlap",
+        minTools: 16,
+        keepRatio: 0.5,
+        dropCap: 0.4,
+      },
+    }).success,
+    true
+  );
+  assert.equal(
+    updateSettingsSchema.safeParse({ toolDisclosure: { enabled: true, mode: "bogus" } }).success,
+    false
+  );
+  assert.equal(
+    updateSettingsSchema.safeParse({ toolDisclosure: { enabled: true, keepRatio: 1.5 } }).success,
+    false
+  );
+});

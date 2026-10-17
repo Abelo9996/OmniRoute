@@ -469,6 +469,8 @@ export async function prepareUpstreamBody(opts: PrepareUpstreamBodyOptions): Pro
     rawBody: opts.rawBody,
     toolNamePrefix: CLAUDE_OAUTH_TOOL_PREFIX,
     isPinnedTool: isFallbackTool,
+    onError: (error) =>
+      log?.warn?.("TOOL_DISCLOSURE", `Selection failed, sending all tools: ${String(error)}`),
   });
   if (disclosure.stats) {
     bodyToSend = disclosure.body;

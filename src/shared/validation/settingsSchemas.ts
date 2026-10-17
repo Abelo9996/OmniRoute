@@ -232,6 +232,11 @@ export const updateSettingsSchema = z.object({
       enabled: z.boolean(),
       maxTools: z.number().int().min(1).max(500).optional(),
       alwaysInclude: z.array(z.string().min(1).max(256)).max(500).optional(),
+      // "zeroOverlap" drops only tools sharing no word with recent messages (bounded below).
+      mode: z.enum(["topK", "zeroOverlap"]).optional(),
+      minTools: z.number().int().min(1).max(500).optional(),
+      keepRatio: z.number().min(0).max(1).optional(),
+      dropCap: z.number().min(0).max(1).optional(),
     })
     .strict()
     .optional(),
