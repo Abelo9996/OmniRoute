@@ -1058,6 +1058,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 所有已存储的凭据，因此它们需要仪表板会话或本地 CLI（或者禁用登录）。
 任何作用域的 API 密钥和 `oma_` 访问令牌都会收到 `403`。
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### 云同步
 
 | 端点                   | 方法 | 描述       |

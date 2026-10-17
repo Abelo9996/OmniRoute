@@ -1090,6 +1090,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 모든 자격 증명을 제공하므로 대시보드 세션이나 로컬 CLI가 필요합니다(또는 로그인이
 비활성화되어 있어야 함). 범위와 관계없이 모든 API 키와 `oma_` 액세스 토큰에는 `403`이 반환됩니다.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### 클라우드 동기화
 
 | 엔드포인트             | 메서드 | 설명                 |

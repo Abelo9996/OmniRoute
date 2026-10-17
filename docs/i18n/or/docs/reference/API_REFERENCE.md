@@ -1031,6 +1031,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 ସମସ୍ତ ପ୍ରମାଣପତ୍ର ପ୍ରଦାନ କରେ, ତେଣୁ ସେଗୁଡ଼ିକ ପାଇଁ ଡ୍ୟାସ୍ବୋର୍ଡ ସେସନ୍ କିମ୍ବା ସ୍ଥାନୀୟ CLI (ଅଥବା ଲଗ୍ଇନ୍
 ଅକ୍ଷମ ଥିବା) ଆବଶ୍ୟକ। ଯେକୌଣସି ସ୍କୋପ୍ର API କୀ ଏବଂ `oma_` ଆକ୍ସେସ୍ ଟୋକନ୍ଗୁଡ଼ିକୁ `403` ମିଳେ।
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### କ୍ଲାଉଡ୍ ସିଙ୍କ୍
 
 | ଏଣ୍ଡପଏଣ୍ଟ              | ପଦ୍ଧତି  | ବର୍ଣ୍ଣନା                     |

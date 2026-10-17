@@ -202,6 +202,23 @@ Obsidian REST API टोकन संचयित करतो. GHSA-62vw ने
 आणि `admin` सह) तसेच `oma_` ॲक्सेस टोकन्सना `403` प्रतिसाद देते. सिंक टोकन जारी करण्यासाठी (`POST /api/sync/tokens`)
 तोच हेल्पर, तसेच विश्वसनीय लूपबॅक अंतर्गत-सेवा टोकन वापरले जाते.
 
+#### Credential exports and restores are operator-only
+
+The tier above only decides whether _some_ credential is required. The routes that download
+stored credentials add a second check in the handler: `GET /api/settings/export-json` (decrypted
+provider connections and raw API keys), `GET /api/db-backups/export` (the SQLite file) and
+`GET /api/db-backups/exportAll` (the full archive) call `requireOperatorCredential()`
+(`src/lib/api/operatorCredential.ts`). It accepts a dashboard session, the local CLI subject, or
+an instance with login disabled, and answers `403` to API keys of any scope (including `manage`
+and `admin`) and to `oma_` access tokens. The destructive counterparts hold the same boundary:
+`POST /api/db-backups/import` (uploaded `.sqlite`, `dryRun=true` included), `POST /api/db-backups`
+(restore a stored backup by id) and `POST /api/settings/import-json` (legacy JSON restore)
+replace the live database or the whole settings/connections/API-key set, so a machine credential
+cannot trigger them either. Listing, creating, retention and cleanup of backups
+(`GET`/`PUT`/`PATCH`/`DELETE /api/db-backups`) keep ordinary management auth. Sync token
+issuance (`POST /api/sync/tokens`) uses the same helper, plus the trusted loopback
+internal-service token.
+
 ### नवीन इंस्टॉलेशनचे बूटस्ट्रॅप केवळ लूपबॅकसाठी — `Host` नव्हे, तर वास्तविक पीअरनुसार
 
 कोणताही व्यवस्थापन पासवर्ड कॉन्फिगर केलेला नसताना (आणि `INITIAL_PASSWORD` नसताना),

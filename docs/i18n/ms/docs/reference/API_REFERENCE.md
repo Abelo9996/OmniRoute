@@ -1110,6 +1110,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 setiap kelayakan yang disimpan, jadi ia memerlukan sesi papan pemuka atau CLI setempat (atau log masuk
 dinyahdayakan). Kunci API bagi sebarang skop dan token akses `oma_` menerima `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Penyegerakan Awan
 
 | Titik akhir            | Kaedah   | Penerangan                |

@@ -103,6 +103,16 @@ Quelques actions `MANAGEMENT` sont réservées **à l’opérateur** : une clé 
 `GET /api/db-backups/exportAll`), l’émission d’un jeton de synchronisation (`POST /api/sync/tokens`) et la création d’un jeton d’accès CLI `admin` (`POST /api/cli/tokens`) nécessitent une session du tableau de bord, le sujet CLI local ou la désactivation de la connexion ; les clés API, quelle que soit leur portée, et les jetons d’accès `oma_` reçoivent une réponse `403`. La vérification se trouve dans `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
 `requireOperatorCredential()`).
 
+A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
+credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
+`GET /api/db-backups/exportAll`), restoring a backup over the live data
+(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
+`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
+`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
+subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
+lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
+`requireOperatorCredential()`).
+
 ## Pipeline
 
 ```

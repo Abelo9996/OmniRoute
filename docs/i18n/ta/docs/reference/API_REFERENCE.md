@@ -1078,6 +1078,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 ஒவ்வொரு நற்சான்றையும் வழங்குவதால், அவற்றுக்கு டாஷ்போர்டு அமர்வு அல்லது உள்ளூர் CLI தேவை (அல்லது உள்நுழைவு
 முடக்கப்பட்டிருக்க வேண்டும்). எந்த நோக்கெல்லையையும் கொண்ட API விசைகளும் `oma_` அணுகல் டோக்கன்களும் `403`-ஐப் பெறும்.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### மேக ஒத்திசைவு
 
 | Endpoint               | Method  | விளக்கம்                     |

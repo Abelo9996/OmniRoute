@@ -1105,6 +1105,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 את כל פרטי האימות המאוחסנים, ולכן הם דורשים הפעלת לוח מחוונים או CLI מקומי (או שההתחברות
 מושבתת). מפתחות API מכל היקף ואסימוני גישה מסוג `oma_` מקבלים `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### סנכרון ענן
 
 | נקודת קצה              | שיטה  | תיאור             |

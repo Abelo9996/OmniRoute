@@ -1114,6 +1114,13 @@ curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
 todas las credenciales almacenadas, por lo que requieren la sesión del panel o la CLI local (o que el inicio
 de sesión esté deshabilitado). Las claves de API de cualquier ámbito y los tokens de acceso `oma_` reciben un `403`.
 
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
+
 ### Sincronización en la nube
 
 | Endpoint               | Método | Descripción                              |
