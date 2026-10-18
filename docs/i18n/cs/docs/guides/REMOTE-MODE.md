@@ -270,7 +270,7 @@ Token nikdy nelze vytvořit s většími oprávněními, než má jeho tvůrce. 
 
 ## Konfigurace programátorského CLI ze vzdáleného katalogu
 
-`omniroute configure` načte živý katalog modelů z **aktivního serveru** a zapíše
+`omniroute configure` načte živý katalog modelů **aktivního serveru** a zapíše
 konfiguraci na **váš** počítač.
 
 ```bash
@@ -284,24 +284,25 @@ omniroute configure codex
 # neinteraktivně
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# ponechání často používaného modelu na začátku interaktivního výběru
+# ponechání často používaného modelu v horní části interaktivního výběru
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-Nástroj pro výběr uchovává v místním souboru `model-preferences.json` pouze ID modelů
-(nikdy adresy URL ani přihlašovací údaje), odděleně podle kontextu a cílového CLI. Oblíbené položky se
-zobrazují před nedávnými výběry; chcete-li vybraný model ze seznamu daného
-kontextu/cíle odebrat, použijte `--unfavorite`.
+Výběr ukládá do místního souboru `model-preferences.json` pouze ID modelů
+(nikdy ne adresy URL ani přihlašovací údaje), a to odděleně podle kontextu a
+cílového CLI. Oblíbené modely se zobrazují před nedávnými volbami; pomocí
+`--unfavorite` odeberete vybraný model ze seznamu pro daný kontext a cílové CLI.
 
-Zapsaný profil odkazuje na inferenční klíč prostřednictvím proměnné prostředí
-(`OMNIROUTE_API_KEY`) — tajný údaj se nikdy nezapisuje na disk. Informace o jednorázovém
-základním nastavení Codexu (blok `[model_providers.omniroute]`) naleznete v souboru
+Zapsaný profil odkazuje na klíč pro inferenci prostřednictvím proměnné prostředí
+(`OMNIROUTE_API_KEY`) — tajný klíč se nikdy nezapisuje na disk. Jednorázové
+základní nastavení Codexu (blok `[model_providers.omniroute]`) najdete v dokumentu
 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
 
-### Spuštění CLI proti vzdálenému serveru (bez zápisu konfigurace)
+### Spuštění CLI vůči vzdálenému serveru (bez zápisu konfigurace)
 
-`omniroute run <target>` rovněž respektuje aktivní kontext: vzdálená základní adresa URL
-a přihlašovací údaj kontextu se vloží pouze do spuštěného procesu.
+`omniroute run <target>` rovněž respektuje aktivní kontext: základní adresa URL
+vzdáleného serveru a přihlašovací údaj kontextu se vloží pouze do spuštěného
+procesu.
 
 ```bash
 omniroute connect 192.168.0.15
@@ -309,50 +310,52 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code → vzdále
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# Náhled přesně toho, co by se spustilo (pouze NÁZVY KLÍČŮ prostředí, nikdy jejich hodnoty):
+# Přesný náhled toho, co by se spustilo (pouze NÁZVY KLÍČŮ prostředí, nikdy hodnoty):
 omniroute run codex --dry-run --json
 ```
 
 Cíle: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
-(jediný zdroj: `bin/cli/cli-manifest.mjs`). Qwen a Gemini se spouštějí s
-dočasným izolovaným domovským adresářem, který se při ukončení odstraní, takže spuštění nikdy neovlivní —
-ani do něj neunikne — konfiguraci vašich osobních nástrojů.
+(jediný zdroj: `bin/cli/cli-manifest.mjs`). Qwen a Gemini se spouštějí
+s dočasným izolovaným domovským adresářem, který se při ukončení odstraní,
+takže spuštění nikdy nezasáhne do osobní konfigurace vašich nástrojů ani do ní
+nic neunikne.
 
 ### Příkazy pro nastavení jednotlivých CLI
 
-Každé podporované CLI má příkaz pro nastavení zohledňující vzdálený server (všechny respektují aktivní
-kontext nebo `--remote <url> --api-key <key>`):
+Každé podporované CLI má příkaz pro nastavení vzdáleného serveru (všechny
+respektují aktivní kontext nebo `--remote <url> --api-key <key>`):
 
-| CLI         | Příkaz                     | Co zapisuje                                                                                                                                                                                           |
-| ----------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Codex       | `omniroute setup-codex`    | profily `~/.codex/<name>.config.toml` (pro jednotlivé modely)                                                                                                                                         |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (pro jednotlivé modely)                                                                                                                                     |
-| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — poskytovatel `omniroute` kompatibilní s OpenAI se všemi modely z katalogu (spusťte `opencode -m omniroute/<model>`)                                              |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (režim CLI) + vypíše nastavení rozšíření VS Code k vložení (kompatibilní s OpenAI, základní URL **bez** `/v1`)                                             |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + nastavení VS Code `kilocode.*` — kompatibilní s OpenAI, základní URL **s** `/v1`                                                                              |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + CLI `cn`) — `provider: openai`, `apiBase` **s** `/v1`, klíč přes `${{ secrets.OMNIROUTE_API_KEY }}`                                                    |
-| Cursor      | `omniroute setup-cursor`   | vypíše postup v aplikaci (Nastavení → Modely → Přepsat základní URL OpenAI **s** `/v1` + klíč + model). Konfigurace Cursoru je neprůhledná databáze SQLite — pouze panel chatu                        |
-| Roo Code    | `omniroute setup-roo`      | zapíše importní JSON pro Roo (`~/.omniroute/roo-settings.json`) + nastaví `roo-cline.autoImportSettingsPath` + vypíše kroky v uživatelském rozhraní (kompatibilní s OpenAI, základní URL **s** `/v1`) |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — poskytovatel `openai-compat`, `base_url` **s** `/v1`, klíč přes `$OMNIROUTE_API_KEY`                                                                                   |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **bez** `/v1` + `GOOSE_MODEL`) + postup pro nastavení prostředí                                                                |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **bez** `/v1` + `model: openai/<id>`) + postup pro nastavení prostředí (`aider --message --yes`)                                                               |
-| Qwen Code   | `omniroute setup-qwen`     | položka V4 `modelProviders.openai` v `~/.qwen/settings.json` + `OMNIROUTE_API_KEY` v `~/.qwen/.env`                                                                                                   |
+| CLI         | Příkaz                     | Co zapisuje                                                                                                                                                                        |
+| ----------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | `omniroute setup-codex`    | Profily `~/.codex/<name>.config.toml` (pro jednotlivé modely)                                                                                                                      |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (pro jednotlivé modely)                                                                                                                  |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — poskytovatel `omniroute` kompatibilní s OpenAI se všemi modely z katalogu (spusťte `opencode -m omniroute/<model>`)                           |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (režim CLI) + vypíše nastavení rozšíření VS Code určená ke vložení (kompatibilní s OpenAI, základní URL **bez** `/v1`)                  |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + nastavení VS Code `kilocode.*` — kompatibilní s OpenAI, základní URL **s** `/v1`                                                           |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + CLI `cn`) — `provider: openai`, `apiBase` **s** `/v1`, klíč prostřednictvím `${{ secrets.OMNIROUTE_API_KEY }}`                      |
+| Cursor      | `omniroute setup-cursor`   | vypíše postup v aplikaci (Nastavení → Modely → Přepsat základní URL OpenAI **s** `/v1` + klíč + model). Konfigurace Cursoru je neprůhledná databáze SQLite — pouze panel chatu     |
+| Roo Code    | `omniroute setup-roo`      | zapíše importní JSON pro Roo (`~/.omniroute/roo-settings.json`) + nastaví `roo-cline.autoImportSettingsPath` + vypíše kroky v UI (kompatibilní s OpenAI, základní URL **s** `/v1`) |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — poskytovatel `openai-compat`, `base_url` **s** `/v1`, klíč prostřednictvím `$OMNIROUTE_API_KEY`                                                     |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `api_url` **s** `/v1`, klíč načítaný Zedem z `$OMNIROUTE_API_KEY` (nikdy se nezapisuje)             |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **bez** `/v1` + `GOOSE_MODEL`) + postup nastavení prostředí                                                 |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **bez** `/v1` + `model: openai/<id>`) + postup nastavení prostředí (`aider --message --yes`)                                                |
+| Qwen Code   | `omniroute setup-qwen`     | položka V4 `modelProviders.openai` v `~/.qwen/settings.json` + `OMNIROUTE_API_KEY` v `~/.qwen/.env`                                                                                |
 
 ```bash
-# OpenCode (poskytovatel kompatibilní s OpenAI, všechny modely z katalogu, vzdálený VPS)
+# OpenCode (poskytovatel kompatibilní s OpenAI, všechny modely z katalogu, vzdálené VPS)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute setup-opencode --only glm,kimi        # ponechat pouze odpovídající modely
-opencode -m omniroute/glm/glm-5.2 "..."          # nejprve exportovat OMNIROUTE_API_KEY
+omniroute setup-opencode --only glm,kimi        # ponechání pouze odpovídajících modelů
+opencode -m omniroute/glm/glm-5.2 "..."          # nejprve exportujte OMNIROUTE_API_KEY
 ```
 
-> OpenCode má také propracovanější integraci pomocí **pluginu**: `omniroute setup opencode`
-> (nyní s podporou vzdáleného připojení přes `--remote`) nainstaluje `@omniroute/opencode-plugin`.
-> `setup-opencode` je odlehčená alternativa kompatibilní s OpenAI. Na klíč API
+> OpenCode má také bohatší integraci pomocí **pluginu**: `omniroute setup opencode`
+> (nyní s podporou vzdáleného přístupu prostřednictvím `--remote`) nainstaluje `@omniroute/opencode-plugin`.
+> `setup-opencode` je odlehčená alternativa kompatibilní s OpenAI. Klíč API
 > se odkazuje pomocí `{env:OMNIROUTE_API_KEY}` — nikdy se nezapisuje na disk.
 >
-> V OpenCode v2 místo toho použijte `@omniroute/opencode-plugin-v2`: stejný katalog,
-> jiný kontrakt zavaděče. Když je integrace připojena, načítá klíč z vlastního úložiště
-> přihlašovacích údajů OpenCode, takže vzdálená brána vůbec nepotřebuje klíč
+> V OpenCode v2 místo něj použijte `@omniroute/opencode-plugin-v2`: stejný katalog,
+> ale odlišný kontrakt zavaděče. Pokud je integrace připojena, načítá klíč z vlastního
+> úložiště přihlašovacích údajů OpenCode, takže vzdálená brána vůbec nepotřebuje klíč
 > v souboru `opencode.json`.
 
 ---

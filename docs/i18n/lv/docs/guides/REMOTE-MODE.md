@@ -267,13 +267,13 @@ Tokenu nekad nevar izveidot ar lielākām privilēģijām, nekā ir tā izveidot
 
 ## Kodēšanas CLI konfigurēšana no attālā kataloga
 
-`omniroute configure` nolasa **aktīvā servera** aktuālo modeļu katalogu un ieraksta
+`omniroute configure` nolasa **aktīvā servera** modeļu katalogu un ieraksta
 konfigurāciju **jūsu** datorā.
 
 ```bash
 omniroute configure codex
-#   Pakalpojumu sniedzēji: glm, kmc, ollamacloud, opencode-go, …
-#   Pakalpojumu sniedzējs: glm
+#   Nodrošinātāji: glm, kmc, ollamacloud, opencode-go, …
+#   Nodrošinātājs: glm
 #   Modeļa ID: glm/glm-5.2
 #   ✔ Ierakstīts ~/.codex/glm52.config.toml
 #   Izmantošana:  codex --profile glm52
@@ -281,23 +281,23 @@ omniroute configure codex
 # neinteraktīvi
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# paturēt bieži izmantotu modeli interaktīvā atlasītāja augšdaļā
+# saglabājiet bieži izmantotu modeli interaktīvā atlasītāja augšdaļā
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-Atlasītājs lokālajā `model-preferences.json` failā glabā tikai modeļu ID (nekad URL vai
-akreditācijas datus), nodalot tos pēc konteksta un CLI mērķa. Izlases vienumi tiek
-rādīti pirms nesen atlasītajiem; izmantojiet `--unfavorite`, lai noņemtu atlasīto modeli
-no attiecīgā konteksta/mērķa saraksta.
+Atlasītājs lokālajā failā `model-preferences.json` glabā tikai modeļu ID (nekad
+URL vai akreditācijas datus), kas ir piesaistīti kontekstam un CLI mērķim.
+Izlase tiek rādīta pirms nesenajām izvēlēm; izmantojiet `--unfavorite`, lai
+noņemtu atlasīto modeli no attiecīgā konteksta/mērķa saraksta.
 
 Ierakstītais profils atsaucas uz inferenču atslēgu, izmantojot vides mainīgo
-(`OMNIROUTE_API_KEY`) — noslēpums nekad netiek ierakstīts diskā. Informāciju par vienreizējo
-Codex pamata iestatīšanu (`[model_providers.omniroute]` bloku) skatiet
+(`OMNIROUTE_API_KEY`) — noslēpums nekad netiek ierakstīts diskā. Vienreizējai
+Codex pamata iestatīšanai (`[model_providers.omniroute]` blokam) skatiet
 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
 
 ### CLI palaišana darbam ar attālo serveri (konfigurācija netiek ierakstīta)
 
-`omniroute run <target>` ņem vērā arī aktīvo kontekstu: attālais pamata URL
+`omniroute run <target>` arī ņem vērā aktīvo kontekstu: attālā servera bāzes URL
 un konteksta akreditācijas dati tiek ievadīti tikai palaistajā procesā.
 
 ```bash
@@ -306,51 +306,52 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code → attāla
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# Priekšskatīt tieši to, kas tiktu palaists (tikai vides mainīgo ATSLĒGU NOSAUKUMI, nekad vērtības):
+# Priekšskatiet tieši to, kas tiktu palaists (tikai vides mainīgo ATSLĒGU NOSAUKUMI, nekad vērtības):
 omniroute run codex --dry-run --json
 ```
 
 Mērķi: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
-(vienīgais avots: `bin/cli/cli-manifest.mjs`). Qwen un Gemini darbojas ar
-pagaidu izolētu mājas direktoriju, kas pēc iziešanas tiek noņemts, tāpēc palaišana nekad nemaina —
-un nepiesārņo — jūsu personīgo rīka konfigurāciju.
+(vienotais avots: `bin/cli/cli-manifest.mjs`). Qwen un Gemini tiek palaisti
+pagaidu izolētā mājas direktorijā, kas pēc iziešanas tiek noņemts, tādēļ
+palaišana nekad nemaina jūsu personīgo rīka konfigurāciju un tajā neiepludina
+nekādus datus.
 
 ### Katram CLI paredzētās iestatīšanas komandas
 
-Katram atbalstītajam CLI ir attālā servera atbalsta iestatīšanas komanda (visas ņem vērā aktīvo
-kontekstu vai `--remote <url> --api-key <key>`):
+Katram atbalstītajam CLI ir attālo serveri atbalstoša iestatīšanas komanda
+(visas ņem vērā aktīvo kontekstu vai `--remote <url> --api-key <key>`):
 
-| CLI         | Komanda                    | Ko tā ieraksta                                                                                                                                                                                              |
-| ----------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` profili (katram modelim)                                                                                                                                                      |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (katram modelim)                                                                                                                                                  |
-| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — ar OpenAI saderīgs `omniroute` nodrošinātājs ar visiem kataloga modeļiem (palaidiet `opencode -m omniroute/<model>`)                                                   |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI režīms) + izdrukā ielīmējamos VS Code paplašinājuma iestatījumus (saderīgs ar OpenAI, pamata URL **bez** `/v1`)                                             |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` iestatījumi — saderīgs ar OpenAI, pamata URL **ar** `/v1`                                                                                      |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `apiBase` **ar** `/v1`, atslēga, izmantojot `${{ secrets.OMNIROUTE_API_KEY }}`                                               |
-| Cursor      | `omniroute setup-cursor`   | izdrukā lietotnē veicamās darbības (Iestatījumi → Modeļi → pārrakstīt OpenAI pamata URL **ar** `/v1` + atslēga + modelis). Cursor konfigurācija ir necaurskatāma SQLite datubāze — tikai tērzēšanas panelis |
-| Roo Code    | `omniroute setup-roo`      | ieraksta Roo importēšanas JSON (`~/.omniroute/roo-settings.json`) + iestata `roo-cline.autoImportSettingsPath` + izdrukā lietotāja saskarnes darbības (saderīgs ar OpenAI, pamata URL **ar** `/v1`)         |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` nodrošinātājs, `base_url` **ar** `/v1`, atslēga, izmantojot `$OMNIROUTE_API_KEY`                                                                             |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **bez** `/v1` + `GOOSE_MODEL`) + vides konfigurēšanas norādes                                                                        |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **bez** `/v1` + `model: openai/<id>`) + vides konfigurēšanas norādes (`aider --message --yes`)                                                                       |
-| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 `modelProviders.openai` ieraksts + `OMNIROUTE_API_KEY` failā `~/.qwen/.env`                                                                                                      |
+| CLI         | Komanda                    | Ko tā ieraksta                                                                                                                                                                                     |
+| ----------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` profili (katram modelim)                                                                                                                                             |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (katram modelim)                                                                                                                                         |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — ar openai saderīgs `omniroute` nodrošinātājs ar visiem kataloga modeļiem (palaidiet `opencode -m omniroute/<model>`)                                          |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI režīms) + izdrukā ielīmējamos VS Code paplašinājuma iestatījumus (saderīgs ar OpenAI, bāzes URL **bez** `/v1`)                                     |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` iestatījumi — saderīgs ar OpenAI, bāzes URL **ar** `/v1`                                                                              |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `apiBase` **ar** `/v1`, atslēga, izmantojot `${{ secrets.OMNIROUTE_API_KEY }}`                                      |
+| Cursor      | `omniroute setup-cursor`   | izdrukā lietotnē veicamās darbības (Settings → Models → Override OpenAI Base URL **ar** `/v1` + atslēga + modelis). Cursor konfigurācija ir necaurspīdīga SQLite — tikai tērzēšanas panelis        |
+| Roo Code    | `omniroute setup-roo`      | ieraksta Roo importēšanas JSON (`~/.omniroute/roo-settings.json`) + iestata `roo-cline.autoImportSettingsPath` + izdrukā lietotāja saskarnes darbības (saderīgs ar OpenAI, bāzes URL **ar** `/v1`) |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` nodrošinātājs, `base_url` **ar** `/v1`, atslēga, izmantojot `$OMNIROUTE_API_KEY`                                                                    |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `api_url` **ar** `/v1`, Zed nolasa atslēgu no `$OMNIROUTE_API_KEY` (tā nekad netiek ierakstīta)                     |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **bez** `/v1` + `GOOSE_MODEL`) + vides mainīgo recepte                                                                      |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **bez** `/v1` + `model: openai/<id>`) + vides mainīgo recepte (`aider --message --yes`)                                                                     |
+| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 `modelProviders.openai` ieraksts + `OMNIROUTE_API_KEY` failā `~/.qwen/.env`                                                                                             |
 
 ```bash
-# OpenCode (ar OpenAI saderīgs nodrošinātājs, visi kataloga modeļi, attāls VPS)
+# OpenCode (ar openai saderīgs nodrošinātājs, visi kataloga modeļi, attāls VPS)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 omniroute setup-opencode --only glm,kimi        # paturēt tikai atbilstošos modeļus
-opencode -m omniroute/glm/glm-5.2 "..."          # vispirms eksportēt OMNIROUTE_API_KEY
+opencode -m omniroute/glm/glm-5.2 "..."          # vispirms eksportējiet OMNIROUTE_API_KEY
 ```
 
-> OpenCode piedāvā arī plašāku **spraudņa** integrāciju: `omniroute setup opencode`
-> (tagad ar attālā režīma atbalstu, izmantojot `--remote`) instalē `@omniroute/opencode-plugin`.
+> OpenCode ir pieejama arī plašāka **spraudņa** integrācija: `omniroute setup opencode`
+> (tagad ar attālā savienojuma atbalstu, izmantojot `--remote`) instalē `@omniroute/opencode-plugin`.
 > `setup-opencode` ir vienkāršāka, ar OpenAI saderīga alternatīva. Atsauce uz API atslēgu
-> tiek veidota, izmantojot `{env:OMNIROUTE_API_KEY}` — tā nekad netiek ierakstīta diskā.
+> tiek norādīta, izmantojot `{env:OMNIROUTE_API_KEY}` — tā nekad netiek ierakstīta diskā.
 >
-> OpenCode v2 gadījumā izmantojiet `@omniroute/opencode-plugin-v2`: tas pats katalogs,
-> bet atšķirīgs ielādētāja kontrakts. Kad integrācija ir savienota, tas nolasa atslēgu no
-> OpenCode akreditācijas datu krātuves, tādēļ attālai vārtejai vispār nav nepieciešama
-> atslēga failā `opencode.json`.
+> OpenCode v2 gadījumā tā vietā izmantojiet `@omniroute/opencode-plugin-v2`: tas pats katalogs,
+> bet atšķirīgs ielādētāja līgums. Kad integrācija ir savienota, tas nolasa atslēgu no paša OpenCode akreditācijas datu
+> krātuves, tāpēc attālai vārtejai failā `opencode.json` vispār nav nepieciešama atslēga.
 
 ---
 

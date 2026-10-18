@@ -274,8 +274,8 @@ Ní féidir comhartha a chruthú riamh le níos mó pribhléidí ná mar atá ag
 
 ## CLI códúcháin a chumrú ón gcatalóg chianda
 
-Léann `omniroute configure` catalóg bheo samhlacha an **fhreastalaí ghníomhaigh**
-agus scríobhann sé cumraíocht ar **do** ríomhaire.
+Léann `omniroute configure` catalóg bheo samhlacha an **fhreastalaí ghníomhaigh** agus scríobhann sé
+cumraíocht ar **do** ríomhaire.
 
 ```bash
 omniroute configure codex
@@ -292,22 +292,20 @@ omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-Ní choinníonn an roghnóir ach aitheantais samhlacha (ní choinníonn sé URLanna ná
-dintiúir choíche) sa chomhad áitiúil `model-preferences.json`, arna scópáil de
-réir comhthéacs agus sprice CLI. Taispeántar ceanáin roimh roghanna a rinneadh le
-déanaí; úsáid `--unfavorite` chun samhail roghnaithe a bhaint den liosta
-comhthéacs/sprice sin.
+Ní choinníonn an roghnóir ach aitheantais samhlacha (ní URLanna ná dintiúir riamh) sa chomhad áitiúil
+`model-preferences.json`, agus iad scóipeáilte de réir comhthéacs agus sprioc-CLI. Taispeántar ceanáin
+roimh roghanna a úsáideadh le déanaí; úsáid `--unfavorite` chun samhail roghnaithe
+a bhaint den liosta comhthéacs/sprice sin.
 
 Tagraíonn an phróifíl scríofa don eochair tátail trí athróg timpeallachta
-(`OMNIROUTE_API_KEY`) — ní scríobhtar an rún ar diosca choíche. Le haghaidh
-bunshocrú aonuaire Codex (an bloc `[model_providers.omniroute]`), féach
+(`OMNIROUTE_API_KEY`) — ní scríobhtar an rún ar diosca riamh. Maidir le socrú bonn aonuaire
+Codex (an bloc `[model_providers.omniroute]`), féach
 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
 
 ### CLI a sheoladh i gcoinne an chianfhreastalaí (gan cumraíocht a scríobh)
 
-Cloíonn `omniroute run <target>` leis an gcomhthéacs gníomhach freisin: ní
-instealltar an bun-URL cianda ná dintiúr an chomhthéacs ach amháin sa phróiseas
-a sceitear.
+Urramaíonn `omniroute run <target>` an comhthéacs gníomhach freisin: ní instealltar bun-URL
+an chianfhreastalaí ná dintiúr an chomhthéacs ach sa phróiseas a sceitear.
 
 ```bash
 omniroute connect 192.168.0.15
@@ -315,33 +313,32 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code → cianfhr
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# Réamhamharc beacht ar an méid a sceithfí (AINMNEACHA EOCHRACHA timpeallachta amháin, luachanna choíche):
+# Réamhamharc ar an méid go díreach a sceithfí (AINMNEACHA EOCHRACHA timpeallachta amháin, luachanna riamh):
 omniroute run codex --dry-run --json
 ```
 
 Spriocanna: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
 (foinse aonair: `bin/cli/cli-manifest.mjs`). Ritheann Qwen agus Gemini le
-heolaire baile sealadach leithlisithe a bhaintear nuair a scoirtear, mar sin ní
-bhaineann an seoladh le cumraíocht phearsanta d'uirlise — ná ní sceitheann sé
-isteach inti — choíche.
+heolaire baile sealadach leithlisithe a bhaintear ar scor, ionas nach mbaineann an seoladh riamh le —
+ná nach sceitheann sé isteach i — do chumraíocht phearsanta uirlise.
 
 ### Orduithe socraithe de réir CLI
 
-Tá ordú socraithe atá feasach ar an gcianfhreastalaí ag gach CLI a dtacaítear
-leis (cloíonn siad uile leis an gcomhthéacs gníomhach, nó
-`--remote <url> --api-key <key>`):
+Tá ordú socraithe atá feasach ar an gcianfhreastalaí ag gach CLI a dtacaítear leis (urramaíonn siad uile an comhthéacs
+gníomhach, nó `--remote <url> --api-key <key>`):
 
 | CLI         | Ordú                       | An méid a scríobhann sé                                                                                                                                                                              |
 | ----------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Codex       | `omniroute setup-codex`    | próifílí `~/.codex/<name>.config.toml` (ceann amháin in aghaidh na samhla)                                                                                                                           |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (ceann amháin in aghaidh na samhla)                                                                                                                        |
+| Codex       | `omniroute setup-codex`    | próifílí `~/.codex/<name>.config.toml` (de réir samhla)                                                                                                                                              |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (de réir samhla)                                                                                                                                           |
 | OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — an soláthraí `omniroute` atá comhoiriúnach le openai, le gach samhail sa chatalóg (rith `opencode -m omniroute/<model>`)                                        |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (mód CLI) + priontálann sé socruithe an eisínteachta VS Code lena ngreamú (comhoiriúnach le OpenAI, Bun-URL **gan** `/v1`)                                |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + socruithe VS Code `kilocode.*` — comhoiriúnach le OpenAI, Bun-URL **le** `/v1`                                                                               |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (mód CLI) + priontálann sé socruithe an eisínteachta VS Code le greamú (comhoiriúnach le OpenAI, bun-URL **gan** `/v1`)                                   |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + socruithe VS Code `kilocode.*` — comhoiriúnach le OpenAI, bun-URL **le** `/v1`                                                                               |
 | Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + CLI `cn`) — `provider: openai`, `apiBase` **le** `/v1`, eochair trí `${{ secrets.OMNIROUTE_API_KEY }}`                                                |
-| Cursor      | `omniroute setup-cursor`   | priontálann sé na céimeanna san aip (Settings → Models → Override OpenAI Base URL **le** `/v1` + eochair + samhail). Is SQLite teimhneach é cumraíocht Cursor — painéal comhrá amháin                |
-| Roo Code    | `omniroute setup-roo`      | scríobhann sé JSON iompórtála Roo (`~/.omniroute/roo-settings.json`) + socraíonn sé `roo-cline.autoImportSettingsPath` + priontálann sé céimeanna UI (comhoiriúnach le OpenAI, Bun-URL **le** `/v1`) |
+| Cursor      | `omniroute setup-cursor`   | priontálann sé na céimeanna san aip (Settings → Models → Override OpenAI Base URL **le** `/v1` + eochair + samhail). Is SQLite doiléir í cumraíocht Cursor — painéal comhrá amháin                   |
+| Roo Code    | `omniroute setup-roo`      | scríobhann sé JSON iompórtála Roo (`~/.omniroute/roo-settings.json`) + socraíonn sé `roo-cline.autoImportSettingsPath` + priontálann sé céimeanna UI (comhoiriúnach le OpenAI, bun-URL **le** `/v1`) |
 | Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — soláthraí `openai-compat`, `base_url` **le** `/v1`, eochair trí `$OMNIROUTE_API_KEY`                                                                                  |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `api_url` **le** `/v1`, eochair á léamh ag Zed ó `$OMNIROUTE_API_KEY` (ní scríobhtar riamh í)                         |
 | Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **gan** `/v1` + `GOOSE_MODEL`) + oideas timpeallachta                                                                         |
 | Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **gan** `/v1` + `model: openai/<id>`) + oideas timpeallachta (`aider --message --yes`)                                                                        |
 | Qwen Code   | `omniroute setup-qwen`     | iontráil V4 `modelProviders.openai` in `~/.qwen/settings.json` + `OMNIROUTE_API_KEY` in `~/.qwen/.env`                                                                                               |
@@ -353,17 +350,17 @@ omniroute setup-opencode --only glm,kimi        # ná coinnigh ach samhlacha mea
 opencode -m omniroute/glm/glm-5.2 "..."          # easpórtáil OMNIROUTE_API_KEY ar dtús
 ```
 
-> Tá comhtháthú **breiseáin** níos saibhre ag OpenCode freisin: `omniroute setup opencode`
-> (a thacaíonn le cianúsáid anois trí `--remote`) a shuiteálann `@omniroute/opencode-plugin`.
-> Is é `setup-opencode` an rogha éadrom atá comhoiriúnach le openai. Déantar tagairt
-> don eochair API trí `{env:OMNIROUTE_API_KEY}` — ní scríobhtar ar diosca riamh í.
+> Tá comhtháthú **breiseáin** níos saibhre ag OpenCode freisin: suiteálann `omniroute setup opencode`
+> (atá feasach ar chianóstach anois trí `--remote`) `@omniroute/opencode-plugin`.
+> Is é `setup-opencode` an rogha éadrom atá comhoiriúnach le OpenAI. Déantar tagairt don eochair API
+> trí `{env:OMNIROUTE_API_KEY}` — ní scríobhtar ar diosca riamh í.
 >
 > Ar OpenCode v2, úsáid `@omniroute/opencode-plugin-v2` ina ionad: an chatalóg chéanna,
-> conradh lódála difriúil. Léann sé an eochair ó stór dintiúr OpenCode féin
-> nuair atá an comhtháthú nasctha, mar sin ní theastaíonn eochair ar bith ó gheata
-> cianda in `opencode.json`.
-
----
+> conradh luchtaithe difriúil. Léann sé an eochair ó stór dintiúr OpenCode féin
+> nuair atá an comhtháthú nasctha, mar sin ní bhíonn eochair ar bith de dhíth ar gheata cianda in
+> `opencode.json`.
+>
+> ---
 
 ## Bainistiú comhthéacsanna (athraigh idir freastalaithe)
 

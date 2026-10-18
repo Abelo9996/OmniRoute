@@ -272,8 +272,8 @@ Token tidak boleh dicipta dengan keistimewaan yang melebihi penciptanya. Hanya p
 
 ## Mengkonfigurasi CLI pengekodan daripada katalog jauh
 
-`omniroute configure` membaca katalog model langsung **pelayan aktif** dan
-menulis konfigurasi pada mesin **anda**.
+`omniroute configure` membaca katalog model langsung **pelayan aktif** dan menulis
+konfigurasi pada mesin **anda**.
 
 ```bash
 omniroute configure codex
@@ -290,74 +290,73 @@ omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-Pemilih hanya menyimpan ID model (tidak sekali-kali URL atau kelayakan) dalam
-fail `model-preferences.json` setempat, yang diskopkan mengikut konteks dan
-sasaran CLI. Kegemaran dipaparkan sebelum pilihan terkini; gunakan
-`--unfavorite` untuk mengalih keluar model terpilih daripada senarai
-konteks/sasaran tersebut.
+Pemilih hanya menyimpan ID model (bukan URL atau kelayakan) dalam fail setempat
+`model-preferences.json`, mengikut skop konteks dan sasaran CLI. Kegemaran
+ditunjukkan sebelum pilihan terkini; gunakan `--unfavorite` untuk mengalih keluar model yang dipilih
+daripada senarai konteks/sasaran tersebut.
 
 Profil yang ditulis merujuk kunci inferens melalui pemboleh ubah persekitaran
-(`OMNIROUTE_API_KEY`) — rahsia tersebut tidak sekali-kali ditulis ke cakera.
-Untuk persediaan asas Codex sekali sahaja (blok `[model_providers.omniroute]`),
-lihat [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
+(`OMNIROUTE_API_KEY`) — rahsia tersebut tidak pernah ditulis ke cakera. Untuk persediaan asas
+Codex sekali sahaja (blok `[model_providers.omniroute]`), lihat
+[CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
 
-### Melancarkan CLI terhadap sistem jauh (tiada konfigurasi ditulis)
+### Melancarkan CLI terhadap pelayan jauh (tiada konfigurasi ditulis)
 
-`omniroute run <target>` juga mematuhi konteks aktif: URL asas jauh dan kelayakan
-konteks disuntik ke dalam proses yang dilancarkan sahaja.
+`omniroute run <target>` juga mematuhi konteks aktif: URL asas jauh
+dan kelayakan konteks disuntik ke dalam proses yang dimulakan sahaja.
 
 ```bash
 omniroute connect 192.168.0.15
-omniroute run claude   --model openai/gpt-5.4          # Claude Code → sistem jauh
+omniroute run claude   --model openai/gpt-5.4          # Claude Code → pelayan jauh
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# Pratonton dengan tepat perkara yang akan dilancarkan (NAMA KUNCI persekitaran sahaja, tidak sekali-kali nilainya):
+# Pratonton dengan tepat perkara yang akan dimulakan (NAMA KUNCI persekitaran sahaja, bukan nilainya):
 omniroute run codex --dry-run --json
 ```
 
 Sasaran: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
 (sumber tunggal: `bin/cli/cli-manifest.mjs`). Qwen dan Gemini dijalankan dengan
-direktori utama terpencil sementara yang dialih keluar semasa keluar, maka
-pelancaran tidak sekali-kali menyentuh — atau membocor masuk ke dalam —
-konfigurasi alat peribadi anda.
+direktori utama terpencil sementara yang dialih keluar semasa keluar, jadi pelancaran tersebut tidak pernah menyentuh —
+atau membocorkan apa-apa ke dalam — konfigurasi alat peribadi anda.
 
 ### Perintah persediaan bagi setiap CLI
 
-Setiap CLI yang disokong mempunyai perintah persediaan yang menyedari sistem
-jauh (semuanya mematuhi konteks aktif atau `--remote <url> --api-key <key>`):
+Setiap CLI yang disokong mempunyai perintah persediaan sedar-jauh (semuanya mematuhi konteks
+aktif, atau `--remote <url> --api-key <key>`):
 
-| CLI         | Perintah                   | Apa yang ditulis                                                                                                                                                                     |
-| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Codex       | `omniroute setup-codex`    | Profil `~/.codex/<name>.config.toml` (bagi setiap model)                                                                                                                             |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (bagi setiap model)                                                                                                                        |
-| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — penyedia `omniroute` yang serasi dengan OpenAI dengan setiap model dalam katalog (jalankan `opencode -m omniroute/<model>`)                     |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (mod CLI) + memaparkan tetapan sambungan VS Code untuk ditampal (serasi dengan OpenAI, URL asas **tanpa** `/v1`)                          |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + tetapan `kilocode.*` VS Code — serasi dengan OpenAI, URL asas **dengan** `/v1`                                                               |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + CLI `cn`) — `provider: openai`, `apiBase` **dengan** `/v1`, kunci melalui `${{ secrets.OMNIROUTE_API_KEY }}`                          |
-| Cursor      | `omniroute setup-cursor`   | memaparkan langkah dalam aplikasi (Settings → Models → Override OpenAI Base URL **dengan** `/v1` + kunci + model). Konfigurasi Cursor ialah SQLite legap — panel sembang sahaja      |
-| Roo Code    | `omniroute setup-roo`      | menulis JSON import Roo (`~/.omniroute/roo-settings.json`) + menetapkan `roo-cline.autoImportSettingsPath` + memaparkan langkah UI (serasi dengan OpenAI, URL asas **dengan** `/v1`) |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — penyedia `openai-compat`, `base_url` **dengan** `/v1`, kunci melalui `$OMNIROUTE_API_KEY`                                                             |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **tanpa** `/v1` + `GOOSE_MODEL`) + panduan persekitaran                                                       |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **tanpa** `/v1` + `model: openai/<id>`) + panduan persekitaran (`aider --message --yes`)                                                      |
-| Qwen Code   | `omniroute setup-qwen`     | entri V4 `modelProviders.openai` dalam `~/.qwen/settings.json` + `OMNIROUTE_API_KEY` dalam `~/.qwen/.env`                                                                            |
+| CLI         | Perintah                   | Perkara yang ditulis                                                                                                                                                                  |
+| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | `omniroute setup-codex`    | Profil `~/.codex/<name>.config.toml` (bagi setiap model)                                                                                                                              |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (bagi setiap model)                                                                                                                         |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — penyedia `omniroute` serasi OpenAI dengan setiap model katalog (jalankan `opencode -m omniroute/<model>`)                                        |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (mod CLI) + mencetak tetapan sambungan VS Code untuk ditampal (serasi OpenAI, URL asas **tanpa** `/v1`)                                    |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + tetapan VS Code `kilocode.*` — serasi OpenAI, URL asas **dengan** `/v1`                                                                       |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + CLI `cn`) — `provider: openai`, `apiBase` **dengan** `/v1`, kunci melalui `${{ secrets.OMNIROUTE_API_KEY }}`                           |
+| Cursor      | `omniroute setup-cursor`   | mencetak langkah dalam aplikasi (Settings → Models → Override OpenAI Base URL **dengan** `/v1` + kunci + model). Konfigurasi Cursor ialah SQLite legap — panel sembang sahaja         |
+| Roo Code    | `omniroute setup-roo`      | menulis JSON import Roo (`~/.omniroute/roo-settings.json`) + menetapkan `roo-cline.autoImportSettingsPath` + mencetak langkah UI (serasi OpenAI, URL asas **dengan** `/v1`)           |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — penyedia `openai-compat`, `base_url` **dengan** `/v1`, kunci melalui `$OMNIROUTE_API_KEY`                                                              |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `api_url` **dengan** `/v1`, kunci dibaca oleh Zed daripada `$OMNIROUTE_API_KEY` (tidak pernah ditulis) |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **tanpa** `/v1` + `GOOSE_MODEL`) + panduan persekitaran                                                        |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **tanpa** `/v1` + `model: openai/<id>`) + panduan persekitaran (`aider --message --yes`)                                                       |
+| Qwen Code   | `omniroute setup-qwen`     | Entri V4 `modelProviders.openai` dalam `~/.qwen/settings.json` + `OMNIROUTE_API_KEY` dalam `~/.qwen/.env`                                                                             |
 
 ```bash
-# OpenCode (penyedia yang serasi dengan OpenAI, semua model katalog, VPS jauh)
+# OpenCode (penyedia serasi OpenAI, semua model katalog, VPS jauh)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 omniroute setup-opencode --only glm,kimi        # kekalkan hanya model yang sepadan
 opencode -m omniroute/glm/glm-5.2 "..."          # eksport OMNIROUTE_API_KEY terlebih dahulu
 ```
 
-> OpenCode juga mempunyai penyepaduan **pemalam** yang lebih lengkap: `omniroute setup opencode`
-> (kini menyokong sistem jauh melalui `--remote`) memasang `@omniroute/opencode-plugin`.
+> OpenCode juga mempunyai integrasi **plugin** yang lebih lengkap: `omniroute setup opencode`
+> (kini menyokong remote melalui `--remote`) memasang `@omniroute/opencode-plugin`.
 > `setup-opencode` ialah alternatif ringan yang serasi dengan OpenAI. Kunci API
 > dirujuk melalui `{env:OMNIROUTE_API_KEY}` — tidak pernah ditulis ke cakera.
 >
 > Pada OpenCode v2, gunakan `@omniroute/opencode-plugin-v2` sebagai gantinya: katalog yang sama,
 > kontrak pemuat yang berbeza. Ia membaca kunci daripada stor kelayakan OpenCode sendiri
-> apabila penyepaduan disambungkan, jadi get laluan jauh langsung tidak memerlukan kunci dalam
-> `opencode.json`.
+> apabila integrasi disambungkan, jadi get laluan jauh tidak memerlukan kunci dalam
+> `opencode.json` sama sekali.
 
 ---
 

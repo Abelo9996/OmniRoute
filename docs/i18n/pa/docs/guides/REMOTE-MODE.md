@@ -259,39 +259,40 @@ omniroute tokens scopes               # ਤਿੰਨਾਂ ਸਕੋਪਾਂ �
 
 ---
 
-## ਰਿਮੋਟ catalog ਤੋਂ coding CLI ਨੂੰ configure ਕਰਨਾ
+## ਰਿਮੋਟ ਕੈਟਾਲਾਗ ਤੋਂ ਇੱਕ ਕੋਡਿੰਗ CLI ਨੂੰ ਕੌਂਫਿਗਰ ਕਰਨਾ
 
-`omniroute configure` **active server** ਦਾ live model catalog ਪੜ੍ਹਦਾ ਹੈ ਅਤੇ
-**ਤੁਹਾਡੀ** ਮਸ਼ੀਨ ਉੱਤੇ config ਲਿਖਦਾ ਹੈ।
+`omniroute configure` **ਸਰਗਰਮ ਸਰਵਰ** ਦੇ ਲਾਈਵ ਮਾਡਲ ਕੈਟਾਲਾਗ ਨੂੰ ਪੜ੍ਹਦਾ ਹੈ ਅਤੇ
+**ਤੁਹਾਡੀ** ਮਸ਼ੀਨ ਉੱਤੇ ਇੱਕ ਕੌਂਫਿਗ ਲਿਖਦਾ ਹੈ।
 
 ```bash
 omniroute configure codex
 #   ਪ੍ਰਦਾਤਾ: glm, kmc, ollamacloud, opencode-go, …
 #   ਪ੍ਰਦਾਤਾ: glm
-#   Model id: glm/glm-5.2
+#   ਮਾਡਲ id: glm/glm-5.2
 #   ✔ ~/.codex/glm52.config.toml ਲਿਖੀ ਗਈ
-#   ਇਸਨੂੰ ਵਰਤੋ:  codex --profile glm52
+#   ਇਸਦੀ ਵਰਤੋਂ ਕਰੋ:  codex --profile glm52
 
-# non-interactive
+# ਗੈਰ-ਇੰਟਰਐਕਟਿਵ
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# ਅਕਸਰ ਵਰਤੇ ਜਾਣ ਵਾਲੇ model ਨੂੰ interactive picker ਦੇ ਸਿਖਰ ਉੱਤੇ ਰੱਖੋ
+# ਅਕਸਰ ਵਰਤੇ ਜਾਂਦੇ ਮਾਡਲ ਨੂੰ ਇੰਟਰਐਕਟਿਵ ਚੋਣਕਾਰ ਦੇ ਸਿਖਰ ਉੱਤੇ ਰੱਖੋ
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-Picker ਸਥਾਨਕ `model-preferences.json` file ਵਿੱਚ ਸਿਰਫ਼ model IDs (ਕਦੇ ਵੀ URLs ਜਾਂ credentials ਨਹੀਂ) ਰੱਖਦਾ ਹੈ,
-ਜਿਨ੍ਹਾਂ ਨੂੰ context ਅਤੇ CLI target ਅਨੁਸਾਰ scoped ਕੀਤਾ ਜਾਂਦਾ ਹੈ। Favorites ਨੂੰ
-ਹਾਲੀਆ selections ਤੋਂ ਪਹਿਲਾਂ ਦਿਖਾਇਆ ਜਾਂਦਾ ਹੈ; ਚੁਣੇ ਹੋਏ model ਨੂੰ ਉਸ context/target ਸੂਚੀ ਵਿੱਚੋਂ ਹਟਾਉਣ ਲਈ
-`--unfavorite` ਵਰਤੋ।
+ਚੋਣਕਾਰ ਸਥਾਨਕ `model-preferences.json` ਫ਼ਾਈਲ ਵਿੱਚ ਸਿਰਫ਼ ਮਾਡਲ IDs ਰੱਖਦਾ ਹੈ
+(URLs ਜਾਂ ਕ੍ਰੈਡੈਂਸ਼ੀਅਲ ਕਦੇ ਨਹੀਂ), ਜਿਨ੍ਹਾਂ ਦਾ ਦਾਇਰਾ ਸੰਦਰਭ ਅਤੇ CLI ਟਾਰਗੇਟ ਅਨੁਸਾਰ ਹੁੰਦਾ ਹੈ। ਮਨਪਸੰਦ
+ਹਾਲੀਆ ਚੋਣਾਂ ਤੋਂ ਪਹਿਲਾਂ ਦਿਖਾਏ ਜਾਂਦੇ ਹਨ; ਉਸ ਸੰਦਰਭ/ਟਾਰਗੇਟ ਸੂਚੀ ਵਿੱਚੋਂ ਚੁਣਿਆ ਮਾਡਲ
+ਹਟਾਉਣ ਲਈ `--unfavorite` ਵਰਤੋ।
 
-ਲਿਖੀ ਗਈ profile env var (`OMNIROUTE_API_KEY`) ਰਾਹੀਂ inference key ਨੂੰ reference ਕਰਦੀ ਹੈ — secret ਕਦੇ ਵੀ disk ਉੱਤੇ ਨਹੀਂ ਲਿਖਿਆ ਜਾਂਦਾ। ਇੱਕ ਵਾਰ ਕੀਤੇ ਜਾਣ ਵਾਲੇ
-ਮੁੱਢਲੇ Codex setup (`[model_providers.omniroute]` block) ਲਈ,
+ਲਿਖੀ ਗਈ ਪ੍ਰੋਫ਼ਾਈਲ env var ਰਾਹੀਂ ਇਨਫ਼ਰੈਂਸ ਕੁੰਜੀ ਦਾ ਹਵਾਲਾ ਦਿੰਦੀ ਹੈ
+(`OMNIROUTE_API_KEY`) — ਗੁਪਤ ਕੁੰਜੀ ਕਦੇ ਵੀ ਡਿਸਕ ਉੱਤੇ ਨਹੀਂ ਲਿਖੀ ਜਾਂਦੀ। ਇੱਕ-ਵਾਰ ਦੀ
+ਮੁੱਢਲੀ Codex ਸੈਟਅੱਪ (`[model_providers.omniroute]` ਬਲਾਕ) ਲਈ,
 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md) ਵੇਖੋ।
 
-### ਰਿਮੋਟ ਨਾਲ CLI launch ਕਰਨਾ (ਕੋਈ config ਨਹੀਂ ਲਿਖੀ ਜਾਂਦੀ)
+### ਰਿਮੋਟ ਦੇ ਵਿਰੁੱਧ ਇੱਕ CLI ਚਲਾਉਣਾ (ਕੋਈ ਕੌਂਫਿਗ ਨਹੀਂ ਲਿਖੀ ਜਾਂਦੀ)
 
-`omniroute run <target>` active context ਦਾ ਵੀ ਆਦਰ ਕਰਦਾ ਹੈ: ਰਿਮੋਟ base URL
-ਅਤੇ context credential ਨੂੰ ਸਿਰਫ਼ spawn ਕੀਤੀ process ਵਿੱਚ inject ਕੀਤਾ ਜਾਂਦਾ ਹੈ।
+`omniroute run <target>` ਵੀ ਸਰਗਰਮ ਸੰਦਰਭ ਦਾ ਸਤਿਕਾਰ ਕਰਦਾ ਹੈ: ਰਿਮੋਟ ਬੇਸ URL
+ਅਤੇ ਸੰਦਰਭ ਕ੍ਰੈਡੈਂਸ਼ੀਅਲ ਸਿਰਫ਼ ਸ਼ੁਰੂ ਕੀਤੀ ਗਈ ਪ੍ਰਕਿਰਿਆ ਵਿੱਚ ਹੀ ਇੰਜੈਕਟ ਕੀਤੇ ਜਾਂਦੇ ਹਨ।
 
 ```bash
 omniroute connect 192.168.0.15
@@ -299,51 +300,52 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code → ਰਿ�
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# ਬਿਲਕੁਲ ਉਹੀ preview ਕਰੋ ਜੋ spawn ਕੀਤਾ ਜਾਵੇਗਾ (ਸਿਰਫ਼ env KEY NAMES, values ਕਦੇ ਨਹੀਂ):
+# ਠੀਕ ਉਸੇ ਚੀਜ਼ ਦੀ ਝਲਕ ਵੇਖੋ ਜੋ ਸ਼ੁਰੂ ਕੀਤੀ ਜਾਵੇਗੀ (ਸਿਰਫ਼ env KEY NAMES, ਮੁੱਲ ਕਦੇ ਨਹੀਂ):
 omniroute run codex --dry-run --json
 ```
 
-Targets: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
-(ਇੱਕੋ source: `bin/cli/cli-manifest.mjs`)। Qwen ਅਤੇ Gemini ਇੱਕ
-ਅਸਥਾਈ isolated home ਨਾਲ ਚੱਲਦੇ ਹਨ, ਜਿਸਨੂੰ exit ਉੱਤੇ ਹਟਾ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ, ਇਸ ਲਈ launch ਕਦੇ ਵੀ ਤੁਹਾਡੀ ਨਿੱਜੀ tool configuration ਨੂੰ ਛੁਹੰਦਾ ਨਹੀਂ —
-ਨਾ ਹੀ ਉਸ ਵਿੱਚ ਕੁਝ leak ਕਰਦਾ ਹੈ।
+ਟਾਰਗੇਟ: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
+(ਇੱਕੋ ਸਰੋਤ: `bin/cli/cli-manifest.mjs`)। Qwen ਅਤੇ Gemini ਇੱਕ ਅਸਥਾਈ
+ਵੱਖਰੇ ਹੋਮ ਨਾਲ ਚੱਲਦੇ ਹਨ ਜੋ ਬੰਦ ਹੋਣ ਉੱਤੇ ਹਟਾ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ, ਇਸ ਲਈ ਇਹ ਲਾਂਚ ਕਦੇ ਵੀ
+ਤੁਹਾਡੇ ਨਿੱਜੀ ਟੂਲ ਕੌਂਫਿਗਰੇਸ਼ਨ ਨੂੰ ਨਾ ਛੂੰਹਦਾ ਹੈ — ਨਾ ਹੀ ਉਸ ਵਿੱਚ ਕੁਝ ਲੀਕ ਕਰਦਾ ਹੈ।
 
-### ਹਰੇਕ CLI ਲਈ setup commands
+### ਪ੍ਰਤੀ-CLI ਸੈਟਅੱਪ ਕਮਾਂਡਾਂ
 
-ਹਰੇਕ ਸਮਰਥਿਤ CLI ਕੋਲ ਇੱਕ remote-aware setup command ਹੈ (ਸਾਰੇ active
-context ਦਾ ਆਦਰ ਕਰਦੇ ਹਨ, ਜਾਂ `--remote <url> --api-key <key>`):
+ਹਰੇਕ ਸਮਰਥਿਤ CLI ਕੋਲ ਰਿਮੋਟ-ਜਾਗਰੂਕ ਸੈਟਅੱਪ ਕਮਾਂਡ ਹੈ (ਸਾਰੀਆਂ ਸਰਗਰਮ
+ਸੰਦਰਭ, ਜਾਂ `--remote <url> --api-key <key>` ਦਾ ਸਤਿਕਾਰ ਕਰਦੀਆਂ ਹਨ):
 
-| CLI         | ਕਮਾਂਡ                      | ਇਹ ਕੀ ਲਿਖਦਾ ਹੈ                                                                                                                                                                       |
-| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` ਪ੍ਰੋਫ਼ਾਈਲਾਂ (ਹਰੇਕ ਮਾਡਲ ਲਈ)                                                                                                                             |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (ਹਰੇਕ ਮਾਡਲ ਲਈ)                                                                                                                             |
-| OpenCode    | `omniroute setup-opencode` | ਹਰ ਕੈਟਾਲੌਗ ਮਾਡਲ ਵਾਲਾ `omniroute` openai-ਅਨੁਕੂਲ ਪ੍ਰਦਾਤਾ — `~/.config/opencode/opencode.json` (`opencode -m omniroute/<model>` ਚਲਾਓ)                                                   |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI ਮੋਡ) + ਪੇਸਟ ਕਰਨ ਲਈ VS Code ਐਕਸਟੈਂਸ਼ਨ ਸੈਟਿੰਗਾਂ ਪ੍ਰਿੰਟ ਕਰਦਾ ਹੈ (OpenAI-ਅਨੁਕੂਲ, Base URL `/v1` **ਤੋਂ ਬਿਨਾਂ**)                           |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` ਸੈਟਿੰਗਾਂ — OpenAI-ਅਨੁਕੂਲ, Base URL `/v1` **ਦੇ ਨਾਲ**                                                                     |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `apiBase` `/v1` **ਦੇ ਨਾਲ**, ਕੁੰਜੀ `${{ secrets.OMNIROUTE_API_KEY }}` ਰਾਹੀਂ                            |
-| Cursor      | `omniroute setup-cursor`   | ਐਪ ਅੰਦਰਲੇ ਕਦਮ ਪ੍ਰਿੰਟ ਕਰਦਾ ਹੈ (Settings → Models → Override OpenAI Base URL `/v1` **ਦੇ ਨਾਲ** + ਕੁੰਜੀ + ਮਾਡਲ)। Cursor ਸੰਰਚਨਾ ਅਪਾਰਦਰਸ਼ੀ SQLite ਹੈ — ਸਿਰਫ਼ ਚੈਟ ਪੈਨਲ                      |
-| Roo Code    | `omniroute setup-roo`      | ਇੱਕ Roo ਇੰਪੋਰਟ JSON (`~/.omniroute/roo-settings.json`) ਲਿਖਦਾ ਹੈ + `roo-cline.autoImportSettingsPath` ਸੈੱਟ ਕਰਦਾ ਹੈ + UI ਕਦਮ ਪ੍ਰਿੰਟ ਕਰਦਾ ਹੈ (OpenAI-ਅਨੁਕੂਲ, Base URL `/v1` **ਦੇ ਨਾਲ**) |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` ਪ੍ਰਦਾਤਾ, `base_url` `/v1` **ਦੇ ਨਾਲ**, ਕੁੰਜੀ `$OMNIROUTE_API_KEY` ਰਾਹੀਂ                                                                |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` `/v1` **ਤੋਂ ਬਿਨਾਂ** + `GOOSE_MODEL`) + env ਵਿਧੀ                                                               |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` `/v1` **ਤੋਂ ਬਿਨਾਂ** + `model: openai/<id>`) + env ਵਿਧੀ (`aider --message --yes`)                                                              |
-| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` ਵਿੱਚ V4 `modelProviders.openai` ਐਂਟਰੀ + `~/.qwen/.env` ਵਿੱਚ `OMNIROUTE_API_KEY`                                                                              |
+| CLI         | ਕਮਾਂਡ                      | ਇਹ ਕੀ ਲਿਖਦੀ ਹੈ                                                                                                                                                                      |
+| ----------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` ਪ੍ਰੋਫ਼ਾਈਲਾਂ (ਹਰੇਕ ਮਾਡਲ ਲਈ)                                                                                                                            |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (ਹਰੇਕ ਮਾਡਲ ਲਈ)                                                                                                                            |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — ਹਰੇਕ ਕੈਟਾਲਾਗ ਮਾਡਲ ਵਾਲਾ `omniroute` openai-ਅਨੁਕੂਲ ਪ੍ਰਦਾਤਾ (`opencode -m omniroute/<model>` ਚਲਾਓ)                                                |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI ਮੋਡ) + ਪੇਸਟ ਕਰਨ ਲਈ VS Code ਐਕਸਟੈਂਸ਼ਨ ਸੈਟਿੰਗਾਂ ਪ੍ਰਿੰਟ ਕਰਦੀ ਹੈ (OpenAI-ਅਨੁਕੂਲ, ਬੇਸ URL **ਬਿਨਾਂ** `/v1`)                               |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` ਸੈਟਿੰਗਾਂ — OpenAI-ਅਨੁਕੂਲ, ਬੇਸ URL `/v1` **ਦੇ ਨਾਲ**                                                                     |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `apiBase` `/v1` **ਦੇ ਨਾਲ**, `${{ secrets.OMNIROUTE_API_KEY }}` ਰਾਹੀਂ ਕੁੰਜੀ                           |
+| Cursor      | `omniroute setup-cursor`   | ਐਪ ਅੰਦਰਲੇ ਕਦਮ ਪ੍ਰਿੰਟ ਕਰਦੀ ਹੈ (ਸੈਟਿੰਗਾਂ → ਮਾਡਲ → `/v1` **ਦੇ ਨਾਲ** OpenAI ਬੇਸ URL ਓਵਰਰਾਈਡ ਕਰੋ + ਕੁੰਜੀ + ਮਾਡਲ)। Cursor ਕੌਂਫਿਗ ਅਪਾਰਦਰਸ਼ੀ SQLite ਹੈ — ਸਿਰਫ਼ ਚੈਟ ਪੈਨਲ                     |
+| Roo Code    | `omniroute setup-roo`      | ਇੱਕ Roo ਇੰਪੋਰਟ JSON (`~/.omniroute/roo-settings.json`) ਲਿਖਦੀ ਹੈ + `roo-cline.autoImportSettingsPath` ਸੈੱਟ ਕਰਦੀ ਹੈ + UI ਕਦਮ ਪ੍ਰਿੰਟ ਕਰਦੀ ਹੈ (OpenAI-ਅਨੁਕੂਲ, ਬੇਸ URL `/v1` **ਦੇ ਨਾਲ**) |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` ਪ੍ਰਦਾਤਾ, `base_url` `/v1` **ਦੇ ਨਾਲ**, `$OMNIROUTE_API_KEY` ਰਾਹੀਂ ਕੁੰਜੀ                                                               |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `api_url` `/v1` **ਦੇ ਨਾਲ**, Zed ਵੱਲੋਂ `$OMNIROUTE_API_KEY` ਤੋਂ ਪੜ੍ਹੀ ਕੁੰਜੀ (ਕਦੇ ਲਿਖੀ ਨਹੀਂ ਜਾਂਦੀ)     |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` `/v1` **ਤੋਂ ਬਿਨਾਂ** + `GOOSE_MODEL`) + env ਵਿਧੀ                                                              |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` `/v1` **ਤੋਂ ਬਿਨਾਂ** + `model: openai/<id>`) + env ਵਿਧੀ (`aider --message --yes`)                                                             |
+| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 `modelProviders.openai` ਐਂਟਰੀ + `~/.qwen/.env` ਵਿੱਚ `OMNIROUTE_API_KEY`                                                                                  |
 
 ```bash
-# OpenCode (openai-ਅਨੁਕੂਲ ਪ੍ਰਦਾਤਾ, ਸਾਰੇ ਕੈਟਾਲੌਗ ਮਾਡਲ, ਰਿਮੋਟ VPS)
+# OpenCode (openai-ਅਨੁਕੂਲ ਪ੍ਰਦਾਤਾ, ਸਾਰੇ ਕੈਟਾਲਾਗ ਮਾਡਲ, ਰਿਮੋਟ VPS)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 omniroute setup-opencode --only glm,kimi        # ਸਿਰਫ਼ ਮੇਲ ਖਾਂਦੇ ਮਾਡਲ ਰੱਖੋ
 opencode -m omniroute/glm/glm-5.2 "..."          # ਪਹਿਲਾਂ OMNIROUTE_API_KEY ਐਕਸਪੋਰਟ ਕਰੋ
 ```
 
-> OpenCode ਕੋਲ ਇੱਕ ਹੋਰ ਸਮਰੱਥ **ਪਲੱਗਇਨ** ਏਕੀਕਰਨ ਵੀ ਹੈ: `omniroute setup opencode`
-> (ਹੁਣ `--remote` ਰਾਹੀਂ ਰਿਮੋਟ-ਅਵੇਅਰ) `@omniroute/opencode-plugin` ਨੂੰ ਇੰਸਟਾਲ ਕਰਦਾ ਹੈ।
-> `setup-opencode` ਹਲਕਾ openai-ਅਨੁਕੂਲ ਵਿਕਲਪ ਹੈ। API ਕੁੰਜੀ ਦਾ ਹਵਾਲਾ
-> `{env:OMNIROUTE_API_KEY}` ਰਾਹੀਂ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ — ਇਸਨੂੰ ਕਦੇ ਵੀ ਡਿਸਕ 'ਤੇ ਨਹੀਂ ਲਿਖਿਆ ਜਾਂਦਾ।
+> OpenCode ਵਿੱਚ ਇੱਕ ਹੋਰ ਵਧੇਰੇ ਸਮਰੱਥ **ਪਲੱਗਇਨ** ਏਕੀਕਰਨ ਵੀ ਹੈ: `omniroute setup opencode`
+> (ਹੁਣ `--remote` ਰਾਹੀਂ ਰਿਮੋਟ-ਸਮਰੱਥ) `@omniroute/opencode-plugin` ਨੂੰ ਇੰਸਟਾਲ ਕਰਦਾ ਹੈ।
+> `setup-opencode` ਹਲਕਾ-ਫੁਲਕਾ OpenAI-ਅਨੁਕੂਲ ਵਿਕਲਪ ਹੈ। API ਕੁੰਜੀ ਦਾ
+> ਹਵਾਲਾ `{env:OMNIROUTE_API_KEY}` ਰਾਹੀਂ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ — ਇਸਨੂੰ ਕਦੇ ਵੀ ਡਿਸਕ ਉੱਤੇ ਨਹੀਂ ਲਿਖਿਆ ਜਾਂਦਾ।
 >
-> OpenCode v2 ਉੱਤੇ ਇਸਦੀ ਬਜਾਏ `@omniroute/opencode-plugin-v2` ਵਰਤੋ: ਉਹੀ ਕੈਟਾਲੌਗ,
-> ਵੱਖਰਾ ਲੋਡਰ ਇਕਰਾਰਨਾਮਾ। ਏਕੀਕਰਨ ਕਨੈਕਟ ਹੋਣ 'ਤੇ ਇਹ OpenCode ਦੇ ਆਪਣੇ ਕ੍ਰੈਡੈਂਸ਼ੀਅਲ
-> ਸਟੋਰ ਤੋਂ ਕੁੰਜੀ ਪੜ੍ਹਦਾ ਹੈ, ਇਸ ਲਈ ਕਿਸੇ ਰਿਮੋਟ ਗੇਟਵੇ ਨੂੰ `opencode.json` ਵਿੱਚ ਕਿਸੇ ਕੁੰਜੀ ਦੀ
-> ਬਿਲਕੁਲ ਲੋੜ ਨਹੀਂ ਹੁੰਦੀ।
+> OpenCode v2 ਉੱਤੇ, ਇਸਦੀ ਬਜਾਏ `@omniroute/opencode-plugin-v2` ਵਰਤੋ: ਉਹੀ ਕੈਟਾਲਾਗ,
+> ਪਰ ਵੱਖਰਾ ਲੋਡਰ ਇਕਰਾਰਨਾਮਾ। ਏਕੀਕਰਨ ਕਨੈਕਟ ਹੋਣ ਉੱਤੇ ਇਹ ਕੁੰਜੀ ਨੂੰ OpenCode ਦੇ ਆਪਣੇ ਕ੍ਰੈਡੈਂਸ਼ੀਅਲ
+> ਸਟੋਰ ਤੋਂ ਪੜ੍ਹਦਾ ਹੈ, ਇਸ ਲਈ ਰਿਮੋਟ ਗੇਟਵੇ ਨੂੰ `opencode.json` ਵਿੱਚ ਕਿਸੇ ਵੀ ਕੁੰਜੀ ਦੀ
+> ਲੋੜ ਨਹੀਂ ਹੁੰਦੀ।
 
 ---
 

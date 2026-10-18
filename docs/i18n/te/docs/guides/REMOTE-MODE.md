@@ -255,10 +255,10 @@ omniroute tokens scopes               # మూడు స్కోప్లను
 
 ---
 
-## రిమోట్ కేటలాగ్ నుంచి కోడింగ్ CLIను కాన్ఫిగర్ చేయడం
+## రిమోట్ కేటలాగ్ నుండి కోడింగ్ CLIని కాన్ఫిగర్ చేయడం
 
-`omniroute configure` **యాక్టివ్ సర్వర్ యొక్క** లైవ్ మోడల్ కేటలాగ్ను చదివి,
-**మీ** మెషీన్లో కాన్ఫిగ్ను వ్రాస్తుంది.
+`omniroute configure` **యాక్టివ్ సర్వర్కు** చెందిన లైవ్ మోడల్ కేటలాగ్ను చదివి,
+**మీ** మెషీన్లో ఒక కాన్ఫిగ్ను వ్రాస్తుంది.
 
 ```bash
 omniroute configure codex
@@ -266,29 +266,29 @@ omniroute configure codex
 #   ప్రొవైడర్: glm
 #   మోడల్ id: glm/glm-5.2
 #   ✔ ~/.codex/glm52.config.toml వ్రాయబడింది
-#   ఇలా ఉపయోగించండి:  codex --profile glm52
+#   దీన్ని ఉపయోగించండి:  codex --profile glm52
 
 # నాన్-ఇంటరాక్టివ్
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# తరచుగా ఉపయోగించే మోడల్ను ఇంటరాక్టివ్ పికర్ ఎగువన ఉంచండి
+# తరచుగా ఉపయోగించే మోడల్ను ఇంటరాక్టివ్ పికర్లో అగ్రభాగంలో ఉంచండి
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-పికర్ స్థానిక `model-preferences.json` ఫైల్లో, కాంటెక్స్ట్ మరియు CLI లక్ష్యం ఆధారంగా
-కేవలం మోడల్ IDలను మాత్రమే ఉంచుతుంది (URLలు లేదా క్రెడెన్షియల్లను ఎప్పటికీ ఉంచదు).
-ఇటీవలి ఎంపికల కంటే ముందు ఇష్టమైనవి చూపబడతాయి; ఎంచుకున్న మోడల్ను ఆ కాంటెక్స్ట్/లక్ష్య జాబితా నుంచి
-తొలగించడానికి `--unfavorite`ను ఉపయోగించండి.
+పికర్ స్థానిక `model-preferences.json` ఫైల్లో, సందర్భం మరియు CLI లక్ష్యం
+ఆధారంగా విభజించి, మోడల్ IDలను మాత్రమే ఉంచుతుంది (URLలు లేదా క్రెడెన్షియల్స్ను ఎప్పుడూ ఉంచదు).
+ఇటీవలి ఎంపికల కంటే ముందు ఇష్టమైనవి చూపబడతాయి; ఆ సందర్భం/లక్ష్య జాబితా నుండి ఎంచుకున్న
+మోడల్ను తొలగించడానికి `--unfavorite` ఉపయోగించండి.
 
 వ్రాయబడిన ప్రొఫైల్ env var ద్వారా ఇన్ఫరెన్స్ కీని సూచిస్తుంది
-(`OMNIROUTE_API_KEY`) — సీక్రెట్ ఎప్పటికీ డిస్క్కు వ్రాయబడదు. ఒక్కసారి చేయాల్సిన
+(`OMNIROUTE_API_KEY`) — సీక్రెట్ ఎప్పుడూ డిస్క్కు వ్రాయబడదు. ఒకసారి మాత్రమే చేయాల్సిన
 ప్రాథమిక Codex సెటప్ (`[model_providers.omniroute]` బ్లాక్) కోసం,
 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md) చూడండి.
 
-### రిమోట్కు అనుసంధానించి CLIను ప్రారంభించడం (కాన్ఫిగ్ వ్రాయబడదు)
+### రిమోట్కు అనుసంధానించి CLIని ప్రారంభించడం (కాన్ఫిగ్ వ్రాయబడదు)
 
-`omniroute run <target>` కూడా యాక్టివ్ కాంటెక్స్ట్ను గౌరవిస్తుంది: రిమోట్ బేస్ URL
-మరియు కాంటెక్స్ట్ క్రెడెన్షియల్ కేవలం ప్రారంభించిన ప్రాసెస్లోకి మాత్రమే ఇంజెక్ట్ చేయబడతాయి.
+`omniroute run <target>` కూడా యాక్టివ్ సందర్భాన్ని గౌరవిస్తుంది: రిమోట్ బేస్ URL
+మరియు సందర్భ క్రెడెన్షియల్ సృష్టించబడిన ప్రాసెస్లోకి మాత్రమే ఇంజెక్ట్ చేయబడతాయి.
 
 ```bash
 omniroute connect 192.168.0.15
@@ -296,50 +296,52 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code → రి�
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# ఖచ్చితంగా ఏమి ప్రారంభించబడుతుందో ప్రివ్యూ చేయండి (env KEY పేర్లు మాత్రమే, విలువలు ఎప్పటికీ కాదు):
+# ఏది సృష్టించబడుతుందో ఖచ్చితంగా ప్రివ్యూ చేయండి (env KEY పేర్లు మాత్రమే, విలువలు ఎప్పుడూ కాదు):
 omniroute run codex --dry-run --json
 ```
 
 లక్ష్యాలు: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
 (ఏకైక మూలం: `bin/cli/cli-manifest.mjs`). Qwen మరియు Gemini నిష్క్రమించినప్పుడు
-తొలగించబడే తాత్కాలిక ఐసోలేటెడ్ హోమ్తో నడుస్తాయి, కాబట్టి ప్రారంభ ప్రక్రియ మీ వ్యక్తిగత టూల్
-కాన్ఫిగరేషన్ను ఎప్పటికీ తాకదు — లేదా దానిలోకి లీక్ అవదు.
+తొలగించబడే తాత్కాలిక ఐసోలేటెడ్ హోమ్తో రన్ అవుతాయి, కాబట్టి ప్రారంభ ప్రక్రియ మీ వ్యక్తిగత
+టూల్ కాన్ఫిగరేషన్ను ఎప్పుడూ తాకదు — లేదా దానిలోకి లీక్ అవదు.
 
-### ప్రతి-CLI సెటప్ కమాండ్లు
+### ప్రతి CLIకి ప్రత్యేక సెటప్ కమాండ్లు
 
-మద్దతు ఉన్న ప్రతి CLIకి రిమోట్ను గుర్తించే సెటప్ కమాండ్ ఉంటుంది (అన్నీ యాక్టివ్
-కాంటెక్స్ట్ను లేదా `--remote <url> --api-key <key>`ను గౌరవిస్తాయి):
+మద్దతు ఉన్న ప్రతి CLIకి రిమోట్-అవేర్ సెటప్ కమాండ్ ఉంది (అన్నీ యాక్టివ్
+సందర్భాన్ని లేదా `--remote <url> --api-key <key>`ను గౌరవిస్తాయి):
 
-| CLI         | కమాండ్                     | ఇది వ్రాసేది                                                                                                                                                                                |
-| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` ప్రొఫైల్లు (ప్రతి మోడల్కు)                                                                                                                                    |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (ప్రతి మోడల్కు)                                                                                                                                   |
-| OpenCode    | `omniroute setup-opencode` | ప్రతి కేటలాగ్ మోడల్తో కూడిన `omniroute` OpenAI-అనుకూల ప్రొవైడర్ను `~/.config/opencode/opencode.json`లో వ్రాస్తుంది (`opencode -m omniroute/<model>` అమలు చేయండి)                            |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI మోడ్) + అతికించాల్సిన VS Code ఎక్స్టెన్షన్ సెట్టింగ్లను ముద్రిస్తుంది (OpenAI-అనుకూలం, `/v1` **లేని** Base URL)                             |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` సెట్టింగ్లు — OpenAI-అనుకూలం, `/v1` **ఉన్న** Base URL                                                                          |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `/v1` **ఉన్న** `apiBase`, `${{ secrets.OMNIROUTE_API_KEY }}` ద్వారా కీ                                       |
-| Cursor      | `omniroute setup-cursor`   | యాప్లోని దశలను ముద్రిస్తుంది (Settings → Models → `/v1` **ఉన్న** OpenAI Base URLను ఓవర్రైడ్ చేయండి + కీ + మోడల్). Cursor కాన్ఫిగరేషన్ అపారదర్శక SQLite — చాట్ ప్యానెల్ మాత్రమే              |
-| Roo Code    | `omniroute setup-roo`      | Roo ఇంపోర్ట్ JSON (`~/.omniroute/roo-settings.json`)ను వ్రాస్తుంది + `roo-cline.autoImportSettingsPath`ను సెట్ చేస్తుంది + UI దశలను ముద్రిస్తుంది (OpenAI-అనుకూలం, `/v1` **ఉన్న** Base URL) |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` ప్రొవైడర్, `/v1` **ఉన్న** `base_url`, `$OMNIROUTE_API_KEY` ద్వారా కీ                                                                         |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `/v1` **లేని** `OPENAI_HOST` + `GOOSE_MODEL`) + ఎన్విరాన్మెంట్ విధానం                                                              |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`/v1` **లేని** `openai-api-base` + `model: openai/<id>`) + ఎన్విరాన్మెంట్ విధానం (`aider --message --yes`)                                                             |
-| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json`లో V4 `modelProviders.openai` ఎంట్రీ + `~/.qwen/.env`లో `OMNIROUTE_API_KEY`                                                                                          |
+| CLI         | కమాండ్                     | ఇది వ్రాసేవి                                                                                                                                                                                    |
+| ----------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` ప్రొఫైల్లు (ప్రతి మోడల్కు)                                                                                                                                        |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (ప్రతి మోడల్కు)                                                                                                                                       |
+| OpenCode    | `omniroute setup-opencode` | ప్రతి కేటలాగ్ మోడల్తో కూడిన `~/.config/opencode/opencode.json` — `omniroute` openai-అనుకూల ప్రొవైడర్ (`opencode -m omniroute/<model>` రన్ చేయండి)                                               |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI మోడ్) + పేస్ట్ చేయాల్సిన VS Code ఎక్స్టెన్షన్ సెట్టింగ్లను ప్రింట్ చేస్తుంది (OpenAI-అనుకూలం, `/v1` **లేని** Base URL)                          |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` సెట్టింగ్లు — OpenAI-అనుకూలం, `/v1` **ఉన్న** Base URL                                                                              |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `/v1` **ఉన్న** `apiBase`, `${{ secrets.OMNIROUTE_API_KEY }}` ద్వారా కీ                                           |
+| Cursor      | `omniroute setup-cursor`   | యాప్లో చేయాల్సిన దశలను ప్రింట్ చేస్తుంది (Settings → Models → `/v1` **ఉన్న** OpenAI Base URLను ఓవర్రైడ్ చేయండి + కీ + మోడల్). Cursor కాన్ఫిగ్ అపారదర్శక SQLite — చాట్ ప్యానెల్ మాత్రమే          |
+| Roo Code    | `omniroute setup-roo`      | Roo ఇంపోర్ట్ JSONను (`~/.omniroute/roo-settings.json`) వ్రాస్తుంది + `roo-cline.autoImportSettingsPath`ను సెట్ చేస్తుంది + UI దశలను ప్రింట్ చేస్తుంది (OpenAI-అనుకూలం, `/v1` **ఉన్న** Base URL) |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` ప్రొవైడర్, `/v1` **ఉన్న** `base_url`, `$OMNIROUTE_API_KEY` ద్వారా కీ                                                                             |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `/v1` **ఉన్న** `api_url`, `$OMNIROUTE_API_KEY` నుండి Zed చదివే కీ (ఎప్పుడూ వ్రాయబడదు)                            |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `/v1` **లేని** `OPENAI_HOST` + `GOOSE_MODEL`) + env విధానం                                                                             |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`/v1` **లేని** `openai-api-base` + `model: openai/<id>`) + env విధానం (`aider --message --yes`)                                                                            |
+| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 `modelProviders.openai` ఎంట్రీ + `~/.qwen/.env`లో `OMNIROUTE_API_KEY`                                                                                                |
 
 ```bash
-# OpenCode (OpenAI-అనుకూల ప్రొవైడర్, అన్ని కేటలాగ్ మోడల్లు, రిమోట్ VPS)
+# OpenCode (openai-అనుకూల ప్రొవైడర్, అన్ని కేటలాగ్ మోడల్లు, రిమోట్ VPS)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 omniroute setup-opencode --only glm,kimi        # సరిపోలే మోడల్లను మాత్రమే ఉంచండి
-opencode -m omniroute/glm/glm-5.2 "..."          # ముందుగా OMNIROUTE_API_KEYను ఎక్స్పోర్ట్ చేయండి
+opencode -m omniroute/glm/glm-5.2 "..."          # ముందుగా OMNIROUTE_API_KEYను export చేయండి
 ```
 
 > OpenCodeలో మరింత సమృద్ధమైన **ప్లగిన్** ఇంటిగ్రేషన్ కూడా ఉంది: `omniroute setup opencode`
-> (ఇప్పుడు `--remote` ద్వారా రిమోట్కు అనుకూలం) `@omniroute/opencode-plugin`ను ఇన్స్టాల్ చేస్తుంది.
+> (`--remote` ద్వారా ఇప్పుడు రిమోట్కు అనుకూలంగా ఉంటుంది) `@omniroute/opencode-plugin`ను ఇన్స్టాల్ చేస్తుంది.
 > `setup-opencode` అనేది తేలికపాటి OpenAI-అనుకూల ప్రత్యామ్నాయం. API కీ
-> `{env:OMNIROUTE_API_KEY}` ద్వారా సూచించబడుతుంది — డిస్క్పై ఎప్పుడూ వ్రాయబడదు.
+> `{env:OMNIROUTE_API_KEY}` ద్వారా సూచించబడుతుంది — డిస్క్లో ఎప్పటికీ వ్రాయబడదు.
 >
 > OpenCode v2లో, బదులుగా `@omniroute/opencode-plugin-v2`ను ఉపయోగించండి: అదే కేటలాగ్,
-> భిన్నమైన లోడర్ ఒప్పందం. ఇంటిగ్రేషన్ కనెక్ట్ చేయబడినప్పుడు ఇది OpenCode యొక్క స్వంత క్రెడెన్షియల్
-> స్టోర్ నుంచి కీని చదువుతుంది, కాబట్టి రిమోట్ గేట్వేకు `opencode.json`లో అసలు కీ అవసరం లేదు.
+> భిన్నమైన లోడర్ ఒప్పందం. ఇంటిగ్రేషన్ కనెక్ట్ చేయబడినప్పుడు, ఇది OpenCode యొక్క స్వంత క్రెడెన్షియల్
+> స్టోర్ నుండి కీని చదువుతుంది, కాబట్టి రిమోట్ గేట్వే కోసం `opencode.json`లో
+> అసలు ఎలాంటి కీ అవసరం లేదు.
 
 ---
 

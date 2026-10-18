@@ -224,8 +224,7 @@ omniroute tokens scopes               # 说明三种作用域
 
 ## 从远程目录配置编码 CLI
 
-`omniroute configure` 会读取**活动服务器的**实时模型目录，并在
-**您的**机器上写入配置。
+`omniroute configure` 会读取**活动服务器的**实时模型目录，并在**你的**计算机上写入配置。
 
 ```bash
 omniroute configure codex
@@ -242,54 +241,45 @@ omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-选择器只会在本地 `model-preferences.json` 文件中保存模型 ID（绝不会保存 URL 或凭据），
-并按上下文和 CLI 目标划分作用域。收藏项会显示在最近选择项之前；使用
-`--unfavorite` 可从该上下文/目标列表中移除所选模型。
+选择器只会在本地 `model-preferences.json` 文件中保存模型 ID（绝不会保存 URL 或凭据），并按上下文和 CLI 目标划分作用域。收藏项会显示在最近选择项之前；使用 `--unfavorite` 可从该上下文/目标列表中移除选定模型。
 
-写入的配置文件通过环境变量（`OMNIROUTE_API_KEY`）引用推理密钥——
-密钥绝不会写入磁盘。有关一次性的 Codex 基础设置
-（`[model_providers.omniroute]` 块），请参阅
-[CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md)。
+写入的配置文件通过环境变量 (`OMNIROUTE_API_KEY`) 引用推理密钥——密钥绝不会写入磁盘。有关一次性的 Codex 基础设置（`[model_providers.omniroute]` 块），请参阅 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md)。
 
-### 针对远程启动 CLI（不写入配置）
+### 针对远程服务器启动 CLI（不写入配置）
 
-`omniroute run <target>` 同样会遵循活动上下文：远程基础 URL
-和上下文凭据仅会被注入启动的进程中。
+`omniroute run <target>` 也遵循活动上下文：远程基础 URL 和上下文凭据只会注入启动的进程中。
 
 ```bash
 omniroute connect 192.168.0.15
-omniroute run claude   --model openai/gpt-5.4          # Claude Code → 远程
+omniroute run claude   --model openai/gpt-5.4          # Claude Code → 远程服务器
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# 准确预览将要启动的内容（仅显示环境变量的键名，绝不显示值）：
+# 准确预览将要启动的内容（仅显示环境变量键名，绝不显示值）：
 omniroute run codex --dry-run --json
 ```
 
-目标：`claude`、`codex`、`aider`、`goose`、`opencode`、`qwen`、`gemini`
-（单一来源：`bin/cli/cli-manifest.mjs`）。Qwen 和 Gemini 会使用一个
-临时隔离的主目录运行，该目录会在退出时移除，因此启动过程绝不会修改——
-或泄露到——您的个人工具配置中。
+目标：`claude`、`codex`、`aider`、`goose`、`opencode`、`qwen`、`gemini`（单一来源：`bin/cli/cli-manifest.mjs`）。Qwen 和 Gemini 会使用临时隔离的主目录，并在退出时将其删除，因此启动过程绝不会触碰你的个人工具配置，也不会将内容泄漏到其中。
 
 ### 各 CLI 的设置命令
 
-每个受支持的 CLI 都有一个支持远程的设置命令（均遵循活动
-上下文，也可使用 `--remote <url> --api-key <key>`）：
+每个受支持的 CLI 都有一个支持远程服务器的设置命令（全部遵循活动上下文，也可使用 `--remote <url> --api-key <key>`）：
 
 | CLI         | 命令                       | 写入内容                                                                                                                                                   |
 | ----------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` 配置文件（每个模型一个）                                                                                                     |
 | Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json`（每个模型一个）                                                                                                  |
-| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — 包含目录中所有模型的 `omniroute` OpenAI 兼容提供者（运行 `opencode -m omniroute/<model>`）                            |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json`（CLI 模式）+ 输出供粘贴的 VS Code 扩展设置（OpenAI 兼容，Base URL **不含** `/v1`）                              |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json`（CLI）+ VS Code `kilocode.*` 设置 — OpenAI 兼容，Base URL **包含** `/v1`                                                   |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml`（VS Code/JetBrains + `cn` CLI）— `provider: openai`，`apiBase` **包含** `/v1`，通过 `${{ secrets.OMNIROUTE_API_KEY }}` 获取密钥  |
-| Cursor      | `omniroute setup-cursor`   | 输出应用内操作步骤（Settings → Models → Override OpenAI Base URL **包含** `/v1` + 密钥 + 模型）。Cursor 配置存储在不透明的 SQLite 中 — 仅适用于聊天面板    |
-| Roo Code    | `omniroute setup-roo`      | 写入 Roo 导入 JSON（`~/.omniroute/roo-settings.json`）+ 设置 `roo-cline.autoImportSettingsPath` + 输出 UI 操作步骤（OpenAI 兼容，Base URL **包含** `/v1`） |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` 提供者，`base_url` **包含** `/v1`，通过 `$OMNIROUTE_API_KEY` 获取密钥                                       |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json`——包含目录中所有模型的 `omniroute` OpenAI 兼容提供者（运行 `opencode -m omniroute/<model>`）                             |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json`（CLI 模式）+ 输出供粘贴的 VS Code 扩展设置（OpenAI 兼容，基础 URL **不含** `/v1`）                              |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json`（CLI）+ VS Code `kilocode.*` 设置——OpenAI 兼容，基础 URL **包含** `/v1`                                                    |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml`（VS Code/JetBrains + `cn` CLI）——`provider: openai`，`apiBase` **包含** `/v1`，通过 `${{ secrets.OMNIROUTE_API_KEY }}` 获取密钥  |
+| Cursor      | `omniroute setup-cursor`   | 输出应用内操作步骤（设置 → 模型 → 覆盖 OpenAI 基础 URL，**包含** `/v1` + 密钥 + 模型）。Cursor 配置是不透明的 SQLite——仅适用于聊天面板                     |
+| Roo Code    | `omniroute setup-roo`      | 写入 Roo 导入 JSON (`~/.omniroute/roo-settings.json`) + 设置 `roo-cline.autoImportSettingsPath` + 输出 UI 操作步骤（OpenAI 兼容，基础 URL **包含** `/v1`） |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json`——`openai-compat` 提供者，`base_url` **包含** `/v1`，通过 `$OMNIROUTE_API_KEY` 获取密钥                                        |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json`——`language_models.openai_compatible.omniroute`，`api_url` **包含** `/v1`，Zed 从 `$OMNIROUTE_API_KEY` 读取密钥（绝不写入）   |
 | Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml`（`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **不含** `/v1` + `GOOSE_MODEL`）+ 环境变量配置方法                                  |
 | Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml`（`openai-api-base` **不含** `/v1` + `model: openai/<id>`）+ 环境变量配置方法（`aider --message --yes`）                                |
-| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 中的 `modelProviders.openai` 条目 + `~/.qwen/.env` 中的 `OMNIROUTE_API_KEY`                                                     |
+| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 `modelProviders.openai` 条目 + `~/.qwen/.env` 中的 `OMNIROUTE_API_KEY`                                                          |
 
 ```bash
 # OpenCode（OpenAI 兼容提供者、所有目录模型、远程 VPS）
@@ -298,13 +288,13 @@ omniroute setup-opencode --only glm,kimi        # 仅保留匹配的模型
 opencode -m omniroute/glm/glm-5.2 "..."          # 请先导出 OMNIROUTE_API_KEY
 ```
 
-> OpenCode 还提供功能更丰富的**插件**集成：`omniroute setup opencode`
-> （现已通过 `--remote` 支持远程模式）会安装 `@omniroute/opencode-plugin`。
-> `setup-opencode` 是轻量级的 OpenAI 兼容替代方案。API 密钥通过
-> `{env:OMNIROUTE_API_KEY}` 引用 — 绝不会写入磁盘。
+> OpenCode 还提供了功能更丰富的**插件**集成：`omniroute setup opencode`
+> （现已通过 `--remote` 支持远程环境）会安装 `@omniroute/opencode-plugin`。
+> `setup-opencode` 则是轻量级的 OpenAI 兼容替代方案。API 密钥
+> 通过 `{env:OMNIROUTE_API_KEY}` 引用，绝不会写入磁盘。
 >
-> 在 OpenCode v2 上，请改用 `@omniroute/opencode-plugin-v2`：目录相同，
-> 但加载器约定不同。连接集成后，它会从 OpenCode 自身的凭据
+> 在 OpenCode v2 上，请改用 `@omniroute/opencode-plugin-v2`：模型目录相同，
+> 但加载器契约不同。连接该集成后，它会从 OpenCode 自身的凭据
 > 存储中读取密钥，因此远程网关完全不需要在 `opencode.json` 中配置密钥。
 
 ---

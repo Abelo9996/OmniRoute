@@ -261,10 +261,10 @@ A kò lè dá token kan sílẹ̀ pẹ̀lú àṣẹ tó ju ti ẹni tó dá a l
 
 ---
 
-## Ṣíṣètò CLI coding láti inú katalogi jíjìn
+## Ṣíṣètò CLI ìkọ̀wé kóòdù láti inú àkójọ ọjà jíjìnnà
 
-`omniroute configure` máa ń ka katalogi model tó wà láàyè ti **olupin tó ń ṣiṣẹ́**
-ó sì máa ń kọ config sórí ẹ̀rọ **rẹ**.
+`omniroute configure` máa ń ka àkójọ àwọn model tó wà lórí **server tó ń ṣiṣẹ́ lọ́wọ́lọ́wọ́**, ó sì máa ń kọ
+config kan sórí ẹ̀rọ **rẹ**.
 
 ```bash
 omniroute configure codex
@@ -272,80 +272,81 @@ omniroute configure codex
 #   Olùpèsè: glm
 #   ID model: glm/glm-5.2
 #   ✔ Ti kọ ~/.codex/glm52.config.toml
-#   Lo ó:  codex --profile glm52
+#   Bí a ṣe ń lò ó:  codex --profile glm52
 
 # láìsí ìbánisọ̀rọ̀
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# fi model tí a sábà ń lò sí òkè picker ìbánisọ̀rọ̀
+# jẹ́ kí model tí a sábà máa ń lò wà ní òkè ohun èlò yíyan aláṣepọ̀
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-Picker náà ń pa àwọn ID model nìkan mọ́ (kì í ṣe URL tàbí credential láé) nínú fáìlì
-`model-preferences.json` agbègbè, tí a pín ní ìbámu pẹ̀lú context àti target CLI.
-Àwọn favorite máa ń hàn ṣáájú àwọn àṣàyàn àìpẹ́; lo `--unfavorite` láti yọ model
-tí a yàn kúrò nínú àkójọ context/target yẹn.
+Ohun èlò yíyan náà máa ń tọ́jú àwọn ID model nìkan (kì í ṣe àwọn URL tàbí ẹ̀rí ìwọlé láé) sínú fáìlì
+`model-preferences.json` abẹ́lẹ̀, tí a pín ní ìbámu pẹ̀lú àyíká àti ibi-afẹ́ CLI. Àwọn ààyò ni a
+máa ń fi hàn ṣáájú àwọn ohun tí a yàn láìpẹ́; lo `--unfavorite` láti yọ model tí a yàn
+kúrò nínú àkójọ àyíká/ibi-afẹ́ yẹn.
 
-Profile tí a kọ ń tọ́ka sí key inference nípasẹ̀ env var
-(`OMNIROUTE_API_KEY`) — a kì í kọ secret náà sí disk láé. Fún ìṣètò Codex ìpìlẹ̀
-lẹ́ẹ̀kan ṣoṣo (block `[model_providers.omniroute]`), wo
+Profile tí a kọ náà ń tọ́ka sí kọ́kọ́rọ́ inference nípasẹ̀ env var
+(`OMNIROUTE_API_KEY`) — a kì í kọ àṣírí náà sórí disk láé. Fún ìṣètò Codex ìpìlẹ̀
+ìgbà-kan-ṣoṣo (block `[model_providers.omniroute]`), wo
 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
 
-### Ṣíṣe CLI kan lòdì sí ẹ̀rọ jíjìn (láìkọ config)
+### Ṣíṣe CLI kan lòdì sí ibi jíjìnnà (a kò kọ config kankan)
 
-`omniroute run <target>` tún ń bọ̀wọ̀ fún context tó ń ṣiṣẹ́: URL ìpìlẹ̀ jíjìn
-àti credential context ni a máa ń fi sínú process tí a ṣẹ̀dá nìkan.
+`omniroute run <target>` tún máa ń tẹ̀lé àyíká tó ń ṣiṣẹ́ lọ́wọ́lọ́wọ́: URL ìpìlẹ̀ jíjìnnà
+àti ẹ̀rí ìwọlé àyíká ni a máa ń fi sínú process tí a dá sílẹ̀ nìkan.
 
 ```bash
 omniroute connect 192.168.0.15
-omniroute run claude   --model openai/gpt-5.4          # Claude Code → ẹ̀rọ jíjìn
+omniroute run claude   --model openai/gpt-5.4          # Claude Code → ibi jíjìnnà
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# Ṣàyẹ̀wò ohun gangan tí a ó ṣẹ̀dá (ÀWỌN ORÚKỌ KEY env nìkan, kì í ṣe àwọn value láé):
+# Ṣàyẹ̀wò ohun gan-an tí a ó dá sílẹ̀ (ÀWỌN ORÚKỌ BỌ́TÌNNÌ env nìkan, kì í ṣe àwọn iye láé):
 omniroute run codex --dry-run --json
 ```
 
-Àwọn target: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
-(orísun kan ṣoṣo: `bin/cli/cli-manifest.mjs`). Qwen àti Gemini ń ṣiṣẹ́ pẹ̀lú home
-àdádó fún ìgbà díẹ̀ tí a máa yọ kúrò nígbà tí wọ́n bá jáde, nítorí náà ìbẹ̀rẹ̀ náà
-kì í fọwọ́ kan — tàbí jo sínú — config irinṣẹ́ ti ara ẹni rẹ.
+Àwọn ibi-afẹ́: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
+(orísun kan ṣoṣo: `bin/cli/cli-manifest.mjs`). Qwen àti Gemini máa ń ṣiṣẹ́ pẹ̀lú
+home àdádó fún ìgbà díẹ̀ tí a máa ń yọ kúrò nígbà tí wọ́n bá parí, nítorí náà ìmúṣiṣẹ́ náà kò ní fọwọ́ kan —
+tàbí jo sínú — ìṣètò irinṣẹ́ ara ẹni rẹ.
 
 ### Àwọn àṣẹ ìṣètò fún CLI kọ̀ọ̀kan
 
-CLI kọ̀ọ̀kan tí a ṣe àtìlẹ́yìn fún ní àṣẹ ìṣètò tó mọ nípa ẹ̀rọ jíjìn (gbogbo wọn
-ń bọ̀wọ̀ fún context tó ń ṣiṣẹ́, tàbí `--remote <url> --api-key <key>`):
+CLI kọ̀ọ̀kan tí a ṣe àtìlẹ́yìn fún ní àṣẹ ìṣètò tó mọ ibi jíjìnnà (gbogbo wọn ń tẹ̀lé
+àyíká tó ń ṣiṣẹ́, tàbí `--remote <url> --api-key <key>`):
 
-| CLI         | Àṣẹ                        | Ohun tí ó kọ                                                                                                                                                                    |
-| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Codex       | `omniroute setup-codex`    | àwọn prófáìlì `~/.codex/<name>.config.toml` (fún awoṣe kọ̀ọ̀kan)                                                                                                                  |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (fún awoṣe kọ̀ọ̀kan)                                                                                                                    |
-| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — olùpèsè `omniroute` tó bá openai mu pẹ̀lú gbogbo awoṣe inú àkójọ (ṣiṣẹ́ `opencode -m omniroute/<model>`)                                     |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (ipò CLI) + ó tẹ àwọn ètò ẹ̀kún VS Code jáde láti lẹ̀ mọ́ ọn (ó bá OpenAI mu, Base URL **láìsí** `/v1`)                                 |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + àwọn ètò VS Code `kilocode.*` — ó bá OpenAI mu, Base URL **pẹ̀lú** `/v1`                                                                 |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `apiBase` **pẹ̀lú** `/v1`, kọ́kọ́rọ́ nípasẹ̀ `${{ secrets.OMNIROUTE_API_KEY }}`                       |
-| Cursor      | `omniroute setup-cursor`   | ó tẹ àwọn ìgbésẹ̀ inú ètò jáde (Settings → Models → Override OpenAI Base URL **pẹ̀lú** `/v1` + kọ́kọ́rọ́ + awoṣe). Àtúnṣe Cursor jẹ́ SQLite tí kò ṣe kedere — pánẹ́ẹ̀lì ìfọ̀rọ̀wérọ̀ nìkan |
-| Roo Code    | `omniroute setup-roo`      | ó kọ JSON àgbéwọlé Roo (`~/.omniroute/roo-settings.json`) + ó ṣètò `roo-cline.autoImportSettingsPath` + ó tẹ àwọn ìgbésẹ̀ UI jáde (ó bá OpenAI mu, Base URL **pẹ̀lú** `/v1`)      |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — olùpèsè `openai-compat`, `base_url` **pẹ̀lú** `/v1`, kọ́kọ́rọ́ nípasẹ̀ `$OMNIROUTE_API_KEY`                                                           |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **láìsí** `/v1` + `GOOSE_MODEL`) + ìtọ́sọ́nà env                                                           |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **láìsí** `/v1` + `model: openai/<id>`) + ìtọ́sọ́nà env (`aider --message --yes`)                                                          |
-| Qwen Code   | `omniroute setup-qwen`     | àkọọ́lẹ̀ V4 `modelProviders.openai` nínú `~/.qwen/settings.json` + `OMNIROUTE_API_KEY` nínú `~/.qwen/.env`                                                                        |
+| CLI         | Àṣẹ                        | Ohun tí ó ń kọ                                                                                                                                                                 |
+| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Codex       | `omniroute setup-codex`    | Àwọn profile `~/.codex/<name>.config.toml` (fún model kọ̀ọ̀kan)                                                                                                                  |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (fún model kọ̀ọ̀kan)                                                                                                                   |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — olùpèsè `omniroute` tó bá OpenAI mu pẹ̀lú gbogbo model inú àkójọ (ṣiṣẹ́ `opencode -m omniroute/<model>`)                                    |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (ipò CLI) + ó tẹ àwọn ìṣètò extension VS Code jáde fún lílẹ̀ mọ́ ọn (tó bá OpenAI mu, URL Ìpìlẹ̀ **láìsí** `/v1`)                      |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + àwọn ìṣètò VS Code `kilocode.*` — tó bá OpenAI mu, URL Ìpìlẹ̀ **pẹ̀lú** `/v1`                                                            |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + CLI `cn`) — `provider: openai`, `apiBase` **pẹ̀lú** `/v1`, kọ́kọ́rọ́ nípasẹ̀ `${{ secrets.OMNIROUTE_API_KEY }}`                      |
+| Cursor      | `omniroute setup-cursor`   | ó tẹ àwọn ìgbésẹ̀ inú app jáde (Settings → Models → Override OpenAI Base URL **pẹ̀lú** `/v1` + kọ́kọ́rọ́ + model). Config Cursor jẹ́ SQLite tí kò ṣe kedere — panel chat nìkan       |
+| Roo Code    | `omniroute setup-roo`      | ó kọ JSON import Roo kan (`~/.omniroute/roo-settings.json`) + ó ṣètò `roo-cline.autoImportSettingsPath` + ó tẹ àwọn ìgbésẹ̀ UI jáde (tó bá OpenAI mu, URL Ìpìlẹ̀ **pẹ̀lú** `/v1`) |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — olùpèsè `openai-compat`, `base_url` **pẹ̀lú** `/v1`, kọ́kọ́rọ́ nípasẹ̀ `$OMNIROUTE_API_KEY`                                                          |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `api_url` **pẹ̀lú** `/v1`, Zed ka kọ́kọ́rọ́ láti `$OMNIROUTE_API_KEY` (a kì í kọ ọ́ láé)             |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **láìsí** `/v1` + `GOOSE_MODEL`) + àlàyé env                                                            |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **láìsí** `/v1` + `model: openai/<id>`) + àlàyé env (`aider --message --yes`)                                                           |
+| Qwen Code   | `omniroute setup-qwen`     | àkọsílẹ̀ V4 `modelProviders.openai` inú `~/.qwen/settings.json` + `OMNIROUTE_API_KEY` nínú `~/.qwen/.env`                                                                       |
 
 ```bash
-# OpenCode (olùpèsè tó bá openai mu, gbogbo awoṣe inú àkójọ, VPS jíjìn)
+# OpenCode (olùpèsè tó bá OpenAI mu, gbogbo àwọn model inú àkójọ, VPS jíjìnnà)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute setup-opencode --only glm,kimi        # pa àwọn awoṣe tó bá mu nìkan mọ́
-opencode -m omniroute/glm/glm-5.2 "..."          # kọ́kọ́ ṣe export OMNIROUTE_API_KEY
+omniroute setup-opencode --only glm,kimi        # fi àwọn model tó bá mu nìkan sílẹ̀
+opencode -m omniroute/glm/glm-5.2 "..."          # kọ́kọ́ export OMNIROUTE_API_KEY
 ```
 
-> OpenCode tún ní ìṣọ̀kan **plugin** tó ní agbára púpọ̀ sí i: `omniroute setup opencode`
-> (tó ti mọ̀ nípa jíjìn báyìí nípasẹ̀ `--remote`) ń fi `@omniroute/opencode-plugin` sílẹ̀.
-> `setup-opencode` ni àṣàyàn tó fẹ́ẹ̀rẹ́ tó sì bá openai mu. A tọ́ka sí kọ́kọ́rọ́ API
-> nípasẹ̀ `{env:OMNIROUTE_API_KEY}` — a kì í kọ ọ́ sí disiki láéláé.
+> OpenCode tún ní ìṣàkóso **plugin** tó péye síi: `omniroute setup opencode`
+> (tó ti ń ṣiṣẹ́ pẹ̀lú ẹ̀rọ jíjìn nípasẹ̀ `--remote` báyìí) ń fi `@omniroute/opencode-plugin` sílẹ̀.
+> `setup-opencode` ni àṣàyàn míì tó fẹ́ẹ́rẹ́ tó sì bá openai mu. À ń tọ́ka sí kọ́kọ́rọ́ API náà
+> nípasẹ̀ `{env:OMNIROUTE_API_KEY}` — a kì í kọ ọ́ sí disiki láé.
 >
 > Lórí OpenCode v2, lo `@omniroute/opencode-plugin-v2` dípò rẹ̀: àkójọ kan náà,
-> àdéhùn olùgbéjáde tó yàtọ̀. Ó máa ń ka kọ́kọ́rọ́ láti ibi ìpamọ́ ẹ̀rí OpenCode fúnra rẹ̀
-> nígbà tí ìṣọ̀kan náà bá sopọ̀, nítorí náà gateway jíjìn kò nílò kọ́kọ́rọ́ kankan nínú
+> ṣùgbọ́n àdéhùn olùkójọpọ̀ yàtọ̀. Ó máa ń ka kọ́kọ́rọ́ náà láti ibi ìpamọ́ ẹ̀rí ìdánimọ̀
+> ti OpenCode fúnra rẹ̀ nígbà tí a bá so ìṣàkóso náà pọ̀, nítorí náà gateway jíjìn kò nílò kọ́kọ́rọ́ kankan nínú
 > `opencode.json` rárá.
 
 ---

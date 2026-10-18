@@ -263,40 +263,40 @@ omniroute tokens scopes               # شرح النطاقات الثلاثة
 
 ---
 
-## إعداد واجهة CLI للبرمجة من الكتالوج البعيد
+## تهيئة واجهة CLI للبرمجة من الكتالوج البعيد
 
-يقرأ `omniroute configure` كتالوج النماذج المباشر **للخادم النشط** ويكتب
-إعدادًا على جهازك **أنت**.
+يقرأ `omniroute configure` كتالوج النماذج المباشر الخاص **بالخادم النشط** ويكتب
+ملف تهيئة على **جهازك**.
 
 ```bash
 omniroute configure codex
-#   الموفّرون: glm، kmc، ollamacloud، opencode-go، …
-#   الموفّر: glm
+#   المزوّدون: glm، kmc، ollamacloud، opencode-go، …
+#   المزوّد: glm
 #   معرّف النموذج: glm/glm-5.2
 #   ✔ تمت كتابة ~/.codex/glm52.config.toml
 #   استخدمه:  codex --profile glm52
 
-# وضع غير تفاعلي
+# الوضع غير التفاعلي
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# أبقِ نموذجًا كثير الاستخدام أعلى أداة الاختيار التفاعلية
+# أبقِ نموذجًا كثير الاستخدام في أعلى أداة الاختيار التفاعلية
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
 تحتفظ أداة الاختيار بمعرّفات النماذج فقط (ولا تحتفظ أبدًا بعناوين URL أو بيانات الاعتماد) في ملف
-`model-preferences.json` المحلي، مع فصلها حسب السياق وهدف CLI. تُعرض المفضلات
+`model-preferences.json` المحلي، مع فصلها حسب السياق وهدف CLI. تظهر المفضلة
 قبل الاختيارات الحديثة؛ استخدم `--unfavorite` لإزالة نموذج محدد
 من قائمة ذلك السياق/الهدف.
 
-يشير ملف التعريف المكتوب إلى مفتاح الاستدلال عبر متغير بيئة
-(`OMNIROUTE_API_KEY`) — ولا يُكتب السر على القرص مطلقًا. لإعداد Codex الأساسي
-لمرة واحدة (كتلة `[model_providers.omniroute]`)، راجع
+يشير الملف التعريفي المكتوب إلى مفتاح الاستدلال عبر متغير بيئة
+(`OMNIROUTE_API_KEY`) — ولا يُكتب السر على القرص مطلقًا. لإجراء إعداد Codex الأساسي
+لمرة واحدة (الكتلة `[model_providers.omniroute]`)، راجع
 [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
 
-### تشغيل واجهة CLI مقابل الخادم البعيد (من دون كتابة إعداد)
+### تشغيل واجهة CLI مقابل الخادم البعيد (من دون كتابة تهيئة)
 
-يراعي `omniroute run <target>` أيضًا السياق النشط: إذ يُحقن عنوان URL الأساسي البعيد
-وبيانات اعتماد السياق في العملية المُشغَّلة فقط.
+يحترم `omniroute run <target>` أيضًا السياق النشط: إذ يُحقن عنوان URL الأساسي البعيد
+وبيانات اعتماد السياق في العملية المُنشأة فقط.
 
 ```bash
 omniroute connect 192.168.0.15
@@ -304,50 +304,51 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code ← الخ�
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# عاين بدقة ما سيُشغَّل (أسماء مفاتيح البيئة فقط، وليس القيم مطلقًا):
+# عاين ما سيُنشأ بالضبط (أسماء مفاتيح البيئة فقط، وليس القيم مطلقًا):
 omniroute run codex --dry-run --json
 ```
 
-الأهداف: `claude` و`codex` و`aider` و`goose` و`opencode` و`qwen` و`gemini`
+الأهداف: `claude`، و`codex`، و`aider`، و`goose`، و`opencode`، و`qwen`، و`gemini`
 (المصدر الوحيد: `bin/cli/cli-manifest.mjs`). يعمل Qwen وGemini باستخدام
-مجلد رئيسي مؤقت ومعزول يُحذف عند الخروج، ولذلك لا تلمس عملية التشغيل
-إعدادات أدواتك الشخصية — ولا تُسرّب أي شيء إليها.
+مجلد رئيسي مؤقت ومعزول يُزال عند الخروج، ولذلك لا يلمس التشغيل تهيئة أداتك
+الشخصية — ولا يسرّب أي شيء إليها.
 
 ### أوامر الإعداد الخاصة بكل واجهة CLI
 
-لكل واجهة CLI مدعومة أمر إعداد يدرك الخادم البعيد (وتراعي جميعها السياق
-النشط، أو `--remote <url> --api-key <key>`):
+لكل واجهة CLI مدعومة أمر إعداد مدرك للخادم البعيد (تحترم جميعها السياق النشط،
+أو `--remote <url> --api-key <key>`):
 
-| واجهة سطر الأوامر | الأمر                      | ما يكتبه                                                                                                                                                                                 |
-| ----------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Codex             | `omniroute setup-codex`    | ملفات تعريف `~/.codex/<name>.config.toml` (لكل نموذج)                                                                                                                                    |
-| Claude Code       | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (لكل نموذج)                                                                                                                                    |
-| OpenCode          | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — موفّر `omniroute` المتوافق مع openai، مع كل نماذج الكتالوج (شغّل `opencode -m omniroute/<model>`)                                                   |
-| Cline             | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (وضع واجهة سطر الأوامر) + يطبع إعدادات إضافة VS Code للصقها (متوافق مع OpenAI، وعنوان URL الأساسي **من دون** `/v1`)                           |
-| Kilo Code         | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (واجهة سطر الأوامر) + إعدادات VS Code ‏`kilocode.*` — متوافق مع OpenAI، وعنوان URL الأساسي **مع** `/v1`                                                  |
-| Continue          | `omniroute setup-continue` | `~/.continue/config.yaml` ‏(VS Code/JetBrains + واجهة `cn` لسطر الأوامر) — ‏`provider: openai`، و`apiBase` **مع** `/v1`، والمفتاح عبر `${{ secrets.OMNIROUTE_API_KEY }}`                 |
-| Cursor            | `omniroute setup-cursor`   | يطبع الخطوات داخل التطبيق (الإعدادات ← النماذج ← تجاوز عنوان URL الأساسي لـ OpenAI **مع** `/v1` + المفتاح + النموذج). إعداد Cursor هو SQLite مبهم — لوحة الدردشة فقط                     |
-| Roo Code          | `omniroute setup-roo`      | يكتب ملف JSON لاستيراد Roo ‏(`~/.omniroute/roo-settings.json`) + يضبط `roo-cline.autoImportSettingsPath` + يطبع خطوات واجهة المستخدم (متوافق مع OpenAI، وعنوان URL الأساسي **مع** `/v1`) |
-| Crush             | `omniroute setup-crush`    | `~/.config/crush/crush.json` — موفّر `openai-compat`، و`base_url` **مع** `/v1`، والمفتاح عبر `$OMNIROUTE_API_KEY`                                                                        |
-| Goose             | `omniroute setup-goose`    | `~/.config/goose/config.yaml` ‏(`GOOSE_PROVIDER=openai` + ‏`OPENAI_HOST` **من دون** `/v1` + ‏`GOOSE_MODEL`) + وصفة متغيرات البيئة                                                        |
-| Aider             | `omniroute setup-aider`    | `~/.aider.conf.yml` ‏(`openai-api-base` **من دون** `/v1` + ‏`model: openai/<id>`) + وصفة متغيرات البيئة (`aider --message --yes`)                                                        |
-| Qwen Code         | `omniroute setup-qwen`     | إدخال V4 ‏`modelProviders.openai` في `~/.qwen/settings.json` + ‏`OMNIROUTE_API_KEY` في `~/.qwen/.env`                                                                                    |
+| واجهة CLI   | الأمر                      | ما يكتبه                                                                                                                                                                                 |
+| ----------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | `omniroute setup-codex`    | ملفات تعريف `~/.codex/<name>.config.toml` (لكل نموذج)                                                                                                                                    |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (لكل نموذج)                                                                                                                                    |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — مزوّد `omniroute` المتوافق مع openai ويحتوي على كل نموذج في الكتالوج (شغّل `opencode -m omniroute/<model>`)                                         |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (وضع CLI) + يطبع إعدادات امتداد VS Code للصقها (متوافق مع OpenAI، وعنوان URL الأساسي **من دون** `/v1`)                                        |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` ‏(CLI) + إعدادات `kilocode.*` في VS Code — متوافق مع OpenAI، وعنوان URL الأساسي **مع** `/v1`                                                             |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` ‏(VS Code/JetBrains + واجهة CLI ‏`cn`) —‏ `provider: openai`، و`apiBase` **مع** `/v1`، والمفتاح عبر `${{ secrets.OMNIROUTE_API_KEY }}`                         |
+| Cursor      | `omniroute setup-cursor`   | يطبع الخطوات داخل التطبيق (Settings ← Models ← Override OpenAI Base URL **مع** `/v1` + المفتاح + النموذج). تهيئة Cursor عبارة عن SQLite مبهم — لوحة الدردشة فقط                          |
+| Roo Code    | `omniroute setup-roo`      | يكتب ملف JSON لاستيراد Roo ‏(`~/.omniroute/roo-settings.json`) + يضبط `roo-cline.autoImportSettingsPath` + يطبع خطوات واجهة المستخدم (متوافق مع OpenAI، وعنوان URL الأساسي **مع** `/v1`) |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — مزوّد `openai-compat`، و`base_url` **مع** `/v1`، والمفتاح عبر `$OMNIROUTE_API_KEY`                                                                        |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` —‏ `language_models.openai_compatible.omniroute`، و`api_url` **مع** `/v1`، ويقرأ Zed المفتاح من `$OMNIROUTE_API_KEY` (ولا يُكتب مطلقًا)                    |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` ‏(`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **من دون** `/v1` + `GOOSE_MODEL`) + وصفة إعداد البيئة                                                            |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` ‏(`openai-api-base` **من دون** `/v1` + `model: openai/<id>`) + وصفة إعداد البيئة (`aider --message --yes`)                                                           |
+| Qwen Code   | `omniroute setup-qwen`     | إدخال V4 باسم `modelProviders.openai` في `~/.qwen/settings.json` + المتغير `OMNIROUTE_API_KEY` في `~/.qwen/.env`                                                                         |
 
 ```bash
-# OpenCode (موفّر متوافق مع openai، وجميع نماذج الكتالوج، وخادم VPS بعيد)
+# OpenCode (مزوّد متوافق مع openai، وجميع نماذج الكتالوج، وخادم VPS بعيد)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute setup-opencode --only glm,kimi        # الاحتفاظ بالنماذج المطابقة فقط
+omniroute setup-opencode --only glm,kimi        # احتفظ بالنماذج المطابقة فقط
 opencode -m omniroute/glm/glm-5.2 "..."          # صدّر OMNIROUTE_API_KEY أولًا
 ```
 
-> يتضمن OpenCode أيضًا تكاملًا أكثر ثراءً عبر **مكوّن إضافي**: `omniroute setup opencode`
-> (وهو يدعم الآن الاتصال عن بُعد عبر `--remote`) يثبّت `@omniroute/opencode-plugin`.
-> يُعد `setup-opencode` البديل الخفيف المتوافق مع openai. تتم الإشارة إلى مفتاح API
-> عبر `{env:OMNIROUTE_API_KEY}` — ولا يُكتب على القرص مطلقًا.
+> يتضمن OpenCode أيضًا تكاملًا أكثر ثراءً عبر **إضافة**: يقوم `omniroute setup opencode`
+> (ويدعم الآن البيئات البعيدة عبر `--remote`) بتثبيت `@omniroute/opencode-plugin`.
+> أما `setup-opencode` فهو البديل خفيف الوزن والمتوافق مع openai. تتم الإشارة إلى مفتاح API
+> عبر `{env:OMNIROUTE_API_KEY}` — ولا تتم كتابته على القرص مطلقًا.
 >
-> في OpenCode v2، استخدم `@omniroute/opencode-plugin-v2` بدلًا منه: الكتالوج نفسه،
-> لكن بعقد تحميل مختلف. يقرأ المفتاح من مخزن بيانات الاعتماد الخاص بـ OpenCode
-> عند اتصال التكامل، لذا لا تحتاج البوابة البعيدة إلى أي مفتاح في
+> في OpenCode v2، استخدم `@omniroute/opencode-plugin-v2` بدلًا من ذلك: الفهرس نفسه،
+> ولكن بعقد تحميل مختلف. يقرأ المفتاح من مخزن بيانات الاعتماد الخاص بـ OpenCode
+> عند اتصال التكامل، ولذلك لا تحتاج البوابة البعيدة إلى أي مفتاح في
 > `opencode.json` على الإطلاق.
 
 ---

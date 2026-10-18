@@ -215,11 +215,11 @@ omniroute tokens scopes               # 3つのスコープについて説明
 
 ## リモートカタログからコーディング CLI を設定する
 
-`omniroute configure` は**アクティブなサーバー**のライブモデルカタログを読み取り、**ユーザーの**マシンに設定を書き込みます。
+`omniroute configure` は、**アクティブなサーバー**の最新モデルカタログを読み取り、**お使いの**マシンに設定を書き込みます。
 
 ```bash
 omniroute configure codex
-#   プロバイダー: glm、kmc、ollamacloud、opencode-go、…
+#   プロバイダー: glm, kmc, ollamacloud, opencode-go, …
 #   プロバイダー: glm
 #   モデル ID: glm/glm-5.2
 #   ✔ ~/.codex/glm52.config.toml に書き込みました
@@ -228,21 +228,17 @@ omniroute configure codex
 # 非対話モード
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# 頻繁に使用するモデルを対話型選択画面の先頭に保持する
+# よく使うモデルを対話型ピッカーの先頭に固定する
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-選択画面では、ローカルの `model-preferences.json` ファイルにモデル ID のみが保持され（URL や認証情報は保存されません）、コンテキストおよび CLI ターゲットごとにスコープされます。お気に入りは最近の選択より前に表示されます。選択したモデルをそのコンテキスト／ターゲットのリストから削除するには、`--unfavorite` を使用してください。
+ピッカーはローカルの `model-preferences.json` ファイルにモデル ID のみ（URL や認証情報は保存しません）を、コンテキストおよび CLI ターゲットごとに保存します。お気に入りは最近の選択より前に表示されます。そのコンテキスト／ターゲットのリストから選択したモデルを削除するには、`--unfavorite` を使用します。
 
-書き込まれるプロファイルは、環境変数
-（`OMNIROUTE_API_KEY`）を使用して推論キーを参照します。シークレットがディスクに書き込まれることはありません。一度限りの Codex
-基本設定（`[model_providers.omniroute]` ブロック）については、
-[CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md) を参照してください。
+書き込まれるプロファイルは、環境変数（`OMNIROUTE_API_KEY`）によって推論キーを参照します。シークレットがディスクに書き込まれることはありません。Codex の初回基本設定（`[model_providers.omniroute]` ブロック）については、[CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md) を参照してください。
 
-### リモートを対象に CLI を起動する（設定の書き込みなし）
+### リモートに対して CLI を起動する（設定は書き込まれません）
 
-`omniroute run <target>` もアクティブなコンテキストに従います。リモートのベース URL
-とコンテキストの認証情報は、起動されたプロセスにのみ注入されます。
+`omniroute run <target>` もアクティブなコンテキストに従います。リモートのベース URL とコンテキストの認証情報は、起動されるプロセスにのみ注入されます。
 
 ```bash
 omniroute connect 192.168.0.15
@@ -250,31 +246,32 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code → リモ�
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# 起動される内容を正確にプレビューします（環境変数のキー名のみ。値は一切表示されません）:
+# 実際に起動される内容を正確にプレビュー（環境変数のキー名のみ。値は表示されません）:
 omniroute run codex --dry-run --json
 ```
 
 ターゲット: `claude`、`codex`、`aider`、`goose`、`opencode`、`qwen`、`gemini`
-（単一のソース: `bin/cli/cli-manifest.mjs`）。Qwen と Gemini は、終了時に削除される一時的な分離ホームで実行されるため、この起動によって個人用ツール設定が変更されたり、その設定に情報が漏れたりすることはありません。
+（単一の情報源: `bin/cli/cli-manifest.mjs`）。Qwen と Gemini は、終了時に削除される一時的な隔離ホームで実行されるため、起動時に個人用ツール設定へ触れたり、その設定に情報が漏れたりすることはありません。
 
 ### CLI ごとのセットアップコマンド
 
-サポートされる各 CLI には、リモート対応のセットアップコマンドがあります（すべてアクティブなコンテキスト、または `--remote <url> --api-key <key>` に従います）。
+サポートされている各 CLI には、リモート対応のセットアップコマンドがあります（すべてアクティブなコンテキスト、または `--remote <url> --api-key <key>` に従います）。
 
-| CLI         | コマンド                   | 書き込まれる内容                                                                                                                                                             |
-| ----------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` プロファイル（モデルごと）                                                                                                                     |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json`（モデルごと）                                                                                                                      |
-| OpenCode    | `omniroute setup-opencode` | すべてのカタログモデルを含む `omniroute` OpenAI 互換プロバイダーを `~/.config/opencode/opencode.json` に書き込み（`opencode -m omniroute/<model>` で実行）                   |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json`（CLI モード）に書き込み、貼り付け用の VS Code 拡張機能設定を表示（OpenAI 互換、ベース URL は `/v1` **なし**）                     |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json`（CLI）および VS Code の `kilocode.*` 設定に書き込み — OpenAI 互換、ベース URL は `/v1` **あり**                                              |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml`（VS Code/JetBrains および `cn` CLI）に書き込み — `provider: openai`、`apiBase` は `/v1` **あり**、キーは `${{ secrets.OMNIROUTE_API_KEY }}` 経由   |
-| Cursor      | `omniroute setup-cursor`   | アプリ内での手順を表示（Settings → Models → Override OpenAI Base URL（`/v1` **あり**）+ キー + モデル）。Cursor の設定は不透明な SQLite 形式 — チャットパネルのみ            |
-| Roo Code    | `omniroute setup-roo`      | Roo インポート用 JSON（`~/.omniroute/roo-settings.json`）を書き込み、`roo-cline.autoImportSettingsPath` を設定し、UI 手順を表示（OpenAI 互換、ベース URL は `/v1` **あり**） |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` に書き込み — `openai-compat` プロバイダー、`base_url` は `/v1` **あり**、キーは `$OMNIROUTE_API_KEY` 経由                                       |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml`（`GOOSE_PROVIDER=openai` + `OPENAI_HOST` は `/v1` **なし** + `GOOSE_MODEL`）および環境変数の設定例                                             |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml`（`openai-api-base` は `/v1` **なし** + `model: openai/<id>`）および環境変数の設定例（`aider --message --yes`）                                           |
-| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` の V4 `modelProviders.openai` エントリ、および `~/.qwen/.env` 内の `OMNIROUTE_API_KEY`                                                               |
+| CLI         | コマンド                   | 書き込まれる内容                                                                                                                                                                |
+| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` プロファイル（モデルごと）                                                                                                                        |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json`（モデルごと）                                                                                                                         |
+| OpenCode    | `omniroute setup-opencode` | すべてのカタログモデルを含む、`omniroute` OpenAI 互換プロバイダー用の `~/.config/opencode/opencode.json`（`opencode -m omniroute/<model>` を実行）                              |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json`（CLI モード）+ 貼り付け用の VS Code 拡張機能設定を出力（OpenAI 互換、ベース URL は `/v1` **なし**）                                  |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json`（CLI）+ VS Code の `kilocode.*` 設定 — OpenAI 互換、ベース URL は `/v1` **付き**                                                                |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml`（VS Code/JetBrains + `cn` CLI）— `provider: openai`、`apiBase` は `/v1` **付き**、キーは `${{ secrets.OMNIROUTE_API_KEY }}` 経由                      |
+| Cursor      | `omniroute setup-cursor`   | アプリ内での手順を出力（Settings → Models → Override OpenAI Base URL は `/v1` **付き** + キー + モデル）。Cursor の設定は不透明な SQLite — チャットパネルのみ                   |
+| Roo Code    | `omniroute setup-roo`      | Roo インポート用 JSON（`~/.omniroute/roo-settings.json`）を書き込み + `roo-cline.autoImportSettingsPath` を設定 + UI 手順を出力（OpenAI 互換、ベース URL は `/v1` **付き**）    |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` プロバイダー、`base_url` は `/v1` **付き**、キーは `$OMNIROUTE_API_KEY` 経由                                                     |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`、`api_url` は `/v1` **付き**、キーは Zed が `$OMNIROUTE_API_KEY` から読み取り（書き込まれません） |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml`（`GOOSE_PROVIDER=openai` + `OPENAI_HOST` は `/v1` **なし** + `GOOSE_MODEL`）+ 環境変数の設定例                                                    |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml`（`openai-api-base` は `/v1` **なし** + `model: openai/<id>`）+ 環境変数の設定例（`aider --message --yes`）                                                  |
+| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` の V4 `modelProviders.openai` エントリ + `~/.qwen/.env` 内の `OMNIROUTE_API_KEY`                                                                        |
 
 ```bash
 # OpenCode（OpenAI 互換プロバイダー、すべてのカタログモデル、リモート VPS）
@@ -283,15 +280,15 @@ omniroute setup-opencode --only glm,kimi        # 一致するモデルのみを
 opencode -m omniroute/glm/glm-5.2 "..."          # 最初に OMNIROUTE_API_KEY をエクスポート
 ```
 
-> OpenCode には、より高機能な**プラグイン**統合もあります：`omniroute setup opencode`
-> （現在は `--remote` によりリモートにも対応）は `@omniroute/opencode-plugin` をインストールします。
-> `setup-opencode` は軽量な OpenAI 互換の代替手段です。API キーは
-> `{env:OMNIROUTE_API_KEY}` 経由で参照され、ディスクには一切書き込まれません。
+> OpenCode には、より高度な **プラグイン** 統合もあります。`omniroute setup opencode`
+> （`--remote` によりリモートにも対応）は `@omniroute/opencode-plugin` をインストールします。
+> `setup-opencode` は、軽量な OpenAI 互換の代替手段です。API キーは
+> `{env:OMNIROUTE_API_KEY}` を介して参照され、ディスクに書き込まれることはありません。
 >
-> OpenCode v2 では、代わりに `@omniroute/opencode-plugin-v2` を使用してください。同じカタログですが、
-> ローダーの規約が異なります。統合が接続されている場合、OpenCode 自体の認証情報
-> ストアからキーを読み取るため、リモートゲートウェイでも `opencode.json` にキーを
-> 記載する必要はまったくありません。
+> OpenCode v2 では、代わりに `@omniroute/opencode-plugin-v2` を使用してください。同じカタログを使用しますが、
+> ローダーのコントラクトが異なります。統合が接続されている場合、OpenCode 自体の認証情報
+> ストアからキーを読み取るため、リモートゲートウェイでは `opencode.json` にキーを
+> 設定する必要がまったくありません。
 
 ---
 

@@ -270,38 +270,35 @@ prieigos raktus; pateikus jiems užklausą su `--scope admin`, grąžinamas `403
 
 ## Programavimo CLI konfigūravimas iš nuotolinio katalogo
 
-`omniroute configure` nuskaito **aktyvaus serverio** modelių katalogą realiuoju
-laiku ir įrašo konfigūraciją **jūsų** įrenginyje.
+`omniroute configure` nuskaito **aktyvaus serverio** tiesioginį modelių katalogą ir įrašo
+konfigūraciją **jūsų** kompiuteryje.
 
 ```bash
 omniroute configure codex
-#   Paslaugų teikėjai: glm, kmc, ollamacloud, opencode-go, …
-#   Paslaugų teikėjas: glm
+#   Teikėjai: glm, kmc, ollamacloud, opencode-go, …
+#   Teikėjas: glm
 #   Modelio ID: glm/glm-5.2
 #   ✔ Įrašyta ~/.codex/glm52.config.toml
-#   Naudojimas:  codex --profile glm52
+#   Naudokite taip:  codex --profile glm52
 
 # neinteraktyvus režimas
 omniroute configure codex --provider glm --model glm/glm-5.2 --name glm52
 
-# laikyti dažnai naudojamą modelį interaktyvaus parinkiklio viršuje
+# dažnai naudojamą modelį laikykite interaktyviojo parinkiklio viršuje
 omniroute configure codex --provider glm --model glm/glm-5.2 --favorite --yes
 ```
 
-Parinkiklis vietiniame `model-preferences.json` faile saugo tik modelių ID
-(niekada ne URL ar kredencialus), suskirstytus pagal kontekstą ir CLI paskirtį.
-Mėgstamiausi rodomi prieš naujausius pasirinkimus; norėdami pašalinti pasirinktą
-modelį iš to konteksto ir paskirties sąrašo, naudokite `--unfavorite`.
+Parinkiklis vietiniame faile `model-preferences.json` saugo tik modelių ID (niekada ne URL ar prisijungimo duomenis), suskirstytus pagal kontekstą ir CLI paskirtį. Mėgstamiausi modeliai rodomi prieš naujausius pasirinkimus; norėdami pašalinti pasirinktą modelį iš to konteksto ir paskirties sąrašo, naudokite `--unfavorite`.
 
-Įrašytame profilyje išvedimo raktas nurodomas per aplinkos kintamąjį
-(`OMNIROUTE_API_KEY`) — paslaptis niekada neįrašoma į diską. Vienkartinio
-pagrindinio Codex nustatymo (`[model_providers.omniroute]` bloko) instrukcijas
-žr. [CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
+Įrašytame profilyje išvadų generavimo raktas nurodomas per aplinkos kintamąjį
+(`OMNIROUTE_API_KEY`) — slaptasis raktas niekada neįrašomas į diską. Vienkartinės
+bazinės Codex sąrankos (`[model_providers.omniroute]` bloko) instrukcijas rasite
+[CODEX-CLI-CONFIGURATION.md](./CODEX-CLI-CONFIGURATION.md).
 
-### CLI paleidimas nuotoliniam serveriui (neįrašant konfigūracijos)
+### CLI paleidimas naudojant nuotolinį serverį (konfigūracija neįrašoma)
 
-`omniroute run <target>` taip pat naudoja aktyvų kontekstą: nuotolinis bazinis URL
-ir konteksto kredencialai įterpiami tik į paleistą procesą.
+`omniroute run <target>` taip pat atsižvelgia į aktyvų kontekstą: nuotolinis bazinis URL
+ir konteksto prisijungimo duomenys įterpiami tik į paleidžiamą procesą.
 
 ```bash
 omniroute connect 192.168.0.15
@@ -309,51 +306,51 @@ omniroute run claude   --model openai/gpt-5.4          # Claude Code → nuotoli
 omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "hello"
 omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
 
-# Tiksliai peržiūrėti, kas būtų paleista (tik aplinkos KINTAMŲJŲ PAVADINIMAI, niekada ne reikšmės):
+# Tiksliai peržiūrėkite, kas būtų paleista (tik aplinkos KINTAMŲJŲ PAVADINIMAI, niekada ne reikšmės):
 omniroute run codex --dry-run --json
 ```
 
 Paskirtys: `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen`, `gemini`
-(vienintelis šaltinis: `bin/cli/cli-manifest.mjs`). Qwen ir Gemini paleidžiami
-naudojant laikiną izoliuotą namų katalogą, kuris pašalinamas baigus darbą, todėl
-paleidimas niekada nepakeičia jūsų asmeninės įrankių konfigūracijos ir į ją
-nenutekina duomenų.
+(vienintelis šaltinis: `bin/cli/cli-manifest.mjs`). Qwen ir Gemini paleidžiami naudojant
+laikiną izoliuotą namų katalogą, kuris pašalinamas užbaigus darbą, todėl paleidimo metu jūsų asmeninė
+įrankių konfigūracija niekada nekeičiama ir jos duomenys nenuteka.
 
-### Kiekvienai CLI skirtos nustatymo komandos
+### Kiekvienam CLI skirtos sąrankos komandos
 
-Kiekviena palaikoma CLI turi nuotolinį serverį palaikančią nustatymo komandą
-(visos naudoja aktyvų kontekstą arba `--remote <url> --api-key <key>`):
+Kiekvienas palaikomas CLI turi nuotoliniam serveriui pritaikytą sąrankos komandą (visos atsižvelgia į aktyvų
+kontekstą arba `--remote <url> --api-key <key>`):
 
-| CLI         | Komanda                    | Ką ji įrašo                                                                                                                                                                                |
-| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` profilius (kiekvienam modeliui)                                                                                                                              |
-| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (kiekvienam modeliui)                                                                                                                            |
-| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — su OpenAI suderinamą `omniroute` teikėją su visais katalogo modeliais (paleiskite `opencode -m omniroute/<model>`)                                    |
-| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI režimu) + išspausdina įklijuotinus VS Code plėtinio nustatymus (suderinama su OpenAI, bazinis URL **be** `/v1`)                            |
-| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` nustatymus — suderinama su OpenAI, bazinis URL **su** `/v1`                                                                   |
-| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `apiBase` **su** `/v1`, raktas per `${{ secrets.OMNIROUTE_API_KEY }}`                                       |
-| Cursor      | `omniroute setup-cursor`   | išspausdina veiksmus programoje (Settings → Models → Override OpenAI Base URL **su** `/v1` + raktas + modelis). Cursor konfigūracija yra nepermatoma SQLite — tik pokalbių skydeliui       |
-| Roo Code    | `omniroute setup-roo`      | įrašo Roo importavimo JSON (`~/.omniroute/roo-settings.json`) + nustato `roo-cline.autoImportSettingsPath` + išspausdina sąsajos veiksmus (suderinama su OpenAI, bazinis URL **su** `/v1`) |
-| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` teikėją, `base_url` **su** `/v1`, raktas per `$OMNIROUTE_API_KEY`                                                                           |
-| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **be** `/v1` + `GOOSE_MODEL`) + aplinkos kintamųjų instrukciją                                                      |
-| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **be** `/v1` + `model: openai/<id>`) + aplinkos kintamųjų instrukciją (`aider --message --yes`)                                                     |
-| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 `modelProviders.openai` įrašą + `OMNIROUTE_API_KEY` faile `~/.qwen/.env`                                                                                        |
+| CLI         | Komanda                    | Kas įrašoma                                                                                                                                                                                                  |
+| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Codex       | `omniroute setup-codex`    | `~/.codex/<name>.config.toml` profiliai (kiekvienam modeliui)                                                                                                                                                |
+| Claude Code | `omniroute setup-claude`   | `~/.claude/profiles/<name>/settings.json` (kiekvienam modeliui)                                                                                                                                              |
+| OpenCode    | `omniroute setup-opencode` | `~/.config/opencode/opencode.json` — su openai suderinamas `omniroute` teikėjas su visais katalogo modeliais (paleiskite `opencode -m omniroute/<model>`)                                                    |
+| Cline       | `omniroute setup-cline`    | `~/.cline/data/{globalState,secrets}.json` (CLI režimas) + išspausdinami įklijuotini VS Code plėtinio nustatymai (suderinama su OpenAI, bazinis URL **be** `/v1`)                                            |
+| Kilo Code   | `omniroute setup-kilo`     | `~/.local/share/kilo/auth.json` (CLI) + VS Code `kilocode.*` nustatymai — suderinama su OpenAI, bazinis URL **su** `/v1`                                                                                     |
+| Continue    | `omniroute setup-continue` | `~/.continue/config.yaml` (VS Code/JetBrains + `cn` CLI) — `provider: openai`, `apiBase` **su** `/v1`, raktas per `${{ secrets.OMNIROUTE_API_KEY }}`                                                         |
+| Cursor      | `omniroute setup-cursor`   | išspausdinami veiksmai programoje (Settings → Models → Override OpenAI Base URL **su** `/v1` + raktas + modelis). Cursor konfigūracija yra nepermatoma SQLite — tik pokalbių skydeliui                       |
+| Roo Code    | `omniroute setup-roo`      | įrašomas Roo importavimo JSON (`~/.omniroute/roo-settings.json`) + nustatomas `roo-cline.autoImportSettingsPath` + išspausdinami naudotojo sąsajos veiksmai (suderinama su OpenAI, bazinis URL **su** `/v1`) |
+| Crush       | `omniroute setup-crush`    | `~/.config/crush/crush.json` — `openai-compat` teikėjas, `base_url` **su** `/v1`, raktas per `$OMNIROUTE_API_KEY`                                                                                            |
+| Zed         | `omniroute setup-zed`      | `~/.config/zed/settings.json` — `language_models.openai_compatible.omniroute`, `api_url` **su** `/v1`, raktą Zed nuskaito iš `$OMNIROUTE_API_KEY` (niekada neįrašomas)                                       |
+| Goose       | `omniroute setup-goose`    | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER=openai` + `OPENAI_HOST` **be** `/v1` + `GOOSE_MODEL`) + aplinkos kintamųjų instrukcija                                                                        |
+| Aider       | `omniroute setup-aider`    | `~/.aider.conf.yml` (`openai-api-base` **be** `/v1` + `model: openai/<id>`) + aplinkos kintamųjų instrukcija (`aider --message --yes`)                                                                       |
+| Qwen Code   | `omniroute setup-qwen`     | `~/.qwen/settings.json` V4 `modelProviders.openai` įrašas + `OMNIROUTE_API_KEY` faile `~/.qwen/.env`                                                                                                         |
 
 ```bash
-# OpenCode (su OpenAI suderinamas teikėjas, visi katalogo modeliai, nuotolinis VPS)
+# OpenCode (su openai suderinamas teikėjas, visi katalogo modeliai, nuotolinis VPS)
 omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 omniroute setup-opencode --only glm,kimi        # palikti tik atitinkančius modelius
-opencode -m omniroute/glm/glm-5.2 "..."          # pirmiausia export OMNIROUTE_API_KEY
+opencode -m omniroute/glm/glm-5.2 "..."          # pirmiausia eksportuokite OMNIROUTE_API_KEY
 ```
 
-> OpenCode taip pat turi funkcionalesnę **papildinio** integraciją: `omniroute setup opencode`
-> (dabar palaikančią nuotolinį veikimą per `--remote`), kuri įdiegia `@omniroute/opencode-plugin`.
-> `setup-opencode` yra paprastesnė, su OpenAI suderinama alternatyva. API raktas
+> OpenCode taip pat turi išsamesnę **papildinio** integraciją: `omniroute setup opencode`
+> (dabar palaiko nuotolinį režimą per `--remote`) įdiegia `@omniroute/opencode-plugin`.
+> `setup-opencode` yra supaprastinta, su openai suderinama alternatyva. API raktas
 > nurodomas per `{env:OMNIROUTE_API_KEY}` — jis niekada neįrašomas į diską.
 >
-> OpenCode v2 versijoje vietoje jo naudokite `@omniroute/opencode-plugin-v2`: tas pats katalogas,
-> kitokia įkėliklio sutartis. Kai integracija prijungta, jis nuskaito raktą iš pačios OpenCode kredencialų
-> saugyklos, todėl nuotoliniam šliuzui faile
+> OpenCode v2 naudokite `@omniroute/opencode-plugin-v2`: tas pats katalogas,
+> tačiau kitokia įkėlimo sąsaja. Kai integracija prijungta, raktas nuskaitomas iš
+> pačios OpenCode kredencialų saugyklos, todėl nuotoliniam šliuzui faile
 > `opencode.json` rakto visai nereikia.
 
 ---
