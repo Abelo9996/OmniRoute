@@ -151,33 +151,33 @@ Semua alat yang dipaparkan dalam `/dashboard/cli-code`. Alat dengan `baseUrlSupp
 
 | id           | nama                         | vendor                     | sokongan URL asas | jenis konfigurasi | boleh dicetuskan ACP |
 | ------------ | ---------------------------- | -------------------------- | ----------------- | ----------------- | -------------------- |
-| claude       | Claude Code                  | Anthropic                  | penuh             | env               | benar                |
-| codex        | OpenAI Codex CLI             | OpenAI                     | penuh             | tersuai           | benar                |
-| zcode        | ZCode (Pelan Pengekodan GLM) | Z.ai                       | tiada             | tersuai           | palsu                |
-| cline        | Cline                        | OSS (dahulunya Claude Dev) | penuh             | tersuai           | benar                |
-| kilo         | Kilo Code                    | Kilo-Org                   | penuh             | tersuai           | palsu                |
-| roo          | Roo Code                     | Roo (OSS)                  | penuh             | panduan           | palsu                |
-| continue     | Continue                     | continue.dev               | penuh             | panduan           | palsu                |
-| aider        | Aider                        | OSS (P. Gauthier)          | penuh             | panduan           | benar                |
-| forge        | ForgeCode                    | Antinomy HQ                | penuh             | tersuai           | benar                |
-| jcode        | jcode                        | 1jehuang (OSS)             | penuh             | tersuai           | palsu                |
-| deepseek-tui | DeepSeek TUI                 | Hunter Bown (OSS)          | penuh             | tersuai           | palsu                |
-| codewhale    | CodeWhale                    | Hmbown (OSS)               | penuh             | tersuai           | palsu                |
-| opencode     | OpenCode                     | Anomaly (dahulunya SST)    | penuh             | panduan           | benar                |
-| droid        | Factory Droid                | Factory AI                 | separa            | panduan           | palsu                |
-| copilot      | GitHub Copilot CLI           | GitHub/MS                  | penuh             | tersuai           | palsu                |
-| cursor-cli   | Cursor CLI                   | Anysphere                  | separa            | panduan           | benar                |
-| smelt        | Smelt                        | leonardcser (OSS)          | penuh             | tersuai           | palsu                |
-| pi           | Pi (pi-coding-agent)         | M. Zechner (OSS)           | penuh             | tersuai           | palsu                |
-| grok-build   | Grok Build                   | xAI                        | penuh             | tersuai           | palsu                |
-| crush        | Crush                        | OSS (Charm)                | penuh             | tersuai           | palsu                |
-| qwen         | Qwen Code                    | Alibaba                    | penuh             | panduan           | benar                |
-| zed          | Zed                          | Zed Industries             | penuh             | panduan           | palsu                |
-| cursor       | Cursor                       | Anysphere                  | tiada             | panduan           | palsu                |
-| antigravity  | Antigravity                  | Google                     | tiada             | mitm              | palsu                |
-| hermes       | Hermes                       | Nous Research              | tiada             | panduan           | palsu                |
-| kiro         | Kiro AI                      | Amazon                     | tiada             | mitm              | palsu                |
-| custom       | CLI Tersuai                  | —                          | penuh             | pembina tersuai   | palsu                |
+| claude       | Claude Code                  | Anthropic                  | full              | env               | true                 |
+| codex        | OpenAI Codex CLI             | OpenAI                     | full              | custom            | true                 |
+| zcode        | ZCode (Pelan Pengekodan GLM) | Z.ai                       | none              | custom            | false                |
+| cline        | Cline                        | OSS (dahulunya Claude Dev) | full              | custom            | true                 |
+| kilo         | Kilo Code                    | Kilo-Org                   | full              | custom            | false                |
+| roo          | Roo Code                     | Roo (OSS)                  | full              | guide             | false                |
+| continue     | Continue                     | continue.dev               | full              | guide             | false                |
+| aider        | Aider                        | OSS (P. Gauthier)          | full              | guide             | true                 |
+| forge        | ForgeCode                    | Antinomy HQ                | full              | custom            | true                 |
+| jcode        | jcode                        | 1jehuang (OSS)             | full              | custom            | false                |
+| deepseek-tui | DeepSeek TUI                 | Hunter Bown (OSS)          | full              | custom            | false                |
+| codewhale    | CodeWhale                    | Hmbown (OSS)               | full              | custom            | false                |
+| opencode     | OpenCode                     | Anomaly (dahulunya SST)    | full              | guide             | true                 |
+| droid        | Factory Droid                | Factory AI                 | partial           | guide             | false                |
+| copilot      | GitHub Copilot CLI           | GitHub/MS                  | full              | custom            | false                |
+| cursor-cli   | Cursor CLI                   | Anysphere                  | partial           | guide             | true                 |
+| smelt        | Smelt                        | leonardcser (OSS)          | full              | custom            | false                |
+| pi           | Pi (pi-coding-agent)         | M. Zechner (OSS)           | full              | custom            | false                |
+| grok-build   | Grok Build                   | xAI                        | full              | custom            | false                |
+| crush        | Crush                        | OSS (Charm)                | full              | custom            | false                |
+| qwen         | Qwen Code                    | Alibaba                    | full              | guide             | true                 |
+| zed          | Zed                          | Zed Industries             | full              | guide             | false                |
+| cursor       | Cursor                       | Anysphere                  | none              | guide             | false                |
+| antigravity  | Antigravity                  | Google                     | none              | mitm              | false                |
+| hermes       | Hermes                       | Nous Research              | none              | guide             | false                |
+| kiro         | Kiro AI                      | Amazon                     | none              | mitm              | false                |
+| custom       | CLI Tersuai                  | —                          | full              | custom-builder    | false                |
 
 Alat dengan `baseUrlSupport: "partial"` memaparkan lencana "⚠ URL Asas Separa" pada kad papan pemuka.
 ---

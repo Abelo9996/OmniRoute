@@ -149,35 +149,35 @@ un'interfaccia ma non alle altre fa fallire la suite anziché consentire una div
 
 Tutti gli strumenti visualizzati in `/dashboard/cli-code`. Quelli con `baseUrlSupport: none` vengono configurati tramite MITM o una guida manuale anziché mediante un URL di base personalizzato:
 
-| id           | nome                    | fornitore           | supporto URL di base | tipo di configurazione    | avviabile tramite ACP |
-| ------------ | ----------------------- | ------------------- | -------------------- | ------------------------- | --------------------- |
-| claude       | Claude Code             | Anthropic           | completo             | ambiente                  | sì                    |
-| codex        | OpenAI Codex CLI        | OpenAI              | completo             | personalizzato            | sì                    |
-| zcode        | ZCode (GLM Coding Plan) | Z.ai                | nessuno              | personalizzato            | no                    |
-| cline        | Cline                   | OSS (ex-Claude Dev) | completo             | personalizzato            | sì                    |
-| kilo         | Kilo Code               | Kilo-Org            | completo             | personalizzato            | no                    |
-| roo          | Roo Code                | Roo (OSS)           | completo             | guida                     | no                    |
-| continue     | Continue                | continue.dev        | completo             | guida                     | no                    |
-| aider        | Aider                   | OSS (P. Gauthier)   | completo             | guida                     | sì                    |
-| forge        | ForgeCode               | Antinomy HQ         | completo             | personalizzato            | sì                    |
-| jcode        | jcode                   | 1jehuang (OSS)      | completo             | personalizzato            | no                    |
-| deepseek-tui | DeepSeek TUI            | Hunter Bown (OSS)   | completo             | personalizzato            | no                    |
-| codewhale    | CodeWhale               | Hmbown (OSS)        | completo             | personalizzato            | no                    |
-| opencode     | OpenCode                | Anomaly (ex-SST)    | completo             | guida                     | sì                    |
-| droid        | Factory Droid           | Factory AI          | parziale             | guida                     | no                    |
-| copilot      | GitHub Copilot CLI      | GitHub/MS           | completo             | personalizzato            | no                    |
-| cursor-cli   | Cursor CLI              | Anysphere           | parziale             | guida                     | sì                    |
-| smelt        | Smelt                   | leonardcser (OSS)   | completo             | personalizzato            | no                    |
-| pi           | Pi (pi-coding-agent)    | M. Zechner (OSS)    | completo             | personalizzato            | no                    |
-| grok-build   | Grok Build              | xAI                 | completo             | personalizzato            | no                    |
-| crush        | Crush                   | OSS (Charm)         | completo             | personalizzato            | no                    |
-| qwen         | Qwen Code               | Alibaba             | completo             | guida                     | sì                    |
-| zed          | Zed                     | Zed Industries      | completo             | guida                     | no                    |
-| cursor       | Cursor                  | Anysphere           | nessuno              | guida                     | no                    |
-| antigravity  | Antigravity             | Google              | nessuno              | mitm                      | no                    |
-| hermes       | Hermes                  | Nous Research       | nessuno              | guida                     | no                    |
-| kiro         | Kiro AI                 | Amazon              | nessuno              | mitm                      | no                    |
-| custom       | CLI personalizzata      | —                   | completo             | generatore personalizzato | no                    |
+| id           | nome                    | fornitore           | supporto URL di base | tipo di configurazione | avviabile tramite ACP |
+| ------------ | ----------------------- | ------------------- | -------------------- | ---------------------- | --------------------- |
+| claude       | Claude Code             | Anthropic           | full                 | env                    | true                  |
+| codex        | OpenAI Codex CLI        | OpenAI              | full                 | custom                 | true                  |
+| zcode        | ZCode (GLM Coding Plan) | Z.ai                | none                 | custom                 | false                 |
+| cline        | Cline                   | OSS (ex-Claude Dev) | full                 | custom                 | true                  |
+| kilo         | Kilo Code               | Kilo-Org            | full                 | custom                 | false                 |
+| roo          | Roo Code                | Roo (OSS)           | full                 | guide                  | false                 |
+| continue     | Continue                | continue.dev        | full                 | guide                  | false                 |
+| aider        | Aider                   | OSS (P. Gauthier)   | full                 | guide                  | true                  |
+| forge        | ForgeCode               | Antinomy HQ         | full                 | custom                 | true                  |
+| jcode        | jcode                   | 1jehuang (OSS)      | full                 | custom                 | false                 |
+| deepseek-tui | DeepSeek TUI            | Hunter Bown (OSS)   | full                 | custom                 | false                 |
+| codewhale    | CodeWhale               | Hmbown (OSS)        | full                 | custom                 | false                 |
+| opencode     | OpenCode                | Anomaly (ex-SST)    | full                 | guide                  | true                  |
+| droid        | Factory Droid           | Factory AI          | partial              | guide                  | false                 |
+| copilot      | GitHub Copilot CLI      | GitHub/MS           | full                 | custom                 | false                 |
+| cursor-cli   | Cursor CLI              | Anysphere           | partial              | guide                  | true                  |
+| smelt        | Smelt                   | leonardcser (OSS)   | full                 | custom                 | false                 |
+| pi           | Pi (pi-coding-agent)    | M. Zechner (OSS)    | full                 | custom                 | false                 |
+| grok-build   | Grok Build              | xAI                 | full                 | custom                 | false                 |
+| crush        | Crush                   | OSS (Charm)         | full                 | custom                 | false                 |
+| qwen         | Qwen Code               | Alibaba             | full                 | guide                  | true                  |
+| zed          | Zed                     | Zed Industries      | full                 | guide                  | false                 |
+| cursor       | Cursor                  | Anysphere           | none                 | guide                  | false                 |
+| antigravity  | Antigravity             | Google              | none                 | mitm                   | false                 |
+| hermes       | Hermes                  | Nous Research       | none                 | guide                  | false                 |
+| kiro         | Kiro AI                 | Amazon              | none                 | mitm                   | false                 |
+| custom       | CLI personalizzata      | —                   | full                 | custom-builder         | false                 |
 
 Gli strumenti con `baseUrlSupport: "partial"` mostrano il badge "⚠ URL di base parziale" nella scheda della dashboard.
 ---
