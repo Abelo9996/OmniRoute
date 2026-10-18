@@ -165,6 +165,81 @@ function validCaseOrder(currentCase: EvidenceCase, repetitions: number, seed: st
   return true;
 }
 
+function executionBlockers(
+  manifest: VideoBridgePromotionManifest,
+  evidence: PromotionEvidenceFile
+): string[] {
+  const blockers: string[] = [];
+  if (evidence.comparison !== "fu07" && evidence.comparison !== "fu09") {
+    blockers.push("COMPARISON_NOT_DECLARED");
+  }
+  const receipt = evidence.execution;
+  if (!receipt?.modelRevision) blockers.push("MODEL_REVISION_MISSING");
+  if (!receipt) blockers.push("EXECUTION_RECEIPT_MISSING");
+  else if (
+    !promotionExecutionSchema.safeParse(receipt).success ||
+    receipt.manifestDigest !== buildPromotionManifestDigest(manifest) ||
+    Date.parse(receipt.finishedAt) <= Date.parse(receipt.startedAt)
+  )
+    blockers.push("EXECUTION_RECEIPT_INVALID");
+  if (evidence.manifestId !== manifest.id) blockers.push("MANIFEST_BINDING_MISMATCH");
+  return blockers;
+}
+
+function fixtureBlockers(manifest: VideoBridgePromotionManifest): string[] {
+  const blockers: string[] = [];
+  if (!manifest.cases.some((currentCase) => currentCase.kind === "real_sanitized")) {
+    blockers.push("REAL_SANITIZED_CASE_MISSING");
+  }
+  if (
+    manifest.cases.some(
+      (currentCase) => !currentCase.mediaDigest || !currentCase.expectedFactsDigest
+    )
+  ) {
+    blockers.push("FIXTURE_DIGEST_BINDING_MISSING");
+  }
+  if (VIDEO_BRIDGE_PROMOTION_METRIC_NAMES.some((metric) => !manifest.metrics.includes(metric))) {
+    blockers.push("MANIFEST_METRIC_SET_INCOMPLETE");
+  }
+  return blockers;
+}
+
+function runBlockers(manifest: VideoBridgePromotionManifest, runs: EvidenceRun[]): string[] {
+  const blockers: string[] = [];
+  const models = new Set(runs.map((run) => run.model));
+  if (models.size !== 1) blockers.push("MODEL_SEPARATION_REQUIRED");
+  if (
+    runs.some(
+      (run) =>
+        typeof run.preAnalysisMs !== "number" ||
+        !Number.isFinite(run.preAnalysisMs) ||
+        run.preAnalysisMs < 0
+    )
+  ) {
+    blockers.push("PRE_ANALYSIS_METRIC_MISSING_OR_INVALID");
+  }
+  const caps = manifest.resourceCaps;
+  if (
+    caps &&
+    runs.some(
+      (run) =>
+        (run.metrics.cpuMs ?? Infinity) > caps.maxCpuMs ||
+        (run.metrics.rssKiB ?? Infinity) > caps.maxRssKiB ||
+        (run.preAnalysisMs ?? Infinity) > caps.maxPreAnalysisMs
+    )
+  ) {
+    blockers.push("RESOURCE_CAP_EXCEEDED");
+  }
+  const observationIds = new Set(runs.map((run) => run.observationId));
+  if (
+    observationIds.size !== runs.length ||
+    runs.some((run) => !z.uuid().safeParse(run.observationId).success)
+  ) {
+    blockers.push("OBSERVATION_IDENTITY_INVALID");
+  }
+  return blockers;
+}
+
 /** Fail closed before aggregating: declared coverage is not observed evidence. */
 export function validatePromotionEvidence(
   manifest: VideoBridgePromotionManifest,
@@ -178,72 +253,17 @@ export function validatePromotionEvidence(
     blockers.add("INPUT_DIGEST_BINDING_MISSING");
   }
   if (!manifest.resourceCaps) blockers.add("RESOURCE_CAPS_MISSING");
-  if (evidence.comparison !== "fu07" && evidence.comparison !== "fu09") {
-    blockers.add("COMPARISON_NOT_DECLARED");
-  }
-  const receipt = evidence.execution;
-  if (!receipt?.modelRevision) blockers.add("MODEL_REVISION_MISSING");
-  if (!receipt) blockers.add("EXECUTION_RECEIPT_MISSING");
-  else if (
-    !promotionExecutionSchema.safeParse(receipt).success ||
-    receipt.manifestDigest !== buildPromotionManifestDigest(manifest) ||
-    Date.parse(receipt.finishedAt) <= Date.parse(receipt.startedAt)
-  )
-    blockers.add("EXECUTION_RECEIPT_INVALID");
-  if (evidence.manifestId !== manifest.id) blockers.add("MANIFEST_BINDING_MISMATCH");
-  if (!manifest.cases.some((currentCase) => currentCase.kind === "real_sanitized")) {
-    blockers.add("REAL_SANITIZED_CASE_MISSING");
-  }
-  if (
-    manifest.cases.some(
-      (currentCase) => !currentCase.mediaDigest || !currentCase.expectedFactsDigest
-    )
-  ) {
-    blockers.add("FIXTURE_DIGEST_BINDING_MISSING");
-  }
-  if (VIDEO_BRIDGE_PROMOTION_METRIC_NAMES.some((metric) => !manifest.metrics.includes(metric))) {
-    blockers.add("MANIFEST_METRIC_SET_INCOMPLETE");
-  }
+  for (const blocker of executionBlockers(manifest, evidence)) blockers.add(blocker);
+  for (const blocker of fixtureBlockers(manifest)) blockers.add(blocker);
   const declared = new Map(manifest.cases.map((currentCase) => [currentCase.id, currentCase]));
   const observed = new Set(evidence.cases.map((currentCase) => currentCase.caseId));
   if (declared.size !== manifest.cases.length || observed.size !== evidence.cases.length) {
     blockers.add("DUPLICATE_CASE_ID");
   }
   if ([...declared.keys()].some((id) => !observed.has(id))) blockers.add("CASE_COVERAGE_MISSING");
-  const models = new Set(
-    evidence.cases.flatMap((currentCase) => currentCase.runs.map((run) => run.model))
-  );
-  if (models.size !== 1) blockers.add("MODEL_SEPARATION_REQUIRED");
   const runs = evidence.cases.flatMap((currentCase) => currentCase.runs);
-  if (
-    runs.some(
-      (run) =>
-        typeof run.preAnalysisMs !== "number" ||
-        !Number.isFinite(run.preAnalysisMs) ||
-        run.preAnalysisMs < 0
-    )
-  ) {
-    blockers.add("PRE_ANALYSIS_METRIC_MISSING_OR_INVALID");
-  }
-  const caps = manifest.resourceCaps;
-  if (
-    caps &&
-    runs.some(
-      (run) =>
-        (run.metrics.cpuMs ?? Infinity) > caps.maxCpuMs ||
-        (run.metrics.rssKiB ?? Infinity) > caps.maxRssKiB ||
-        (run.preAnalysisMs ?? Infinity) > caps.maxPreAnalysisMs
-    )
-  ) {
-    blockers.add("RESOURCE_CAP_EXCEEDED");
-  }
-  const observationIds = new Set(runs.map((run) => run.observationId));
-  if (
-    observationIds.size !== runs.length ||
-    runs.some((run) => !z.uuid().safeParse(run.observationId).success)
-  ) {
-    blockers.add("OBSERVATION_IDENTITY_INVALID");
-  }
+  for (const blocker of runBlockers(manifest, runs)) blockers.add(blocker);
+  const receipt = evidence.execution;
   for (const currentCase of evidence.cases) {
     const declaredCase = declared.get(currentCase.caseId);
     for (const blocker of caseBlockers(currentCase, declaredCase, manifest.configurationDigest)) {

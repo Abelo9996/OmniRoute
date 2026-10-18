@@ -64,6 +64,35 @@ function validReport(report: PromotionRunReceipt): boolean {
   );
 }
 
+/** Called only after both reports have valid execution receipts. */
+function executionPairBlocker(
+  first: PromotionRunReceipt,
+  second: PromotionRunReceipt
+): string | null {
+  const left = first.execution.receipt!;
+  const right = second.execution.receipt!;
+  if (
+    left.candidateSha !== right.candidateSha ||
+    left.modelRevision !== right.modelRevision ||
+    left.manifestDigest !== right.manifestDigest ||
+    first.candidateModel !== second.candidateModel
+  )
+    return "EXECUTION_TARGET_MISMATCH";
+  if (
+    left.runId === right.runId ||
+    left.orderSeed === right.orderSeed ||
+    first.observationsDigest === second.observationsDigest
+  )
+    return "EXECUTIONS_NOT_INDEPENDENT";
+  if (
+    Date.parse(left.finishedAt) <= Date.parse(left.startedAt) ||
+    Date.parse(right.finishedAt) <= Date.parse(right.startedAt) ||
+    Date.parse(right.startedAt) < Date.parse(left.finishedAt)
+  )
+    return "EXECUTION_ORDER_INVALID";
+  return null;
+}
+
 /** Only the last two receipts count: an intervening ineligible run resets confirmation. */
 export function confirmVideoBridgePromotionRuns(
   reports: readonly PromotionRunReceipt[]
@@ -76,27 +105,8 @@ export function confirmVideoBridgePromotionRuns(
     first.comparison !== second.comparison
   )
     return hold("COMPARISON_TARGET_MISMATCH");
-  const left = first.execution.receipt!;
-  const right = second.execution.receipt!;
-  if (
-    left.candidateSha !== right.candidateSha ||
-    left.modelRevision !== right.modelRevision ||
-    left.manifestDigest !== right.manifestDigest ||
-    first.candidateModel !== second.candidateModel
-  )
-    return hold("EXECUTION_TARGET_MISMATCH");
-  if (
-    left.runId === right.runId ||
-    left.orderSeed === right.orderSeed ||
-    first.observationsDigest === second.observationsDigest
-  )
-    return hold("EXECUTIONS_NOT_INDEPENDENT");
-  if (
-    Date.parse(left.finishedAt) <= Date.parse(left.startedAt) ||
-    Date.parse(right.finishedAt) <= Date.parse(right.startedAt) ||
-    Date.parse(right.startedAt) < Date.parse(left.finishedAt)
-  )
-    return hold("EXECUTION_ORDER_INVALID");
+  const blocker = executionPairBlocker(first, second);
+  if (blocker) return hold(blocker);
   const lane = (name: "fu07" | "fu09"): PromotionVerdict =>
     name === first.comparison &&
     first[name].status === "eligible" &&
