@@ -153,16 +153,16 @@ omniroute setup-5dive        omniroute setup-zed
 
 | id           | 名称             | 供应方                   | 基础 URL 支持 | 可通过 ACP 启动 |
 | ------------ | ---------------- | ------------------------ | ------------- | --------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | 完整          | false           |
-| openclaw     | OpenClaw         | 开源（P. Steinberger）   | 完整          | true            |
-| goose        | Goose            | Block / Linux Foundation | 完整          | true            |
-| interpreter  | Open Interpreter | 开源                     | 完整          | true            |
-| warp         | Warp AI          | Warp Inc.                | 部分          | true            |
-| agent-deck   | Agent Deck       | asheshgoplani（开源）    | 完整          | false           |
-| omp          | Oh My Pi         | 开源                     | 完整          | true            |
-| letta        | Letta CLI        | Letta                    | 完整          | false           |
-| prime-agent  | Prime Agent      | Prime Intellect（开源）  | 完整          | false           |
-| 5dive        | 5dive            | 开源（5dive-ai）         | 完整          | false           |
+| hermes-agent | Hermes Agent     | Nous Research            | full          | false           |
+| openclaw     | OpenClaw         | 开源（P. Steinberger）   | full          | true            |
+| goose        | Goose            | Block / Linux Foundation | full          | true            |
+| interpreter  | Open Interpreter | 开源                     | full          | true            |
+| warp         | Warp AI          | Warp Inc.                | partial       | true            |
+| agent-deck   | Agent Deck       | asheshgoplani（开源）    | full          | false           |
+| omp          | Oh My Pi         | 开源                     | full          | true            |
+| letta        | Letta CLI        | Letta                    | full          | false           |
+| prime-agent  | Prime Agent      | Prime Intellect（开源）  | full          | false           |
+| 5dive        | 5dive            | 开源（5dive-ai）         | full          | false           |
 
 ---
 

@@ -188,16 +188,16 @@ OmniRoute بعيد)، و`--dry-run` (للمعاينة دون كتابة)، و`--
 
 | id           | الاسم            | المورّد                  | دعم baseUrl | قابل للتشغيل عبر ACP |
 | ------------ | ---------------- | ------------------------ | ----------- | -------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | كامل        | false                |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | كامل        | true                 |
-| goose        | Goose            | Block / Linux Foundation | كامل        | true                 |
-| interpreter  | Open Interpreter | OSS                      | كامل        | true                 |
-| warp         | Warp AI          | Warp Inc.                | جزئي        | true                 |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | كامل        | false                |
-| omp          | Oh My Pi         | OSS                      | كامل        | true                 |
-| letta        | Letta CLI        | Letta                    | كامل        | false                |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | كامل        | false                |
-| 5dive        | 5dive            | OSS (5dive-ai)           | كامل        | false                |
+| hermes-agent | Hermes Agent     | Nous Research            | full        | false                |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full        | true                 |
+| goose        | Goose            | Block / Linux Foundation | full        | true                 |
+| interpreter  | Open Interpreter | OSS                      | full        | true                 |
+| warp         | Warp AI          | Warp Inc.                | partial     | true                 |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full        | false                |
+| omp          | Oh My Pi         | OSS                      | full        | true                 |
+| letta        | Letta CLI        | Letta                    | full        | false                |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full        | false                |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full        | false                |
 
 ---
 

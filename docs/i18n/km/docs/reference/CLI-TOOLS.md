@@ -181,16 +181,16 @@ kilo, continue) — `hostSetupCommand` (ឧ. `omniroute setup-opencode`) ដើ�
 
 | id           | ឈ្មោះ            | អ្នកផ្គត់ផ្គង់           | ការគាំទ្រ baseUrl | អាចបង្កើតតាម acp |
 | ------------ | ---------------- | ------------------------ | ----------------- | ---------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | ពេញលេញ            | ទេ               |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | ពេញលេញ            | បាទ              |
-| goose        | Goose            | Block / Linux Foundation | ពេញលេញ            | បាទ              |
-| interpreter  | Open Interpreter | OSS                      | ពេញលេញ            | បាទ              |
-| warp         | Warp AI          | Warp Inc.                | មួយផ្នែក          | បាទ              |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | ពេញលេញ            | ទេ               |
-| omp          | Oh My Pi         | OSS                      | ពេញលេញ            | បាទ              |
-| letta        | Letta CLI        | Letta                    | ពេញលេញ            | ទេ               |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | ពេញលេញ            | ទេ               |
-| 5dive        | 5dive            | OSS (5dive-ai)           | ពេញលេញ            | ទេ               |
+| hermes-agent | Hermes Agent     | Nous Research            | full              | false            |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full              | true             |
+| goose        | Goose            | Block / Linux Foundation | full              | true             |
+| interpreter  | Open Interpreter | OSS                      | full              | true             |
+| warp         | Warp AI          | Warp Inc.                | partial           | true             |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full              | false            |
+| omp          | Oh My Pi         | OSS                      | full              | true             |
+| letta        | Letta CLI        | Letta                    | full              | false            |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full              | false            |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full              | false            |
 
 ---
 

@@ -188,16 +188,16 @@ Autonómni agenti, ktorí sa zobrazujú v `/dashboard/cli-agents`:
 
 | id           | názov            | dodávateľ                | podpora baseUrl | spustiteľný cez ACP |
 | ------------ | ---------------- | ------------------------ | --------------- | ------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | úplná           | nie                 |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | úplná           | áno                 |
-| goose        | Goose            | Block / Linux Foundation | úplná           | áno                 |
-| interpreter  | Open Interpreter | OSS                      | úplná           | áno                 |
-| warp         | Warp AI          | Warp Inc.                | čiastočná       | áno                 |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | úplná           | nie                 |
-| omp          | Oh My Pi         | OSS                      | úplná           | áno                 |
-| letta        | Letta CLI        | Letta                    | úplná           | nie                 |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | úplná           | nie                 |
-| 5dive        | 5dive            | OSS (5dive-ai)           | úplná           | nie                 |
+| hermes-agent | Hermes Agent     | Nous Research            | full            | false               |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full            | true                |
+| goose        | Goose            | Block / Linux Foundation | full            | true                |
+| interpreter  | Open Interpreter | OSS                      | full            | true                |
+| warp         | Warp AI          | Warp Inc.                | partial         | true                |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full            | false               |
+| omp          | Oh My Pi         | OSS                      | full            | true                |
+| letta        | Letta CLI        | Letta                    | full            | false               |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full            | false               |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full            | false               |
 
 ---
 

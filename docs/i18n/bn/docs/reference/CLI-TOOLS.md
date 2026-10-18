@@ -187,16 +187,16 @@ guard সরিয়ে কখনোই একটি 422 "ঠিক" করব�
 
 | id           | নাম              | সরবরাহকারী               | baseUrlSupport | acpSpawnable |
 | ------------ | ---------------- | ------------------------ | -------------- | ------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | পূর্ণ          | false        |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | পূর্ণ          | true         |
-| goose        | Goose            | Block / Linux Foundation | পূর্ণ          | true         |
-| interpreter  | Open Interpreter | OSS                      | পূর্ণ          | true         |
-| warp         | Warp AI          | Warp Inc.                | আংশিক          | true         |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | পূর্ণ          | false        |
-| omp          | Oh My Pi         | OSS                      | পূর্ণ          | true         |
-| letta        | Letta CLI        | Letta                    | পূর্ণ          | false        |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | পূর্ণ          | false        |
-| 5dive        | 5dive            | OSS (5dive-ai)           | পূর্ণ          | false        |
+| hermes-agent | Hermes Agent     | Nous Research            | full           | false        |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full           | true         |
+| goose        | Goose            | Block / Linux Foundation | full           | true         |
+| interpreter  | Open Interpreter | OSS                      | full           | true         |
+| warp         | Warp AI          | Warp Inc.                | partial        | true         |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full           | false        |
+| omp          | Oh My Pi         | OSS                      | full           | true         |
+| letta        | Letta CLI        | Letta                    | full           | false        |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full           | false        |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full           | false        |
 
 ---
 

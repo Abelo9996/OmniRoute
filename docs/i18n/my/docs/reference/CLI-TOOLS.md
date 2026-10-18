@@ -152,16 +152,16 @@ catalog၊ UI catalog နှင့် consumer မျက်နှာပြင်
 
 | id           | အမည်             | ထုတ်လုပ်သူ               | baseUrl ပံ့ပိုးမှု | ACP ဖြင့် စတင်နိုင်မှု |
 | ------------ | ---------------- | ------------------------ | ------------------ | ---------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | အပြည့်အဝ           | မရပါ                   |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | အပြည့်အဝ           | ရပါ                    |
-| goose        | Goose            | Block / Linux Foundation | အပြည့်အဝ           | ရပါ                    |
-| interpreter  | Open Interpreter | OSS                      | အပြည့်အဝ           | ရပါ                    |
-| warp         | Warp AI          | Warp Inc.                | တစ်စိတ်တစ်ပိုင်း   | ရပါ                    |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | အပြည့်အဝ           | မရပါ                   |
-| omp          | Oh My Pi         | OSS                      | အပြည့်အဝ           | ရပါ                    |
-| letta        | Letta CLI        | Letta                    | အပြည့်အဝ           | မရပါ                   |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | အပြည့်အဝ           | မရပါ                   |
-| 5dive        | 5dive            | OSS (5dive-ai)           | အပြည့်အဝ           | မရပါ                   |
+| hermes-agent | Hermes Agent     | Nous Research            | full               | false                  |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full               | true                   |
+| goose        | Goose            | Block / Linux Foundation | full               | true                   |
+| interpreter  | Open Interpreter | OSS                      | full               | true                   |
+| warp         | Warp AI          | Warp Inc.                | partial            | true                   |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full               | false                  |
+| omp          | Oh My Pi         | OSS                      | full               | true                   |
+| letta        | Letta CLI        | Letta                    | full               | false                  |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full               | false                  |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full               | false                  |
 
 ---
 

@@ -188,16 +188,16 @@ Wakilai masu cin gashin kansu waɗanda suke bayyana a `/dashboard/cli-agents`:
 
 | id           | suna             | mai samarwa              | goyon bayan baseUrl | ana iya ƙaddamarwa ta acp |
 | ------------ | ---------------- | ------------------------ | ------------------- | ------------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | cikakke             | a'a                       |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | cikakke             | eh                        |
-| goose        | Goose            | Block / Linux Foundation | cikakke             | eh                        |
-| interpreter  | Open Interpreter | OSS                      | cikakke             | eh                        |
-| warp         | Warp AI          | Warp Inc.                | na wani ɓangare     | eh                        |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | cikakke             | a'a                       |
-| omp          | Oh My Pi         | OSS                      | cikakke             | eh                        |
-| letta        | Letta CLI        | Letta                    | cikakke             | a'a                       |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | cikakke             | a'a                       |
-| 5dive        | 5dive            | OSS (5dive-ai)           | cikakke             | a'a                       |
+| hermes-agent | Hermes Agent     | Nous Research            | full                | false                     |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full                | true                      |
+| goose        | Goose            | Block / Linux Foundation | full                | true                      |
+| interpreter  | Open Interpreter | OSS                      | full                | true                      |
+| warp         | Warp AI          | Warp Inc.                | partial             | true                      |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full                | false                     |
+| omp          | Oh My Pi         | OSS                      | full                | true                      |
+| letta        | Letta CLI        | Letta                    | full                | false                     |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full                | false                     |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full                | false                     |
 
 ---
 

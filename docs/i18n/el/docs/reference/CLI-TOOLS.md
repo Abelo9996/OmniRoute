@@ -188,16 +188,16 @@ runtime, ο κατάλογος UI και κάθε επιφάνεια καταν�
 
 | id           | όνομα            | προμηθευτής              | υποστήριξη baseUrl | δυνατότητα εκκίνησης μέσω ACP |
 | ------------ | ---------------- | ------------------------ | ------------------ | ----------------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | πλήρης             | όχι                           |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | πλήρης             | ναι                           |
-| goose        | Goose            | Block / Linux Foundation | πλήρης             | ναι                           |
-| interpreter  | Open Interpreter | OSS                      | πλήρης             | ναι                           |
-| warp         | Warp AI          | Warp Inc.                | μερική             | ναι                           |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | πλήρης             | όχι                           |
-| omp          | Oh My Pi         | OSS                      | πλήρης             | ναι                           |
-| letta        | Letta CLI        | Letta                    | πλήρης             | όχι                           |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | πλήρης             | όχι                           |
-| 5dive        | 5dive            | OSS (5dive-ai)           | πλήρης             | όχι                           |
+| hermes-agent | Hermes Agent     | Nous Research            | full               | false                         |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full               | true                          |
+| goose        | Goose            | Block / Linux Foundation | full               | true                          |
+| interpreter  | Open Interpreter | OSS                      | full               | true                          |
+| warp         | Warp AI          | Warp Inc.                | partial            | true                          |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full               | false                         |
+| omp          | Oh My Pi         | OSS                      | full               | true                          |
+| letta        | Letta CLI        | Letta                    | full               | false                         |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full               | false                         |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full               | false                         |
 
 ---
 

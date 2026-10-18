@@ -152,16 +152,16 @@ omniroute setup-5dive        omniroute setup-zed
 
 | id           | نام              | ارائهدهنده               | پشتیبانی از baseUrl | قابل اجرا توسط ACP |
 | ------------ | ---------------- | ------------------------ | ------------------- | ------------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | کامل                | خیر                |
-| openclaw     | OpenClaw         | متنباز (P. Steinberger)  | کامل                | بله                |
-| goose        | Goose            | Block / Linux Foundation | کامل                | بله                |
-| interpreter  | Open Interpreter | متنباز                   | کامل                | بله                |
-| warp         | Warp AI          | Warp Inc.                | جزئی                | بله                |
-| agent-deck   | Agent Deck       | asheshgoplani (متنباز)   | کامل                | خیر                |
-| omp          | Oh My Pi         | متنباز                   | کامل                | بله                |
-| letta        | Letta CLI        | Letta                    | کامل                | خیر                |
-| prime-agent  | Prime Agent      | Prime Intellect (متنباز) | کامل                | خیر                |
-| 5dive        | 5dive            | متنباز (5dive-ai)        | کامل                | خیر                |
+| hermes-agent | Hermes Agent     | Nous Research            | full                | false              |
+| openclaw     | OpenClaw         | متنباز (P. Steinberger)  | full                | true               |
+| goose        | Goose            | Block / Linux Foundation | full                | true               |
+| interpreter  | Open Interpreter | متنباز                   | full                | true               |
+| warp         | Warp AI          | Warp Inc.                | partial             | true               |
+| agent-deck   | Agent Deck       | asheshgoplani (متنباز)   | full                | false              |
+| omp          | Oh My Pi         | متنباز                   | full                | true               |
+| letta        | Letta CLI        | Letta                    | full                | false              |
+| prime-agent  | Prime Agent      | Prime Intellect (متنباز) | full                | false              |
+| 5dive        | 5dive            | متنباز (5dive-ai)        | full                | false              |
 
 ---
 

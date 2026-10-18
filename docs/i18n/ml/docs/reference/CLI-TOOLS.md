@@ -190,16 +190,16 @@ CLI കമാൻഡ് സർഫേസുകൾക്കുള്ള ആധി�
 
 | id           | പേര്             | വെൻഡർ                    | baseUrlSupport | acpSpawnable |
 | ------------ | ---------------- | ------------------------ | -------------- | ------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | പൂർണ്ണം        | false        |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | പൂർണ്ണം        | true         |
-| goose        | Goose            | Block / Linux Foundation | പൂർണ്ണം        | true         |
-| interpreter  | Open Interpreter | OSS                      | പൂർണ്ണം        | true         |
-| warp         | Warp AI          | Warp Inc.                | ഭാഗികം         | true         |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | പൂർണ്ണം        | false        |
-| omp          | Oh My Pi         | OSS                      | പൂർണ്ണം        | true         |
-| letta        | Letta CLI        | Letta                    | പൂർണ്ണം        | false        |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | പൂർണ്ണം        | false        |
-| 5dive        | 5dive            | OSS (5dive-ai)           | പൂർണ്ണം        | false        |
+| hermes-agent | Hermes Agent     | Nous Research            | full           | false        |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full           | true         |
+| goose        | Goose            | Block / Linux Foundation | full           | true         |
+| interpreter  | Open Interpreter | OSS                      | full           | true         |
+| warp         | Warp AI          | Warp Inc.                | partial        | true         |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full           | false        |
+| omp          | Oh My Pi         | OSS                      | full           | true         |
+| letta        | Letta CLI        | Letta                    | full           | false        |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full           | false        |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full           | false        |
 
 ---
 

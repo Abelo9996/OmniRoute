@@ -152,16 +152,16 @@ yüzeye eklenip diğerlerine eklenmeyen bir hedef, sessizce sapmaya yol açmak y
 
 | id           | ad               | sağlayıcı                | baseUrl desteği | ACP ile başlatılabilir |
 | ------------ | ---------------- | ------------------------ | --------------- | ---------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | tam             | false                  |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | tam             | true                   |
-| goose        | Goose            | Block / Linux Foundation | tam             | true                   |
-| interpreter  | Open Interpreter | OSS                      | tam             | true                   |
-| warp         | Warp AI          | Warp Inc.                | kısmi           | true                   |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | tam             | false                  |
-| omp          | Oh My Pi         | OSS                      | tam             | true                   |
-| letta        | Letta CLI        | Letta                    | tam             | false                  |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | tam             | false                  |
-| 5dive        | 5dive            | OSS (5dive-ai)           | tam             | false                  |
+| hermes-agent | Hermes Agent     | Nous Research            | full            | false                  |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full            | true                   |
+| goose        | Goose            | Block / Linux Foundation | full            | true                   |
+| interpreter  | Open Interpreter | OSS                      | full            | true                   |
+| warp         | Warp AI          | Warp Inc.                | partial         | true                   |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full            | false                  |
+| omp          | Oh My Pi         | OSS                      | full            | true                   |
+| letta        | Letta CLI        | Letta                    | full            | false                  |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full            | false                  |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full            | false                  |
 
 ---
 

@@ -144,16 +144,16 @@ Kataloglangan vositalarning hammasini ham aniqlash, sozlash yoki ishga tushirish
 
 | id           | nomi             | yetkazib beruvchi        | baseUrlSupport | acpSpawnable |
 | ------------ | ---------------- | ------------------------ | -------------- | ------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | to‘liq         | false        |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | to‘liq         | true         |
-| goose        | Goose            | Block / Linux Foundation | to‘liq         | true         |
-| interpreter  | Open Interpreter | OSS                      | to‘liq         | true         |
-| warp         | Warp AI          | Warp Inc.                | qisman         | true         |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | to‘liq         | false        |
-| omp          | Oh My Pi         | OSS                      | to‘liq         | true         |
-| letta        | Letta CLI        | Letta                    | to‘liq         | false        |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | to‘liq         | false        |
-| 5dive        | 5dive            | OSS (5dive-ai)           | to‘liq         | false        |
+| hermes-agent | Hermes Agent     | Nous Research            | full           | false        |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full           | true         |
+| goose        | Goose            | Block / Linux Foundation | full           | true         |
+| interpreter  | Open Interpreter | OSS                      | full           | true         |
+| warp         | Warp AI          | Warp Inc.                | partial        | true         |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full           | false        |
+| omp          | Oh My Pi         | OSS                      | full           | true         |
+| letta        | Letta CLI        | Letta                    | full           | false        |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full           | false        |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full           | false        |
 
 ---
 

@@ -194,16 +194,16 @@ OmniRoute බහාලුම තුළ ක්රියාත්මක කළ `se
 
 | id           | නම               | සැපයුම්කරු               | baseUrl සහාය | acp මඟින් ආරම්භ කළ හැකිද |
 | ------------ | ---------------- | ------------------------ | ------------ | ------------------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | සම්පූර්ණයි   | නැත                      |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | සම්පූර්ණයි   | ඔව්                      |
-| goose        | Goose            | Block / Linux Foundation | සම්පූර්ණයි   | ඔව්                      |
-| interpreter  | Open Interpreter | OSS                      | සම්පූර්ණයි   | ඔව්                      |
-| warp         | Warp AI          | Warp Inc.                | අර්ධ වශයෙන්  | ඔව්                      |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | සම්පූර්ණයි   | නැත                      |
-| omp          | Oh My Pi         | OSS                      | සම්පූර්ණයි   | ඔව්                      |
-| letta        | Letta CLI        | Letta                    | සම්පූර්ණයි   | නැත                      |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | සම්පූර්ණයි   | නැත                      |
-| 5dive        | 5dive            | OSS (5dive-ai)           | සම්පූර්ණයි   | නැත                      |
+| hermes-agent | Hermes Agent     | Nous Research            | full         | false                    |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full         | true                     |
+| goose        | Goose            | Block / Linux Foundation | full         | true                     |
+| interpreter  | Open Interpreter | OSS                      | full         | true                     |
+| warp         | Warp AI          | Warp Inc.                | partial      | true                     |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full         | false                    |
+| omp          | Oh My Pi         | OSS                      | full         | true                     |
+| letta        | Letta CLI        | Letta                    | full         | false                    |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full         | false                    |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full         | false                    |
 
 ---
 

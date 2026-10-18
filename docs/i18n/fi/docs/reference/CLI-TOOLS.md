@@ -152,16 +152,16 @@ Autonomiset agentit, jotka näkyvät näkymässä `/dashboard/cli-agents`:
 
 | id           | nimi             | toimittaja               | baseUrl-tuki | ACP-käynnistettävä |
 | ------------ | ---------------- | ------------------------ | ------------ | ------------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | täysi        | ei                 |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | täysi        | kyllä              |
-| goose        | Goose            | Block / Linux Foundation | täysi        | kyllä              |
-| interpreter  | Open Interpreter | OSS                      | täysi        | kyllä              |
-| warp         | Warp AI          | Warp Inc.                | osittainen   | kyllä              |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | täysi        | ei                 |
-| omp          | Oh My Pi         | OSS                      | täysi        | kyllä              |
-| letta        | Letta CLI        | Letta                    | täysi        | ei                 |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | täysi        | ei                 |
-| 5dive        | 5dive            | OSS (5dive-ai)           | täysi        | ei                 |
+| hermes-agent | Hermes Agent     | Nous Research            | full         | false              |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full         | true               |
+| goose        | Goose            | Block / Linux Foundation | full         | true               |
+| interpreter  | Open Interpreter | OSS                      | full         | true               |
+| warp         | Warp AI          | Warp Inc.                | partial      | true               |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full         | false              |
+| omp          | Oh My Pi         | OSS                      | full         | true               |
+| letta        | Letta CLI        | Letta                    | full         | false              |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full         | false              |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full         | false              |
 
 ---
 

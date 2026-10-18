@@ -184,16 +184,16 @@ OmniRoute کنٹینر کے اندر چلائی گئی `setup-*` کمانڈ کن
 
 | id           | نام              | وینڈر                    | baseUrlSupport | acpSpawnable |
 | ------------ | ---------------- | ------------------------ | -------------- | ------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | مکمل           | false        |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | مکمل           | true         |
-| goose        | Goose            | Block / Linux Foundation | مکمل           | true         |
-| interpreter  | Open Interpreter | OSS                      | مکمل           | true         |
-| warp         | Warp AI          | Warp Inc.                | جزوی           | true         |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | مکمل           | false        |
-| omp          | Oh My Pi         | OSS                      | مکمل           | true         |
-| letta        | Letta CLI        | Letta                    | مکمل           | false        |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | مکمل           | false        |
-| 5dive        | 5dive            | OSS (5dive-ai)           | مکمل           | false        |
+| hermes-agent | Hermes Agent     | Nous Research            | full           | false        |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full           | true         |
+| goose        | Goose            | Block / Linux Foundation | full           | true         |
+| interpreter  | Open Interpreter | OSS                      | full           | true         |
+| warp         | Warp AI          | Warp Inc.                | partial        | true         |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full           | false        |
+| omp          | Oh My Pi         | OSS                      | full           | true         |
+| letta        | Letta CLI        | Letta                    | full           | false        |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full           | false        |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full           | false        |
 
 ---
 

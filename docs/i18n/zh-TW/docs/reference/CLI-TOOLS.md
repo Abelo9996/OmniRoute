@@ -169,16 +169,16 @@ kilo、continue）——一個可改在主機上執行的 `hostSetupCommand`（�
 
 | id           | 名稱             | 提供者                   | 基礎 URL 支援 | 可由 ACP 產生 |
 | ------------ | ---------------- | ------------------------ | ------------- | ------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | 完整          | 否            |
-| openclaw     | OpenClaw         | OSS（P. Steinberger）    | 完整          | 是            |
-| goose        | Goose            | Block / Linux Foundation | 完整          | 是            |
-| interpreter  | Open Interpreter | OSS                      | 完整          | 是            |
-| warp         | Warp AI          | Warp Inc.                | 部分          | 是            |
-| agent-deck   | Agent Deck       | asheshgoplani（OSS）     | 完整          | 否            |
-| omp          | Oh My Pi         | OSS                      | 完整          | 是            |
-| letta        | Letta CLI        | Letta                    | 完整          | 否            |
-| prime-agent  | Prime Agent      | Prime Intellect（OSS）   | 完整          | 否            |
-| 5dive        | 5dive            | OSS（5dive-ai）          | 完整          | 否            |
+| hermes-agent | Hermes Agent     | Nous Research            | full          | false         |
+| openclaw     | OpenClaw         | OSS（P. Steinberger）    | full          | true          |
+| goose        | Goose            | Block / Linux Foundation | full          | true          |
+| interpreter  | Open Interpreter | OSS                      | full          | true          |
+| warp         | Warp AI          | Warp Inc.                | partial       | true          |
+| agent-deck   | Agent Deck       | asheshgoplani（OSS）     | full          | false         |
+| omp          | Oh My Pi         | OSS                      | full          | true          |
+| letta        | Letta CLI        | Letta                    | full          | false         |
+| prime-agent  | Prime Agent      | Prime Intellect（OSS）   | full          | false         |
+| 5dive        | 5dive            | OSS（5dive-ai）          | full          | false         |
 
 ---
 

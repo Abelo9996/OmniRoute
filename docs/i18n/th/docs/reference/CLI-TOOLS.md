@@ -188,16 +188,16 @@ CLI โดย `run`, `configure` และตัวสร้าง shell complet
 
 | id           | name             | vendor                   | baseUrlSupport | acpSpawnable |
 | ------------ | ---------------- | ------------------------ | -------------- | ------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | เต็มรูปแบบ     | false        |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | เต็มรูปแบบ     | true         |
-| goose        | Goose            | Block / Linux Foundation | เต็มรูปแบบ     | true         |
-| interpreter  | Open Interpreter | OSS                      | เต็มรูปแบบ     | true         |
-| warp         | Warp AI          | Warp Inc.                | บางส่วน        | true         |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | เต็มรูปแบบ     | false        |
-| omp          | Oh My Pi         | OSS                      | เต็มรูปแบบ     | true         |
-| letta        | Letta CLI        | Letta                    | เต็มรูปแบบ     | false        |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | เต็มรูปแบบ     | false        |
-| 5dive        | 5dive            | OSS (5dive-ai)           | เต็มรูปแบบ     | false        |
+| hermes-agent | Hermes Agent     | Nous Research            | full           | false        |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full           | true         |
+| goose        | Goose            | Block / Linux Foundation | full           | true         |
+| interpreter  | Open Interpreter | OSS                      | full           | true         |
+| warp         | Warp AI          | Warp Inc.                | partial        | true         |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full           | false        |
+| omp          | Oh My Pi         | OSS                      | full           | true         |
+| letta        | Letta CLI        | Letta                    | full           | false        |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full           | false        |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full           | false        |
 
 ---
 

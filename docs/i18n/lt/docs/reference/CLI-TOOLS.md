@@ -187,16 +187,16 @@ Autonominiai agentai, rodomi `/dashboard/cli-agents`:
 
 | id           | pavadinimas      | tiekėjas                 | baseUrl palaikymas | galima paleisti per ACP |
 | ------------ | ---------------- | ------------------------ | ------------------ | ----------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | visiškas           | ne                      |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | visiškas           | taip                    |
-| goose        | Goose            | Block / Linux Foundation | visiškas           | taip                    |
-| interpreter  | Open Interpreter | OSS                      | visiškas           | taip                    |
-| warp         | Warp AI          | Warp Inc.                | dalinis            | taip                    |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | visiškas           | ne                      |
-| omp          | Oh My Pi         | OSS                      | visiškas           | taip                    |
-| letta        | Letta CLI        | Letta                    | visiškas           | ne                      |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | visiškas           | ne                      |
-| 5dive        | 5dive            | OSS (5dive-ai)           | visiškas           | ne                      |
+| hermes-agent | Hermes Agent     | Nous Research            | full               | false                   |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full               | true                    |
+| goose        | Goose            | Block / Linux Foundation | full               | true                    |
+| interpreter  | Open Interpreter | OSS                      | full               | true                    |
+| warp         | Warp AI          | Warp Inc.                | partial            | true                    |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full               | false                   |
+| omp          | Oh My Pi         | OSS                      | full               | true                    |
+| letta        | Letta CLI        | Letta                    | full               | false                   |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full               | false                   |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full               | false                   |
 
 ---
 

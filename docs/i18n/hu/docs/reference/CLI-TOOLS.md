@@ -188,16 +188,16 @@ A `/dashboard/cli-agents` oldalon megjelenő autonóm ügynökök:
 
 | id           | név              | szolgáltató              | baseUrl-támogatás | acpSpawnable |
 | ------------ | ---------------- | ------------------------ | ----------------- | ------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | teljes            | false        |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | teljes            | true         |
-| goose        | Goose            | Block / Linux Foundation | teljes            | true         |
-| interpreter  | Open Interpreter | OSS                      | teljes            | true         |
-| warp         | Warp AI          | Warp Inc.                | részleges         | true         |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | teljes            | false        |
-| omp          | Oh My Pi         | OSS                      | teljes            | true         |
-| letta        | Letta CLI        | Letta                    | teljes            | false        |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | teljes            | false        |
-| 5dive        | 5dive            | OSS (5dive-ai)           | teljes            | false        |
+| hermes-agent | Hermes Agent     | Nous Research            | full              | false        |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full              | true         |
+| goose        | Goose            | Block / Linux Foundation | full              | true         |
+| interpreter  | Open Interpreter | OSS                      | full              | true         |
+| warp         | Warp AI          | Warp Inc.                | partial           | true         |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full              | false        |
+| omp          | Oh My Pi         | OSS                      | full              | true         |
+| letta        | Letta CLI        | Letta                    | full              | false        |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full              | false        |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full              | false        |
 
 ---
 

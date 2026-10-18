@@ -151,16 +151,16 @@ omniroute setup-5dive        omniroute setup-zed
 
 | id           | название         | поставщик                | поддержка base URL | запуск через ACP |
 | ------------ | ---------------- | ------------------------ | ------------------ | ---------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | полная             | false            |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | полная             | true             |
-| goose        | Goose            | Block / Linux Foundation | полная             | true             |
-| interpreter  | Open Interpreter | OSS                      | полная             | true             |
-| warp         | Warp AI          | Warp Inc.                | частичная          | true             |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | полная             | false            |
-| omp          | Oh My Pi         | OSS                      | полная             | true             |
-| letta        | Letta CLI        | Letta                    | полная             | false            |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | полная             | false            |
-| 5dive        | 5dive            | OSS (5dive-ai)           | полная             | false            |
+| hermes-agent | Hermes Agent     | Nous Research            | full               | false            |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full               | true             |
+| goose        | Goose            | Block / Linux Foundation | full               | true             |
+| interpreter  | Open Interpreter | OSS                      | full               | true             |
+| warp         | Warp AI          | Warp Inc.                | partial            | true             |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full               | false            |
+| omp          | Oh My Pi         | OSS                      | full               | true             |
+| letta        | Letta CLI        | Letta                    | full               | false            |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full               | false            |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full               | false            |
 
 ---
 

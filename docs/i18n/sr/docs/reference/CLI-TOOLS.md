@@ -188,16 +188,16 @@ UI каталог и свака корисничка површина остај
 
 | id           | назив            | добављач                 | подршка за baseUrl | могуће ACP покретање |
 | ------------ | ---------------- | ------------------------ | ------------------ | -------------------- |
-| hermes-agent | Hermes Agent     | Nous Research            | потпуна            | false                |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | потпуна            | true                 |
-| goose        | Goose            | Block / Linux Foundation | потпуна            | true                 |
-| interpreter  | Open Interpreter | OSS                      | потпуна            | true                 |
-| warp         | Warp AI          | Warp Inc.                | делимична          | true                 |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | потпуна            | false                |
-| omp          | Oh My Pi         | OSS                      | потпуна            | true                 |
-| letta        | Letta CLI        | Letta                    | потпуна            | false                |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | потпуна            | false                |
-| 5dive        | 5dive            | OSS (5dive-ai)           | потпуна            | false                |
+| hermes-agent | Hermes Agent     | Nous Research            | full               | false                |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full               | true                 |
+| goose        | Goose            | Block / Linux Foundation | full               | true                 |
+| interpreter  | Open Interpreter | OSS                      | full               | true                 |
+| warp         | Warp AI          | Warp Inc.                | partial            | true                 |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full               | false                |
+| omp          | Oh My Pi         | OSS                      | full               | true                 |
+| letta        | Letta CLI        | Letta                    | full               | false                |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full               | false                |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full               | false                |
 
 ---
 

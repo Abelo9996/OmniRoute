@@ -188,16 +188,16 @@ kilo, continue)—גם `hostSetupCommand` (לדוגמה, `omniroute setup-openco
 
 | id           | name             | vendor                   | baseUrlSupport | acpSpawnable |
 | ------------ | ---------------- | ------------------------ | -------------- | ------------ |
-| hermes-agent | Hermes Agent     | Nous Research            | מלא            | false        |
-| openclaw     | OpenClaw         | OSS (P. Steinberger)     | מלא            | true         |
-| goose        | Goose            | Block / Linux Foundation | מלא            | true         |
-| interpreter  | Open Interpreter | OSS                      | מלא            | true         |
-| warp         | Warp AI          | Warp Inc.                | חלקי           | true         |
-| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | מלא            | false        |
-| omp          | Oh My Pi         | OSS                      | מלא            | true         |
-| letta        | Letta CLI        | Letta                    | מלא            | false        |
-| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | מלא            | false        |
-| 5dive        | 5dive            | OSS (5dive-ai)           | מלא            | false        |
+| hermes-agent | Hermes Agent     | Nous Research            | full           | false        |
+| openclaw     | OpenClaw         | OSS (P. Steinberger)     | full           | true         |
+| goose        | Goose            | Block / Linux Foundation | full           | true         |
+| interpreter  | Open Interpreter | OSS                      | full           | true         |
+| warp         | Warp AI          | Warp Inc.                | partial        | true         |
+| agent-deck   | Agent Deck       | asheshgoplani (OSS)      | full           | false        |
+| omp          | Oh My Pi         | OSS                      | full           | true         |
+| letta        | Letta CLI        | Letta                    | full           | false        |
+| prime-agent  | Prime Agent      | Prime Intellect (OSS)    | full           | false        |
+| 5dive        | 5dive            | OSS (5dive-ai)           | full           | false        |
 
 ---
 
