@@ -11,76 +11,76 @@ _Aġġornat l-aħħar: 2026-06-28_
 ## Sommarju Eżekuttiv
 
 OmniRoute huwa gateway lokali għar-routing tal-AI u dashboard mibni fuq Next.js.
-Jipprovdi endpoint wieħed kompatibbli ma’ OpenAI (`/v1/*`) u jidderieġi t-traffiku bejn diversi fornituri upstream bi traduzzjoni, fallback, aġġornament tat-tokens, u traċċar tal-użu.
+Jipprovdi endpoint wieħed kompatibbli ma’ OpenAI (`/v1/*`) u jidderieġi t-traffiku lejn diversi fornituri upstream bi traduzzjoni, fallback, aġġornament tat-tokens, u traċċar tal-użu.
 
 Kapaċitajiet ewlenin:
 
-- Superfiċje tal-API kompatibbli ma’ OpenAI għal CLI/għodod (373 fornitur, 150 modulu ta’ eżekuzzjoni)
+- Wiċċ tal-API kompatibbli ma’ OpenAI għal CLI/għodod (374 fornitur, 150 modulu ta’ eżekuzzjoni)
 - Traduzzjoni tat-talbiet/tweġibiet bejn il-formati tal-fornituri
-- Fallback ta’ kombinazzjonijiet ta’ mudelli (sekwenza b’diversi mudelli)
+- Fallback ta’ kombinazzjonijiet ta’ mudelli (sekwenza ta’ diversi mudelli)
 - Passi strutturati tal-kombinazzjonijiet (`provider + model + connection`) b’ordni waqt l-eżekuzzjoni skont `compositeTiers`
 - Fallback fil-livell tal-kont (diversi kontijiet għal kull fornitur)
-- Verifika preliminari tal-kwota u għażla ta’ kont P2C konxja mill-kwota fil-fluss ewlieni taċ-chat
-- Ġestjoni tal-konnessjonijiet tal-fornituri permezz ta’ OAuth + ċavetta tal-API (27 modulu ta’ fornituri OAuth)
+- Kontroll preliminari tal-kwota u għażla tal-kont P2C konxja mill-kwota fil-fluss prinċipali taċ-chat
+- Ġestjoni tal-konnessjonijiet tal-fornituri b’OAuth + API key (27 modulu ta’ fornituri OAuth)
 - Ġenerazzjoni ta’ embeddings permezz ta’ `/v1/embeddings` (18-il fornitur)
-- Ġenerazzjoni ta’ immaġnijiet permezz ta’ `/v1/images/generations` (aktar minn 10 fornituri, aktar minn 20 mudell)
+- Ġenerazzjoni ta’ immaġnijiet permezz ta’ `/v1/images/generations` (10+ fornituri, 20+ mudell)
 - Traskrizzjoni tal-awdjo permezz ta’ `/v1/audio/transcriptions` (18-il fornitur)
-- Konverżjoni minn test għal diskors permezz ta’ `/v1/audio/speech` (24 fornitur inkorporat)
+- Konverżjoni minn test għal diskors permezz ta’ `/v1/audio/speech` (24 fornitur integrat)
 - Ġenerazzjoni ta’ vidjows permezz ta’ `/v1/videos/generations` (ComfyUI + SD WebUI)
 - Ġenerazzjoni ta’ mużika permezz ta’ `/v1/music/generations` (ComfyUI)
 - Tiftix fuq il-web permezz ta’ `/v1/search` (20 fornitur)
 - Moderazzjonijiet permezz ta’ `/v1/moderations`
 - Klassifikazzjoni mill-ġdid permezz ta’ `/v1/rerank`
-- Analiżi tat-tags tal-ħsieb (``) għal mudelli ta’ raġunament
+- Parsing tat-tag Think (``) għal mudelli ta’ raġunament
 - Sanitizzazzjoni tat-tweġibiet għal kompatibbiltà stretta mal-OpenAI SDK
 - Normalizzazzjoni tar-rwoli (developer→system, system→user) għal kompatibbiltà bejn il-fornituri
 - Konverżjoni tal-output strutturat (json_schema → Gemini responseSchema)
-- Persistenza lokali għall-fornituri, ċwievet, psewdonimi, kombinazzjonijiet, settings, u prezzijiet (122 modulu tad-DB)
-- Traċċar tal-użu/tal-ispejjeż u reġistrazzjoni tat-talbiet
-- Sinkronizzazzjoni fakultattiva mal-cloud għal sinkronizzazzjoni bejn diversi apparati/tal-istat
+- Persistenza lokali għall-fornituri, ċwievet, aliases, kombinazzjonijiet, settings, prezzijiet (122 modulu tad-DB)
+- Traċċar tal-użu/spejjeż u reġistrazzjoni tat-talbiet
+- Sinkronizzazzjoni fakultattiva mal-cloud għal sinkronizzazzjoni tal-istat bejn diversi apparati
 - Lista ta’ IPs permessi/imblukkati għall-kontroll tal-aċċess għall-API
 - Ġestjoni tal-baġit tal-ħsieb (passthrough/awtomatiku/personalizzat/adattiv)
 - Injezzjoni globali tal-prompt tas-sistema
 - Traċċar tas-sessjonijiet u teħid tal-marki tas-swaba’
 - Limitazzjoni mtejba tar-rata għal kull kont bi profili speċifiċi għall-fornitur
-- Mudell ta’ circuit breaker għar-reżiljenza tal-fornitur
-- Protezzjoni kontra thundering herd b’illokkjar permezz ta’ mutex
+- Disinn ta’ circuit breaker għar-reżiljenza tal-fornituri
+- Protezzjoni kontra thundering herd permezz ta’ mutex locking
 - Cache għad-deduplikazzjoni tat-talbiet ibbażata fuq il-firma
-- Saff tad-domain: regoli tal-ispejjeż, politika tal-fallback, politika tal-lockout
+- Saff tad-domain: regoli tal-ispejjeż, politika ta’ fallback, politika ta’ lockout
 - Context Relay: sommarji tat-trasferiment tas-sessjoni għall-kontinwità waqt ir-rotazzjoni tal-kontijiet
-- Persistenza tal-istat tad-domain (cache SQLite write-through għal fallbacks, baġits, lockouts, u circuit breakers)
+- Persistenza tal-istat tad-domain (cache SQLite b’write-through għal fallbacks, baġits, lockouts, circuit breakers)
 - Magna tal-politiki għall-evalwazzjoni ċentralizzata tat-talbiet (lockout → baġit → fallback)
 - Telemetrija tat-talbiet b’aggregazzjoni tal-latenza p50/p95/p99
-- Telemetrija tal-miri tal-kombinazzjonijiet u storja tas-saħħa tal-miri tal-kombinazzjonijiet permezz ta’ `combo_execution_key` / `combo_step_id`
+- Telemetrija tal-miri tal-kombinazzjonijiet u saħħa storika tal-miri tal-kombinazzjonijiet permezz ta’ `combo_execution_key` / `combo_step_id`
 - ID ta’ korrelazzjoni (X-Request-Id) għal traċċar minn tarf sa tarf
-- Reġistrazzjoni tal-awditjar tal-konformità b’għażla ta’ rinunzja għal kull ċavetta tal-API
+- Reġistrazzjoni tal-awditjar tal-konformità b’għażla ta’ esklużjoni għal kull API key
 - Qafas ta’ evalwazzjoni għall-assigurazzjoni tal-kwalità tal-LLM
-- Dashboard tas-saħħa bi status f’ħin reali tas-circuit breakers tal-fornituri
-- MCP Server (110 għodda) bi 3 trasporti (stdio/SSE/Streamable HTTP)
-- A2A Server (JSON-RPC 2.0 + SSE) b’ħiliet u ċiklu tal-ħajja tal-kompiti
-- Sistema tal-memorja (estrazzjoni, injezzjoni, irkupru, tqassir)
-- Sistema tal-ħiliet (reġistru, eżekutur, sandbox, ħiliet inkorporati)
-- Proxy MITM b’ġestjoni taċ-ċertifikati u mmaniġġjar tad-DNS
-- Middleware ta’ protezzjoni kontra l-injezzjoni tal-prompt
-- Pipeline għall-kompressjoni tal-prompt b’Caveman, RTK, pipelines stacked, kombinazzjonijiet ta’ kompressjoni, pakketti lingwistiċi, u analitika
+- Dashboard tas-saħħa bl-istat f’ħin reali tas-circuit breakers tal-fornituri
+- Server MCP (110 għodda) bi 3 mezzi ta’ trasport (stdio/SSE/Streamable HTTP)
+- Server A2A (JSON-RPC 2.0 + SSE) b’ħiliet u ċiklu tal-ħajja tal-kompiti
+- Sistema tal-memorja (estrazzjoni, injezzjoni, irkupru, sommarizzazzjoni)
+- Sistema tal-ħiliet (reġistru, eżekutur, sandbox, ħiliet integrati)
+- Proxy MITM b’ġestjoni taċ-ċertifikati u trattament tad-DNS
+- Middleware ta’ protezzjoni kontra l-injezzjoni ta’ prompts
+- Pipeline għall-kompressjoni tal-prompts b’Caveman, RTK, pipelines f’munzell, kombinazzjonijiet ta’ kompressjoni, pakketti tal-lingwa, u analitika
 - Reġistru ACP (Agent Communication Protocol)
 - Fornituri OAuth modulari (22 modulu individwali taħt `src/lib/oauth/providers/`)
-- Scripts ta’ diżinstallazzjoni/diżinstallazzjoni sħiħa
-- Azzjoni ta’ tiswija tal-ambjent OAuth
+- Scripts għad-diżinstallazzjoni/diżinstallazzjoni sħiħa
+- Azzjoni għat-tiswija tal-ambjent OAuth
 - Bridge WebSocket għal klijenti WS kompatibbli ma’ OpenAI (`/v1/ws`)
-- Ġestjoni tat-tokens tas-sinkronizzazzjoni (ħruġ/revoka, tniżżil ta’ bundle tal-konfigurazzjoni b’verżjonijiet ETag)
+- Ġestjoni tat-tokens tas-sinkronizzazzjoni (ħruġ/revoka, tniżżil ta’ pakkett tal-konfigurazzjoni b’verżjonijiet ETag)
 - Preset tal-fornitur GLM Thinking (`glmt`) tal-ewwel klassi
 - Għadd ibridu tat-tokens (`/messages/count_tokens` min-naħa tal-fornitur b’fallback għall-istima)
-- Ħolqien awtomatiku inizjali ta’ psewdonimi tal-mudelli (aktar minn 30 normalizzazzjoni ta’ djaletti bejn proxies waqt l-istartjar)
-- Fetch outbound sikur bi protezzjoni SSRF, imblukkar ta’ URLs privati, u tentattivi mill-ġdid konfigurabbli
+- Popolament inizjali awtomatiku tal-aliases tal-mudelli (30+ normalizzazzjoni bejn djaletti ta’ proxies differenti waqt l-istartjar)
+- Fetch outbound sigur bi protezzjoni SSRF, imblukkar ta’ URLs privati, u tentattivi mill-ġdid konfigurabbli
 - Tentattivi mill-ġdid taċ-chat konxji mill-cooldown b’`requestRetry` u `maxRetryIntervalSec` konfigurabbli
 - Validazzjoni tal-ambjent tar-runtime b’Zod waqt l-istartjar
-- Awditjar tal-konformità v2 b’paġinazzjoni, avvenimenti CRUD tal-fornituri, u reġistrazzjoni tal-validazzjoni mblukkata mill-SSRF
+- Awditjar tal-konformità v2 b’paġinazzjoni, avvenimenti CRUD tal-fornituri, u reġistrazzjoni tal-validazzjoni mblukkata minn SSRF
 
-Mudell ewlieni tar-runtime:
+Mudell primarju tar-runtime:
 
 - Ir-rotot tal-app Next.js taħt `src/app/api/*` jimplimentaw kemm l-APIs tad-dashboard kif ukoll l-APIs tal-kompatibbiltà
-- Core kondiviż tal-SSE/routing f’`src/sse/*` + `open-sse/*` jimmaniġġja l-eżekuzzjoni tal-fornituri, it-traduzzjoni, l-istreaming, il-fallback, u l-użu
+- Core kondiviż tal-SSE/routing f’`src/sse/*` + `open-sse/*` jittratta l-eżekuzzjoni tal-fornituri, it-traduzzjoni, l-istreaming, il-fallback, u l-użu
 
 ## Diqaġni tal-Referenza
 
@@ -535,16 +535,17 @@ DB tal-Stat tal-Dominju (SQLite):
 - Tabelli (maħluqa f'`src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Mudell ta' cache write-through: Maps fil-memorja huma awtorettivi waqt il-produzzjoni; il-mudifiki huma miktuba sinchronament lejn SQLite; l-stat jiġi restawrat mid-DB fuq cold start
 
-## 4) Autentikazzjoni + Superfiċi tal-Sigurtà
+## 4) Uċuħ ta’ Awtentikazzjoni + Sigurtà
 
-- Autentikazzjoni permezz tal-cookies tal-Pannell: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
-- Ġenerazzjoni/tabella tal-API keys: `src/shared/utils/apiKey.ts`
-- Sigrieti tal-fornitur permanenti fl-entitajiet `providerConnections`
-- Appoġġ għal proxy tal-barri permezz ta' `open-sse/utils/proxyFetch.ts` (varjabbli env) u `open-sse/utils/networkProxy.ts` (konfigurabbli għal kull fornutur jew globalment)
-- Gwardija SSRF / ta' URLs tal-barri: `src/shared/network/outboundUrlGuard.ts` — jimblokka ranġi privati/link-local/loopback għal sejħiet kollha tal-fornituri
-- Validazzjoni tal-ambjent runtime: `src/lib/env/runtimeEnv.ts` — skema Zod għal varjabbli ambjentali kollha, murija bħala żbalji/twissijiet tal-istart
-- Token ta' sinkronizzazzjoni: `src/lib/db/syncTokens.ts` — token skopati għal punti tal-API tat-tniżżil tal-pakkett tal-konfigurazzjoni; appoġġjati minn tabella SQLite `sync_tokens` (migrazzjoni `024_create_sync_tokens.sql`)
-- Autentikazzjoni tal-Handshake WebSocket: `src/lib/ws/handshake.ts` — jivvalida talbiet tal-ġdid WS permezz ta' API key jew session cookie
+- Awtentikazzjoni permezz tal-cookie tad-dashboard: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Ġenerazzjoni/verifika taċ-ċavetta tal-API: `src/shared/utils/apiKey.ts`
+- Sigrieti tal-fornitur maħżuna fl-entrati ta’ `providerConnections`
+- Appoġġ għal proxy ħiereġ permezz ta’ `open-sse/utils/proxyFetch.ts` (varjabbli tal-ambjent) u `open-sse/utils/networkProxy.ts` (konfigurabbli għal kull fornitur jew globalment)
+- Protezzjoni kontra SSRF / URLs ħerġin: `src/shared/network/outboundUrlGuard.ts` — kontrolli tal-host fuq sejħiet lill-fornituri u miri tal-webhooks; il-modalità tiġi minn `src/shared/network/outboundUrlGuardPolicy.ts` (flags f’`docs/reference/ENVIRONMENT.md`)
+- Validazzjoni tal-ambjent waqt it-tħaddim: `src/lib/env/runtimeEnv.ts` — skema Zod għall-varjabbli kollha tal-ambjent, murija bħala żbalji/twissijiet waqt l-istartjar
+- Tokens tas-sinkronizzazzjoni: `src/lib/db/syncTokens.ts` — tokens b’ambitu speċifiku għall-endpoints tat-tniżżil tal-pakkett tal-konfigurazzjoni; sostnuti mit-tabella SQLite `sync_tokens` (migrazzjoni `024_create_sync_tokens.sql`)
+- Awtentikazzjoni tal-handshake tal-WebSocket: `src/lib/ws/handshake.ts` — tivvalida t-talbiet għall-upgrade ta’ WS permezz ta’ ċavetta tal-API jew cookie tas-sessjoni
+- Awtentikazzjoni WebSocket tad-dashboard dirett: `src/server/ws/liveServer.ts` — is-sidecar (port `LIVE_WS_PORT`) jaċċetta cookie tas-sessjoni tad-dashboard jew ċavetta Bearer tal-API li jkollha ambitu ta’ ġestjoni (`manage`/`admin`); ċwievet għall-inferenza biss jiġu rrifjutati. L-endpoint intern tiegħu għall-pubblikazzjoni `POST /__omniroute_event` jaċċetta peers loopback biss meta ma jkun preżenti ebda header ta’ passaġġ minn proxy (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Sinkronizzazzjoni tal-Cloud
 

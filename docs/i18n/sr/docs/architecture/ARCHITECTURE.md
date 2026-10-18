@@ -11,76 +11,76 @@ _Последње ажурирање: 2026-06-28_
 ## Извршни сажетак
 
 OmniRoute је локални мрежни пролаз и контролна табла за усмеравање AI захтева, изграђена на Next.js-у.
-Обезбеђује јединствену крајњу тачку компатибилну са OpenAI-јем (`/v1/*`) и усмерава саобраћај ка више узводних добављача, уз превођење, резервно пребацивање, освежавање токена и праћење коришћења.
+Обезбеђује јединствену крајњу тачку компатибилну са OpenAI-јем (`/v1/*`) и усмерава саобраћај ка више спољних провајдера, уз превођење, резервно пребацивање, освежавање токена и праћење потрошње.
 
-Кључне могућности:
+Основне могућности:
 
-- API површина компатибилна са OpenAI-јем за CLI/алате (373 добављача, 150 извршних модула)
-- Превођење захтева/одговора између формата добављача
+- API интерфејс компатибилан са OpenAI-јем за CLI/алате (374 провајдера, 150 извршних модула)
+- Превођење захтева/одговора између формата провајдера
 - Резервно пребацивање комбинација модела (секвенца више модела)
 - Структурирани кораци комбинације (`provider + model + connection`) са редоследом током извршавања према `compositeTiers`
-- Резервно пребацивање на нивоу налога (више налога по добављачу)
-- Прелиминарна провера квоте и P2C избор налога који узима квоту у обзир у главној путањи ћаскања
-- Управљање везама са добављачима путем OAuth-а и API кључева (27 OAuth модула добављача)
-- Генерисање угнежђивања путем `/v1/embeddings` (18 добављача)
-- Генерисање слика путем `/v1/images/generations` (10+ добављача, 20+ модела)
-- Транскрипција звука путем `/v1/audio/transcriptions` (18 добављача)
-- Претварање текста у говор путем `/v1/audio/speech` (24 уграђена добављача)
-- Генерисање видео-записа путем `/v1/videos/generations` (ComfyUI + SD WebUI)
-- Генерисање музике путем `/v1/music/generations` (ComfyUI)
-- Веб-претрага путем `/v1/search` (20 добављача)
-- Модерације путем `/v1/moderations`
-- Поновно рангирање путем `/v1/rerank`
-- Рашчлањивање ознака за размишљање (``) за моделе резоновања
+- Резервно пребацивање на нивоу налога (више налога по провајдеру)
+- Претходна провера квоте и P2C избор налога који узима у обзир квоту у главној путањи ћаскања
+- Управљање везама са провајдерима преко OAuth-а и API кључева (27 OAuth модула провајдера)
+- Генерисање угнежђивања преко `/v1/embeddings` (18 провајдера)
+- Генерисање слика преко `/v1/images/generations` (10+ провајдера, 20+ модела)
+- Транскрипција звука преко `/v1/audio/transcriptions` (18 провајдера)
+- Претварање текста у говор преко `/v1/audio/speech` (24 уграђена провајдера)
+- Генерисање видео-записа преко `/v1/videos/generations` (ComfyUI + SD WebUI)
+- Генерисање музике преко `/v1/music/generations` (ComfyUI)
+- Веб-претрага преко `/v1/search` (20 провајдера)
+- Модерација преко `/v1/moderations`
+- Поновно рангирање преко `/v1/rerank`
+- Рашчлањивање ознака размишљања (``) за моделе резоновања
 - Санитизација одговора ради строге компатибилности са OpenAI SDK-ом
-- Нормализација улога (developer→system, system→user) ради компатибилности између добављача
+- Нормализација улога (developer→system, system→user) ради компатибилности између провајдера
 - Конверзија структурираног излаза (json_schema → Gemini responseSchema)
-- Локално трајно чување добављача, кључева, алијаса, комбинација, подешавања и цена (122 DB модула)
-- Праћење коришћења/трошкова и евидентирање захтева
-- Опциона синхронизација у облаку за синхронизацију више уређаја/стања
+- Локално трајно чување провајдера, кључева, алијаса, комбинација, подешавања и цена (122 DB модула)
+- Праћење употребе/трошкова и евидентирање захтева
+- Опциона синхронизација у облаку за синхронизацију стања између више уређаја
 - Листа дозвољених/блокираних IP адреса за контролу приступа API-ју
-- Управљање буџетом за размишљање (директно прослеђивање/аутоматски/прилагођени/адаптивни)
+- Управљање буџетом размишљања (директно прослеђивање/аутоматски/прилагођени/адаптивни)
 - Уметање глобалног системског упита
-- Праћење сесија и узимање отиска
-- Побољшано ограничавање брзине по налогу, са профилима специфичним за добављача
-- Образац прекидача кола за отпорност добављача
-- Заштита од ефекта наглог истовременог оптерећења помоћу закључавања мутексом
-- Кеш за дедупликацију захтева засновану на потпису
+- Праћење сесија и креирање отисака
+- Побољшено ограничавање брзине по налогу, са профилима специфичним за провајдере
+- Образац прекидача кола ради отпорности провајдера
+- Заштита од наглог таласа истовремених захтева помоћу mutex закључавања
+- Кеш за дедупликацију захтева заснован на потпису
 - Доменски слој: правила трошкова, политика резервног пребацивања, политика закључавања
-- Контекстни релеј: сажеци примопредаје сесије ради континуитета при ротирању налога
+- Context Relay: сажеци за пренос сесије ради очувања континуитета при ротацији налога
 - Трајно чување стања домена (SQLite кеш са директним уписом за резервна пребацивања, буџете, закључавања и прекидаче кола)
 - Механизам политика за централизовану процену захтева (закључавање → буџет → резервно пребацивање)
-- Телеметрија захтева са агрегацијом кашњења p50/p95/p99
-- Телеметрија циљева комбинације и историјско стање циљева комбинације путем `combo_execution_key` / `combo_step_id`
-- Корелациони ID (X-Request-Id) за праћење од почетка до краја
-- Евидентирање ревизије усклађености са могућношћу искључивања по API кључу
+- Телеметрија захтева са агрегацијом p50/p95/p99 латенције
+- Телеметрија циљева комбинације и историјско стање циљева комбинације преко `combo_execution_key` / `combo_step_id`
+- ID корелације (X-Request-Id) за праћење од почетка до краја
+- Евидентирање усклађености са могућношћу искључивања по API кључу
 - Оквир за евалуацију ради обезбеђивања квалитета LLM-а
-- Контролна табла стања са приказом статуса прекидача кола добављача у реалном времену
+- Контролна табла стања са статусом прекидача кола провајдера у реалном времену
 - MCP сервер (110 алата) са 3 транспорта (stdio/SSE/Streamable HTTP)
 - A2A сервер (JSON-RPC 2.0 + SSE) са вештинама и животним циклусом задатака
 - Систем меморије (издвајање, уметање, преузимање, сажимање)
 - Систем вештина (регистар, извршилац, изоловано окружење, уграђене вештине)
 - MITM прокси са управљањем сертификатима и DNS-ом
-- Посреднички софтвер за заштиту од убризгавања упита
+- Посреднички слој за заштиту од убацивања злонамерних упита
 - Ток компресије упита са Caveman-ом, RTK-ом, наслаганим токовима, комбинацијама компресије, језичким пакетима и аналитиком
 - ACP (Agent Communication Protocol) регистар
-- Модуларни OAuth добављачи (22 појединачна модула у `src/lib/oauth/providers/`)
+- Модуларни OAuth провајдери (22 појединачна модула у `src/lib/oauth/providers/`)
 - Скрипте за деинсталацију/потпуну деинсталацију
-- Радња поправке OAuth окружења
+- Радња за поправку OAuth окружења
 - WebSocket мост за WS клијенте компатибилне са OpenAI-јем (`/v1/ws`)
 - Управљање токенима за синхронизацију (издавање/опозив, преузимање конфигурационог пакета верзионисаног помоћу ETag-а)
-- GLM Thinking (`glmt`) као првокласно унапред подешавање добављача
-- Хибридно бројање токена (`/messages/count_tokens` на страни добављача, са резервном проценом)
-- Аутоматско почетно попуњавање алијаса модела (30+ нормализација дијалеката између проксија при покретању)
+- GLM Thinking (`glmt`) као пуноправно унапред подешавање провајдера
+- Хибридно бројање токена (провајдерска крајња тачка `/messages/count_tokens` са резервном проценом)
+- Аутоматско иницијално попуњавање алијаса модела (30+ нормализација дијалеката између проксија при покретању)
 - Безбедно одлазно преузимање са SSRF заштитом, блокирањем приватних URL-ова и подесивим поновним покушајима
 - Поновни покушаји ћаскања који узимају у обзир период мировања, са подесивим `requestRetry` и `maxRetryIntervalSec`
 - Провера окружења током извршавања помоћу Zod-а при покретању
-- Ревизија усклађености v2 са пагинацијом, CRUD догађајима добављача и евидентирањем провера блокираних SSRF-ом
+- Евиденција усклађености v2 са пагинацијом, CRUD догађајима провајдера и евидентирањем провере блокирања SSRF-а
 
 Примарни модел извршавања:
 
 - Next.js руте апликације у `src/app/api/*` имплементирају и API-је контролне табле и API-је за компатибилност
-- Заједничко SSE/усмеравајуће језгро у `src/sse/*` + `open-sse/*` управља извршавањем добављача, превођењем, стримовањем, резервним пребацивањем и коришћењем
+- Заједничко SSE/рутерско језгро у `src/sse/*` + `open-sse/*` управља извршавањем провајдера, превођењем, стримовањем, резервним пребацивањем и праћењем употребе
 
 ## Референтни дијаграми
 
@@ -534,16 +534,17 @@ Baza stanja domena (SQLite):
 - Tabele (kreirane u `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Šablon write-through keša: mape u memoriji su autoritativne u vreme izvršavanja; izmene se sinhrono upisuju u SQLite; stanje se obnavlja iz baze prilikom hladnog pokretanja
 
-## 4) Površine za autentifikaciju i bezbednost
+## 4) Autentifikacija + bezbednosne površine
 
-- Autentifikacija kolačićem za dashboard: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
-- Generisanje/verifikacija API ključa: `src/shared/utils/apiKey.ts`
-- Tajne provajdera se čuvaju u zapisima `providerConnections`
-- Podrška za izlazni proxy putem `open-sse/utils/proxyFetch.ts` (env promenljive) i `open-sse/utils/networkProxy.ts` (podesivo po provajderu ili globalno)
-- SSRF / zaštita izlaznog URL-a: `src/shared/network/outboundUrlGuard.ts` — blokira privatne/loopback/link-local opsege za sve pozive provajdera
-- Validacija env promenljivih u vreme izvršavanja: `src/lib/env/runtimeEnv.ts` — Zod šema za sve promenljive okruženja, prikazana kao greške/upozorenja prilikom pokretanja
-- Sync tokeni: `src/lib/db/syncTokens.ts` — tokeni ograničenog opsega za endpointe preuzimanja konfiguracionih paketa; podržani SQLite tabelom `sync_tokens` (migracija `024_create_sync_tokens.sql`)
-- Autentifikacija WebSocket handshake-a: `src/lib/ws/handshake.ts` — validira zahteve za WS upgrade putem API ključa ili sesijskog kolačića
+- Autentifikacija kontrolne table pomoću kolačića: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Generisanje/verifikacija API ključeva: `src/shared/utils/apiKey.ts`
+- Tajne podataka dobavljača trajno se čuvaju u stavkama `providerConnections`
+- Podrška za odlazni proksi putem `open-sse/utils/proxyFetch.ts` (promenljive okruženja) i `open-sse/utils/networkProxy.ts` (podesivo po dobavljaču ili globalno)
+- SSRF / zaštita odlaznih URL adresa: `src/shared/network/outboundUrlGuard.ts` — provere hosta pri pozivima dobavljača i ciljevima webhook-ova; režim potiče iz `src/shared/network/outboundUrlGuardPolicy.ts` (zastavice u `docs/reference/ENVIRONMENT.md`)
+- Validacija okruženja tokom izvršavanja: `src/lib/env/runtimeEnv.ts` — Zod šema za sve promenljive okruženja, pri čemu se greške i upozorenja prikazuju pri pokretanju
+- Tokeni za sinhronizaciju: `src/lib/db/syncTokens.ts` — tokeni ograničenog opsega za krajnje tačke za preuzimanje konfiguracionih paketa; podržani SQLite tabelom `sync_tokens` (migracija `024_create_sync_tokens.sql`)
+- Autentifikacija WebSocket rukovanja: `src/lib/ws/handshake.ts` — validira zahteve za WS nadogradnju pomoću API ključa ili kolačića sesije
+- WebSocket autentifikacija kontrolne table uživo: `src/server/ws/liveServer.ts` — pomoćni servis (port `LIVE_WS_PORT`) prihvata kolačić sesije kontrolne table ili Bearer API ključ koji ima upravljački opseg (`manage`/`admin`); ključevi namenjeni samo zaključivanju se odbijaju. Njegova interna izdavačka krajnja tačka `POST /__omniroute_event` prihvata lokalne peer-ove samo kada nije prisutno zaglavlje proksi skoka (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Sinhronizacija u oblaku
 

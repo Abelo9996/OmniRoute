@@ -10,77 +10,77 @@ _Utolsó frissítés: 2026-06-28_
 
 ## Vezetői összefoglaló
 
-Az OmniRoute egy Next.js-alapú, helyi AI-útválasztási átjáró és irányítópult.
-Egyetlen OpenAI-kompatibilis végpontot (`/v1/*`) biztosít, és a forgalmat több felsőbb szintű szolgáltató között irányítja, formátumátalakítással, tartalék útvonalakkal, tokenfrissítéssel és használatkövetéssel.
+Az OmniRoute egy Next.js-alapú, helyben futó AI-útválasztó átjáró és irányítópult.
+Egyetlen, OpenAI-kompatibilis végpontot (`/v1/*`) biztosít, és több külső szolgáltató között irányítja a forgalmat, formátumátalakítással, tartalék útvonalakkal, tokenfrissítéssel és használatkövetéssel.
 
-Főbb képességek:
+Fő képességek:
 
-- OpenAI-kompatibilis API-felület CLI-khez és eszközökhöz (373 szolgáltató, 150 végrehajtómodul)
+- OpenAI-kompatibilis API-felület parancssori felületekhez és eszközökhöz (374 szolgáltató, 150 végrehajtómodul)
 - Kérések és válaszok átalakítása a szolgáltatói formátumok között
-- Modellkombinációs tartalék útvonal (többmodelles sorrend)
-- Strukturált kombinációs lépések (`provider + model + connection`) futásidejű sorrendezéssel a `compositeTiers` alapján
-- Fiókszintű tartalék útvonal (szolgáltatónként több fiók)
-- Kvóta-előzetes ellenőrzés és kvótatudatos P2C-fiókválasztás a fő csevegési útvonalon
+- Modellkombinációs tartalék útvonalak (többmodelles szekvencia)
+- Strukturált kombinációs lépések (`provider + model + connection`), futásidejű sorrendezéssel a `compositeTiers` alapján
+- Fiókszintű tartalék útvonalak (szolgáltatónként több fiók)
+- Kvóta-előellenőrzés és kvótatudatos P2C-fiókkiválasztás a fő csevegési útvonalon
 - OAuth- és API-kulcs-alapú szolgáltatói kapcsolatok kezelése (27 OAuth-szolgáltatói modul)
-- Beágyazások generálása a `/v1/embeddings` útvonalon keresztül (18 szolgáltató)
-- Képgenerálás a `/v1/images/generations` útvonalon keresztül (több mint 10 szolgáltató, több mint 20 modell)
-- Hangátírás a `/v1/audio/transcriptions` útvonalon keresztül (18 szolgáltató)
-- Szövegfelolvasás a `/v1/audio/speech` útvonalon keresztül (24 beépített szolgáltató)
-- Videógenerálás a `/v1/videos/generations` útvonalon keresztül (ComfyUI + SD WebUI)
-- Zenegenerálás a `/v1/music/generations` útvonalon keresztül (ComfyUI)
-- Webes keresés a `/v1/search` útvonalon keresztül (20 szolgáltató)
-- Moderálás a `/v1/moderations` útvonalon keresztül
-- Újrarangsorolás a `/v1/rerank` útvonalon keresztül
+- Beágyazások generálása a `/v1/embeddings` végponton keresztül (18 szolgáltató)
+- Képgenerálás a `/v1/images/generations` végponton keresztül (több mint 10 szolgáltató, több mint 20 modell)
+- Hangátirat készítése a `/v1/audio/transcriptions` végponton keresztül (18 szolgáltató)
+- Szövegfelolvasás a `/v1/audio/speech` végponton keresztül (24 beépített szolgáltató)
+- Videógenerálás a `/v1/videos/generations` végponton keresztül (ComfyUI + SD WebUI)
+- Zenegenerálás a `/v1/music/generations` végponton keresztül (ComfyUI)
+- Webes keresés a `/v1/search` végponton keresztül (20 szolgáltató)
+- Moderálás a `/v1/moderations` végponton keresztül
+- Újrarangsorolás a `/v1/rerank` végponton keresztül
 - Gondolkodási címkék (``) feldolgozása következtetési modellekhez
 - Válaszok tisztítása a szigorú OpenAI SDK-kompatibilitás érdekében
 - Szerepkörök normalizálása (developer→system, system→user) a szolgáltatók közötti kompatibilitás érdekében
-- Strukturált kimenet átalakítása (json_schema → Gemini responseSchema)
-- Szolgáltatók, kulcsok, aliasok, kombinációk, beállítások és árazás helyi perzisztenciája (122 adatbázismodul)
+- Strukturált kimenetek átalakítása (json_schema → Gemini responseSchema)
+- Szolgáltatók, kulcsok, álnevek, kombinációk, beállítások és árképzés helyi tárolása (122 adatbázismodul)
 - Használat- és költségkövetés, valamint kérések naplózása
-- Opcionális felhőszinkronizálás több eszköz és állapot szinkronizálásához
+- Opcionális felhőszinkronizálás több eszköz és az állapot szinkronizálásához
 - IP-engedélyezési és -tiltólista az API-hozzáférés szabályozásához
 - Gondolkodási keret kezelése (közvetlen továbbítás/automatikus/egyéni/adaptív)
 - Globális rendszerprompt beszúrása
-- Munkamenet-követés és ujjlenyomat-készítés
-- Fiókonkénti, továbbfejlesztett sebességkorlátozás szolgáltatóspecifikus profilokkal
-- Megszakító áramkör minta a szolgáltatók ellenálló képességéhez
-- Tömeges egyidejű újrapróbálkozás elleni védelem mutex-zárolással
-- Aláírás-alapú gyorsítótár a kérések deduplikálásához
-- Tartományi réteg: költségszabályok, tartalékútvonal-szabályzat, kizárási szabályzat
-- Context Relay: munkamenet-átadási összefoglalók a folytonosság megőrzéséhez fiókváltáskor
-- Tartományi állapot perzisztenciája (SQLite közvetlen írású gyorsítótár tartalék útvonalakhoz, keretekhez, kizárásokhoz és megszakító áramkörökhöz)
-- Szabályzatmotor a kérések központosított kiértékeléséhez (kizárás → keret → tartalék útvonal)
-- Kéréstelemetria p50/p95/p99 késleltetési összesítéssel
-- Kombinációs célpontok telemetriája és előzményeik állapota a `combo_execution_key` / `combo_step_id` használatával
-- Korrelációs azonosító (X-Request-Id) a teljes folyamat végponttól végpontig történő nyomkövetéséhez
+- Munkamenetek követése és ujjlenyomat-képzése
+- Továbbfejlesztett, fiókonkénti sebességkorlátozás szolgáltatóspecifikus profilokkal
+- Áramkör-megszakító minta a szolgáltatók hibatűréséhez
+- Párhuzamos lekérdezési rohamok elleni védelem mutex-zárolással
+- Aláírás-alapú kérés-deduplikációs gyorsítótár
+- Tartományi réteg: költségszabályok, tartalékútvonal-szabályzat, zárolási szabályzat
+- Context Relay: munkamenet-átadási összefoglalók a folytonosság megőrzéséhez a fiókok rotációjakor
+- Tartományi állapot tartós tárolása (SQLite-alapú, azonnali visszaírású gyorsítótár tartalék útvonalakhoz, keretekhez, zárolásokhoz és áramkör-megszakítókhoz)
+- Szabályzatmotor a kérések központosított kiértékeléséhez (zárolás → keret → tartalék útvonal)
+- Kéréstelemetria p50/p95/p99 késleltetés-összesítéssel
+- Kombinációs célpontok telemetriája és korábbi állapotadatai a `combo_execution_key` / `combo_step_id` használatával
+- Korrelációs azonosító (X-Request-Id) a végponttól végpontig tartó nyomkövetéshez
 - Megfelelőségi auditnaplózás API-kulcsonkénti letiltási lehetőséggel
 - Kiértékelési keretrendszer az LLM-ek minőségbiztosításához
-- Állapot-irányítópult a szolgáltatói megszakító áramkörök valós idejű állapotával
+- Állapot-irányítópult a szolgáltatói áramkör-megszakítók valós idejű állapotával
 - MCP Server (110 eszköz) 3 átviteli móddal (stdio/SSE/Streamable HTTP)
 - A2A Server (JSON-RPC 2.0 + SSE) képességekkel és feladat-életciklussal
 - Memóriarendszer (kinyerés, beszúrás, visszakeresés, összegzés)
-- Képességrendszer (regiszter, végrehajtó, védett futtatókörnyezet, beépített képességek)
+- Képességrendszer (nyilvántartás, végrehajtó, elkülönített környezet, beépített képességek)
 - MITM-proxy tanúsítványkezeléssel és DNS-kezeléssel
-- Promptinjektálás elleni köztesréteg
-- Prompttömörítési folyamat Caveman, RTK, egymásra épülő folyamatok, tömörítési kombinációk, nyelvi csomagok és analitika támogatásával
-- ACP (Agent Communication Protocol) regiszter
+- Promptinjektálás elleni védelmi köztesréteg
+- Prompttömörítési folyamat Caveman, RTK és halmozott folyamatokkal, tömörítési kombinációkkal, nyelvi csomagokkal és analitikával
+- ACP-nyilvántartás (Agent Communication Protocol)
 - Moduláris OAuth-szolgáltatók (22 különálló modul a `src/lib/oauth/providers/` alatt)
-- Eltávolítási és teljes eltávolítási szkriptek
+- Eltávolítási és teljes eltávolítási parancsfájlok
 - OAuth-környezet javítási művelete
 - WebSocket-híd OpenAI-kompatibilis WS-kliensekhez (`/v1/ws`)
-- Szinkronizációs tokenek kezelése (kibocsátás/visszavonás, ETag-verziózott konfigurációscsomag-letöltés)
-- Első osztályú GLM Thinking (`glmt`) szolgáltatói előbeállítás
-- Hibrid tokenszámlálás (szolgáltatói oldali `/messages/count_tokens`, becslésalapú tartalék megoldással)
-- Modellaliasok automatikus kezdeti feltöltése (több mint 30, proxyk közötti dialektusnormalizálás indításkor)
+- Szinkronizációs tokenek kezelése (kibocsátás/visszavonás, ETag-verziózott konfigurációs csomag letöltése)
+- GLM Thinking (`glmt`) első osztályú szolgáltatói előbeállítás
+- Hibrid tokenszámlálás (szolgáltatói oldali `/messages/count_tokens`, becslési tartalékmegoldással)
+- Modellálnevek automatikus létrehozása (több mint 30, proxyk közötti dialektusnormalizálás indításkor)
 - Biztonságos kimenő lekérés SSRF-védelemmel, privát URL-ek blokkolásával és konfigurálható újrapróbálkozással
-- Várakozási időt figyelembe vevő csevegési újrapróbálkozások konfigurálható `requestRetry` és `maxRetryIntervalSec` beállítással
-- Futásidejű környezetellenőrzés Zod használatával indításkor
-- Megfelelőségi audit v2 lapozással, szolgáltatói CRUD-eseményekkel és az SSRF miatt blokkolt ellenőrzések naplózásával
+- Lehűlési időt figyelembe vevő csevegési újrapróbálkozások konfigurálható `requestRetry` és `maxRetryIntervalSec` beállításokkal
+- Futásidejű környezet ellenőrzése Zod használatával indításkor
+- Megfelelőségi audit v2 lapozással, szolgáltatói CRUD-eseményekkel és SSRF által blokkolt ellenőrzések naplózásával
 
 Elsődleges futásidejű modell:
 
-- A `src/app/api/*` alatti Next.js-alkalmazásútvonalak valósítják meg mind az irányítópult API-jait, mind a kompatibilitási API-kat
-- A `src/sse/*` + `open-sse/*` alatt található megosztott SSE- és útválasztási mag kezeli a szolgáltatói végrehajtást, az átalakítást, a streamelést, a tartalék útvonalakat és a használatot
+- A `src/app/api/*` alatti Next.js-alkalmazásútvonalak valósítják meg az irányítópult API-jait és a kompatibilitási API-kat
+- A `src/sse/*` + `open-sse/*` megosztott SSE- és útválasztási magja kezeli a szolgáltatói végrehajtást, az átalakítást, a streamelést, a tartalék útvonalakat és a használatot
 
 ## Referenciadiagramok
 
@@ -532,16 +532,17 @@ Tartományi állapotadatbázis (SQLite):
 - Táblák (létrehozásuk helye: `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Azonnali adatbázisba írást alkalmazó gyorsítótár-minta: futásidőben a memóriabeli Mapek a mérvadók; a módosítások szinkron módon íródnak az SQLite-ba; hidegindításkor az állapot visszaáll az adatbázisból
 
-## 4) Hitelesítési és biztonsági felületek
+## 4) Hitelesítés + biztonsági felületek
 
-- Irányítópult cookie-alapú hitelesítése: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Vezérlőpult cookie-alapú hitelesítése: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - API-kulcsok generálása/ellenőrzése: `src/shared/utils/apiKey.ts`
-- A szolgáltatói titkos adatok a `providerConnections` bejegyzéseiben tárolódnak
-- Kimenőproxy-támogatás az `open-sse/utils/proxyFetch.ts` (környezeti változók) és az `open-sse/utils/networkProxy.ts` (szolgáltatónként vagy globálisan konfigurálható) révén
-- SSRF-/kimenő-URL-védelem: `src/shared/network/outboundUrlGuard.ts` — minden szolgáltatói hívásnál blokkolja a privát/loopback/link-local tartományokat
-- Futásidejű környezetellenőrzés: `src/lib/env/runtimeEnv.ts` — Zod-séma az összes környezeti változóhoz; a problémák indítási hibákként/figyelmeztetésekként jelennek meg
+- A szolgáltatói titkos adatok a `providerConnections` bejegyzésekben vannak tartósan tárolva
+- Kimenő proxy támogatása az `open-sse/utils/proxyFetch.ts` (környezeti változók) és az `open-sse/utils/networkProxy.ts` (szolgáltatónként vagy globálisan konfigurálható) révén
+- SSRF- / kimenő URL-védelem: `src/shared/network/outboundUrlGuard.ts` — hosztellenőrzések a szolgáltatói hívásoknál és a webhook-célpontoknál; a módot a `src/shared/network/outboundUrlGuardPolicy.ts` határozza meg (kapcsolók a `docs/reference/ENVIRONMENT.md` fájlban)
+- Futásidejű környezeti változók ellenőrzése: `src/lib/env/runtimeEnv.ts` — Zod-séma minden környezeti változóhoz, az eltérések indítási hibákként/figyelmeztetésekként jelennek meg
 - Szinkronizálási tokenek: `src/lib/db/syncTokens.ts` — hatókörrel rendelkező tokenek a konfigurációscsomag-letöltési végpontokhoz; a `sync_tokens` SQLite-tábla tárolja őket (`024_create_sync_tokens.sql` migráció)
-- WebSocket-kézfogás hitelesítése: `src/lib/ws/handshake.ts` — API-kulcs vagy munkamenet-cookie segítségével ellenőrzi a WS-frissítési kéréseket
+- WebSocket-kézfogás hitelesítése: `src/lib/ws/handshake.ts` — API-kulccsal vagy munkamenet-cookie-val ellenőrzi a WS-frissítési kéréseket
+- Az élő vezérlőpult WebSocket-hitelesítése: `src/server/ws/liveServer.ts` — a segédfolyamat (a `LIVE_WS_PORT` porton) vezérlőpult-munkamenet-cookie-t vagy felügyeleti hatókörrel (`manage`/`admin`) rendelkező Bearer API-kulcsot fogad el; a csak következtetésre jogosító kulcsokat elutasítja. Belső `POST /__omniroute_event` közzétételi végpontja csak akkor fogad el helyi visszacsatolási társakat, ha nincs jelen proxyugrás-fejléc (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Felhőalapú szinkronizálás
 

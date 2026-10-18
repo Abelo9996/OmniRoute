@@ -10,22 +10,22 @@ _Son güncelleme: 2026-06-28_
 
 ## Yönetici Özeti
 
-OmniRoute, Next.js üzerine inşa edilmiş yerel bir yapay zekâ yönlendirme ağ geçidi ve kontrol panelidir.
-Tek bir OpenAI uyumlu uç nokta (`/v1/*`) sağlar ve trafiği çeviri, yedekleme, token yenileme ve kullanım takibi özellikleriyle birden fazla üst sağlayıcı arasında yönlendirir.
+OmniRoute, Next.js üzerine kurulmuş yerel bir yapay zekâ yönlendirme ağ geçidi ve kontrol panelidir.
+Tek bir OpenAI uyumlu uç nokta (`/v1/*`) sağlar ve trafiği çeviri, geri dönüş, token yenileme ve kullanım takibi özellikleriyle birden fazla üst sağlayıcı arasında yönlendirir.
 
 Temel yetenekler:
 
-- CLI/araçlar için OpenAI uyumlu API yüzeyi (373 sağlayıcı, 150 yürütücü modülü)
+- CLI/araçlar için OpenAI uyumlu API yüzeyi (374 sağlayıcı, 150 yürütücü modülü)
 - Sağlayıcı biçimleri arasında istek/yanıt çevirisi
-- Model kombinasyonu yedekleme mekanizması (çok modelli sıra)
-- `compositeTiers` tarafından çalışma zamanında sıralanan yapılandırılmış kombinasyon adımları (`provider + model + connection`)
-- Hesap düzeyinde yedekleme (sağlayıcı başına birden fazla hesap)
+- Model kombinasyonu geri dönüşü (çok modelli sıra)
+- `compositeTiers` ile çalışma zamanı sıralamasına sahip yapılandırılmış kombinasyon adımları (`provider + model + connection`)
+- Hesap düzeyinde geri dönüş (sağlayıcı başına birden fazla hesap)
 - Ana sohbet akışında kota ön kontrolü ve kotayı dikkate alan P2C hesap seçimi
-- OAuth + API anahtarıyla sağlayıcı bağlantısı yönetimi (27 OAuth sağlayıcı modülü)
+- OAuth + API anahtarı sağlayıcı bağlantı yönetimi (27 OAuth sağlayıcı modülü)
 - `/v1/embeddings` üzerinden gömme oluşturma (18 sağlayıcı)
-- `/v1/images/generations` üzerinden görüntü oluşturma (10+ sağlayıcı, 20+ model)
+- `/v1/images/generations` üzerinden görüntü oluşturma (10'dan fazla sağlayıcı, 20'den fazla model)
 - `/v1/audio/transcriptions` üzerinden ses transkripsiyonu (18 sağlayıcı)
-- `/v1/audio/speech` üzerinden metinden konuşma oluşturma (24 yerleşik sağlayıcı)
+- `/v1/audio/speech` üzerinden metinden konuşmaya dönüştürme (24 yerleşik sağlayıcı)
 - `/v1/videos/generations` üzerinden video oluşturma (ComfyUI + SD WebUI)
 - `/v1/music/generations` üzerinden müzik oluşturma (ComfyUI)
 - `/v1/search` üzerinden web araması (20 sağlayıcı)
@@ -36,51 +36,51 @@ Temel yetenekler:
 - Sağlayıcılar arası uyumluluk için rol normalleştirme (developer→system, system→user)
 - Yapılandırılmış çıktı dönüştürme (json_schema → Gemini responseSchema)
 - Sağlayıcılar, anahtarlar, takma adlar, kombinasyonlar, ayarlar ve fiyatlandırma için yerel kalıcılık (122 DB modülü)
-- Kullanım/maliyet takibi ve istek günlükleme
-- Çoklu cihaz/durum eşitlemesi için isteğe bağlı bulut eşitleme
+- Kullanım/maliyet takibi ve istek günlüğü
+- Çoklu cihaz/durum senkronizasyonu için isteğe bağlı bulut senkronizasyonu
 - API erişim denetimi için IP izin listesi/engelleme listesi
-- Düşünme bütçesi yönetimi (doğrudan aktarma/otomatik/özel/uyarlanabilir)
+- Düşünme bütçesi yönetimi (doğrudan aktarma/otomatik/özel/uyarlamalı)
 - Genel sistem istemi ekleme
 - Oturum takibi ve parmak izi oluşturma
 - Sağlayıcıya özgü profillerle hesap başına gelişmiş hız sınırlama
-- Sağlayıcı dayanıklılığı için devre kesici deseni
-- Mutex kilitlemeyle eş zamanlı istek yığılmasına karşı koruma
+- Sağlayıcı dayanıklılığı için devre kesici kalıbı
+- Mutex kilitleme ile yoğun eşzamanlı istek koruması
 - İmza tabanlı istek tekilleştirme önbelleği
-- Etki alanı katmanı: maliyet kuralları, yedekleme politikası, kilitleme politikası
-- Context Relay: hesap rotasyonunda süreklilik için oturum aktarım özetleri
-- Etki alanı durumu kalıcılığı (yedeklemeler, bütçeler, kilitlemeler ve devre kesiciler için SQLite doğrudan yazma önbelleği)
-- Merkezi istek değerlendirmesi için politika motoru (kilitleme → bütçe → yedekleme)
-- p50/p95/p99 gecikme toplama özellikli istek telemetrisi
-- `combo_execution_key` / `combo_step_id` üzerinden kombinasyon hedefi telemetrisi ve geçmiş kombinasyon hedefi durumu
+- Etki alanı katmanı: maliyet kuralları, geri dönüş politikası, kilitleme politikası
+- Bağlam Aktarımı: hesap rotasyonu sürekliliği için oturum devir özetleri
+- Etki alanı durumu kalıcılığı (geri dönüşler, bütçeler, kilitlemeler ve devre kesiciler için doğrudan yazmalı SQLite önbelleği)
+- Merkezi istek değerlendirmesi için politika motoru (kilitleme → bütçe → geri dönüş)
+- p50/p95/p99 gecikme toplamasıyla istek telemetrisi
+- `combo_execution_key` / `combo_step_id` üzerinden kombinasyon hedefi telemetrisi ve geçmiş kombinasyon hedefi sağlığı
 - Uçtan uca izleme için korelasyon kimliği (X-Request-Id)
 - API anahtarı başına devre dışı bırakma seçeneğiyle uyumluluk denetim günlüğü
 - LLM kalite güvencesi için değerlendirme çerçevesi
-- Gerçek zamanlı sağlayıcı devre kesici durumunu gösteren sağlık kontrol paneli
-- 3 taşıma yöntemine (stdio/SSE/Streamable HTTP) sahip MCP Sunucusu (110 araç)
-- Beceriler ve görev yaşam döngüsü içeren A2A Sunucusu (JSON-RPC 2.0 + SSE)
-- Bellek sistemi (çıkarma, ekleme, getirme, özetleme)
-- Beceri sistemi (kayıt defteri, yürütücü, korumalı alan, yerleşik beceriler)
-- Sertifika yönetimi ve DNS işleme özellikli MITM proxy
+- Gerçek zamanlı sağlayıcı devre kesici durumunu içeren sağlık kontrol paneli
+- 3 aktarım mekanizmasına (stdio/SSE/Akış Yapılabilir HTTP) sahip MCP Sunucusu (110 araç)
+- Beceriler ve görev yaşam döngüsüne sahip A2A Sunucusu (JSON-RPC 2.0 + SSE)
+- Bellek sistemi (çıkarma, ekleme, erişim, özetleme)
+- Beceri sistemi (kayıt, yürütücü, korumalı alan, yerleşik beceriler)
+- Sertifika yönetimi ve DNS işleme özelliklerine sahip MITM proxy
 - İstem enjeksiyonu koruma ara yazılımı
-- Caveman, RTK, yığınlanmış işlem hatları, sıkıştırma kombinasyonları, dil paketleri ve analiz özelliklerine sahip istem sıkıştırma işlem hattı
-- ACP (Agent Communication Protocol) kayıt defteri
+- Caveman, RTK, yığınlanmış işlem hatları, sıkıştırma kombinasyonları, dil paketleri ve analitik özelliklerine sahip istem sıkıştırma işlem hattı
+- ACP (Aracı İletişim Protokolü) kayıt sistemi
 - Modüler OAuth sağlayıcıları (`src/lib/oauth/providers/` altında 22 ayrı modül)
 - Kaldırma/tam kaldırma betikleri
 - OAuth ortamı onarma eylemi
 - OpenAI uyumlu WS istemcileri için WebSocket köprüsü (`/v1/ws`)
-- Eşitleme token'ı yönetimi (oluşturma/iptal etme, ETag sürümlü yapılandırma paketi indirme)
+- Senkronizasyon token'ı yönetimi (oluşturma/iptal etme, ETag sürümlü yapılandırma paketi indirme)
 - Birinci sınıf sağlayıcı ön ayarı olarak GLM Thinking (`glmt`)
-- Hibrit token sayımı (tahmine dayalı yedeklemeyle sağlayıcı tarafındaki `/messages/count_tokens`)
-- Model takma adlarını otomatik başlangıç verisi olarak ekleme (başlangıçta 30+ proxy'ler arası lehçe normalleştirmesi)
-- SSRF koruması, özel URL engelleme ve yapılandırılabilir yeniden deneme özellikli güvenli giden veri getirme
+- Hibrit token sayımı (tahmin geri dönüşüyle sağlayıcı tarafındaki `/messages/count_tokens`)
+- Model takma adlarının otomatik başlangıç verileriyle oluşturulması (başlangıçta 30'dan fazla proxy'ler arası lehçe normalleştirmesi)
+- SSRF koruması, özel URL engelleme ve yapılandırılabilir yeniden deneme özelliklerine sahip güvenli giden fetch
 - Yapılandırılabilir `requestRetry` ve `maxRetryIntervalSec` ile bekleme süresini dikkate alan sohbet yeniden denemeleri
-- Başlangıçta Zod ile çalışma zamanı ortamı doğrulaması
-- Sayfalandırma, sağlayıcı CRUD olayları ve SSRF tarafından engellenen doğrulama günlüğü özellikli uyumluluk denetimi v2
+- Başlangıçta Zod ile çalışma zamanı ortam doğrulaması
+- Sayfalama, sağlayıcı CRUD olayları ve SSRF tarafından engellenen doğrulamaların günlüklenmesi özelliklerine sahip uyumluluk denetimi v2
 
 Birincil çalışma zamanı modeli:
 
 - `src/app/api/*` altındaki Next.js uygulama rotaları hem kontrol paneli API'lerini hem de uyumluluk API'lerini uygular
-- `src/sse/*` + `open-sse/*` içindeki paylaşılan SSE/yönlendirme çekirdeği; sağlayıcı yürütme, çeviri, akış, yedekleme ve kullanım işlemlerini yönetir
+- `src/sse/*` + `open-sse/*` içindeki paylaşılan SSE/yönlendirme çekirdeği; sağlayıcı yürütme, çeviri, akış, geri dönüş ve kullanım işlemlerini yönetir
 
 ## Referans Diyagramları
 
@@ -536,14 +536,15 @@ Etki Alanı Durum Veritabanı (SQLite):
 
 ## 4) Kimlik Doğrulama + Güvenlik Yüzeyleri
 
-- Kontrol paneli çerez kimlik doğrulaması: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Dashboard çerez kimlik doğrulaması: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - API anahtarı oluşturma/doğrulama: `src/shared/utils/apiKey.ts`
-- Sağlayıcı gizli bilgileri `providerConnections` girdilerinde saklanır
-- `open-sse/utils/proxyFetch.ts` (ortam değişkenleri) ve `open-sse/utils/networkProxy.ts` (sağlayıcı başına veya genel olarak yapılandırılabilir) üzerinden giden proxy desteği
-- SSRF / giden URL koruması: `src/shared/network/outboundUrlGuard.ts` — tüm sağlayıcı çağrılarında özel/geri döngü/yerel bağlantı aralıklarını engeller
+- Sağlayıcı gizli bilgileri `providerConnections` girdilerinde kalıcı olarak saklanır
+- `open-sse/utils/proxyFetch.ts` (ortam değişkenleri) ve `open-sse/utils/networkProxy.ts` (sağlayıcı bazında veya global olarak yapılandırılabilir) üzerinden giden proxy desteği
+- SSRF / giden URL koruması: `src/shared/network/outboundUrlGuard.ts` — sağlayıcı çağrılarında ve webhook hedeflerinde ana makine denetimleri; mod, `src/shared/network/outboundUrlGuardPolicy.ts` dosyasından gelir (`docs/reference/ENVIRONMENT.md` içindeki bayraklar)
 - Çalışma zamanı ortam doğrulaması: `src/lib/env/runtimeEnv.ts` — tüm ortam değişkenleri için Zod şeması; başlangıç hataları/uyarıları olarak gösterilir
-- Eşzamanlama belirteçleri: `src/lib/db/syncTokens.ts` — yapılandırma paketi indirme uç noktaları için kapsamlı belirteçler; `sync_tokens` SQLite tablosu tarafından desteklenir (`024_create_sync_tokens.sql` migrasyonu)
+- Eşitleme belirteçleri: `src/lib/db/syncTokens.ts` — yapılandırma paketi indirme uç noktaları için kapsamlı belirteçler; `sync_tokens` SQLite tablosu tarafından desteklenir (`024_create_sync_tokens.sql` geçişi)
 - WebSocket el sıkışması kimlik doğrulaması: `src/lib/ws/handshake.ts` — WS yükseltme isteklerini API anahtarı veya oturum çerezi aracılığıyla doğrular
+- Canlı dashboard WebSocket kimlik doğrulaması: `src/server/ws/liveServer.ts` — yardımcı servis (`LIVE_WS_PORT` portu), bir dashboard oturum çerezini veya yönetim kapsamına (`manage`/`admin`) sahip bir Bearer API anahtarını kabul eder; yalnızca çıkarım yetkili anahtarlar reddedilir. Dahili `POST /__omniroute_event` yayıncı uç noktası, yalnızca hiçbir proxy geçiş başlığı (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`) bulunmadığında geri döngü eşlerini kabul eder
 
 ## 5) Bulut Eşzamanlama
 

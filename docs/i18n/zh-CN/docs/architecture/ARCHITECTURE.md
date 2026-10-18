@@ -20,11 +20,11 @@ _最后更新：2026-06-28_
 ## 执行摘要
 
 OmniRoute 是一个基于 Next.js 构建的本地 AI 路由网关和仪表板。
-它提供单一的 OpenAI 兼容端点（`/v1/*`），并通过格式转换、回退、令牌刷新和用量跟踪，在多个上游提供者之间路由流量。
+它提供单一的 OpenAI 兼容端点（`/v1/*`），并通过格式转换、回退、令牌刷新和用量跟踪，将流量路由到多个上游提供者。
 
 核心功能：
 
-- 面向 CLI/工具的 OpenAI 兼容 API 接口（373 个提供者、150 个执行器模块）
+- 面向 CLI/工具的 OpenAI 兼容 API 接口（374 个提供者、150 个执行器模块）
 - 跨提供者格式的请求/响应转换
 - 模型组合回退（多模型序列）
 - 结构化组合步骤（`provider + model + connection`），运行时按 `compositeTiers` 排序
@@ -34,15 +34,15 @@ OmniRoute 是一个基于 Next.js 构建的本地 AI 路由网关和仪表板。
 - 通过 `/v1/embeddings` 生成嵌入向量（18 个提供者）
 - 通过 `/v1/images/generations` 生成图像（10+ 个提供者、20+ 个模型）
 - 通过 `/v1/audio/transcriptions` 进行音频转录（18 个提供者）
-- 通过 `/v1/audio/speech` 将文本转换为语音（24 个内置提供者）
+- 通过 `/v1/audio/speech` 进行文本转语音（24 个内置提供者）
 - 通过 `/v1/videos/generations` 生成视频（ComfyUI + SD WebUI）
 - 通过 `/v1/music/generations` 生成音乐（ComfyUI）
 - 通过 `/v1/search` 进行 Web 搜索（20 个提供者）
 - 通过 `/v1/moderations` 进行内容审核
 - 通过 `/v1/rerank` 进行重排序
 - 为推理模型解析思考标签（``）
-- 响应净化，确保与严格的 OpenAI SDK 兼容
-- 角色规范化（developer→system、system→user），实现跨提供者兼容
+- 为严格兼容 OpenAI SDK 进行响应清理
+- 为实现跨提供者兼容性进行角色规范化（developer→system、system→user）
 - 结构化输出转换（json_schema → Gemini responseSchema）
 - 提供者、密钥、别名、组合、设置和定价的本地持久化（122 个数据库模块）
 - 用量/成本跟踪和请求日志记录
@@ -51,45 +51,45 @@ OmniRoute 是一个基于 Next.js 构建的本地 AI 路由网关和仪表板。
 - 思考预算管理（透传/自动/自定义/自适应）
 - 全局系统提示词注入
 - 会话跟踪和指纹识别
-- 账户级增强速率限制，并支持特定于提供者的配置
-- 用于提高提供者韧性的断路器模式
+- 每账户增强型速率限制，支持提供者特定配置
+- 用于提升提供者韧性的断路器模式
 - 使用互斥锁防止惊群效应
 - 基于签名的请求去重缓存
 - 领域层：成本规则、回退策略、锁定策略
 - 上下文中继：用于在账户轮换时保持连续性的会话交接摘要
-- 领域状态持久化（用于回退、预算、锁定和断路器的 SQLite 直写缓存）
+- 领域状态持久化（针对回退、预算、锁定和断路器的 SQLite 直写式缓存）
 - 用于集中式请求评估的策略引擎（锁定 → 预算 → 回退）
 - 请求遥测，支持 p50/p95/p99 延迟聚合
-- 组合目标遥测，以及通过 `combo_execution_key` / `combo_step_id` 记录的历史组合目标健康状态
+- 组合目标遥测，以及通过 `combo_execution_key` / `combo_step_id` 记录的组合目标历史健康状况
 - 用于端到端追踪的关联 ID（X-Request-Id）
 - 合规审计日志记录，支持按 API 密钥选择退出
 - 用于 LLM 质量保证的评估框架
 - 健康状态仪表板，实时显示提供者断路器状态
-- MCP Server（110 个工具），支持 3 种传输方式（stdio/SSE/Streamable HTTP）
-- A2A Server（JSON-RPC 2.0 + SSE），支持技能和任务生命周期
+- MCP 服务器（110 个工具），支持 3 种传输方式（stdio/SSE/Streamable HTTP）
+- A2A 服务器（JSON-RPC 2.0 + SSE），支持技能和任务生命周期
 - 记忆系统（提取、注入、检索、摘要）
 - 技能系统（注册表、执行器、沙箱、内置技能）
-- 具有证书管理和 DNS 处理功能的 MITM 代理
+- 支持证书管理和 DNS 处理的 MITM 代理
 - 提示词注入防护中间件
 - 提示词压缩管线，支持 Caveman、RTK、堆叠管线、压缩组合、语言包和分析
-- ACP（Agent Communication Protocol）注册表
+- ACP（代理通信协议）注册表
 - 模块化 OAuth 提供者（`src/lib/oauth/providers/` 下的 22 个独立模块）
 - 卸载/完全卸载脚本
 - OAuth 环境修复操作
 - 面向 OpenAI 兼容 WS 客户端的 WebSocket 桥接（`/v1/ws`）
 - 同步令牌管理（签发/撤销、下载使用 ETag 进行版本控制的配置包）
-- 一流的 GLM Thinking（`glmt`）提供者预设
-- 混合令牌计数（提供者侧 `/messages/count_tokens`，并在失败时回退到估算）
-- 模型别名自动初始化（启动时进行 30+ 种跨代理方言规范化）
-- 具有 SSRF 防护、私有 URL 阻止和可配置重试机制的安全出站请求
-- 可感知冷却时间的聊天重试，支持配置 `requestRetry` 和 `maxRetryIntervalSec`
+- GLM Thinking（`glmt`）一等提供者预设
+- 混合式令牌计数（提供者侧 `/messages/count_tokens`，失败时回退到估算）
+- 模型别名自动植入（启动时进行 30+ 种跨代理方言规范化）
+- 安全出站请求，支持 SSRF 防护、私有 URL 阻止和可配置重试
+- 感知冷却时间的聊天重试，支持配置 `requestRetry` 和 `maxRetryIntervalSec`
 - 启动时使用 Zod 进行运行时环境验证
 - 合规审计 v2，支持分页、提供者 CRUD 事件和 SSRF 阻止验证日志记录
 
 主要运行时模型：
 
 - `src/app/api/*` 下的 Next.js 应用路由同时实现仪表板 API 和兼容性 API
-- `src/sse/*` + `open-sse/*` 中的共享 SSE/路由核心负责提供者执行、格式转换、流式传输、回退和用量处理
+- `src/sse/*` + `open-sse/*` 中的共享 SSE/路由核心负责提供者执行、转换、流式传输、回退和用量处理
 
 ## 参考架构图
 
@@ -536,16 +536,17 @@ FSM 状态转换反馈到 Auto Combo 的评分中，使后台/自动化任务偏
 - 表（在 `src/lib/db/core.ts` 中创建）：`domain_fallback_chains`、`domain_budgets`、`domain_cost_history`、`domain_lockout_state`、`domain_circuit_breakers`
 - 写穿式缓存模式：运行时以内存 Map 为权威数据源；变更同步写入 SQLite；冷启动时从数据库恢复状态
 
-## 4) 认证与安全界面
+## 4) 身份验证 + 安全层面
 
-- 控制台 Cookie 认证：`src/proxy.ts`、`src/app/api/auth/login/route.ts`
-- API Key 生成/验证：`src/shared/utils/apiKey.ts`
-- 服务商密钥持久化存储在 `providerConnections` 条目中
-- 出站代理支持：`open-sse/utils/proxyFetch.ts`（环境变量）和 `open-sse/utils/networkProxy.ts`（可按服务商或全局配置）
-- SSRF / 出站 URL 守卫：`src/shared/network/outboundUrlGuard.ts` — 拦截所有服务商调用的私有/loopback/本地链路范围目标
-- 运行时环境校验：`src/lib/env/runtimeEnv.ts` — 用于所有环境变量的 Zod Schema，在启动时以错误/警告形式呈现
-- 同步 Token：`src/lib/db/syncTokens.ts` — 为配置包下载端点签发的带权限域 Token；后端使用 `sync_tokens` SQLite 表（迁移文件 `024_create_sync_tokens.sql`）
-- WebSocket 握手认证：`src/lib/ws/handshake.ts` — 通过 API Key 或会话 Cookie 校验 WS 升级请求
+- 仪表盘 Cookie 身份验证：`src/proxy.ts`、`src/app/api/auth/login/route.ts`
+- API 密钥生成/验证：`src/shared/utils/apiKey.ts`
+- 提供者密钥持久化存储在 `providerConnections` 条目中
+- 出站代理支持：通过 `open-sse/utils/proxyFetch.ts`（环境变量）和 `open-sse/utils/networkProxy.ts`（可按提供者或全局配置）
+- SSRF / 出站 URL 防护：`src/shared/network/outboundUrlGuard.ts` — 对提供者调用和 Webhook 目标执行主机检查；模式由 `src/shared/network/outboundUrlGuardPolicy.ts` 决定（相关标志位见 `docs/reference/ENVIRONMENT.md`）
+- 运行时环境变量验证：`src/lib/env/runtimeEnv.ts` — 针对所有环境变量的 Zod 模式，验证结果以启动错误/警告形式呈现
+- 同步令牌：`src/lib/db/syncTokens.ts` — 用于配置包下载端点的作用域令牌；由 `sync_tokens` SQLite 表提供支持（迁移文件 `024_create_sync_tokens.sql`）
+- WebSocket 握手身份验证：`src/lib/ws/handshake.ts` — 通过 API 密钥或会话 Cookie 验证 WS 升级请求
+- 实时仪表盘 WebSocket 身份验证：`src/server/ws/liveServer.ts` — sidecar（端口 `LIVE_WS_PORT`）接受仪表盘会话 Cookie，或持有管理作用域（`manage`/`admin`）的 Bearer API 密钥；仅具有推理权限的密钥会被拒绝。其内部 `POST /__omniroute_event` 发布端点仅在不存在代理跳转标头（`x-forwarded-*`、`x-real-ip`、`forwarded`、`via`）时接受来自环回地址的对等端请求
 
 ## 5) 云端同步
 

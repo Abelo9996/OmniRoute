@@ -8,79 +8,79 @@
 
 _መጨረሻ የተዘመነው: 2026-06-28_
 
-## አጠቃላይ ማጠቃለያ
+## አስፈጻሚ ማጠቃለያ
 
-OmniRoute በNext.js ላይ የተገነባ አካባቢያዊ የAI ማስተላለፊያ መግቢያ እና ዳሽቦርድ ነው።
-አንድ ነጠላ ከOpenAI ጋር ተኳሃኝ የሆነ መዳረሻ (`/v1/*`) ያቀርባል፣ እንዲሁም ትራፊክን ትርጉም፣ ተለዋጭ መንገድ፣ የቶከን ማደስ እና የአጠቃቀም ክትትልን በመጠቀም በበርካታ የላይኛው ደረጃ አቅራቢዎች መካከል ያስተላልፋል።
+OmniRoute በNext.js ላይ የተገነባ አካባቢያዊ AI ማስተላለፊያ ጌትዌይ እና ዳሽቦርድ ነው።
+አንድ OpenAI-ተኳሃኝ መዳረሻ (`/v1/*`) ያቀርባል፤ ትራፊክንም በቅርጸት ለውጥ፣ በአማራጭ መተካት፣ በቶከን ማደስ እና በአጠቃቀም ክትትል አማካኝነት በበርካታ የላይኛው ደረጃ አቅራቢዎች መካከል ያስተላልፋል።
 
 ዋና ችሎታዎች፦
 
-- ከOpenAI ጋር ተኳሃኝ የAPI በይነገጽ ለCLI/መሣሪያዎች (373 አቅራቢዎች፣ 150 የአስፈጻሚ ሞጁሎች)
-- በአቅራቢ ቅርጸቶች መካከል የጥያቄ/ምላሽ ትርጉም
-- የሞዴል ጥምረት ተለዋጭ መንገድ (ባለብዙ-ሞዴል ቅደም ተከተል)
-- በ`compositeTiers` መሠረት በአሂድ ጊዜ ቅደም ተከተል ያላቸው የተዋቀሩ የጥምረት ደረጃዎች (`provider + model + connection`)
-- በመለያ ደረጃ ያለ ተለዋጭ መንገድ (ለእያንዳንዱ አቅራቢ በርካታ መለያዎች)
-- በዋናው የውይይት ዱካ ውስጥ የኮታ ቅድመ-ምርመራ እና ኮታን ያገናዘበ የP2C መለያ ምርጫ
-- OAuth + API-key የአቅራቢ ግንኙነት አስተዳደር (27 የOAuth አቅራቢ ሞጁሎች)
-- በ`/v1/embeddings` በኩል የEmbedding ማመንጨት (18 አቅራቢዎች)
+- ለCLI/መሣሪያዎች OpenAI-ተኳሃኝ API በይነገጽ (374 አቅራቢዎች፣ 150 አስፈጻሚ ሞጁሎች)
+- በአቅራቢ ቅርጸቶች መካከል የጥያቄ/ምላሽ ቅርጸት ለውጥ
+- የሞዴል ጥምረት አማራጭ መተካት (ባለብዙ-ሞዴል ቅደም ተከተል)
+- የተዋቀሩ የጥምረት ደረጃዎች (`provider + model + connection`)፣ በ`compositeTiers` መሠረት በሩጫ ጊዜ የሚደረግ ቅደም ተከተል
+- በመለያ ደረጃ አማራጭ መተካት (ለእያንዳንዱ አቅራቢ በርካታ መለያዎች)
+- በዋናው የውይይት መንገድ ውስጥ የኮታ ቅድመ-ምርመራ እና ኮታን ከግምት ያስገባ የP2C መለያ ምርጫ
+- የOAuth + API-key አቅራቢ ግንኙነት አስተዳደር (27 OAuth አቅራቢ ሞጁሎች)
+- በ`/v1/embeddings` በኩል የኤምቤዲንግ ማመንጨት (18 አቅራቢዎች)
 - በ`/v1/images/generations` በኩል የምስል ማመንጨት (10+ አቅራቢዎች፣ 20+ ሞዴሎች)
-- በ`/v1/audio/transcriptions` በኩል የድምፅ ግልባጭ (18 አቅራቢዎች)
+- በ`/v1/audio/transcriptions` በኩል የድምፅ ወደ ጽሑፍ ቅጂ ማዘጋጀት (18 አቅራቢዎች)
 - በ`/v1/audio/speech` በኩል ጽሑፍን ወደ ንግግር መቀየር (24 አብሮገነብ አቅራቢዎች)
 - በ`/v1/videos/generations` በኩል የቪዲዮ ማመንጨት (ComfyUI + SD WebUI)
 - በ`/v1/music/generations` በኩል የሙዚቃ ማመንጨት (ComfyUI)
 - በ`/v1/search` በኩል የድር ፍለጋ (20 አቅራቢዎች)
 - በ`/v1/moderations` በኩል የይዘት ቁጥጥር
 - በ`/v1/rerank` በኩል ዳግም ደረጃ መስጠት
-- ለምክንያታዊ አስተሳሰብ ሞዴሎች የThink መለያ መተንተን (``)
-- ከጥብቅ የOpenAI SDK ተኳሃኝነት ጋር የምላሽ ማጽዳት
-- ለተለያዩ አቅራቢዎች ተኳሃኝነት የሚና መደበኛነት (developer→system, system→user)
-- የተዋቀረ ውጤት መቀየር (json_schema → Gemini responseSchema)
-- ለአቅራቢዎች፣ ቁልፎች፣ ተለዋጭ ስሞች፣ ጥምረቶች፣ ቅንብሮች እና ዋጋ አሰጣጥ አካባቢያዊ ውሂብ ማቆየት (122 የDB ሞጁሎች)
-- የአጠቃቀም/ወጪ ክትትል እና የጥያቄ ምዝገባ
-- ለበርካታ መሣሪያዎች/ሁኔታ ማመሳሰል አማራጭ የደመና ማመሳሰል
-- ለAPI መዳረሻ ቁጥጥር የIP ፈቃድ ዝርዝር/እገዳ ዝርዝር
+- ለማመዛዘኛ ሞዴሎች የThink መለያ መተንተን (``)
+- ከጥብቅ የOpenAI SDK ተኳሃኝነት ጋር እንዲስማማ ምላሽን ማጽዳት
+- ለአቅራቢዎች መካከል ተኳሃኝነት የሚደረግ የሚና መደበኛነት (developer→system፣ system→user)
+- የተዋቀረ ውጤት ልወጣ (json_schema → Gemini responseSchema)
+- ለአቅራቢዎች፣ ቁልፎች፣ ተለዋጭ ስሞች፣ ጥምረቶች፣ ቅንብሮች እና ዋጋ አሰጣጥ አካባቢያዊ ዘላቂ ማከማቻ (122 DB ሞጁሎች)
+- የአጠቃቀም/ወጪ ክትትል እና የጥያቄ መዝገብ
+- ለብዙ መሣሪያ/ሁኔታ ማመሳሰል አማራጭ የደመና ማመሳሰል
+- ለAPI መዳረሻ ቁጥጥር የIP የተፈቀደላቸው/የታገዱ ዝርዝሮች
 - የማሰብ በጀት አስተዳደር (passthrough/auto/custom/adaptive)
-- ዓለም አቀፍ የስርዓት መጠየቂያ ማስገባት
-- የክፍለ ጊዜ ክትትል እና የጣት አሻራ ማመንጨት
-- በአቅራቢ-ተኮር መገለጫዎች የተሻሻለ በመለያ የተወሰነ የፍጥነት ገደብ
-- ለአቅራቢዎች ጽናት የወረዳ ማቋረጫ ንድፍ
-- በmutex locking አማካኝነት የተቀናጀ ድንገተኛ ጭነት መከላከያ
+- ዓለም አቀፍ የስርዓት መመሪያ ማስገባት
+- የክፍለ ጊዜ ክትትል እና አሻራ ማውጣት
+- ለእያንዳንዱ መለያ በአቅራቢ-ተኮር መገለጫዎች የተሻሻለ የፍጥነት ገደብ
+- ለአቅራቢ ጽናት የሰርኪት ብሬከር ንድፍ
+- በmutex መቆለፍ የሚከናወን የአንድ ጊዜ የብዙ ጥያቄዎች መጉረፍ መከላከያ
 - በፊርማ ላይ የተመሠረተ የተደጋጋሚ ጥያቄ ማስወገጃ መሸጎጫ
-- የጎራ ንብርብር፦ የወጪ ደንቦች፣ የተለዋጭ መንገድ ፖሊሲ፣ የመቆለፍ ፖሊሲ
-- Context Relay፦ መለያዎች ሲቀያየሩ ቀጣይነትን ለመጠበቅ የክፍለ ጊዜ ርክክብ ማጠቃለያዎች
-- የጎራ ሁኔታ ማቆየት (ለተለዋጭ መንገዶች፣ በጀቶች፣ መቆለፊያዎች፣ የወረዳ ማቋረጫዎች የSQLite write-through መሸጎጫ)
-- ለተማከለ የጥያቄ ግምገማ የፖሊሲ ሞተር (lockout → budget → fallback)
+- የዶሜይን ንብርብር፦ የወጪ ደንቦች፣ የአማራጭ መተካት ፖሊሲ፣ የመቆለፍ ፖሊሲ
+- Context Relay፦ በመለያ ሽክርክር ወቅት ቀጣይነትን ለማስጠበቅ የክፍለ ጊዜ ርክክብ ማጠቃለያዎች
+- የዶሜይን ሁኔታ ዘላቂ ማከማቻ (ለአማራጭ መተካቶች፣ በጀቶች፣ መቆለፎች እና ሰርኪት ብሬከሮች SQLite write-through መሸጎጫ)
+- ለማዕከላዊ የጥያቄ ግምገማ የፖሊሲ ሞተር (lockout → budget → fallback)
 - p50/p95/p99 የመዘግየት ድምር ያለው የጥያቄ ቴሌሜትሪ
-- የጥምረት ዒላማ ቴሌሜትሪ እና ታሪካዊ የጥምረት ዒላማ ጤንነት በ`combo_execution_key` / `combo_step_id`
-- ከጫፍ እስከ ጫፍ ፍለጋ የCorrelation ID (X-Request-Id)
-- ለእያንዳንዱ API key መርጦ የመውጣት አማራጭ ያለው የተገዢነት ኦዲት ምዝገባ
+- የጥምረት ዒላማ ቴሌሜትሪ እና በ`combo_execution_key` / `combo_step_id` በኩል ታሪካዊ የጥምረት ዒላማ ጤና
+- ከጫፍ እስከ ጫፍ ለሚደረግ ክትትል የግንኙነት መለያ (X-Request-Id)
+- ለእያንዳንዱ API ቁልፍ ከመሳተፍ የመውጣት አማራጭ ያለው የተገዢነት ኦዲት ምዝገባ
 - ለLLM ጥራት ማረጋገጫ የEval ማዕቀፍ
-- ቅጽበታዊ የአቅራቢ ወረዳ ማቋረጫ ሁኔታ ያለው የጤና ዳሽቦርድ
-- MCP Server (110 መሣሪያዎች) ከ3 የማጓጓዣ ዘዴዎች ጋር (stdio/SSE/Streamable HTTP)
+- ቅጽበታዊ የአቅራቢ ሰርኪት ብሬከር ሁኔታ ያለው የጤና ዳሽቦርድ
+- MCP Server (110 መሣሪያዎች) ከ3 ማጓጓዣዎች ጋር (stdio/SSE/Streamable HTTP)
 - A2A Server (JSON-RPC 2.0 + SSE) ከክህሎቶች እና የተግባር የሕይወት ዑደት ጋር
-- የማስታወሻ ስርዓት (ማውጣት፣ ማስገባት፣ መልሶ ማግኘት፣ ማጠቃለል)
+- የማስታወሻ ስርዓት (ማውጣት፣ ማስገባት፣ ሰርስሮ ማውጣት፣ ማጠቃለል)
 - የክህሎቶች ስርዓት (መዝገብ፣ አስፈጻሚ፣ sandbox፣ አብሮገነብ ክህሎቶች)
-- የMITM ፕሮክሲ ከሰርቲፊኬት አስተዳደር እና DNS አያያዝ ጋር
-- የPrompt injection መከላከያ middleware
-- የPrompt compression መስመር ከCaveman፣ RTK፣ የተደራረቡ መስመሮች፣ የcompression ጥምረቶች፣ የቋንቋ ጥቅሎች እና ትንታኔዎች ጋር
-- የACP (Agent Communication Protocol) መዝገብ
-- ሞጁላር የOAuth አቅራቢዎች (በ`src/lib/oauth/providers/` ስር 22 የግል ሞጁሎች)
+- የምስክር ወረቀት አስተዳደር እና DNS አያያዝ ያለው MITM proxy
+- የመመሪያ ጥቃት መከላከያ middleware
+- Caveman፣ RTK፣ የተደራረቡ የሂደት መስመሮች፣ የማመቅ ጥምረቶች፣ የቋንቋ ጥቅሎች እና ትንታኔዎች ያሉት የመመሪያ ማመቂያ የሂደት መስመር
+- ACP (Agent Communication Protocol) መዝገብ
+- ሞጁላር OAuth አቅራቢዎች (በ`src/lib/oauth/providers/` ስር 22 የተናጠል ሞጁሎች)
 - የማራገፊያ/ሙሉ-ማራገፊያ ስክሪፕቶች
 - የOAuth አካባቢ ጥገና እርምጃ
-- ከOpenAI ጋር ተኳሃኝ ለሆኑ WS ደንበኞች የWebSocket ድልድይ (`/v1/ws`)
-- የማመሳሰያ ቶከን አስተዳደር (መስጠት/መሻር፣ በETag ስሪት የተያዘ የውቅር ጥቅል ማውረድ)
-- GLM Thinking (`glmt`) እንደ ዋና የአቅራቢ ቅድመ-ቅንብር
-- ድብልቅ የቶከን ቆጠራ (የአቅራቢ-ወገን `/messages/count_tokens` ከግምታዊ ተለዋጭ ዘዴ ጋር)
-- የሞዴል ተለዋጭ ስም ራስ-ሰር መዝራት (በማስጀመሪያ ጊዜ 30+ የመስቀለኛ-ፕሮክሲ ዘዬ መደበኛነቶች)
-- ከSSRF መከላከያ፣ የግል URL እገዳ እና ሊዋቀር የሚችል ድጋሚ ሙከራ ጋር ደህንነቱ የተጠበቀ ወደ ውጭ የሚደረግ fetch
-- ሊዋቀሩ የሚችሉ `requestRetry` እና `maxRetryIntervalSec` ያላቸው የመረጋጋት ጊዜን ያገናዘቡ የውይይት ድጋሚ ሙከራዎች
-- በማስጀመሪያ ጊዜ በZod የአሂድ ጊዜ አካባቢ ማረጋገጥ
-- የተገዢነት ኦዲት v2 ከገጽ ከፈላ፣ የአቅራቢ CRUD ክስተቶች እና በSSRF የታገደ የማረጋገጫ ምዝገባ ጋር
+- ለOpenAI-ተኳሃኝ WS ደንበኞች WebSocket ድልድይ (`/v1/ws`)
+- የማመሳሰያ ቶከን አስተዳደር (መስጠት/መሻር፣ ETag-ስሪት ያለው የውቅር ጥቅል ማውረድ)
+- GLM Thinking (`glmt`) እንደ ዋና ደረጃ አቅራቢ ቅድመ-ቅንብር
+- ድብልቅ የቶከን ቆጠራ (በአቅራቢ በኩል `/messages/count_tokens` ከግምታዊ አማራጭ ጋር)
+- የሞዴል ተለዋጭ ስም ራስ-ሰር መዝራት (ሲጀመር 30+ የፕሮክሲ-አቋራጭ የቅላፄ መደበኛነቶች)
+- ከSSRF መከላከያ፣ ከግል URL እገዳ እና ሊዋቀር ከሚችል ዳግም ሙከራ ጋር ደህንነቱ የተጠበቀ ወደ ውጭ የሚደረግ ሰርስሮ ማምጣት
+- ሊዋቀሩ ከሚችሉ `requestRetry` እና `maxRetryIntervalSec` ጋር የማቀዝቀዣ ጊዜን ከግምት ያስገቡ የውይይት ዳግም ሙከራዎች
+- ሲጀመር በZod የሚደረግ የሩጫ ጊዜ አካባቢ ማረጋገጫ
+- የተገዢነት ኦዲት v2 ከገጽ ክፍፍል፣ ከአቅራቢ CRUD ክስተቶች እና ከSSRF-የታገደ የማረጋገጫ ምዝገባ ጋር
 
-ዋና የአሂድ ጊዜ ሞዴል፦
+ዋና የሩጫ ጊዜ ሞዴል፦
 
-- በ`src/app/api/*` ስር ያሉ የNext.js መተግበሪያ ዱካዎች ሁለቱንም የዳሽቦርድ APIዎች እና የተኳሃኝነት APIዎች ይተገብራሉ
-- በ`src/sse/*` + `open-sse/*` ውስጥ ያለ የጋራ SSE/ማስተላለፊያ ኮር የአቅራቢ አፈጻጸምን፣ ትርጉምን፣ ዥረትን፣ ተለዋጭ መንገድን እና አጠቃቀምን ያስተናግዳል
+- በ`src/app/api/*` ስር ያሉ የNext.js መተግበሪያ መንገዶች ሁለቱንም የዳሽቦርድ APIዎች እና የተኳሃኝነት APIዎች ይተገብራሉ
+- በ`src/sse/*` + `open-sse/*` ውስጥ ያለ የጋራ SSE/ማስተላለፊያ ዋና አካል የአቅራቢ አፈጻጸምን፣ የቅርጸት ለውጥን፣ ዥረትን፣ አማራጭ መተካትን እና አጠቃቀምን ያስተናግዳል
 
 ## የማጣቀሻ ንድፎች
 
@@ -533,16 +533,17 @@ model lockout ንብርብሮች ላይ የሚደገፉ ልዩ የመቋቋም �
 - ሰንጠረዦች (በ`src/lib/db/core.ts` ውስጥ የሚፈጠሩ)፦ `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - የWrite-through cache ንድፍ፦ በሂደት ላይ ሳለ in-memory Maps ዋና የመረጃ ምንጭ ናቸው፤ ለውጦች በተመሳሰለ ሁኔታ ወደ SQLite ይጻፋሉ፤ በcold start ጊዜ ሁኔታው ከDB ይመለሳል
 
-## 4) የማረጋገጫ + ደህንነት መገናኛዎች
+## 4) ማረጋገጫ + የደህንነት ገጽታዎች
 
-- የDashboard cookie ማረጋገጫ፦ `src/proxy.ts`, `src/app/api/auth/login/route.ts`
-- የAPI key ማመንጨት/ማረጋገጥ፦ `src/shared/utils/apiKey.ts`
-- የአቅራቢ ምስጢሮች በ`providerConnections` entries ውስጥ በቋሚነት ይቀመጣሉ
-- የውጪ proxy ድጋፍ በ`open-sse/utils/proxyFetch.ts` (env vars) እና `open-sse/utils/networkProxy.ts` (በየአቅራቢው ወይም በዓለም አቀፍ ደረጃ ሊዋቀር የሚችል)
-- SSRF / የውጪ URL መከላከያ፦ `src/shared/network/outboundUrlGuard.ts` — ለሁሉም የአቅራቢ ጥሪዎች private/loopback/link-local ክልሎችን ያግዳል
-- የRuntime env ማረጋገጫ፦ `src/lib/env/runtimeEnv.ts` — ለሁሉም የአካባቢ ተለዋዋጮች Zod schema፣ እንደ ማስጀመሪያ ስህተቶች/ማስጠንቀቂያዎች ይቀርባል
-- የSync tokens፦ `src/lib/db/syncTokens.ts` — ለconfig bundle የማውረጃ endpoints የተገደበ ወሰን ያላቸው tokens፤ በ`sync_tokens` SQLite ሰንጠረዥ የተደገፉ (migration `024_create_sync_tokens.sql`)
-- የWebSocket handshake ማረጋገጫ፦ `src/lib/ws/handshake.ts` — የWS upgrade requestsን በAPI key ወይም በsession cookie ያረጋግጣል
+- የዳሽቦርድ ኩኪ ማረጋገጫ፦ `src/proxy.ts`፣ `src/app/api/auth/login/route.ts`
+- የAPI ቁልፍ ማመንጨት/ማረጋገጥ፦ `src/shared/utils/apiKey.ts`
+- የአቅራቢዎች ሚስጥሮች በ`providerConnections` ግቤቶች ውስጥ ቋሚ ሆነው ይቀመጣሉ
+- የወጪ ፕሮክሲ ድጋፍ በ`open-sse/utils/proxyFetch.ts` (የአካባቢ ተለዋዋጮች) እና በ`open-sse/utils/networkProxy.ts` (ለእያንዳንዱ አቅራቢ ወይም በአጠቃላይ ሊዋቀር የሚችል)
+- SSRF / የወጪ URL መከላከያ፦ `src/shared/network/outboundUrlGuard.ts` — በአቅራቢ ጥሪዎች እና በwebhook መዳረሻዎች ላይ የአስተናጋጅ ማረጋገጫዎችን ያከናውናል፤ ሁነታው ከ`src/shared/network/outboundUrlGuardPolicy.ts` ይመጣል (ጠቋሚዎቹ በ`docs/reference/ENVIRONMENT.md` ውስጥ ይገኛሉ)
+- የአሂድ-ጊዜ የአካባቢ ማረጋገጫ፦ `src/lib/env/runtimeEnv.ts` — ለሁሉም የአካባቢ ተለዋዋጮች የZod ንድፍ፤ እንደ ማስጀመሪያ ስህተቶች/ማስጠንቀቂያዎች ይቀርባል
+- የማመሳሰያ ቶከኖች፦ `src/lib/db/syncTokens.ts` — ለውቅረት ጥቅል ማውረጃ መጨረሻ ነጥቦች የተወሰነ ወሰን ያላቸው ቶከኖች፤ በ`sync_tokens` SQLite ሰንጠረዥ የተደገፉ ናቸው (ፍልሰት `024_create_sync_tokens.sql`)
+- የWebSocket ቅድመ-ግንኙነት ማረጋገጫ፦ `src/lib/ws/handshake.ts` — የWS ማሻሻያ ጥያቄዎችን በAPI ቁልፍ ወይም በክፍለ-ጊዜ ኩኪ ያረጋግጣል
+- የቀጥታ ዳሽቦርድ WebSocket ማረጋገጫ፦ `src/server/ws/liveServer.ts` — sidecar (ወደብ `LIVE_WS_PORT`) የዳሽቦርድ ክፍለ-ጊዜ ኩኪ ወይም የአስተዳደር ወሰን (`manage`/`admin`) ያለው Bearer API ቁልፍ ይቀበላል፤ ለinference ብቻ የሚያገለግሉ ቁልፎችን አይቀበልም። ውስጣዊው `POST /__omniroute_event` የአታሚ መጨረሻ ነጥብ የፕሮክሲ-ዝላይ ራስጌ (`x-forwarded-*`፣ `x-real-ip`፣ `forwarded`፣ `via`) ከሌለ ብቻ የloopback አቻዎችን ይቀበላል
 
 ## 5) የCloud ማመሳሰል
 

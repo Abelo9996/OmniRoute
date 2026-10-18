@@ -15,13 +15,13 @@ Den tillhandahåller en enda OpenAI-kompatibel slutpunkt (`/v1/*`) och dirigerar
 
 Centrala funktioner:
 
-- OpenAI-kompatibel API-yta för CLI/verktyg (373 leverantörer, 150 exekveringsmoduler)
-- Översättning av förfrågningar och svar mellan leverantörsformat
+- OpenAI-kompatibelt API-gränssnitt för CLI/verktyg (374 leverantörer, 150 exekveringsmoduler)
+- Översättning av förfrågningar/svar mellan leverantörsformat
 - Reservväxling för modellkombinationer (sekvens med flera modeller)
 - Strukturerade kombinationssteg (`provider + model + connection`) med körningsordning baserad på `compositeTiers`
 - Reservväxling på kontonivå (flera konton per leverantör)
-- Förhandskontroll av kvoter och kvotmedvetet P2C-kontoval i huvudflödet för chatt
-- Hantering av leverantörsanslutningar via OAuth och API-nycklar (27 OAuth-leverantörsmoduler)
+- Förhandskontroll av kvoter och kvotmedvetet P2C-val av konto i det huvudsakliga chattflödet
+- Hantering av leverantörsanslutningar med OAuth och API-nycklar (27 OAuth-leverantörsmoduler)
 - Generering av inbäddningar via `/v1/embeddings` (18 leverantörer)
 - Bildgenerering via `/v1/images/generations` (10+ leverantörer, 20+ modeller)
 - Ljudtranskribering via `/v1/audio/transcriptions` (18 leverantörer)
@@ -30,57 +30,57 @@ Centrala funktioner:
 - Musikgenerering via `/v1/music/generations` (ComfyUI)
 - Webbsökning via `/v1/search` (20 leverantörer)
 - Moderering via `/v1/moderations`
-- Omrangordning via `/v1/rerank`
-- Parsning av Think-taggar (``) för resonerande modeller
+- Omrankning via `/v1/rerank`
+- Tolkning av think-taggar (``) för resonemangsmodeller
 - Sanering av svar för strikt kompatibilitet med OpenAI SDK
 - Rollnormalisering (developer→system, system→user) för kompatibilitet mellan leverantörer
 - Konvertering av strukturerade utdata (json_schema → Gemini responseSchema)
-- Lokal persistens för leverantörer, nycklar, alias, kombinationer, inställningar och prissättning (122 databasmoduler)
-- Spårning av användning och kostnader samt loggning av förfrågningar
-- Valfri molnsynkronisering för synkronisering av tillstånd mellan flera enheter
-- Tillåtelse- och blockeringslistor för IP-adresser för åtkomstkontroll till API:et
-- Hantering av beräkningsbudget (vidarebefordran/automatisk/anpassad/adaptiv)
+- Lokal persistens för leverantörer, nycklar, alias, kombinationer, inställningar och prissättning (122 DB-moduler)
+- Spårning av användning/kostnader och loggning av förfrågningar
+- Valfri molnsynkronisering för synkronisering mellan flera enheter och av tillstånd
+- Tillåtelselista/blockeringslista för IP-adresser för åtkomstkontroll till API:et
+- Hantering av tankebudget (vidarebefordran/automatisk/anpassad/adaptiv)
 - Global injicering av systemprompt
-- Sessionsspårning och fingeravtryck
+- Sessionsspårning och fingeravtrycksidentifiering
 - Förbättrad hastighetsbegränsning per konto med leverantörsspecifika profiler
 - Kretsbrytarmönster för leverantörsresiliens
-- Skydd mot anropsstormar med mutex-låsning
+- Skydd mot samtidiga anropsstormar med mutexlåsning
 - Signaturbaserad cache för deduplicering av förfrågningar
-- Domänlager: kostnadsregler, reservväxlingspolicy och utlåsningspolicy
-- Context Relay: sammanfattningar för sessionsöverlämning som säkerställer kontinuitet vid kontorotation
-- Persistens av domäntillstånd (SQLite-cache med direktgenomskrivning för reservväxlingar, budgetar, utlåsningar och kretsbrytare)
-- Policymotor för centraliserad utvärdering av förfrågningar (utlåsning → budget → reservväxling)
-- Telemetri för förfrågningar med aggregering av p50-/p95-/p99-latens
+- Domänlager: kostnadsregler, reservväxlingspolicy, utelåsningspolicy
+- Context Relay: sammanfattningar för sessionsöverlämning som bevarar kontinuiteten vid kontorotation
+- Persistens för domäntillstånd (SQLite-cache med direktskrivning för reservväxlingar, budgetar, utelåsningar och kretsbrytare)
+- Policymotor för centraliserad utvärdering av förfrågningar (utelåsning → budget → reservväxling)
+- Telemetri för förfrågningar med aggregering av p50/p95/p99-latens
 - Telemetri för kombinationsmål och historisk status för kombinationsmål via `combo_execution_key` / `combo_step_id`
-- Korrelations-ID (X-Request-Id) för heltäckande spårning
-- Loggning för regelefterlevnadsgranskning med möjlighet att välja bort per API-nyckel
-- Utvärderingsramverk för kvalitetssäkring av LLM:er
-- Hälsokontrollpanel med status i realtid för leverantörernas kretsbrytare
+- Korrelations-ID (X-Request-Id) för spårning från början till slut
+- Regelefterlevnadsloggning med möjlighet att välja bort per API-nyckel
+- Eval-ramverk för kvalitetssäkring av LLM:er
+- Statuspanel med kretsbrytarstatus för leverantörer i realtid
 - MCP-server (110 verktyg) med 3 transporter (stdio/SSE/Streamable HTTP)
-- A2A-server (JSON-RPC 2.0 + SSE) med färdigheter och livscykel för uppgifter
-- Minnessystem (extrahering, injicering, hämtning och sammanfattning)
-- Färdighetssystem (register, exekverare, sandlåda och inbyggda färdigheter)
+- A2A-server (JSON-RPC 2.0 + SSE) med färdigheter och uppgiftslivscykel
+- Minnessystem (extrahering, injicering, hämtning, sammanfattning)
+- Färdighetssystem (register, exekverare, sandlåda, inbyggda färdigheter)
 - MITM-proxy med certifikathantering och DNS-hantering
-- Middleware som skyddar mot promptinjektion
+- Middleware för skydd mot promptinjektion
 - Pipeline för promptkomprimering med Caveman, RTK, staplade pipelines, komprimeringskombinationer, språkpaket och analys
 - ACP-register (Agent Communication Protocol)
 - Modulära OAuth-leverantörer (22 enskilda moduler under `src/lib/oauth/providers/`)
 - Skript för avinstallation/fullständig avinstallation
 - Åtgärd för reparation av OAuth-miljön
 - WebSocket-brygga för OpenAI-kompatibla WS-klienter (`/v1/ws`)
-- Hantering av synkroniseringstoken (utfärdande/återkallande och nedladdning av ETag-versionshanterade konfigurationspaket)
-- GLM Thinking (`glmt`) som fullvärdig förinställning för leverantör
+- Hantering av synkroniseringstoken (utfärdande/återkallande, hämtning av ETag-versionerat konfigurationspaket)
+- GLM Thinking (`glmt`) som förstklassig leverantörsförinställning
 - Hybridbaserad tokenräkning (leverantörssidan `/messages/count_tokens` med uppskattning som reserv)
-- Automatisk initiering av modellalias (30+ normaliseringar mellan proxydialekter vid start)
+- Automatisk initiering av modellalias (30+ normaliseringar mellan proxydialekter vid uppstart)
 - Säker utgående hämtning med SSRF-skydd, blockering av privata URL:er och konfigurerbara återförsök
-- Nedkylningsmedvetna återförsök för chatt med konfigurerbara `requestRetry` och `maxRetryIntervalSec`
-- Validering av körningsmiljön med Zod vid start
-- Regelefterlevnadsgranskning v2 med sidnumrering, CRUD-händelser för leverantörer och valideringsloggning för blockerad SSRF
+- Cooldown-medvetna återförsök för chatt med konfigurerbara `requestRetry` och `maxRetryIntervalSec`
+- Validering av körningsmiljön med Zod vid uppstart
+- Regelefterlevnadsloggning v2 med sidindelning, CRUD-händelser för leverantörer och valideringsloggning av SSRF-blockeringar
 
 Primär körningsmodell:
 
-- Next.js-appens routes under `src/app/api/*` implementerar både API:er för kontrollpanelen och kompatibilitets-API:er
-- En delad SSE-/routingkärna i `src/sse/*` + `open-sse/*` hanterar leverantörsexekvering, översättning, strömning, reservväxling och användning
+- Next.js-apprutter under `src/app/api/*` implementerar både API:er för kontrollpanelen och kompatibilitets-API:er
+- En gemensam SSE-/routingkärna i `src/sse/*` + `open-sse/*` hanterar leverantörsexekvering, översättning, strömning, reservväxling och användning
 
 ## Referensdiagram
 
@@ -534,16 +534,17 @@ Domäntillståndsdatabas (SQLite):
 - Tabeller (skapade i `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Genomskrivningscache: minnesbaserade Maps är auktoritativa under körning; ändringar skrivs synkront till SQLite; tillståndet återställs från databasen vid kallstart
 
-## 4) Ytor för autentisering och säkerhet
+## 4) Autentisering + säkerhetsytor
 
-- Cookie-autentisering för kontrollpanelen: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Cookiebaserad autentisering för kontrollpanelen: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - Generering/verifiering av API-nycklar: `src/shared/utils/apiKey.ts`
-- Leverantörshemligheter lagras i poster i `providerConnections`
+- Leverantörshemligheter lagras i posterna för `providerConnections`
 - Stöd för utgående proxy via `open-sse/utils/proxyFetch.ts` (miljövariabler) och `open-sse/utils/networkProxy.ts` (konfigurerbart per leverantör eller globalt)
-- SSRF-/URL-skydd för utgående trafik: `src/shared/network/outboundUrlGuard.ts` — blockerar privata intervall, loopback-intervall och länklokala intervall för alla leverantörsanrop
-- Validering av körmiljön: `src/lib/env/runtimeEnv.ts` — Zod-schema för alla miljövariabler, presenteras som fel/varningar vid uppstart
-- Synkroniseringstoken: `src/lib/db/syncTokens.ts` — avgränsade token för slutpunkter som laddar ned konfigurationspaket; stöds av SQLite-tabellen `sync_tokens` (migrering `024_create_sync_tokens.sql`)
-- Autentisering vid WebSocket-handskakning: `src/lib/ws/handshake.ts` — validerar WS-uppgraderingsförfrågningar via API-nyckel eller sessionscookie
+- SSRF-/URL-skydd för utgående trafik: `src/shared/network/outboundUrlGuard.ts` — värdkontroller för leverantörsanrop och webhookmål; läget hämtas från `src/shared/network/outboundUrlGuardPolicy.ts` (flaggor i `docs/reference/ENVIRONMENT.md`)
+- Validering av körningsmiljön: `src/lib/env/runtimeEnv.ts` — Zod-schema för alla miljövariabler, som visas som fel/varningar vid start
+- Synkroniseringstoken: `src/lib/db/syncTokens.ts` — avgränsade token för slutpunkter för hämtning av konfigurationspaket; stöds av SQLite-tabellen `sync_tokens` (migrering `024_create_sync_tokens.sql`)
+- Autentisering vid WebSocket-handskakning: `src/lib/ws/handshake.ts` — validerar WS-uppgraderingsbegäranden via API-nyckel eller sessionscookie
+- WebSocket-autentisering för livekontrollpanelen: `src/server/ws/liveServer.ts` — sidoprocessen (port `LIVE_WS_PORT`) accepterar en sessionscookie för kontrollpanelen eller en Bearer-API-nyckel med hanteringsbehörighet (`manage`/`admin`); nycklar som endast är avsedda för inferens nekas. Dess interna publiceringsslutpunkt `POST /__omniroute_event` accepterar endast loopback-motparter när inget proxyhopp-huvud (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`) finns
 
 ## 5) Molnsynkronisering
 

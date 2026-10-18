@@ -17,22 +17,22 @@ _最後更新：2026-06-28_
 
 ## 執行摘要
 
-OmniRoute 是一個以 Next.js 建置的本機 AI 路由閘道與儀表板。
-它提供單一的 OpenAI 相容端點（`/v1/*`），並透過格式轉換、備援、權杖重新整理與用量追蹤，將流量路由至多個上游提供者。
+OmniRoute 是一個基於 Next.js 建置的本機 AI 路由閘道與儀表板。
+它提供單一 OpenAI 相容端點（`/v1/*`），並透過格式轉換、備援、權杖重新整理及使用量追蹤，將流量路由至多個上游提供者。
 
 核心功能：
 
-- 為 CLI／工具提供 OpenAI 相容的 API 介面（373 個提供者、150 個執行器模組）
-- 在不同提供者格式之間轉換請求／回應
+- 為 CLI/工具提供 OpenAI 相容的 API 介面（374 個提供者、150 個執行器模組）
+- 在不同提供者格式之間轉換請求/回應
 - 模型組合備援（多模型序列）
-- 結構化組合步驟（`provider + model + connection`），並於執行階段依 `compositeTiers` 排序
-- 帳戶層級備援（每個提供者可設定多個帳戶）
-- 主要聊天路徑中的配額預檢，以及可感知配額的 P2C 帳戶選擇
+- 結構化組合步驟（`provider + model + connection`），執行階段依 `compositeTiers` 排序
+- 帳戶層級備援（每個提供者支援多個帳戶）
+- 主要聊天路徑中的配額預檢與配額感知 P2C 帳戶選擇
 - OAuth + API 金鑰提供者連線管理（27 個 OAuth 提供者模組）
 - 透過 `/v1/embeddings` 產生嵌入向量（18 個提供者）
-- 透過 `/v1/images/generations` 產生圖片（10+ 個提供者、20+ 個模型）
+- 透過 `/v1/images/generations` 產生影像（10+ 個提供者、20+ 個模型）
 - 透過 `/v1/audio/transcriptions` 進行音訊轉錄（18 個提供者）
-- 透過 `/v1/audio/speech` 進行文字轉語音（24 個內建提供者）
+- 透過 `/v1/audio/speech` 將文字轉換為語音（24 個內建提供者）
 - 透過 `/v1/videos/generations` 產生影片（ComfyUI + SD WebUI）
 - 透過 `/v1/music/generations` 產生音樂（ComfyUI）
 - 透過 `/v1/search` 進行網頁搜尋（20 個提供者）
@@ -40,54 +40,54 @@ OmniRoute 是一個以 Next.js 建置的本機 AI 路由閘道與儀表板。
 - 透過 `/v1/rerank` 進行重新排序
 - 為推理模型解析思考標籤（``）
 - 清理回應，以嚴格相容 OpenAI SDK
-- 正規化角色（developer→system、system→user），以實現跨提供者相容性
+- 角色正規化（developer→system、system→user），以實現跨提供者相容性
 - 結構化輸出轉換（json_schema → Gemini responseSchema）
-- 對提供者、金鑰、別名、組合、設定與定價進行本機持久化（122 個資料庫模組）
-- 用量／成本追蹤與請求記錄
-- 可選的雲端同步，用於多裝置／狀態同步
-- 用於 API 存取控制的 IP 允許清單／封鎖清單
-- 思考預算管理（直通／自動／自訂／自適應）
+- 在本機持久儲存提供者、金鑰、別名、組合、設定及定價資料（122 個 DB 模組）
+- 使用量/成本追蹤與請求記錄
+- 選用的雲端同步，支援多裝置/狀態同步
+- 用於 API 存取控制的 IP 允許清單/封鎖清單
+- 思考預算管理（直通/自動/自訂/自適應）
 - 全域系統提示詞注入
 - 工作階段追蹤與指紋辨識
-- 每帳戶增強型速率限制，並支援提供者專屬設定檔
+- 每個帳戶的增強型速率限制，並支援提供者特定設定檔
 - 用於提升提供者韌性的斷路器模式
-- 使用互斥鎖防止驚群效應
+- 使用互斥鎖提供防驚群保護
 - 基於簽章的請求去重快取
-- 領域層：成本規則、備援原則、鎖定原則
-- Context Relay：工作階段交接摘要，確保帳戶輪替時的連續性
-- 領域狀態持久化（用於備援、預算、鎖定與斷路器的 SQLite 寫入穿透快取）
-- 用於集中式請求評估的原則引擎（鎖定 → 預算 → 備援）
-- 請求遙測，支援 p50／p95／p99 延遲彙總
-- 透過 `combo_execution_key`／`combo_step_id` 提供組合目標遙測與歷史組合目標健康狀態
+- 領域層：成本規則、備援策略、鎖定策略
+- Context Relay：用於在帳戶輪替期間維持連續性的工作階段交接摘要
+- 領域狀態持久化（針對備援、預算、鎖定及斷路器的 SQLite 寫入式快取）
+- 用於集中式請求評估的策略引擎（鎖定 → 預算 → 備援）
+- 請求遙測，支援 p50/p95/p99 延遲彙總
+- 透過 `combo_execution_key` / `combo_step_id` 提供組合目標遙測與歷史組合目標健康狀態
 - 用於端對端追蹤的關聯 ID（X-Request-Id）
-- 合規稽核記錄，支援依 API 金鑰選擇退出
+- 合規稽核記錄，支援依 API 金鑰選擇停用
 - 用於 LLM 品質保證的評估框架
-- 健康狀態儀表板，即時顯示提供者斷路器狀態
-- MCP Server（110 個工具），支援 3 種傳輸方式（stdio／SSE／Streamable HTTP）
+- 健康狀態儀表板，提供即時提供者斷路器狀態
+- MCP Server（110 個工具），支援 3 種傳輸方式（stdio/SSE/Streamable HTTP）
 - A2A Server（JSON-RPC 2.0 + SSE），支援技能與任務生命週期
 - 記憶系統（擷取、注入、檢索、摘要）
-- 技能系統（註冊表、執行器、沙箱、內建技能）
-- MITM 代理，支援憑證管理與 DNS 處理
+- 技能系統（登錄檔、執行器、沙箱、內建技能）
+- MITM 代理伺服器，支援憑證管理與 DNS 處理
 - 提示詞注入防護中介軟體
-- 提示詞壓縮管線，支援 Caveman、RTK、堆疊式管線、壓縮組合、語言套件與分析
-- ACP（Agent Communication Protocol）註冊表
-- 模組化 OAuth 提供者（`src/lib/oauth/providers/` 下有 22 個獨立模組）
-- 解除安裝／完整解除安裝指令碼
-- OAuth 環境修復操作
+- 提示詞壓縮管線，支援 Caveman、RTK、堆疊式管線、壓縮組合、語言套件及分析
+- ACP（Agent Communication Protocol）登錄檔
+- 模組化 OAuth 提供者（`src/lib/oauth/providers/` 下的 22 個獨立模組）
+- 解除安裝/完整解除安裝指令碼
+- OAuth 環境修復動作
 - 適用於 OpenAI 相容 WS 用戶端的 WebSocket 橋接器（`/v1/ws`）
-- 同步權杖管理（發行／撤銷、下載以 ETag 版本控管的設定套件）
-- GLM Thinking（`glmt`）一級提供者預設
+- 同步權杖管理（簽發/撤銷、下載以 ETag 進行版本管理的設定套件）
+- GLM Thinking（`glmt`）一級提供者預設集
 - 混合式權杖計數（提供者端 `/messages/count_tokens`，並提供估算備援）
-- 自動植入模型別名（啟動時正規化 30+ 種跨代理方言）
-- 安全的對外擷取，具備 SSRF 防護、私人 URL 封鎖與可設定的重試機制
-- 可感知冷卻時間的聊天重試，支援設定 `requestRetry` 與 `maxRetryIntervalSec`
+- 模型別名自動植入（啟動時執行 30+ 種跨代理方言正規化）
+- 安全的對外擷取，具備 SSRF 防護、私有 URL 封鎖及可設定的重試機制
+- 可感知冷卻時間的聊天重試，支援可設定的 `requestRetry` 與 `maxRetryIntervalSec`
 - 啟動時使用 Zod 驗證執行階段環境
-- 合規稽核 v2，支援分頁、提供者 CRUD 事件，以及 SSRF 封鎖驗證記錄
+- 合規稽核 v2，支援分頁、提供者 CRUD 事件及 SSRF 封鎖驗證記錄
 
 主要執行階段模型：
 
 - `src/app/api/*` 下的 Next.js 應用程式路由同時實作儀表板 API 與相容性 API
-- `src/sse/*` + `open-sse/*` 中的共用 SSE／路由核心負責提供者執行、格式轉換、串流、備援與用量處理
+- `src/sse/*` + `open-sse/*` 中的共用 SSE/路由核心負責提供者執行、格式轉換、串流、備援及使用量處理
 
 ## 參考圖表
 
@@ -514,16 +514,17 @@ FSM 轉換結果饋入自動組合的評分，對背景/自動化任務偏向較
 - 表格（在 `src/lib/db/core.ts` 中建立）：`domain_fallback_chains`、`domain_budgets`、`domain_cost_history`、`domain_lockout_state`、`domain_circuit_breakers`
 - 寫穿透快取模式：記憶體中的 Maps 在執行時期具有權威性；變更同步寫入 SQLite；冷啟動時從 DB 恢復狀態
 
-## 4) 驗證 + 安全表面
+## 4) 驗證 + 安全性介面
 
 - 儀表板 Cookie 驗證：`src/proxy.ts`、`src/app/api/auth/login/route.ts`
-- API 金鑰生成/驗證：`src/shared/utils/apiKey.ts`
-- 提供者秘密儲存在 `providerConnections` 項目中
-- 透過 `open-sse/utils/proxyFetch.ts`（環境變數）與 `open-sse/utils/networkProxy.ts`（可針對每個提供者或全域設定）支援外送代理
-- SSRF / 外送 URL 防護：`src/shared/network/outboundUrlGuard.ts` — 封鎖所有提供者呼叫的私人/迴路/鏈結本地範圍
-- 執行時期環境驗證：`src/lib/env/runtimeEnv.ts` — 所有環境變數的 Zod 架構，以啟動錯誤/警告形式呈現
-- 同步令牌：`src/lib/db/syncTokens.ts` — 用於設定套件下載端點的範圍限定令牌；由 `sync_tokens` SQLite 表格支援（遷移 `024_create_sync_tokens.sql`）
-- WebSocket 握手驗證：`src/lib/ws/handshake.ts` — 透過 API 金鑰或工作階段 Cookie 驗證 WS 升級請求
+- API 金鑰產生／驗證：`src/shared/utils/apiKey.ts`
+- 提供者密鑰持久儲存於 `providerConnections` 項目中
+- 對外代理支援：透過 `open-sse/utils/proxyFetch.ts`（環境變數）及 `open-sse/utils/networkProxy.ts`（可針對各提供者或全域設定）
+- SSRF／對外 URL 防護：`src/shared/network/outboundUrlGuard.ts` — 對提供者呼叫及 Webhook 目標執行主機檢查；模式來自 `src/shared/network/outboundUrlGuardPolicy.ts`（旗標記載於 `docs/reference/ENVIRONMENT.md`）
+- 執行階段環境驗證：`src/lib/env/runtimeEnv.ts` — 適用於所有環境變數的 Zod 結構描述，並以啟動錯誤／警告呈現
+- 同步權杖：`src/lib/db/syncTokens.ts` — 用於設定套件下載端點的具範圍權杖；由 `sync_tokens` SQLite 資料表支援（遷移檔案 `024_create_sync_tokens.sql`）
+- WebSocket 握手驗證：`src/lib/ws/handshake.ts` — 透過 API 金鑰或工作階段 Cookie 驗證 WS 升級要求
+- 即時儀表板 WebSocket 驗證：`src/server/ws/liveServer.ts` — Sidecar（連接埠 `LIVE_WS_PORT`）接受儀表板工作階段 Cookie，或具有管理範圍（`manage`／`admin`）的 Bearer API 金鑰；僅限推論的金鑰會遭拒絕。其內部 `POST /__omniroute_event` 發布者端點僅在不存在代理躍點標頭（`x-forwarded-*`、`x-real-ip`、`forwarded`、`via`）時接受迴路位址對等端。
 
 ## 5) 雲端同步
 

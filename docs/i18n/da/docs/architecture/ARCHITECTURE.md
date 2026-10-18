@@ -10,77 +10,77 @@ _Senest opdateret: 2026-06-28_
 
 ## Resumé
 
-OmniRoute er en lokal AI-routinggateway og et dashboard bygget med Next.js.
-Den leverer ét enkelt OpenAI-kompatibelt endpoint (`/v1/*`) og router trafik på tværs af flere upstream-udbydere med oversættelse, fallback, tokenfornyelse og forbrugssporing.
+OmniRoute er en lokal AI-routinggateway og et dashboard bygget på Next.js.
+Den leverer et enkelt OpenAI-kompatibelt slutpunkt (`/v1/*`) og router trafik på tværs af flere upstream-udbydere med oversættelse, fallback, tokenfornyelse og brugsregistrering.
 
-Centrale funktioner:
+Kernefunktioner:
 
-- OpenAI-kompatibel API-grænseflade til CLI/værktøjer (373 udbydere, 150 eksekveringsmoduler)
-- Oversættelse af anmodninger/svar mellem udbyderformater
-- Fallback med modelkombinationer (sekvens med flere modeller)
-- Strukturerede kombinationstrin (`provider + model + connection`) med rækkefølge under kørsel baseret på `compositeTiers`
+- OpenAI-kompatibel API-grænseflade til CLI/værktøjer (374 udbydere, 150 eksekveringsmoduler)
+- Oversættelse af anmodninger/svar på tværs af udbyderformater
+- Fallback for modelkombinationer (sekvens med flere modeller)
+- Strukturerede kombinationstrin (`provider + model + connection`) med kørselsrækkefølge baseret på `compositeTiers`
 - Fallback på kontoniveau (flere konti pr. udbyder)
-- Forhåndskontrol af kvoter og kvotebevidst P2C-kontovalg i hovedforløbet for chat
+- Forhåndskontrol af kvoter og kvotebevidst P2C-kontovalg i den primære chatsti
 - Administration af udbyderforbindelser via OAuth og API-nøgler (27 OAuth-udbydermoduler)
 - Generering af embeddings via `/v1/embeddings` (18 udbydere)
-- Billedgenerering via `/v1/images/generations` (10+ udbydere, 20+ modeller)
+- Billedgenerering via `/v1/images/generations` (mere end 10 udbydere, mere end 20 modeller)
 - Lydtransskription via `/v1/audio/transcriptions` (18 udbydere)
 - Tekst-til-tale via `/v1/audio/speech` (24 indbyggede udbydere)
 - Videogenerering via `/v1/videos/generations` (ComfyUI + SD WebUI)
 - Musikgenerering via `/v1/music/generations` (ComfyUI)
 - Websøgning via `/v1/search` (20 udbydere)
-- Moderation via `/v1/moderations`
-- Omrangering via `/v1/rerank`
-- Fortolkning af tænkningstags (``) for ræsonneringsmodeller
+- Moderering via `/v1/moderations`
+- Genrangering via `/v1/rerank`
+- Fortolkning af tænketags (``) til ræsonneringsmodeller
 - Rensning af svar med henblik på streng kompatibilitet med OpenAI SDK
-- Rollenormalisering (developer→system, system→user) for kompatibilitet på tværs af udbydere
+- Normalisering af roller (developer→system, system→user) med henblik på kompatibilitet på tværs af udbydere
 - Konvertering af struktureret output (json_schema → Gemini responseSchema)
 - Lokal persistens for udbydere, nøgler, aliasser, kombinationer, indstillinger og priser (122 DB-moduler)
-- Sporing af forbrug/omkostninger og logning af anmodninger
-- Valgfri cloudsynkronisering til synkronisering på tværs af enheder og af tilstand
+- Registrering af forbrug/omkostninger og logning af anmodninger
+- Valgfri synkronisering i skyen til synkronisering af tilstand på tværs af flere enheder
 - IP-tilladelsesliste/blokeringsliste til adgangskontrol for API'et
-- Administration af tænkningsbudget (videresendelse/automatisk/brugerdefineret/adaptivt)
+- Administration af tænkningsbudget (passthrough/auto/custom/adaptive)
 - Global injektion af systemprompt
 - Sessionssporing og fingeraftryk
-- Forbedret hastighedsbegrænsning pr. konto med udbyderspecifikke profiler
-- Circuit breaker-mønster til robusthed over for udbyderfejl
-- Beskyttelse mod samtidige anmodningsbølger med mutex-låsning
+- Udvidet hastighedsbegrænsning pr. konto med udbyderspecifikke profiler
+- Circuit breaker-mønster for robusthed over for udbyderfejl
+- Beskyttelse mod thundering herd med mutex-låsning
 - Signaturbaseret cache til deduplikering af anmodninger
 - Domænelag: omkostningsregler, fallbackpolitik og lockoutpolitik
-- Context Relay: sessionsoverdragelsesresuméer for kontinuitet ved kontorotation
-- Persistens af domænetilstand (SQLite-write-through-cache til fallbacks, budgetter, lockouts og circuit breakers)
+- Context Relay: overdragelsesresuméer for sessioner, som sikrer kontinuitet ved kontorotation
+- Persistens af domænetilstand (SQLite-cache med direkte skrivning for fallbacks, budgetter, lockouts og circuit breakers)
 - Politikmotor til centraliseret evaluering af anmodninger (lockout → budget → fallback)
-- Anmodningstelemetri med aggregering af p50-/p95-/p99-latenstid
+- Telemetri for anmodninger med aggregering af p50/p95/p99-latenstid
 - Telemetri for kombinationsmål og historisk tilstand for kombinationsmål via `combo_execution_key` / `combo_step_id`
 - Korrelations-id (X-Request-Id) til end-to-end-sporing
 - Logning af compliance-revision med mulighed for fravalg pr. API-nøgle
 - Evalueringsframework til kvalitetssikring af LLM'er
-- Tilstandsdashboard med status i realtid for udbydernes circuit breakers
-- MCP-server (110 værktøjer) med 3 transportmekanismer (stdio/SSE/Streamable HTTP)
+- Tilstandsdashboard med udbydernes circuit breaker-status i realtid
+- MCP-server (110 værktøjer) med 3 transporter (stdio/SSE/Streamable HTTP)
 - A2A-server (JSON-RPC 2.0 + SSE) med færdigheder og opgavelivscyklus
 - Hukommelsessystem (udtrækning, injektion, hentning og opsummering)
-- Færdighedssystem (register, eksekvering, sandbox og indbyggede færdigheder)
+- Færdighedssystem (register, eksekveringskomponent, sandbox og indbyggede færdigheder)
 - MITM-proxy med certifikatadministration og DNS-håndtering
 - Middleware til beskyttelse mod promptinjektion
 - Pipeline til promptkomprimering med Caveman, RTK, stablede pipelines, komprimeringskombinationer, sprogpakker og analyse
 - ACP-register (Agent Communication Protocol)
 - Modulære OAuth-udbydere (22 individuelle moduler under `src/lib/oauth/providers/`)
 - Scripts til afinstallation/fuldstændig afinstallation
-- Handling til reparation af OAuth-miljø
+- Handling til reparation af OAuth-miljøet
 - WebSocket-bro til OpenAI-kompatible WS-klienter (`/v1/ws`)
-- Administration af synkroniseringstokens (udstedelse/tilbagekaldelse samt download af ETag-versioneret konfigurationspakke)
+- Administration af synkroniseringstokens (udstedelse/tilbagekaldelse og download af ETag-versionsstyret konfigurationspakke)
 - GLM Thinking (`glmt`) som førsteklasses udbyderforudindstilling
-- Hybrid tokenoptælling (udbydersidebaseret `/messages/count_tokens` med estimering som fallback)
-- Automatisk initialisering af modelaliasser (30+ normaliseringer på tværs af proxy-dialekter ved opstart)
-- Sikker udgående fetch med SSRF-beskyttelse, blokering af private URL'er og konfigurerbare genforsøg
-- Cooldown-bevidste chatgenforsøg med konfigurerbare `requestRetry` og `maxRetryIntervalSec`
-- Validering af kørselsmiljøet med Zod ved opstart
-- Compliance-revision v2 med sideinddeling, CRUD-hændelser for udbydere og logning af valideringer blokeret af SSRF-beskyttelsen
+- Hybrid tokenoptælling (udbyderspecifik `/messages/count_tokens` med estimering som fallback)
+- Automatisk oprettelse af modelaliasser (mere end 30 normaliseringer på tværs af proxy-dialekter ved opstart)
+- Sikker udgående hentning med SSRF-beskyttelse, blokering af private URL'er og konfigurerbare genforsøg
+- Cooldown-bevidste genforsøg af chat med konfigurerbare `requestRetry` og `maxRetryIntervalSec`
+- Validering af kørselstidsmiljøet med Zod ved opstart
+- Compliance-revision v2 med paginering, CRUD-hændelser for udbydere og valideringslogning af SSRF-blokeringer
 
 Primær kørselsmodel:
 
-- Next.js-app-ruter under `src/app/api/*` implementerer både dashboard-API'er og kompatibilitets-API'er
-- En delt SSE-/routingkerne i `src/sse/*` + `open-sse/*` håndterer udbydereksekvering, oversættelse, streaming, fallback og forbrug
+- Next.js-appruter under `src/app/api/*` implementerer både dashboard-API'er og kompatibilitets-API'er
+- En delt SSE-/routingkerne i `src/sse/*` + `open-sse/*` håndterer udbyderkørsel, oversættelse, streaming, fallback og forbrug
 
 ## Referencediagrammer
 
@@ -534,16 +534,17 @@ Domænetilstandsdatabase (SQLite):
 - Tabeller (oprettet i `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Write-through-cachemønster: Maps i hukommelsen er autoritative under kørsel; ændringer skrives synkront til SQLite; tilstanden gendannes fra databasen ved kold opstart
 
-## 4) Godkendelses- og sikkerhedsflader
+## 4) Godkendelse + sikkerhedsflader
 
-- Cookie-godkendelse til kontrolpanelet: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Cookiegodkendelse til dashboardet: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - Generering/verificering af API-nøgler: `src/shared/utils/apiKey.ts`
 - Udbyderhemmeligheder gemmes i `providerConnections`-poster
 - Understøttelse af udgående proxy via `open-sse/utils/proxyFetch.ts` (miljøvariabler) og `open-sse/utils/networkProxy.ts` (kan konfigureres pr. udbyder eller globalt)
-- SSRF-/URL-beskyttelse for udgående trafik: `src/shared/network/outboundUrlGuard.ts` — blokerer private, loopback- og link-local-intervaller for alle udbyderkald
-- Validering af kørselsmiljø: `src/lib/env/runtimeEnv.ts` — Zod-skema for alle miljøvariabler, der vises som opstartsfejl/-advarsler
-- Synkroniseringstokens: `src/lib/db/syncTokens.ts` — tokens med afgrænset omfang til slutpunkter for download af konfigurationspakker; understøttet af SQLite-tabellen `sync_tokens` (migrering `024_create_sync_tokens.sql`)
+- SSRF-/URL-beskyttelse for udgående trafik: `src/shared/network/outboundUrlGuard.ts` — værtskontroller ved udbyderkald og webhookdestinationer; tilstanden kommer fra `src/shared/network/outboundUrlGuardPolicy.ts` (flag i `docs/reference/ENVIRONMENT.md`)
+- Validering af kørselsmiljøet: `src/lib/env/runtimeEnv.ts` — Zod-skema for alle miljøvariabler, der vises som opstartsfejl/-advarsler
+- Synkroniseringstokens: `src/lib/db/syncTokens.ts` — tokens med begrænset omfang til slutpunkter for download af konfigurationspakker; understøttet af SQLite-tabellen `sync_tokens` (migrering `024_create_sync_tokens.sql`)
 - Godkendelse ved WebSocket-handshake: `src/lib/ws/handshake.ts` — validerer WS-opgraderingsanmodninger via API-nøgle eller sessionscookie
+- WebSocket-godkendelse til live-dashboardet: `src/server/ws/liveServer.ts` — sidecar-tjenesten (port `LIVE_WS_PORT`) accepterer en dashboard-sessionscookie eller en Bearer-API-nøgle med et administrationsomfang (`manage`/`admin`); nøgler, der kun er beregnet til inferens, afvises. Dens interne `POST /__omniroute_event`-udgiverslutpunkt accepterer kun peers på loopback-adressen, når der ikke findes en proxy-hop-header (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Cloudsynkronisering
 

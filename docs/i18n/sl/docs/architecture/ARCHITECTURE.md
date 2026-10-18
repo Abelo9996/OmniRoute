@@ -10,17 +10,17 @@ _Nazadnje posodobljeno: 2026-06-28_
 
 ## Povzetek
 
-OmniRoute je lokalni prehod in nadzorna plošča za usmerjanje umetne inteligence, zgrajena na Next.js.
-Zagotavlja enotno končno točko, združljivo z OpenAI (`/v1/*`), ter usmerja promet med več ponudniki v zaledju s prevajanjem, nadomestnimi možnostmi, osveževanjem žetonov in spremljanjem uporabe.
+OmniRoute je lokalni usmerjevalni prehod in nadzorna plošča za umetno inteligenco, zgrajena na Next.js.
+Zagotavlja enotno končno točko, združljivo z OpenAI (`/v1/*`), ter usmerja promet med več ponudniki z uporabo pretvorbe, nadomestnega preklopa, osveževanja žetonov in spremljanja uporabe.
 
-Ključne zmogljivosti:
+Ključne zmožnosti:
 
-- Površina API-ja, združljiva z OpenAI, za orodja CLI in druga orodja (373 ponudnikov, 150 izvajalnih modulov)
-- Prevajanje zahtev in odgovorov med formati ponudnikov
-- Nadomestne možnosti kombinacij modelov (zaporedje več modelov)
-- Strukturirani koraki kombinacij (`provider + model + connection`) z izvajanjem po vrstnem redu `compositeTiers`
-- Nadomestne možnosti na ravni računov (več računov na ponudnika)
-- Predhodno preverjanje kvot in izbira računov P2C z upoštevanjem kvot v glavni poti klepeta
+- Površina API-ja, združljiva z OpenAI, za CLI/orodja (374 ponudnikov, 150 izvajalnih modulov)
+- Pretvorba zahtev in odgovorov med oblikami različnih ponudnikov
+- Nadomestni preklop kombinacije modelov (zaporedje več modelov)
+- Strukturirani koraki kombinacije (`provider + model + connection`) z izvajanjem po vrstnem redu, določenem z `compositeTiers`
+- Nadomestni preklop na ravni računa (več računov na ponudnika)
+- Predhodno preverjanje kvote in izbira računa P2C ob upoštevanju kvote v glavni poti klepeta
 - Upravljanje povezav s ponudniki prek OAuth in ključev API (27 modulov ponudnikov OAuth)
 - Ustvarjanje vdelav prek `/v1/embeddings` (18 ponudnikov)
 - Ustvarjanje slik prek `/v1/images/generations` (več kot 10 ponudnikov, več kot 20 modelov)
@@ -31,56 +31,56 @@ Ključne zmogljivosti:
 - Spletno iskanje prek `/v1/search` (20 ponudnikov)
 - Moderiranje prek `/v1/moderations`
 - Ponovno razvrščanje prek `/v1/rerank`
-- Razčlenjevanje oznak razmišljanja (``) za modele sklepanja
+- Razčlenjevanje oznak za razmišljanje (``) za modele sklepanja
 - Čiščenje odgovorov za strogo združljivost z OpenAI SDK
 - Normalizacija vlog (developer→system, system→user) za združljivost med ponudniki
 - Pretvorba strukturiranega izhoda (json_schema → Gemini responseSchema)
-- Lokalna trajna hramba ponudnikov, ključev, vzdevkov, kombinacij, nastavitev in cen (122 modulov zbirke podatkov)
-- Spremljanje uporabe in stroškov ter beleženje zahtev
-- Izbirna sinhronizacija v oblaku za sinhronizacijo stanja med več napravami
+- Lokalno trajno shranjevanje ponudnikov, ključev, vzdevkov, kombinacij, nastavitev in cen (122 modulov DB)
+- Spremljanje uporabe/stroškov in beleženje zahtev
+- Izbirna sinhronizacija v oblaku za sinhronizacijo med več napravami oziroma sinhronizacijo stanja
 - Seznam dovoljenih/blokiranih naslovov IP za nadzor dostopa do API-ja
 - Upravljanje proračuna za razmišljanje (neposredno posredovanje/samodejno/po meri/prilagodljivo)
 - Globalno vstavljanje sistemskega poziva
-- Spremljanje sej in ustvarjanje prstnih odtisov
-- Izboljšeno omejevanje hitrosti na ravni posameznega računa s profili, specifičnimi za ponudnika
+- Sledenje sejam in ustvarjanje prstnih odtisov
+- Izboljšeno omejevanje hitrosti za posamezen račun s profili, prilagojenimi ponudnikom
 - Vzorec odklopnika za odpornost ponudnikov
-- Zaščita pred stampedom zahtev z zaklepanjem z mutexi
-- Predpomnilnik za odstranjevanje podvojenih zahtev na podlagi podpisov
-- Domenska plast: pravila stroškov, pravilnik nadomestnih možnosti, pravilnik zaklepanja
-- Context Relay: povzetki predaje sej za ohranjanje kontinuitete pri menjavi računov
-- Trajna hramba domenskega stanja (prepisovalni predpomnilnik SQLite za nadomestne možnosti, proračune, zaklepanja in odklopnike)
-- Mehanizem pravilnikov za centralizirano vrednotenje zahtev (zaklepanje → proračun → nadomestna možnost)
+- Zaščita pred množičnim sočasnim navalom zahtev z zaklepanjem z mutexom
+- Predpomnilnik za odstranjevanje podvojenih zahtev na podlagi podpisa
+- Domenska plast: pravila za stroške, pravilnik nadomestnega preklopa, pravilnik zaklepanja
+- Context Relay: povzetki predaje sej za zagotavljanje neprekinjenosti pri menjavi računov
+- Trajno shranjevanje stanja domene (prepisovalni predpomnilnik SQLite za nadomestne preklope, proračune, zaklepanja in odklopnike)
+- Mehanizem pravilnikov za centralizirano vrednotenje zahtev (zaklepanje → proračun → nadomestni preklop)
 - Telemetrija zahtev z združevanjem zakasnitev p50/p95/p99
 - Telemetrija ciljev kombinacij in zgodovinsko stanje ciljev kombinacij prek `combo_execution_key` / `combo_step_id`
 - ID korelacije (X-Request-Id) za sledenje od začetka do konca
 - Revizijsko beleženje skladnosti z možnostjo izključitve za posamezen ključ API
 - Ogrodje za vrednotenje zagotavljanja kakovosti LLM
-- Nadzorna plošča stanja s sprotnim prikazom stanja odklopnikov ponudnikov
-- Strežnik MCP (110 orodij) s 3 prenosi (stdio/SSE/Streamable HTTP)
+- Nadzorna plošča stanja s prikazom stanja odklopnikov ponudnikov v realnem času
+- Strežnik MCP (110 orodij) s 3 načini prenosa (stdio/SSE/Streamable HTTP)
 - Strežnik A2A (JSON-RPC 2.0 + SSE) z veščinami in življenjskim ciklom opravil
-- Sistem pomnilnika (izluščenje, vstavljanje, pridobivanje, povzemanje)
+- Pomnilniški sistem (izluščanje, vstavljanje, pridobivanje, povzemanje)
 - Sistem veščin (register, izvajalnik, peskovnik, vgrajene veščine)
 - Posredniški strežnik MITM z upravljanjem potrdil in obravnavo DNS
 - Vmesna programska oprema za zaščito pred vstavljanjem pozivov
-- Cevovod za stiskanje pozivov z orodji Caveman, RTK, naloženimi cevovodi, kombinacijami stiskanja, jezikovnimi paketi in analitiko
+- Cevovod za stiskanje pozivov s Caveman, RTK, zloženimi cevovodi, kombinacijami stiskanja, jezikovnimi paketi in analitiko
 - Register ACP (Agent Communication Protocol)
 - Modularni ponudniki OAuth (22 posameznih modulov v `src/lib/oauth/providers/`)
 - Skripti za odstranitev/popolno odstranitev
 - Dejanje za popravilo okolja OAuth
 - Most WebSocket za odjemalce WS, združljive z OpenAI (`/v1/ws`)
-- Upravljanje sinhronizacijskih žetonov (izdaja/preklic, prenos konfiguracijskega svežnja z različicami ETag)
+- Upravljanje žetonov za sinhronizacijo (izdaja/preklic, prenos konfiguracijskega svežnja z različicami ETag)
 - GLM Thinking (`glmt`) kot prvovrstna prednastavitev ponudnika
-- Hibridno štetje žetonov (ponudnikova končna točka `/messages/count_tokens` z nadomestnim ocenjevanjem)
+- Hibridno štetje žetonov (štetje na strani ponudnika prek `/messages/count_tokens` z nadomestno oceno)
 - Samodejno začetno ustvarjanje vzdevkov modelov (več kot 30 normalizacij narečij med posredniškimi strežniki ob zagonu)
-- Varno odhodno pridobivanje z zaščito pred SSRF, blokiranjem zasebnih URL-jev in nastavljivim ponavljanjem poskusov
-- Ponovni poskusi klepeta z upoštevanjem obdobja ohlajanja in nastavljivima `requestRetry` ter `maxRetryIntervalSec`
+- Varen odhodni priklic z zaščito pred SSRF, blokiranjem zasebnih URL-jev in nastavljivimi ponovnimi poskusi
+- Ponovni poskusi klepeta, ki upoštevajo čas ohlajanja, z nastavljivima `requestRetry` in `maxRetryIntervalSec`
 - Preverjanje izvajalnega okolja z Zod ob zagonu
-- Revizija skladnosti v2 s stranjenjem, dogodki CRUD ponudnikov in beleženjem preverjanj, blokiranih zaradi SSRF
+- Revizija skladnosti v2 s paginacijo, dogodki CRUD ponudnikov in beleženjem preverjanj, blokiranih zaradi SSRF
 
 Primarni izvajalni model:
 
 - Poti aplikacije Next.js v `src/app/api/*` izvajajo tako API-je nadzorne plošče kot združljivostne API-je
-- Skupno jedro SSE/usmerjanja v `src/sse/*` + `open-sse/*` obravnava izvajanje pri ponudnikih, prevajanje, pretočno prenašanje, nadomestne možnosti in uporabo
+- Skupno jedro SSE/usmerjanja v `src/sse/*` + `open-sse/*` obravnava izvajanje pri ponudnikih, pretvorbo, pretočno pošiljanje, nadomestni preklop in uporabo
 
 ## Referenčni diagrami
 
@@ -534,16 +534,17 @@ Podatkovna zbirka stanja domen (SQLite):
 - Tabele (ustvarjene v `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Vzorec predpomnilnika s sprotnim zapisovanjem: zemljevidi v pomnilniku so med izvajanjem avtoritativni; spremembe se sinhrono zapisujejo v SQLite; stanje se ob hladnem zagonu obnovi iz podatkovne zbirke
 
-## 4) Vmesniki za preverjanje pristnosti in varnost
+## 4) Avtentikacija + varnostne površine
 
-- Preverjanje pristnosti nadzorne plošče s piškotki: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Avtentikacija nadzorne plošče s piškotki: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - Ustvarjanje/preverjanje ključev API: `src/shared/utils/apiKey.ts`
-- Skrivnosti ponudnikov so trajno shranjene v vnosih `providerConnections`
-- Podpora za izhodni posredniški strežnik prek `open-sse/utils/proxyFetch.ts` (spremenljivke okolja) in `open-sse/utils/networkProxy.ts` (nastavljivo za posameznega ponudnika ali globalno)
-- Zaščita pred SSRF in preverjanje izhodnih URL-jev: `src/shared/network/outboundUrlGuard.ts` — blokira zasebne, povratne in lokalne omrežne obsege za vse klice ponudnikov
-- Preverjanje okolja med izvajanjem: `src/lib/env/runtimeEnv.ts` — shema Zod za vse spremenljivke okolja, pri čemer se težave prikažejo kot napake/opozorila ob zagonu
-- Žetoni za sinhronizacijo: `src/lib/db/syncTokens.ts` — žetoni z omejenim obsegom za končne točke za prenos konfiguracijskih paketov; podprti s tabelo SQLite `sync_tokens` (migracija `024_create_sync_tokens.sql`)
-- Preverjanje pristnosti pri vzpostavitvi povezave WebSocket: `src/lib/ws/handshake.ts` — preveri zahteve za nadgradnjo WS s ključem API ali sejskim piškotkom
+- Skrivnosti ponudnikov, shranjene v vnosih `providerConnections`
+- Podpora za izhodni posredniški strežnik prek `open-sse/utils/proxyFetch.ts` (okoljske spremenljivke) in `open-sse/utils/networkProxy.ts` (nastavljivo za posameznega ponudnika ali globalno)
+- Zaščita pred SSRF / preverjanje izhodnih URL-jev: `src/shared/network/outboundUrlGuard.ts` — preverjanje gostiteljev pri klicih ponudnikov in ciljih webhookov; način določa `src/shared/network/outboundUrlGuardPolicy.ts` (zastavice v `docs/reference/ENVIRONMENT.md`)
+- Preverjanje izvajalnega okolja: `src/lib/env/runtimeEnv.ts` — shema Zod za vse okoljske spremenljivke, pri čemer so napake/opozorila prikazana ob zagonu
+- Žetoni za sinhronizacijo: `src/lib/db/syncTokens.ts` — žetoni z omejenim obsegom za končne točke za prenos konfiguracijskega paketa; podprti s tabelo SQLite `sync_tokens` (migracija `024_create_sync_tokens.sql`)
+- Avtentikacija rokovanja WebSocket: `src/lib/ws/handshake.ts` — preverja zahteve za nadgradnjo WS s ključem API ali sejskim piškotkom
+- Avtentikacija WebSocket za nadzorno ploščo v živo: `src/server/ws/liveServer.ts` — stranski proces (vrata `LIVE_WS_PORT`) sprejme sejski piškotek nadzorne plošče ali ključ Bearer API z upravljavskim obsegom (`manage`/`admin`); ključi, namenjeni samo sklepanju, so zavrnjeni. Njegova notranja končna točka za objavljanje `POST /__omniroute_event` sprejme lokalne povezave le, če ni prisotna nobena glava prehoda prek posredniškega strežnika (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Sinhronizacija z oblakom
 

@@ -8,79 +8,79 @@
 
 _Paskutinį kartą atnaujinta: 2026-06-28_
 
-## Vykdomoji santrauka
+## Santrauka vadovams
 
-„OmniRoute“ yra vietinis dirbtinio intelekto užklausų nukreipimo šliuzas ir valdymo skydelis, sukurtas naudojant Next.js.
-Jis suteikia vieną su OpenAI suderinamą galinį tašką (`/v1/*`) ir nukreipia srautą keliems išoriniams paslaugų teikėjams, užtikrindamas formatų konvertavimą, atsarginį perjungimą, prieigos raktų atnaujinimą ir naudojimo stebėjimą.
+„OmniRoute“ yra „Next.js“ pagrindu sukurtas vietinis DI užklausų maršruto parinkimo šliuzas ir valdymo skydelis.
+Jis suteikia vieną su „OpenAI“ suderinamą galinį tašką (`/v1/*`) ir nukreipia srautą keliems pirminiams paslaugų teikėjams, užtikrindamas formatų konvertavimą, atsarginį perjungimą, prieigos raktų atnaujinimą ir naudojimo stebėjimą.
 
 Pagrindinės galimybės:
 
-- Su OpenAI suderinama API sąsaja, skirta CLI / įrankiams (373 paslaugų teikėjai, 150 vykdymo modulių)
+- Su „OpenAI“ suderinama API sąsaja, skirta CLI / įrankiams (374 paslaugų teikėjai, 150 vykdymo modulių)
 - Užklausų ir atsakymų konvertavimas tarp paslaugų teikėjų formatų
-- Modelių kombinacijų atsarginis perjungimas (kelių modelių seka)
-- Struktūrizuoti kombinacijų žingsniai (`provider + model + connection`) su vykdymo eiliškumu pagal `compositeTiers`
-- Paskyros lygmens atsarginis perjungimas (kelios paskyros vienam paslaugų teikėjui)
-- Išankstinis kvotos tikrinimas ir kvotą įvertinantis P2C paskyros parinkimas pagrindiniame pokalbių sraute
-- OAuth ir API raktais grindžiamas paslaugų teikėjų ryšių valdymas (27 OAuth paslaugų teikėjų moduliai)
-- Vektorių generavimas per `/v1/embeddings` (18 paslaugų teikėjų)
+- Modelių derinio atsarginis perjungimas (kelių modelių seka)
+- Struktūrizuoti derinio veiksmai (`provider + model + connection`), vykdymo metu išrikiuojami pagal `compositeTiers`
+- Atsarginis perjungimas paskyros lygmeniu (kelios paskyros vienam paslaugų teikėjui)
+- Išankstinis kvotos patikrinimas ir kvotą įvertinantis P2C paskyros parinkimas pagrindiniame pokalbių sraute
+- „OAuth“ ir API raktais pagrįstas ryšių su paslaugų teikėjais valdymas (27 „OAuth“ paslaugų teikėjų moduliai)
+- Vektorinių reprezentacijų generavimas per `/v1/embeddings` (18 paslaugų teikėjų)
 - Vaizdų generavimas per `/v1/images/generations` (daugiau nei 10 paslaugų teikėjų, daugiau nei 20 modelių)
-- Garso transkribavimas per `/v1/audio/transcriptions` (18 paslaugų teikėjų)
+- Garso transkripcija per `/v1/audio/transcriptions` (18 paslaugų teikėjų)
 - Teksto vertimas į kalbą per `/v1/audio/speech` (24 integruoti paslaugų teikėjai)
-- Vaizdo įrašų generavimas per `/v1/videos/generations` (ComfyUI + SD WebUI)
-- Muzikos generavimas per `/v1/music/generations` (ComfyUI)
+- Vaizdo įrašų generavimas per `/v1/videos/generations` („ComfyUI“ + „SD WebUI“)
+- Muzikos generavimas per `/v1/music/generations` („ComfyUI“)
 - Paieška žiniatinklyje per `/v1/search` (20 paslaugų teikėjų)
 - Turinio moderavimas per `/v1/moderations`
 - Pakartotinis rezultatų reitingavimas per `/v1/rerank`
-- Mąstymo žymų analizė (``) samprotavimo modeliams
-- Atsakymų išvalymas, užtikrinantis griežtą suderinamumą su OpenAI SDK
+- Samprotavimo modeliams skirtų mąstymo žymų (``) analizė
+- Atsakymų išvalymas, užtikrinantis griežtą suderinamumą su „OpenAI“ SDK
 - Vaidmenų normalizavimas (developer→system, system→user), užtikrinantis skirtingų paslaugų teikėjų suderinamumą
-- Struktūrizuotos išvesties konvertavimas (json_schema → Gemini responseSchema)
-- Vietinis paslaugų teikėjų, raktų, alternatyviųjų pavadinimų, kombinacijų, nustatymų ir kainodaros išsaugojimas (122 DB moduliai)
+- Struktūrizuotos išvesties konvertavimas (json_schema → „Gemini“ responseSchema)
+- Vietinis paslaugų teikėjų, raktų, alternatyviųjų pavadinimų, derinių, nuostatų ir kainodaros duomenų išsaugojimas (122 DB moduliai)
 - Naudojimo bei sąnaudų stebėjimas ir užklausų registravimas
-- Pasirinktinis sinchronizavimas debesijoje, skirtas kelių įrenginių ir būsenos sinchronizavimui
-- Leidžiamų ir blokuojamų IP adresų sąrašai, skirti API prieigos kontrolei
+- Pasirenkamas sinchronizavimas debesijoje, skirtas būsenai sinchronizuoti tarp kelių įrenginių
+- Leidžiamų ir blokuojamų IP adresų sąrašai API prieigai valdyti
 - Mąstymo biudžeto valdymas (tiesioginis perdavimas / automatinis / pasirinktinis / adaptyvus)
-- Visuotinio sistemos raginimo įterpimas
-- Seansų stebėjimas ir skaitmeninių atspaudų nustatymas
-- Patobulintas kiekvienos paskyros užklausų dažnio ribojimas, naudojant konkretiems paslaugų teikėjams pritaikytus profilius
-- Grandinės pertraukiklio šablonas, užtikrinantis paslaugų teikėjų atsparumą
-- Apsauga nuo staigaus masinio užklausų antplūdžio naudojant mutex užraktus
-- Parašais grindžiama pasikartojančių užklausų šalinimo podėlio sistema
+- Visuotinis sistemos raginimo įterpimas
+- Seansų stebėjimas ir skaitmeninių atspaudų kūrimas
+- Patobulintas paskyrų užklausų dažnio ribojimas, naudojant konkretiems paslaugų teikėjams skirtus profilius
+- Grandinės pertraukiklio šablonas paslaugų teikėjų atsparumui užtikrinti
+- Apsauga nuo lavinos efekto naudojant savitarpio išskirties užraktus
+- Parašais pagrįsta pasikartojančių užklausų šalinimo podėlinė
 - Domeno sluoksnis: sąnaudų taisyklės, atsarginio perjungimo politika, blokavimo politika
-- „Context Relay“: seanso perdavimo santraukos, užtikrinančios tęstinumą keičiant paskyras
-- Domeno būsenos išsaugojimas (SQLite tiesioginio įrašymo podėlis, skirtas atsarginiams perjungimams, biudžetams, blokavimams ir grandinės pertraukikliams)
-- Centralizuoto užklausų vertinimo strategijų variklis (blokavimas → biudžetas → atsarginis perjungimas)
+- „Context Relay“: seansų perdavimo santraukos, užtikrinančios tęstinumą keičiant paskyras
+- Domeno būsenos išsaugojimas („SQLite“ tiesioginio įrašymo podėlis, skirtas atsarginiams perjungimams, biudžetams, blokavimams ir grandinės pertraukikliams)
+- Centralizuoto užklausų vertinimo politikos variklis (blokavimas → biudžetas → atsarginis perjungimas)
 - Užklausų telemetrija su p50 / p95 / p99 delsos agregavimu
-- Kombinacijų paskirties vietų telemetrija ir istorinė kombinacijų paskirties vietų būklė naudojant `combo_execution_key` / `combo_step_id`
-- Koreliacijos ID (X-Request-Id), skirtas ištisiniam sekimui
-- Atitikties audito žurnalų registravimas su galimybe jo atsisakyti kiekvienam API raktui
-- Vertinimo sistema, skirta LLM kokybei užtikrinti
+- Derinio tikslinių elementų telemetrija ir istorinė jų būsena, naudojant `combo_execution_key` / `combo_step_id`
+- Koreliacijos ID (X-Request-Id), skirtas visos grandinės sekimui
+- Atitikties audito registravimas su galimybe jį išjungti kiekvienam API raktui
+- Vertinimo sistema LLM kokybei užtikrinti
 - Būklės valdymo skydelis, realiuoju laiku rodantis paslaugų teikėjų grandinės pertraukiklių būseną
-- MCP serveris (110 įrankių) su 3 perdavimo būdais (stdio/SSE/Streamable HTTP)
-- A2A serveris (JSON-RPC 2.0 + SSE) su gebėjimais ir užduočių gyvavimo ciklu
+- MCP serveris (110 įrankių) su 3 perdavimo būdais (stdio / SSE / srautinis HTTP)
+- A2A serveris (JSON-RPC 2.0 + SSE) su įgūdžiais ir užduočių gyvavimo ciklu
 - Atminties sistema (išgavimas, įterpimas, gavimas, apibendrinimas)
-- Gebėjimų sistema (registras, vykdymo priemonė, smėlio dėžė, integruoti gebėjimai)
-- MITM tarpinis serveris su sertifikatų valdymu ir DNS apdorojimu
-- Apsaugos nuo raginimų įterpimo tarpinė programinė įranga
-- Raginimų glaudinimo konvejeris su Caveman, RTK, sudėtiniais konvejeriais, glaudinimo kombinacijomis, kalbų paketais ir analitika
-- ACP (Agent Communication Protocol) registras
-- Moduliniai OAuth paslaugų teikėjai (22 atskiri moduliai kataloge `src/lib/oauth/providers/`)
+- Įgūdžių sistema (registras, vykdymo priemonė, izoliuota aplinka, integruoti įgūdžiai)
+- MITM įgaliotasis serveris su sertifikatų valdymu ir DNS apdorojimu
+- Raginimų įterpimo atakų apsaugos tarpinė programinė įranga
+- Raginimų glaudinimo konvejeris su „Caveman“, RTK, sukrautais konvejeriais, glaudinimo deriniais, kalbų paketais ir analitika
+- ACP („Agent Communication Protocol“) registras
+- Moduliniai „OAuth“ paslaugų teikėjai (22 atskiri moduliai aplanke `src/lib/oauth/providers/`)
 - Pašalinimo ir visiško pašalinimo scenarijai
-- OAuth aplinkos atkūrimo veiksmas
-- WebSocket tiltas, skirtas su OpenAI suderinamiems WS klientams (`/v1/ws`)
+- „OAuth“ aplinkos taisymo veiksmas
+- „WebSocket“ tiltas, skirtas su „OpenAI“ suderinamiems WS klientams (`/v1/ws`)
 - Sinchronizavimo prieigos raktų valdymas (išdavimas / atšaukimas, ETag versijuojamo konfigūracijos paketo atsisiuntimas)
-- GLM Thinking (`glmt`) kaip visavertė paslaugų teikėjo išankstinė konfigūracija
-- Hibridinis prieigos ženklų skaičiavimas (paslaugų teikėjo pusės `/messages/count_tokens` su atsarginiu apytiksliu įvertinimu)
+- GLM Thinking (`glmt`) kaip visavertė paslaugų teikėjo išankstinė nuostata
+- Hibridinis žetonų skaičiavimas (paslaugų teikėjo pusės `/messages/count_tokens` su atsarginiu įvertinimu)
 - Automatinis modelių alternatyviųjų pavadinimų pradinis užpildymas (daugiau nei 30 skirtingų tarpinių serverių dialektų normalizavimų paleidimo metu)
-- Saugus išeinančių užklausų vykdymas su SSRF apsauga, privačių URL blokavimu ir konfigūruojamais pakartotiniais bandymais
-- Sustabdymo laikotarpį įvertinantys pokalbių užklausų pakartotiniai bandymai su konfigūruojamais `requestRetry` ir `maxRetryIntervalSec`
-- Vykdymo aplinkos tikrinimas paleidimo metu naudojant Zod
-- Atitikties audito v2 versija su puslapiavimu, paslaugų teikėjų CRUD įvykiais ir SSRF užblokuoto tikrinimo registravimu
+- Saugus išorinių išteklių gavimas su SSRF apsauga, privačių URL blokavimu ir konfigūruojamu pakartotiniu bandymu
+- Atvėsimo laikotarpius įvertinantys pakartotiniai pokalbių užklausų bandymai su konfigūruojamais `requestRetry` ir `maxRetryIntervalSec`
+- Vykdymo aplinkos patvirtinimas naudojant „Zod“ paleidimo metu
+- Atitikties auditas v2 su puslapiavimu, paslaugų teikėjų CRUD įvykiais ir SSRF užblokuoto patvirtinimo registravimu
 
 Pagrindinis vykdymo modelis:
 
-- Next.js programos maršrutai, esantys `src/app/api/*`, įgyvendina ir valdymo skydelio API, ir suderinamumo API
-- Bendras SSE / nukreipimo branduolys, esantis `src/sse/*` ir `open-sse/*`, valdo paslaugų teikėjų vykdymą, konvertavimą, srautinį perdavimą, atsarginį perjungimą ir naudojimą
+- „Next.js“ programos maršrutai aplanke `src/app/api/*` įgyvendina ir valdymo skydelio API, ir suderinamumo API
+- Bendras SSE ir maršruto parinkimo branduolys, esantis `src/sse/*` + `open-sse/*`, vykdo paslaugų teikėjų iškvietimą, formatų konvertavimą, srautinį perdavimą, atsarginį perjungimą ir naudojimo apskaitą
 
 ## Etaloninės diagramos
 
@@ -536,14 +536,15 @@ Domeno būsenos DB (SQLite):
 
 ## 4) Autentifikavimo ir saugumo sritys
 
-- Valdymo skydelio autentifikavimas slapukais: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
-- API raktų generavimas / tikrinimas: `src/shared/utils/apiKey.ts`
-- Teikėjų paslaptys išsaugomos `providerConnections` įrašuose
-- Išeinančiojo tarpinio serverio palaikymas per `open-sse/utils/proxyFetch.ts` (aplinkos kintamieji) ir `open-sse/utils/networkProxy.ts` (konfigūruojamas kiekvienam teikėjui arba visuotinai)
-- SSRF / išeinančiųjų URL apsauga: `src/shared/network/outboundUrlGuard.ts` — blokuoja privačius, grįžtamojo ryšio ir vietinio ryšio adresų diapazonus visoms teikėjų užklausoms
-- Vykdymo aplinkos tikrinimas: `src/lib/env/runtimeEnv.ts` — visų aplinkos kintamųjų Zod schema, kurios klaidos / įspėjimai pateikiami paleidžiant
-- Sinchronizavimo prieigos raktai: `src/lib/db/syncTokens.ts` — apribotos apimties prieigos raktai, skirti konfigūracijos paketų atsisiuntimo galiniams taškams; saugomi SQLite lentelėje `sync_tokens` (migracija `024_create_sync_tokens.sql`)
-- WebSocket ryšio užmezgimo autentifikavimas: `src/lib/ws/handshake.ts` — tikrina WS protokolo naujovinimo užklausas naudodamas API raktą arba seanso slapuką
+- Valdymo skydelio autentifikavimas slapuku: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- API rakto generavimas / tikrinimas: `src/shared/utils/apiKey.ts`
+- Teikėjų paslaptys saugomos `providerConnections` įrašuose
+- Išeinančiojo tarpinio serverio palaikymas per `open-sse/utils/proxyFetch.ts` (aplinkos kintamieji) ir `open-sse/utils/networkProxy.ts` (konfigūruojama kiekvienam teikėjui atskirai arba visuotinai)
+- SSRF / išeinančiųjų URL apsauga: `src/shared/network/outboundUrlGuard.ts` — teikėjų užklausų ir webhook paskirties vietų prieglobos serverio patikros; režimas gaunamas iš `src/shared/network/outboundUrlGuardPolicy.ts` (parametrai aprašyti `docs/reference/ENVIRONMENT.md`)
+- Vykdymo aplinkos kintamųjų validavimas: `src/lib/env/runtimeEnv.ts` — visų aplinkos kintamųjų Zod schema, kurios klaidos ir įspėjimai pateikiami paleidžiant
+- Sinchronizavimo prieigos raktai: `src/lib/db/syncTokens.ts` — konkrečiai sričiai skirti prieigos raktai, naudojami konfigūracijos paketų atsisiuntimo galiniuose taškuose; saugomi `sync_tokens` SQLite lentelėje (migracija `024_create_sync_tokens.sql`)
+- WebSocket ryšio užmezgimo autentifikavimas: `src/lib/ws/handshake.ts` — validuoja WS naujovinimo užklausas naudodamas API raktą arba seanso slapuką
+- Tiesioginio valdymo skydelio WebSocket autentifikavimas: `src/server/ws/liveServer.ts` — pagalbinis procesas (prievadas `LIVE_WS_PORT`) priima valdymo skydelio seanso slapuką arba Bearer API raktą, turintį valdymo sritį (`manage`/`admin`); tik išvadoms generuoti skirti raktai atmetami. Jo vidinis `POST /__omniroute_event` publikavimo galinis taškas priima vietinio ciklo lygiaverčius mazgus tik tada, kai nėra tarpinio serverio šuolio antraštės (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Sinchronizavimas su debesija
 

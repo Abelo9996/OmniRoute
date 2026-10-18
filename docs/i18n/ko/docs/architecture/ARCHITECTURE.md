@@ -10,21 +10,21 @@ _최종 업데이트: 2026-06-28_
 
 ## 요약
 
-OmniRoute는 Next.js를 기반으로 구축된 로컬 AI 라우팅 게이트웨이 및 대시보드입니다.
-단일 OpenAI 호환 엔드포인트(`/v1/*`)를 제공하며, 변환, 폴백, 토큰 갱신 및 사용량 추적 기능을 통해 여러 업스트림 제공자에 걸쳐 트래픽을 라우팅합니다.
+OmniRoute는 Next.js 기반으로 구축된 로컬 AI 라우팅 게이트웨이 및 대시보드입니다.
+단일 OpenAI 호환 엔드포인트(`/v1/*`)를 제공하며, 변환, 폴백, 토큰 갱신 및 사용량 추적 기능을 통해 여러 업스트림 제공자에 트래픽을 라우팅합니다.
 
 핵심 기능:
 
-- CLI/도구를 위한 OpenAI 호환 API 인터페이스(373개 제공자, 150개 실행기 모듈)
+- CLI/도구용 OpenAI 호환 API 인터페이스(374개 제공자, 150개 실행기 모듈)
 - 제공자 형식 간 요청/응답 변환
-- 모델 조합 폴백(다중 모델 시퀀스)
-- 구조화된 조합 단계(`provider + model + connection`) 및 `compositeTiers`에 따른 런타임 순서 지정
+- 모델 콤보 폴백(다중 모델 시퀀스)
+- `compositeTiers`에 따른 런타임 순서 지정 기능을 갖춘 구조화된 콤보 단계(`provider + model + connection`)
 - 계정 수준 폴백(제공자별 다중 계정)
-- 기본 채팅 경로에서 할당량 사전 확인 및 할당량 인식 P2C 계정 선택
-- OAuth + API 키 제공자 연결 관리(27개 OAuth 제공자 모듈)
+- 기본 채팅 경로에서 할당량 사전 검사 및 할당량을 고려한 P2C 계정 선택
+- OAuth + API 키 기반 제공자 연결 관리(27개 OAuth 제공자 모듈)
 - `/v1/embeddings`를 통한 임베딩 생성(18개 제공자)
 - `/v1/images/generations`를 통한 이미지 생성(10개 이상의 제공자, 20개 이상의 모델)
-- `/v1/audio/transcriptions`를 통한 오디오 트랜스크립션(18개 제공자)
+- `/v1/audio/transcriptions`를 통한 오디오 전사(18개 제공자)
 - `/v1/audio/speech`를 통한 텍스트 음성 변환(24개 기본 제공자)
 - `/v1/videos/generations`를 통한 동영상 생성(ComfyUI + SD WebUI)
 - `/v1/music/generations`를 통한 음악 생성(ComfyUI)
@@ -35,49 +35,49 @@ OmniRoute는 Next.js를 기반으로 구축된 로컬 AI 라우팅 게이트웨�
 - 엄격한 OpenAI SDK 호환성을 위한 응답 정제
 - 제공자 간 호환성을 위한 역할 정규화(developer→system, system→user)
 - 구조화된 출력 변환(json_schema → Gemini responseSchema)
-- 제공자, 키, 별칭, 조합, 설정 및 가격 정보의 로컬 영속성(122개 DB 모듈)
+- 제공자, 키, 별칭, 콤보, 설정 및 가격 정보의 로컬 영속성(122개 DB 모듈)
 - 사용량/비용 추적 및 요청 로깅
 - 다중 기기/상태 동기화를 위한 선택적 클라우드 동기화
-- API 액세스 제어를 위한 IP 허용 목록/차단 목록
+- API 접근 제어를 위한 IP 허용 목록/차단 목록
 - 사고 예산 관리(패스스루/자동/사용자 지정/적응형)
-- 전역 시스템 프롬프트 삽입
+- 전역 시스템 프롬프트 주입
 - 세션 추적 및 핑거프린팅
 - 제공자별 프로필을 사용하는 계정별 향상된 속도 제한
 - 제공자 복원력을 위한 회로 차단기 패턴
-- 뮤텍스 잠금을 통한 쇄도 방지
+- 뮤텍스 잠금을 통한 스탬피드 방지
 - 서명 기반 요청 중복 제거 캐시
 - 도메인 계층: 비용 규칙, 폴백 정책, 잠금 정책
 - Context Relay: 계정 전환 시 연속성을 위한 세션 인계 요약
-- 도메인 상태 영속성(폴백, 예산, 잠금 및 회로 차단기를 위한 SQLite 연속 기록 캐시)
+- 도메인 상태 영속성(폴백, 예산, 잠금, 회로 차단기를 위한 SQLite 연속 기록 캐시)
 - 중앙 집중식 요청 평가를 위한 정책 엔진(잠금 → 예산 → 폴백)
-- p50/p95/p99 지연 시간 집계를 포함한 요청 텔레메트리
-- `combo_execution_key` / `combo_step_id`를 통한 조합 대상 텔레메트리 및 과거 조합 대상 상태
+- p50/p95/p99 지연 시간 집계가 포함된 요청 텔레메트리
+- `combo_execution_key` / `combo_step_id`를 통한 콤보 대상 텔레메트리 및 과거 콤보 대상 상태
 - 엔드투엔드 추적을 위한 상관관계 ID(X-Request-Id)
-- API 키별 옵트아웃을 지원하는 규정 준수 감사 로깅
+- API 키별 비활성화 옵션을 제공하는 규정 준수 감사 로깅
 - LLM 품질 보증을 위한 평가 프레임워크
-- 실시간 제공자 회로 차단기 상태를 제공하는 상태 대시보드
+- 실시간 제공자 회로 차단기 상태가 포함된 상태 대시보드
 - 3가지 전송 방식(stdio/SSE/Streamable HTTP)을 지원하는 MCP Server(110개 도구)
 - 스킬 및 작업 수명 주기를 지원하는 A2A Server(JSON-RPC 2.0 + SSE)
-- 메모리 시스템(추출, 삽입, 검색, 요약)
+- 메모리 시스템(추출, 주입, 검색, 요약)
 - 스킬 시스템(레지스트리, 실행기, 샌드박스, 기본 제공 스킬)
 - 인증서 관리 및 DNS 처리를 지원하는 MITM 프록시
 - 프롬프트 인젝션 방어 미들웨어
-- Caveman, RTK, 스택형 파이프라인, 압축 조합, 언어 팩 및 분석을 지원하는 프롬프트 압축 파이프라인
+- Caveman, RTK, 스택형 파이프라인, 압축 콤보, 언어 팩 및 분석 기능을 갖춘 프롬프트 압축 파이프라인
 - ACP(Agent Communication Protocol) 레지스트리
-- 모듈식 OAuth 제공자(`src/lib/oauth/providers/` 아래 22개 개별 모듈)
+- 모듈식 OAuth 제공자(`src/lib/oauth/providers/` 아래의 개별 모듈 22개)
 - 제거/완전 제거 스크립트
 - OAuth 환경 복구 작업
 - OpenAI 호환 WS 클라이언트를 위한 WebSocket 브리지(`/v1/ws`)
-- 동기화 토큰 관리(발급/폐기, ETag 버전 관리 구성 번들 다운로드)
+- 동기화 토큰 관리(발급/폐기, ETag 버전 기반 구성 번들 다운로드)
 - GLM Thinking(`glmt`) 일급 제공자 프리셋
-- 하이브리드 토큰 계산(제공자 측 `/messages/count_tokens` 및 추정 폴백)
-- 모델 별칭 자동 시딩(시작 시 30개 이상의 프록시 간 방언 정규화)
-- SSRF 방어, 비공개 URL 차단 및 구성 가능한 재시도를 지원하는 안전한 아웃바운드 fetch
+- 하이브리드 토큰 계산(추정 폴백을 포함한 제공자 측 `/messages/count_tokens`)
+- 모델 별칭 자동 시딩(시작 시 30개 이상의 교차 프록시 방언 정규화)
+- SSRF 방어, 비공개 URL 차단 및 구성 가능한 재시도를 지원하는 안전한 아웃바운드 가져오기
 - 구성 가능한 `requestRetry` 및 `maxRetryIntervalSec`를 사용하는 쿨다운 인식 채팅 재시도
 - 시작 시 Zod를 사용한 런타임 환경 검증
 - 페이지네이션, 제공자 CRUD 이벤트 및 SSRF 차단 검증 로깅을 지원하는 규정 준수 감사 v2
 
-기본 런타임 모델:
+주요 런타임 모델:
 
 - `src/app/api/*` 아래의 Next.js 앱 라우트가 대시보드 API와 호환성 API를 모두 구현
 - `src/sse/*` + `open-sse/*`의 공유 SSE/라우팅 코어가 제공자 실행, 변환, 스트리밍, 폴백 및 사용량을 처리
@@ -522,16 +522,17 @@ FSM 전이는 Auto Combo의 점수 산정에 반영되어, 백그라운드/자�
 - 테이블(`src/lib/db/core.ts`에서 생성): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - 쓰기 연계 캐시 패턴: 런타임에는 인메모리 Map이 기준 데이터이며, 변경 사항은 SQLite에 동기적으로 기록되고 콜드 스타트 시 DB에서 상태가 복원됨
 
-## 4) 인증 + 보안 접점
+## 4) 인증 + 보안 표면
 
 - 대시보드 쿠키 인증: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - API 키 생성/검증: `src/shared/utils/apiKey.ts`
-- 제공자 보안 정보는 `providerConnections` 항목에 영속적으로 저장됨
-- `open-sse/utils/proxyFetch.ts`(환경 변수) 및 `open-sse/utils/networkProxy.ts`(제공자별 또는 전역으로 구성 가능)를 통한 아웃바운드 프록시 지원
-- SSRF / 아웃바운드 URL 보호: `src/shared/network/outboundUrlGuard.ts` — 모든 제공자 호출에 대해 사설/루프백/링크 로컬 범위를 차단
-- 런타임 환경 검증: `src/lib/env/runtimeEnv.ts` — 모든 환경 변수에 대한 Zod 스키마이며, 문제를 시작 오류/경고로 표시
-- 동기화 토큰: `src/lib/db/syncTokens.ts` — 구성 번들 다운로드 엔드포인트용 범위 제한 토큰이며, `sync_tokens` SQLite 테이블(마이그레이션 `024_create_sync_tokens.sql`)을 사용
+- `providerConnections` 항목에 저장되는 공급자 비밀 정보
+- `open-sse/utils/proxyFetch.ts`(환경 변수) 및 `open-sse/utils/networkProxy.ts`(공급자별 또는 전역 설정 가능)를 통한 아웃바운드 프록시 지원
+- SSRF / 아웃바운드 URL 보호: `src/shared/network/outboundUrlGuard.ts` — 공급자 호출 및 웹훅 대상에 대한 호스트 검사. 모드는 `src/shared/network/outboundUrlGuardPolicy.ts`에서 가져옴(`docs/reference/ENVIRONMENT.md`의 플래그 참조)
+- 런타임 환경 변수 검증: `src/lib/env/runtimeEnv.ts` — 모든 환경 변수에 대한 Zod 스키마이며, 시작 시 오류/경고로 표시됨
+- 동기화 토큰: `src/lib/db/syncTokens.ts` — 구성 번들 다운로드 엔드포인트용 범위 지정 토큰. `sync_tokens` SQLite 테이블을 기반으로 함(마이그레이션 `024_create_sync_tokens.sql`)
 - WebSocket 핸드셰이크 인증: `src/lib/ws/handshake.ts` — API 키 또는 세션 쿠키를 통해 WS 업그레이드 요청을 검증
+- 실시간 대시보드 WebSocket 인증: `src/server/ws/liveServer.ts` — 사이드카(포트 `LIVE_WS_PORT`)는 대시보드 세션 쿠키 또는 관리 범위(`manage`/`admin`)를 보유한 Bearer API 키를 허용하며, 추론 전용 키는 거부함. 내부 `POST /__omniroute_event` 게시자 엔드포인트는 프록시 홉 헤더(`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)가 없는 경우에만 루프백 피어를 허용함
 
 ## 5) 클라우드 동기화
 

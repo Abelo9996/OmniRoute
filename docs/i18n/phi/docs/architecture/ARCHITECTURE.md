@@ -8,79 +8,79 @@
 
 _Huling na-update: 2026-06-28_
 
-## Buod para sa mga Ehekutibo
+## Buod na Ehekutibo
 
 Ang OmniRoute ay isang lokal na AI routing gateway at dashboard na binuo gamit ang Next.js.
-Nagbibigay ito ng iisang endpoint na compatible sa OpenAI (`/v1/*`) at niruruta ang trapiko sa maraming upstream provider na may pagsasalin, fallback, pag-refresh ng token, at pagsubaybay sa paggamit.
+Nagbibigay ito ng iisang endpoint na tugma sa OpenAI (`/v1/*`) at niruruta ang trapiko sa maraming upstream provider nang may pagsasalin, fallback, pag-refresh ng token, at pagsubaybay sa paggamit.
 
 Mga pangunahing kakayahan:
 
-- API surface na compatible sa OpenAI para sa CLI/mga tool (373 provider, 150 executor module)
+- API surface na tugma sa OpenAI para sa CLI/mga tool (374 provider, 150 executor module)
 - Pagsasalin ng request/response sa iba't ibang format ng provider
-- Fallback ng model combo (pagkakasunod-sunod ng maraming modelo)
-- Mga structured combo step (`provider + model + connection`) na may runtime ordering ayon sa `compositeTiers`
+- Fallback ng combo ng modelo (sunud-sunod na maraming modelo)
+- Mga structured combo step (`provider + model + connection`) na may runtime ordering batay sa `compositeTiers`
 - Fallback sa antas ng account (maraming account sa bawat provider)
-- Paunang pagsusuri ng quota at pagpili ng P2C account na isinasaalang-alang ang quota sa pangunahing chat path
+- Paunang pagsusuri ng quota at quota-aware na pagpili ng P2C account sa pangunahing chat path
 - Pamamahala ng koneksyon sa provider gamit ang OAuth + API key (27 OAuth provider module)
 - Pagbuo ng embedding sa pamamagitan ng `/v1/embeddings` (18 provider)
 - Pagbuo ng larawan sa pamamagitan ng `/v1/images/generations` (10+ provider, 20+ modelo)
-- Transkripsyon ng audio sa pamamagitan ng `/v1/audio/transcriptions` (18 provider)
-- Text-to-speech sa pamamagitan ng `/v1/audio/speech` (24 built-in na provider)
+- Transkripsiyon ng audio sa pamamagitan ng `/v1/audio/transcriptions` (18 provider)
+- Text-to-speech sa pamamagitan ng `/v1/audio/speech` (24 na built-in na provider)
 - Pagbuo ng video sa pamamagitan ng `/v1/videos/generations` (ComfyUI + SD WebUI)
 - Pagbuo ng musika sa pamamagitan ng `/v1/music/generations` (ComfyUI)
 - Paghahanap sa web sa pamamagitan ng `/v1/search` (20 provider)
 - Mga moderation sa pamamagitan ng `/v1/moderations`
 - Muling pagraranggo sa pamamagitan ng `/v1/rerank`
 - Pag-parse ng think tag (``) para sa mga reasoning model
-- Paglilinis ng response para sa mahigpit na compatibility sa OpenAI SDK
-- Normalisasyon ng role (developer→system, system→user) para sa compatibility sa iba't ibang provider
+- Paglilinis ng response para sa mahigpit na pagiging tugma sa OpenAI SDK
+- Normalisasyon ng role (developer→system, system→user) para sa pagiging tugma sa iba't ibang provider
 - Pag-convert ng structured output (json_schema → Gemini responseSchema)
-- Lokal na persistence para sa mga provider, key, alias, combo, setting, at pagpepresyo (122 DB module)
+- Lokal na persistence para sa mga provider, key, alias, combo, setting, at presyo (122 DB module)
 - Pagsubaybay sa paggamit/gastos at pag-log ng request
 - Opsyonal na cloud sync para sa pag-sync ng maraming device/state
-- IP allowlist/blocklist para sa pagkontrol ng access sa API
+- IP allowlist/blocklist para sa kontrol ng access sa API
 - Pamamahala ng thinking budget (passthrough/auto/custom/adaptive)
-- Global na pag-inject ng system prompt
+- Pandaigdigang pag-inject ng system prompt
 - Pagsubaybay sa session at fingerprinting
 - Pinahusay na rate limiting sa bawat account na may mga profile na partikular sa provider
-- Pattern na circuit breaker para sa katatagan ng provider
+- Circuit breaker pattern para sa katatagan ng provider
 - Proteksiyon laban sa thundering herd gamit ang mutex locking
-- Cache para sa pag-deduplicate ng request batay sa signature
+- Cache para sa deduplikasyon ng request batay sa signature
 - Domain layer: mga panuntunan sa gastos, patakaran sa fallback, patakaran sa lockout
-- Context Relay: mga buod ng paglilipat ng session para mapanatili ang continuity kapag nagpapalit ng account
+- Context Relay: mga buod ng paglilipat ng session para sa pagpapatuloy kapag nagpapalit ng account
 - Persistence ng domain state (SQLite write-through cache para sa mga fallback, budget, lockout, at circuit breaker)
 - Policy engine para sa sentralisadong pagsusuri ng request (lockout → budget → fallback)
 - Telemetry ng request na may pagsasama-sama ng latency na p50/p95/p99
 - Telemetry ng combo target at historikal na kalagayan ng combo target sa pamamagitan ng `combo_execution_key` / `combo_step_id`
-- Correlation ID (X-Request-Id) para sa end-to-end tracing
+- Correlation ID (X-Request-Id) para sa end-to-end na pagsubaybay
 - Pag-log ng compliance audit na may opsyong mag-opt out sa bawat API key
-- Eval framework para sa quality assurance ng LLM
+- Eval framework para sa pagtitiyak ng kalidad ng LLM
 - Health dashboard na may real-time na status ng circuit breaker ng provider
 - MCP Server (110 tool) na may 3 transport (stdio/SSE/Streamable HTTP)
 - A2A Server (JSON-RPC 2.0 + SSE) na may mga skill at lifecycle ng task
-- Memory system (extraction, injection, retrieval, summarization)
-- Skills system (registry, executor, sandbox, mga built-in na skill)
-- MITM proxy na may pamamahala ng certificate at paghawak ng DNS
+- Sistema ng memorya (extraction, injection, retrieval, summarization)
+- Sistema ng mga skill (registry, executor, sandbox, mga built-in na skill)
+- MITM proxy na may pamamahala ng certificate at pangangasiwa ng DNS
 - Middleware na panangga laban sa prompt injection
 - Pipeline ng prompt compression na may Caveman, RTK, mga stacked pipeline, compression combo, language pack, at analytics
 - Registry ng ACP (Agent Communication Protocol)
 - Mga modular na OAuth provider (22 indibidwal na module sa ilalim ng `src/lib/oauth/providers/`)
 - Mga script para sa uninstall/full-uninstall
 - Aksiyon para sa pagkukumpuni ng OAuth environment
-- WebSocket bridge para sa mga WS client na compatible sa OpenAI (`/v1/ws`)
-- Pamamahala ng sync token (pag-isyu/pagbawi, pag-download ng config bundle na may ETag versioning)
-- First-class na provider preset para sa GLM Thinking (`glmt`)
-- Hybrid na pagbibilang ng token (`/messages/count_tokens` sa panig ng provider na may estimation fallback)
-- Awtomatikong pag-seed ng model alias (30+ normalisasyon ng cross-proxy dialect sa startup)
-- Ligtas na outbound fetch na may SSRF guard, pag-block sa pribadong URL, at nako-configure na retry
-- Mga chat retry na isinasaalang-alang ang cooldown, na may nako-configure na `requestRetry` at `maxRetryIntervalSec`
-- Pag-validate ng runtime environment gamit ang Zod sa startup
-- Compliance audit v2 na may pagination, mga provider CRUD event, at pag-log ng validation na na-block ng SSRF
+- WebSocket bridge para sa mga WS client na tugma sa OpenAI (`/v1/ws`)
+- Pamamahala ng sync token (pag-isyu/pagbawi, pag-download ng config bundle na may bersiyong ETag)
+- GLM Thinking (`glmt`) bilang first-class na provider preset
+- Hybrid na pagbibilang ng token (provider-side na `/messages/count_tokens` na may estimation fallback)
+- Awtomatikong pag-seed ng model alias (30+ normalisasyon ng cross-proxy dialect sa pagsisimula)
+- Ligtas na outbound fetch na may SSRF guard, pag-block ng pribadong URL, at nakokompigurang retry
+- Mga chat retry na isinasaalang-alang ang cooldown at may nakokompigurang `requestRetry` at `maxRetryIntervalSec`
+- Pagpapatunay ng runtime environment gamit ang Zod sa pagsisimula
+- Compliance audit v2 na may pagination, mga CRUD event ng provider, at pag-log ng validation na hinarang ng SSRF
 
 Pangunahing runtime model:
 
 - Ipinapatupad ng mga Next.js app route sa ilalim ng `src/app/api/*` ang mga dashboard API at compatibility API
-- Isang shared na SSE/routing core sa `src/sse/*` + `open-sse/*` ang nangangasiwa sa pagpapatakbo ng provider, pagsasalin, streaming, fallback, at paggamit
+- Isang nakabahaging SSE/routing core sa `src/sse/*` + `open-sse/*` ang nangangasiwa sa pagpapatakbo ng provider, pagsasalin, streaming, fallback, at paggamit
 
 ## Mga Reference Diagram
 
@@ -534,16 +534,17 @@ Domain State DB (SQLite):
 - Mga table (ginagawa sa `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Pattern ng write-through cache: ang mga in-memory Map ang awtoritatibo habang runtime; sabayang isinusulat sa SQLite ang mga pagbabago; ibinabalik mula sa DB ang state sa cold start
 
-## 4) Mga Surface ng Auth + Seguridad
+## 4) Auth + Mga Bahaging Pangseguridad
 
-- Auth ng dashboard cookie: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Auth gamit ang cookie ng dashboard: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - Pagbuo/pag-verify ng API key: `src/shared/utils/apiKey.ts`
-- Naka-persist ang mga provider secret sa mga entry ng `providerConnections`
-- Suporta sa outbound proxy sa pamamagitan ng `open-sse/utils/proxyFetch.ts` (mga env var) at `open-sse/utils/networkProxy.ts` (maaaring i-configure kada provider o sa pangkalahatan)
-- Guard para sa SSRF / outbound URL: `src/shared/network/outboundUrlGuard.ts` — bina-block ang mga private/loopback/link-local range para sa lahat ng tawag sa provider
-- Runtime na validation ng env: `src/lib/env/runtimeEnv.ts` — Zod schema para sa lahat ng environment variable, na inilalantad bilang mga error/babala sa startup
-- Mga sync token: `src/lib/db/syncTokens.ts` — mga scoped token para sa mga endpoint sa pag-download ng config bundle; sinusuportahan ng SQLite table na `sync_tokens` (migration na `024_create_sync_tokens.sql`)
-- Auth para sa WebSocket handshake: `src/lib/ws/handshake.ts` — vina-validate ang mga kahilingan sa pag-upgrade ng WS sa pamamagitan ng API key o session cookie
+- Ang mga lihim ng provider ay pinapanatili sa mga entry ng `providerConnections`
+- Suporta para sa outbound proxy sa pamamagitan ng `open-sse/utils/proxyFetch.ts` (mga env var) at `open-sse/utils/networkProxy.ts` (maaaring i-configure para sa bawat provider o sa pangkalahatan)
+- Proteksiyon laban sa SSRF / outbound URL: `src/shared/network/outboundUrlGuard.ts` — mga pagsusuri sa host para sa mga tawag sa provider at mga target ng webhook; nagmumula ang mode sa `src/shared/network/outboundUrlGuardPolicy.ts` (mga flag sa `docs/reference/ENVIRONMENT.md`)
+- Pag-validate ng runtime env: `src/lib/env/runtimeEnv.ts` — Zod schema para sa lahat ng environment variable, na inilalantad bilang mga error/babala sa pagsisimula
+- Mga sync token: `src/lib/db/syncTokens.ts` — mga token na may limitadong saklaw para sa mga endpoint sa pag-download ng config bundle; sinusuportahan ng SQLite table na `sync_tokens` (migration na `024_create_sync_tokens.sql`)
+- Auth sa WebSocket handshake: `src/lib/ws/handshake.ts` — vina-validate ang mga kahilingan sa pag-upgrade ng WS gamit ang API key o session cookie
+- Auth sa live dashboard WebSocket: `src/server/ws/liveServer.ts` — tumatanggap ang sidecar (port na `LIVE_WS_PORT`) ng dashboard session cookie o Bearer API key na may management scope (`manage`/`admin`); tinatanggihan ang mga key na para lamang sa inference. Tumatanggap lamang ang panloob nitong publisher endpoint na `POST /__omniroute_event` ng mga loopback peer kapag walang proxy-hop header (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Cloud Sync
 

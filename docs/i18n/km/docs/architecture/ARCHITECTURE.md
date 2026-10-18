@@ -10,77 +10,77 @@ _បានធ្វើបច្ចុប្បន្នភាពចុងក្�
 
 ## សេចក្តីសង្ខេបសម្រាប់ថ្នាក់ដឹកនាំ
 
-OmniRoute គឺជាច្រកបញ្ជូន AI និងផ្ទាំងគ្រប់គ្រងមូលដ្ឋាន ដែលបង្កើតឡើងលើ Next.js។
-វាផ្តល់ endpoint តែមួយដែលត្រូវគ្នាជាមួយ OpenAI (`/v1/*`) និងបញ្ជូនចរាចរណ៍ឆ្លងកាត់អ្នកផ្តល់សេវា upstream ច្រើន ដោយមានការបម្លែងទម្រង់ ការប្ដូរទៅជម្រើសបម្រុង ការធ្វើឱ្យ token ស្រស់ឡើងវិញ និងការតាមដានការប្រើប្រាស់។
+OmniRoute គឺជាច្រកផ្លូវបញ្ជូន AI មូលដ្ឋាន និងផ្ទាំងគ្រប់គ្រងដែលបង្កើតឡើងលើ Next.js។
+វាផ្តល់ endpoint តែមួយដែលត្រូវគ្នាជាមួយ OpenAI (`/v1/*`) និងបញ្ជូនចរាចរណ៍ឆ្លងកាត់អ្នកផ្តល់សេវាដើមជាច្រើន ដោយមានការបម្លែង ការប្តូរទៅជម្រើសបម្រុង ការធ្វើឱ្យ token ស្រស់ឡើងវិញ និងការតាមដានការប្រើប្រាស់។
 
 សមត្ថភាពស្នូល៖
 
-- ផ្ទៃ API ដែលត្រូវគ្នាជាមួយ OpenAI សម្រាប់ CLI/ឧបករណ៍ (អ្នកផ្តល់សេវា 373, ម៉ូឌុលប្រតិបត្តិ 150)
+- ផ្ទៃ API ដែលត្រូវគ្នាជាមួយ OpenAI សម្រាប់ CLI/ឧបករណ៍ (អ្នកផ្តល់សេវា 374 និងម៉ូឌុលប្រតិបត្តិ 150)
 - ការបម្លែង request/response រវាងទម្រង់របស់អ្នកផ្តល់សេវា
-- ការប្ដូរទៅជម្រើសបម្រុងនៃបន្សំម៉ូដែល (លំដាប់ពហុម៉ូដែល)
-- ជំហានបន្សំដែលមានរចនាសម្ព័ន្ធ (`provider + model + connection`) ជាមួយការតម្រៀបលំដាប់ពេលដំណើរការដោយ `compositeTiers`
-- ការប្ដូរទៅគណនីបម្រុងនៅកម្រិតគណនី (ពហុគណនីសម្រាប់អ្នកផ្តល់សេវានីមួយៗ)
-- ការត្រួតពិនិត្យ quota ជាមុន និងការជ្រើសរើសគណនី P2C ដោយគិតគូរពី quota នៅក្នុងផ្លូវ chat ចម្បង
-- ការគ្រប់គ្រងការតភ្ជាប់ទៅអ្នកផ្តល់សេវាតាម OAuth + API-key (ម៉ូឌុលអ្នកផ្តល់សេវា OAuth 27)
+- ជម្រើសបម្រុងជាបន្សំម៉ូដែល (លំដាប់ពហុម៉ូដែល)
+- ជំហានបន្សំដែលមានរចនាសម្ព័ន្ធ (`provider + model + connection`) ជាមួយការរៀបលំដាប់ពេលដំណើរការដោយ `compositeTiers`
+- ជម្រើសបម្រុងកម្រិតគណនី (គណនីច្រើនសម្រាប់អ្នកផ្តល់សេវានីមួយៗ)
+- ការត្រួតពិនិត្យ quota មុនដំណើរការ និងការជ្រើសរើសគណនី P2C ដោយយល់ដឹងពី quota នៅក្នុងលំហូរ chat សំខាន់
+- ការគ្រប់គ្រងការតភ្ជាប់ទៅអ្នកផ្តល់សេវាតាម OAuth + API key (ម៉ូឌុលអ្នកផ្តល់សេវា OAuth ចំនួន 27)
 - ការបង្កើត embedding តាមរយៈ `/v1/embeddings` (អ្នកផ្តល់សេវា 18)
 - ការបង្កើតរូបភាពតាមរយៈ `/v1/images/generations` (អ្នកផ្តល់សេវា 10+ និងម៉ូដែល 20+)
-- ការចម្លងសំឡេងទៅជាអត្ថបទតាមរយៈ `/v1/audio/transcriptions` (អ្នកផ្តល់សេវា 18)
-- ការបម្លែងអត្ថបទទៅជាសំឡេងតាមរយៈ `/v1/audio/speech` (អ្នកផ្តល់សេវាភ្ជាប់មកជាមួយ 24)
+- ការបម្លែងសំឡេងទៅជាអត្ថបទតាមរយៈ `/v1/audio/transcriptions` (អ្នកផ្តល់សេវា 18)
+- ការបម្លែងអត្ថបទទៅជាសំឡេងតាមរយៈ `/v1/audio/speech` (អ្នកផ្តល់សេវាដែលភ្ជាប់មកជាមួយ 24)
 - ការបង្កើតវីដេអូតាមរយៈ `/v1/videos/generations` (ComfyUI + SD WebUI)
 - ការបង្កើតតន្ត្រីតាមរយៈ `/v1/music/generations` (ComfyUI)
-- ការស្វែងរកតាមបណ្ដាញតាមរយៈ `/v1/search` (អ្នកផ្តល់សេវា 20)
-- ការត្រួតពិនិត្យមាតិកាតាមរយៈ `/v1/moderations`
+- ការស្វែងរកលើបណ្ដាញតាមរយៈ `/v1/search` (អ្នកផ្តល់សេវា 20)
+- ការត្រួតពិនិត្យខ្លឹមសារតាមរយៈ `/v1/moderations`
 - ការរៀបចំណាត់ថ្នាក់ឡើងវិញតាមរយៈ `/v1/rerank`
 - ការញែក think tag (``) សម្រាប់ម៉ូដែលដែលមានការវែកញែក
-- ការសម្អាត response ដើម្បីឱ្យត្រូវគ្នាយ៉ាងតឹងរ៉ឹងជាមួយ OpenAI SDK
-- ការធ្វើឱ្យ role មានទម្រង់ស្តង់ដារ (developer→system, system→user) ដើម្បីឱ្យត្រូវគ្នារវាងអ្នកផ្តល់សេវា
+- ការសម្អាត response ដើម្បីធានាភាពត្រូវគ្នាយ៉ាងតឹងរ៉ឹងជាមួយ OpenAI SDK
+- ការធ្វើឱ្យ role មានលក្ខណៈស្តង់ដារ (developer→system, system→user) ដើម្បីឱ្យត្រូវគ្នារវាងអ្នកផ្តល់សេវា
 - ការបម្លែង structured output (json_schema → Gemini responseSchema)
-- ការរក្សាទុកក្នុងមូលដ្ឋានសម្រាប់អ្នកផ្តល់សេវា keys, aliases, combos, settings និង pricing (ម៉ូឌុល DB 122)
+- ការរក្សាទុកទិន្នន័យក្នុងមូលដ្ឋានសម្រាប់អ្នកផ្តល់សេវា key ឈ្មោះក្លែងក្លាយ បន្សំ ការកំណត់ និងតម្លៃ (ម៉ូឌុល DB ចំនួន 122)
 - ការតាមដានការប្រើប្រាស់/ថ្លៃចំណាយ និងការកត់ត្រា request
-- ការធ្វើសមកាលកម្ម cloud ជាជម្រើស សម្រាប់ការធ្វើសមកាលកម្មពហុឧបករណ៍/ស្ថានភាព
-- បញ្ជីអនុញ្ញាត/បញ្ជីទប់ស្កាត់ IP សម្រាប់ការគ្រប់គ្រងសិទ្ធិចូលប្រើ API
-- ការគ្រប់គ្រង thinking budget (passthrough/auto/custom/adaptive)
+- ជម្រើសធ្វើសមកាលកម្មជាមួយ cloud សម្រាប់ការធ្វើសមកាលកម្មពហុឧបករណ៍/ស្ថានភាព
+- បញ្ជីអនុញ្ញាត/បញ្ជីទប់ស្កាត់ IP សម្រាប់គ្រប់គ្រងការចូលប្រើ API
+- ការគ្រប់គ្រងកញ្ចប់ថវិកាសម្រាប់ការគិត (បញ្ជូនបន្ត/ស្វ័យប្រវត្តិ/ផ្ទាល់ខ្លួន/សម្របខ្លួន)
 - ការបញ្ចូល system prompt ជាសកល
-- ការតាមដាន session និងការកំណត់ fingerprint
-- ការកំណត់អត្រាកម្រិតខ្ពស់សម្រាប់គណនីនីមួយៗ ជាមួយ profile ជាក់លាក់តាមអ្នកផ្តល់សេវា
+- ការតាមដាន session និងការកំណត់ស្នាមសម្គាល់
+- ការកំណត់អត្រាកម្រិតខ្ពស់តាមគណនី ជាមួយប្រូហ្វាលជាក់លាក់របស់អ្នកផ្តល់សេវា
 - លំនាំ circuit breaker សម្រាប់ភាពធន់របស់អ្នកផ្តល់សេវា
 - ការការពារបាតុភូត anti-thundering herd ដោយប្រើ mutex locking
-- ឃ្លាំងសម្ងាត់សម្រាប់ការលុប request ស្ទួនដោយផ្អែកលើ signature
-- ស្រទាប់ domain៖ ច្បាប់ថ្លៃចំណាយ គោលការណ៍ fallback និងគោលការណ៍ lockout
-- Context Relay៖ សេចក្តីសង្ខេបសម្រាប់ផ្ទេរ session ដើម្បីរក្សាភាពបន្តនៅពេលប្ដូរគណនី
-- ការរក្សាទុកស្ថានភាព domain (ឃ្លាំងសម្ងាត់ SQLite write-through សម្រាប់ fallbacks, budgets, lockouts និង circuit breakers)
-- ម៉ាស៊ីនគោលការណ៍សម្រាប់ការវាយតម្លៃ request ជាកណ្ដាល (lockout → budget → fallback)
-- ទិន្នន័យ telemetry របស់ request ជាមួយការប្រមូលផ្ដុំ latency p50/p95/p99
-- ទិន្នន័យ telemetry របស់ combo target និងប្រវត្តិសុខភាព combo target តាមរយៈ `combo_execution_key` / `combo_step_id`
+- ឃ្លាំងសម្ងាត់សម្រាប់លុប request ស្ទួនដោយផ្អែកលើហត្ថលេខា
+- ស្រទាប់ domain៖ ច្បាប់ថ្លៃចំណាយ គោលការណ៍ជម្រើសបម្រុង និងគោលការណ៍ lockout
+- Context Relay៖ សេចក្តីសង្ខេបសម្រាប់ផ្ទេរ session ដើម្បីរក្សាភាពបន្តនៅពេលប្តូរគណនី
+- ការរក្សាទុកស្ថានភាព domain (ឃ្លាំងសម្ងាត់ SQLite ប្រភេទ write-through សម្រាប់ជម្រើសបម្រុង កញ្ចប់ថវិកា lockout និង circuit breaker)
+- ម៉ាស៊ីនគោលការណ៍សម្រាប់វាយតម្លៃ request ជាមជ្ឈការ (lockout → budget → fallback)
+- Telemetry របស់ request ជាមួយការបូកសរុប latency កម្រិត p50/p95/p99
+- Telemetry របស់គោលដៅបន្សំ និងសុខភាពជាប្រវត្តិរបស់គោលដៅបន្សំតាមរយៈ `combo_execution_key` / `combo_step_id`
 - Correlation ID (X-Request-Id) សម្រាប់ការតាមដានពីដើមដល់ចប់
-- ការកត់ត្រាសវនកម្មការអនុលោមតាមបទប្បញ្ញត្តិ ជាមួយជម្រើសបដិសេធសម្រាប់ API key នីមួយៗ
-- ក្របខណ្ឌ Eval សម្រាប់ការធានាគុណភាព LLM
-- ផ្ទាំងព័ត៌មានសុខភាព ជាមួយស្ថានភាព circuit breaker របស់អ្នកផ្តល់សេវាក្នុងពេលជាក់ស្ដែង
-- MCP Server (ឧបករណ៍ 110) ជាមួយ transport 3 ប្រភេទ (stdio/SSE/Streamable HTTP)
-- A2A Server (JSON-RPC 2.0 + SSE) ជាមួយ skills និងវដ្តជីវិត task
-- ប្រព័ន្ធ memory (ការស្រង់ចេញ ការបញ្ចូល ការទាញយក និងការសង្ខេប)
-- ប្រព័ន្ធ skills (registry, executor, sandbox និង skills ភ្ជាប់មកជាមួយ)
-- MITM proxy ជាមួយការគ្រប់គ្រង certificate និងការដោះស្រាយ DNS
-- Middleware ការពារ prompt injection
-- Pipeline បង្ហាប់ prompt ជាមួយ Caveman, RTK, stacked pipelines, compression combos, language packs និង analytics
-- Registry របស់ ACP (Agent Communication Protocol)
-- អ្នកផ្តល់សេវា OAuth បែបម៉ូឌុល (ម៉ូឌុលនីមួយៗ 22 នៅក្រោម `src/lib/oauth/providers/`)
-- Script សម្រាប់ uninstall/full-uninstall
+- ការកត់ត្រាសវនកម្មអនុលោមភាព ជាមួយជម្រើសបដិសេធតាម API key នីមួយៗ
+- ក្របខណ្ឌវាយតម្លៃសម្រាប់ការធានាគុណភាព LLM
+- ផ្ទាំងគ្រប់គ្រងសុខភាព ជាមួយស្ថានភាព circuit breaker របស់អ្នកផ្តល់សេវាក្នុងពេលជាក់ស្តែង
+- MCP Server (ឧបករណ៍ 110) ជាមួយមធ្យោបាយដឹកជញ្ជូន 3 ប្រភេទ (stdio/SSE/Streamable HTTP)
+- A2A Server (JSON-RPC 2.0 + SSE) ជាមួយជំនាញ និងវដ្តជីវិតរបស់ភារកិច្ច
+- ប្រព័ន្ធ memory (ការស្រង់ ការបញ្ចូល ការទាញយក និងការសង្ខេប)
+- ប្រព័ន្ធ skills (បញ្ជីចុះឈ្មោះ ប្រតិបត្តិករ sandbox និងជំនាញដែលភ្ជាប់មកជាមួយ)
+- MITM proxy ជាមួយការគ្រប់គ្រងវិញ្ញាបនបត្រ និងការដោះស្រាយ DNS
+- Middleware ការពារការចាក់បញ្ចូល prompt
+- បំពង់ដំណើរការបង្ហាប់ prompt ជាមួយ Caveman, RTK, បំពង់ដំណើរការដាក់ជាស្រទាប់ បន្សំការបង្ហាប់ កញ្ចប់ភាសា និងការវិភាគ
+- បញ្ជីចុះឈ្មោះ ACP (Agent Communication Protocol)
+- អ្នកផ្តល់សេវា OAuth បែបម៉ូឌុល (ម៉ូឌុលដាច់ដោយឡែក 22 នៅក្រោម `src/lib/oauth/providers/`)
+- ស្គ្រីបលុបការដំឡើង/លុបការដំឡើងទាំងស្រុង
 - សកម្មភាពជួសជុល environment របស់ OAuth
-- ស្ពាន WebSocket សម្រាប់ client WS ដែលត្រូវគ្នាជាមួយ OpenAI (`/v1/ws`)
-- ការគ្រប់គ្រង sync token (ចេញ/ដកហូត និងការទាញយក config bundle ដែលកំណត់កំណែដោយ ETag)
-- Preset អ្នកផ្តល់សេវាថ្នាក់ទីមួយសម្រាប់ GLM Thinking (`glmt`)
-- ការរាប់ token បែប hybrid (`/messages/count_tokens` នៅខាងអ្នកផ្តល់សេវា ជាមួយការប៉ាន់ស្មានជាជម្រើសបម្រុង)
-- ការបង្កើត model alias ដោយស្វ័យប្រវត្តិ (ការធ្វើឱ្យ dialect ឆ្លងកាត់ proxy មានទម្រង់ស្តង់ដារ 30+ នៅពេលចាប់ផ្ដើម)
-- ការទាញយកទិន្នន័យចេញដោយសុវត្ថិភាព ជាមួយការការពារ SSRF ការទប់ស្កាត់ URL ឯកជន និងការព្យាយាមឡើងវិញដែលអាចកំណត់រចនាសម្ព័ន្ធបាន
-- ការព្យាយាម chat ឡើងវិញដោយគិតគូរពី cooldown ជាមួយ `requestRetry` និង `maxRetryIntervalSec` ដែលអាចកំណត់រចនាសម្ព័ន្ធបាន
-- ការផ្ទៀងផ្ទាត់ runtime environment ជាមួយ Zod នៅពេលចាប់ផ្ដើម
-- សវនកម្មការអនុលោមតាមបទប្បញ្ញត្តិ v2 ជាមួយ pagination, ព្រឹត្តិការណ៍ CRUD របស់អ្នកផ្តល់សេវា និងការកត់ត្រាការផ្ទៀងផ្ទាត់ដែលត្រូវបានទប់ស្កាត់ដោយ SSRF
+- ស្ពាន WebSocket សម្រាប់ WS client ដែលត្រូវគ្នាជាមួយ OpenAI (`/v1/ws`)
+- ការគ្រប់គ្រង sync token (ចេញ/ដកហូត និងការទាញយកកញ្ចប់ config ដែលកំណត់កំណែដោយ ETag)
+- Preset អ្នកផ្តល់សេវា GLM Thinking (`glmt`) ថ្នាក់ទីមួយ
+- ការរាប់ token បែបកូនកាត់ (`/messages/count_tokens` នៅខាងអ្នកផ្តល់សេវា ជាមួយជម្រើសបម្រុងជាការប៉ាន់ស្មាន)
+- ការបង្កើត model alias ដោយស្វ័យប្រវត្តិជាមុន (ការធ្វើឱ្យ dialect ឆ្លង proxy មានលក្ខណៈស្តង់ដារ 30+ នៅពេលចាប់ផ្តើម)
+- ការទាញយក outbound ដោយសុវត្ថិភាព ជាមួយការការពារ SSRF ការទប់ស្កាត់ URL ឯកជន និងការព្យាយាមឡើងវិញដែលអាចកំណត់រចនាសម្ព័ន្ធបាន
+- ការព្យាយាម chat ឡើងវិញដោយយល់ដឹងពី cooldown ជាមួយ `requestRetry` និង `maxRetryIntervalSec` ដែលអាចកំណត់រចនាសម្ព័ន្ធបាន
+- ការផ្ទៀងផ្ទាត់ runtime environment ដោយប្រើ Zod នៅពេលចាប់ផ្តើម
+- សវនកម្មអនុលោមភាព v2 ជាមួយ pagination ព្រឹត្តិការណ៍ CRUD របស់អ្នកផ្តល់សេវា និងការកត់ត្រាផ្ទៀងផ្ទាត់ដែលត្រូវបានទប់ស្កាត់ដោយ SSRF
 
-គំរូ runtime ចម្បង៖
+ម៉ូដែល runtime ចម្បង៖
 
-- App routes របស់ Next.js នៅក្រោម `src/app/api/*` អនុវត្តទាំង API របស់ផ្ទាំងគ្រប់គ្រង និង API សម្រាប់ភាពត្រូវគ្នា
-- ស្នូល SSE/routing ដែលប្រើរួមគ្នានៅក្នុង `src/sse/*` + `open-sse/*` គ្រប់គ្រងការប្រតិបត្តិរបស់អ្នកផ្តល់សេវា ការបម្លែងទម្រង់ streaming, fallback និងការប្រើប្រាស់
+- App route របស់ Next.js នៅក្រោម `src/app/api/*` អនុវត្តទាំង API សម្រាប់ផ្ទាំងគ្រប់គ្រង និង API សម្រាប់ភាពត្រូវគ្នា
+- ស្នូល SSE/routing រួមនៅក្នុង `src/sse/*` + `open-sse/*` គ្រប់គ្រងការប្រតិបត្តិរបស់អ្នកផ្តល់សេវា ការបម្លែង streaming ជម្រើសបម្រុង និងការប្រើប្រាស់
 
 ## ដ្យាក្រាមយោង
 
@@ -533,16 +533,17 @@ Provider មួយចំនួនផ្តល់មកជាមួយ module ព
 - តារាង (បង្កើតនៅក្នុង `src/lib/db/core.ts`)៖ `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - លំនាំឃ្លាំងសម្ងាត់ write-through៖ Maps ក្នុងអង្គចងចាំជាប្រភពត្រឹមត្រូវនៅពេលដំណើរការ; ការផ្លាស់ប្ដូរត្រូវបានសរសេរទៅ SQLite ជាសមកាលកម្ម; ស្ថានភាពត្រូវបានស្ដារពី DB នៅពេលចាប់ផ្ដើមត្រជាក់
 
-## 4) ផ្ទៃផ្ទៀងផ្ទាត់អត្តសញ្ញាណ + សុវត្ថិភាព
+## 4) ផ្ទៃមុខងារ Auth + សុវត្ថិភាព
 
-- ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណ cookie របស់ផ្ទាំងគ្រប់គ្រង៖ `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណតាម cookie របស់ Dashboard៖ `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - ការបង្កើត/ផ្ទៀងផ្ទាត់ API key៖ `src/shared/utils/apiKey.ts`
-- ព័ត៌មានសម្ងាត់របស់ provider ត្រូវបានរក្សាទុកក្នុងធាតុ `providerConnections`
-- ការគាំទ្រ proxy ចេញតាមរយៈ `open-sse/utils/proxyFetch.ts` (env vars) និង `open-sse/utils/networkProxy.ts` (អាចកំណត់រចនាសម្ព័ន្ធតាម provider នីមួយៗ ឬជាសកល)
-- របាំងការពារ SSRF / URL ចេញ៖ `src/shared/network/outboundUrlGuard.ts` — ទប់ស្កាត់ជួរអាសយដ្ឋាន private/loopback/link-local សម្រាប់ការហៅទៅ provider ទាំងអស់
-- ការផ្ទៀងផ្ទាត់ env នៅពេលដំណើរការ៖ `src/lib/env/runtimeEnv.ts` — Zod schema សម្រាប់អថេរបរិស្ថានទាំងអស់ ដែលបង្ហាញជាកំហុស/ការព្រមានពេលចាប់ផ្ដើម
-- ថូខឹនសមកាលកម្ម៖ `src/lib/db/syncTokens.ts` — ថូខឹនដែលកំណត់វិសាលភាពសម្រាប់ endpoints ទាញយកកញ្ចប់កំណត់រចនាសម្ព័ន្ធ; គាំទ្រដោយតារាង SQLite `sync_tokens` (migration `024_create_sync_tokens.sql`)
-- ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណ WebSocket handshake៖ `src/lib/ws/handshake.ts` — ផ្ទៀងផ្ទាត់សំណើដំឡើងកម្រិត WS តាមរយៈ API key ឬ session cookie
+- ទិន្នន័យសម្ងាត់របស់ Provider ត្រូវបានរក្សាទុកក្នុងធាតុ `providerConnections`
+- ការគាំទ្រ proxy ចេញក្រៅតាមរយៈ `open-sse/utils/proxyFetch.ts` (អថេរបរិស្ថាន) និង `open-sse/utils/networkProxy.ts` (អាចកំណត់រចនាសម្ព័ន្ធសម្រាប់ Provider នីមួយៗ ឬជាសកល)
+- របាំងការពារ SSRF / URL ចេញក្រៅ៖ `src/shared/network/outboundUrlGuard.ts` — ពិនិត្យ host លើការហៅទៅ Provider និងគោលដៅ webhook; របៀបដំណើរការមកពី `src/shared/network/outboundUrlGuardPolicy.ts` (ទង់កំណត់នៅក្នុង `docs/reference/ENVIRONMENT.md`)
+- ការផ្ទៀងផ្ទាត់អថេរបរិស្ថានពេលដំណើរការ៖ `src/lib/env/runtimeEnv.ts` — គ្រោងការណ៍ Zod សម្រាប់អថេរបរិស្ថានទាំងអស់ ដែលបង្ហាញជាកំហុស/ការព្រមាននៅពេលចាប់ផ្ដើម
+- Token ធ្វើសមកាលកម្ម៖ `src/lib/db/syncTokens.ts` — token ដែលមានវិសាលភាពកំណត់ សម្រាប់ endpoint ទាញយកបណ្ដុំការកំណត់រចនាសម្ព័ន្ធ; គាំទ្រដោយតារាង SQLite `sync_tokens` (migration `024_create_sync_tokens.sql`)
+- ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណពេល WebSocket handshake៖ `src/lib/ws/handshake.ts` — ផ្ទៀងផ្ទាត់សំណើ upgrade របស់ WS តាមរយៈ API key ឬ session cookie
+- ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណ WebSocket ផ្ទាល់របស់ Dashboard៖ `src/server/ws/liveServer.ts` — sidecar (port `LIVE_WS_PORT`) ទទួលយក session cookie របស់ Dashboard ឬ Bearer API key ដែលមានវិសាលភាពគ្រប់គ្រង (`manage`/`admin`); key សម្រាប់តែ inference ត្រូវបានបដិសេធ។ Endpoint ផ្សព្វផ្សាយខាងក្នុង `POST /__omniroute_event` របស់វា ទទួលយកតែ peer ពី loopback ប៉ុណ្ណោះ នៅពេលគ្មាន header ឆ្លងកាត់ proxy (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`) វត្តមាន
 
 ## 5) ការធ្វើសមកាលកម្ម Cloud
 

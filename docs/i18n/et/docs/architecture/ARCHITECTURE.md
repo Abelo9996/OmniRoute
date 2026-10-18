@@ -12,77 +12,77 @@ _Viimati uuendatud: 2026-06-28_
 
 ## Kokkuvõte
 
-OmniRoute on Next.js-il põhinev kohalik tehisintellekti päringute marsruutimise lüüs ja juhtpaneel.
-See pakub ühtset OpenAI-ga ühilduvat lõpp-punkti (`/v1/*`) ning marsruudib liiklust mitme ülesvoolupakkuja vahel, toetades teisendamist, varuvalikuid, pääsulubade värskendamist ja kasutuse jälgimist.
+OmniRoute on Next.js-il põhinev lokaalne AI-päringute marsruutimise lüüs ja juhtpaneel.
+See pakub üht OpenAI-ga ühilduvat lõpp-punkti (`/v1/*`) ning marsruudib liikluse mitme ülesvooluteenuse pakkuja vahel, toetades teisendamist, varuvalikuid, tokenite värskendamist ja kasutuse jälgimist.
 
 Põhivõimekused:
 
-- OpenAI-ga ühilduv API-liides CLI-dele ja tööriistadele (373 pakkujat, 150 käivitusmoodulit)
-- Päringute ja vastuste teisendamine eri pakkujate vormingute vahel
-- Mudelikombinatsioonide varuvalik (mitme mudeli järjestus)
-- Struktureeritud kombinatsioonisammud (`provider + model + connection`) koos käitusaegse järjestamisega `compositeTiers` alusel
-- Kontotaseme varuvalik (mitu kontot ühe pakkuja kohta)
-- Kvoodi eelkontroll ja kvooditeadlik P2C-konto valimine peamises vestlusvoos
-- OAuthi ja API-võtmega pakkujaühenduste haldus (27 OAuthi pakkujamoodulit)
-- Manuste genereerimine lõpp-punkti `/v1/embeddings` kaudu (18 pakkujat)
-- Piltide genereerimine lõpp-punkti `/v1/images/generations` kaudu (üle 10 pakkuja, üle 20 mudeli)
-- Heli transkribeerimine lõpp-punkti `/v1/audio/transcriptions` kaudu (18 pakkujat)
-- Tekst-kõneks teisendus lõpp-punkti `/v1/audio/speech` kaudu (24 sisseehitatud pakkujat)
-- Video genereerimine lõpp-punkti `/v1/videos/generations` kaudu (ComfyUI + SD WebUI)
-- Muusika genereerimine lõpp-punkti `/v1/music/generations` kaudu (ComfyUI)
-- Veebiotsing lõpp-punkti `/v1/search` kaudu (20 pakkujat)
-- Sisu modereerimine lõpp-punkti `/v1/moderations` kaudu
-- Ümberjärjestamine lõpp-punkti `/v1/rerank` kaudu
-- Mõtlemismärgendite (``) parsimine arutlusmudelite jaoks
-- Vastuste puhastamine range ühilduvuse tagamiseks OpenAI SDK-ga
-- Rollide normaliseerimine (developer→system, system→user) pakkujateülese ühilduvuse tagamiseks
+- OpenAI-ga ühilduv API-liides CLI-dele/tööriistadele (374 teenusepakkujat, 150 käivitusmoodulit)
+- Päringute ja vastuste teisendamine teenusepakkujate vormingute vahel
+- Mudelikombinatsioonide varuvalikud (mitme mudeliga jada)
+- Struktureeritud kombinatsioonisammud (`provider + model + connection`) käitusaegse järjestamisega `compositeTiers` alusel
+- Kontotaseme varuvalikud (mitu kontot teenusepakkuja kohta)
+- Kvoodi eelkontroll ja kvooditeadlik P2C-konto valimine põhilises vestlusvoos
+- OAuthi ja API-võtmega teenusepakkujaühenduste haldus (27 OAuthi teenusepakkujamoodulit)
+- Põimvektorite genereerimine `/v1/embeddings` kaudu (18 teenusepakkujat)
+- Piltide genereerimine `/v1/images/generations` kaudu (10+ teenusepakkujat, 20+ mudelit)
+- Heli transkribeerimine `/v1/audio/transcriptions` kaudu (18 teenusepakkujat)
+- Tekst-kõneks teisendamine `/v1/audio/speech` kaudu (24 sisseehitatud teenusepakkujat)
+- Videote genereerimine `/v1/videos/generations` kaudu (ComfyUI + SD WebUI)
+- Muusika genereerimine `/v1/music/generations` kaudu (ComfyUI)
+- Veebiotsing `/v1/search` kaudu (20 teenusepakkujat)
+- Sisu modereerimine `/v1/moderations` kaudu
+- Ümberjärjestamine `/v1/rerank` kaudu
+- Mõtlemissiltide sõelumine (``) arutlusmudelite jaoks
+- Vastuste puhastamine rangeks ühilduvuseks OpenAI SDK-ga
+- Rollide normaliseerimine (developer→system, system→user) teenusepakkujatevahelise ühilduvuse tagamiseks
 - Struktureeritud väljundi teisendamine (json_schema → Gemini responseSchema)
-- Pakkujate, võtmete, aliaste, kombinatsioonide, seadete ja hinnastuse kohalik püsimälu (122 andmebaasimoodulit)
-- Kasutuse ja kulude jälgimine ning päringute logimine
-- Valikuline pilvesünkroonimine mitme seadme ja oleku sünkroonimiseks
-- IP-aadresside lubamis- ja blokeerimisloend API juurdepääsu juhtimiseks
-- Mõtlemiseelarve haldus (muutmata edastamine / automaatne / kohandatud / adaptiivne)
-- Globaalse süsteemiviiba sisestamine
+- Teenusepakkujate, võtmete, aliaste, kombinatsioonide, seadete ja hinnastuse lokaalne püsisalvestus (122 andmebaasimoodulit)
+- Kasutuse/kulude jälgimine ja päringute logimine
+- Valikuline pilvesünkroonimine mitme seadme/oleku sünkroonimiseks
+- IP-aadresside lubamis- ja blokeerimisloend API juurdepääsu kontrollimiseks
+- Mõtlemiseelarve haldus (muutmata edastamine/automaatne/kohandatud/adaptiivne)
+- Globaalse süsteemiviiba lisamine
 - Seansside jälgimine ja sõrmejäljestamine
-- Täiustatud kontopõhine kiirusepiirang koos pakkujapõhiste profiilidega
-- Kaitselüliti muster pakkujate töökindluse tagamiseks
-- Päringutulva vastane kaitse mutex-lukustusega
-- Allkirjapõhine päringute deduplikeerimise vahemälu
-- Domeenikiht: kulureeglid, varuvalikupoliitika, lukustuspoliitika
-- Konteksti edastamine: seansi üleandmise kokkuvõtted järjepidevuse säilitamiseks kontode vahetamisel
-- Domeenioleku püsimälu (SQLite'i läbikirjutusega vahemälu varuvalikute, eelarvete, lukustuste ja kaitselülitite jaoks)
+- Kontopõhine täiustatud päringusageduse piiramine teenusepakkujapõhiste profiilidega
+- Kaitselüliti muster teenusepakkujate töökindluse tagamiseks
+- Päringutormi vastane kaitse mutex-lukustusega
+- Allkirjapõhine päringute deduplitseerimise vahemälu
+- Domeenikiht: kulureeglid, varuvalikute poliitika, lukustuspoliitika
+- Context Relay: seansi üleandmise kokkuvõtted järjepidevuse säilitamiseks kontode vahetamisel
+- Domeenioleku püsisalvestus (SQLite'i otsekirjutusega vahemälu varuvalikute, eelarvete, lukustuste ja kaitselülitite jaoks)
 - Poliitikamootor päringute tsentraliseeritud hindamiseks (lukustus → eelarve → varuvalik)
 - Päringute telemeetria p50/p95/p99 latentsuse koondamisega
-- Kombinatsiooni sihtmärkide telemeetria ja nende ajalooline seisund väljade `combo_execution_key` / `combo_step_id` kaudu
-- Korrelatsiooni-ID (X-Request-Id) läbivaks jälgimiseks
-- Vastavusauditi logimine koos API-võtme põhise loobumisvõimalusega
+- Kombinatsiooni sihtmärkide telemeetria ja nende ajalooline seisund `combo_execution_key` / `combo_step_id` kaudu
+- Korrelatsiooni-ID (X-Request-Id) täielikuks jälgimiseks
+- Nõuetele vastavuse auditilogimine koos API-võtmepõhise loobumisvõimalusega
 - Hindamisraamistik LLM-ide kvaliteedi tagamiseks
-- Seisundi juhtpaneel pakkujate kaitselülitite reaalajas olekuga
-- MCP-server (110 tööriista) kolme transpordiviisiga (stdio/SSE/Streamable HTTP)
-- A2A-server (JSON-RPC 2.0 + SSE) koos oskuste ja ülesannete elutsükliga
-- Mälusüsteem (eraldamine, sisestamine, otsimine, kokkuvõtete tegemine)
+- Seisundi juhtpaneel teenusepakkujate kaitselülitite reaalajas olekuga
+- MCP-server (110 tööriista) kolme transpordiga (stdio/SSE/Streamable HTTP)
+- A2A-server (JSON-RPC 2.0 + SSE) oskuste ja ülesannete elutsükliga
+- Mälusüsteem (eraldamine, lisamine, otsing, kokkuvõtete koostamine)
 - Oskuste süsteem (register, käivitaja, liivakast, sisseehitatud oskused)
-- MITM-puhverserver sertifikaatide halduse ja DNS-i käsitlusega
-- Viibasüstide vastane vahevara
-- Viipade tihendamise konveier Cavemani, RTK, virnastatud konveierite, tihenduskombinatsioonide, keelepakettide ja analüütikaga
+- MITM-proksi sertifikaatide halduse ja DNS-i käsitlemisega
+- Viibasüstide vastane vahevarakiht
+- Viipade tihendamise konveier Cavemani, RTK, virnastatud konveierite, tihendamiskombinatsioonide, keelepakettide ja analüütikaga
 - ACP (Agent Communication Protocol) register
-- Modulaarsed OAuthi pakkujad (22 eraldiseisvat moodulit kataloogis `src/lib/oauth/providers/`)
+- Modulaarsed OAuthi teenusepakkujad (22 eraldi moodulit asukohas `src/lib/oauth/providers/`)
 - Desinstallimise ja täieliku desinstallimise skriptid
 - OAuthi keskkonna parandamise toiming
-- WebSocketi sild OpenAI-ga ühilduvate WS-klientide jaoks (`/v1/ws`)
-- Sünkroonimislubade haldus (väljastamine/tühistamine, ETag-versioonitud konfiguratsioonipaketi allalaadimine)
-- GLM Thinking (`glmt`) kui esmaklassiline pakkuja eelseadistus
-- Hübriidne lubade loendamine (pakkujapoolne `/messages/count_tokens` koos hinnangulise varumeetodiga)
-- Mudelialiaste automaatne algväärtustamine (üle 30 puhverserveriüleste dialektide normaliseeringu käivitamisel)
-- Turvaline väljaminev päringumehhanism koos SSRF-kaitse, privaatsete URL-ide blokeerimise ja seadistatavate korduskatsetega
-- Jahutusperioodi arvestavad vestluspäringute korduskatsed seadistatavate `requestRetry` ja `maxRetryIntervalSec` väärtustega
-- Käituskeskkonna valideerimine Zodiga käivitamisel
-- Vastavusauditi v2 koos lehekülgjaotuse, pakkujate CRUD-sündmuste ja SSRF-i tõttu blokeeritud valideerimiste logimisega
+- WebSocketi sild OpenAI-ga ühilduvatele WS-klientidele (`/v1/ws`)
+- Sünkroonimistokenite haldus (väljastamine/tühistamine, ETagi versioonitud konfiguratsioonipaketi allalaadimine)
+- GLM Thinking (`glmt`) esmaklassilise teenusepakkuja eelseadistus
+- Hübriidne tokenite loendamine (teenusepakkujapoolne `/messages/count_tokens` koos varuhindamisega)
+- Mudelialiaste automaatne algtäitmine (30+ proksidevahelise dialekti normaliseerimist käivitamisel)
+- Turvaline väljaminev fetch koos SSRF-kaitse, privaatsete URL-ide blokeerimise ja seadistatavate korduskatsetega
+- Ooteajateadlikud vestluse korduskatsed seadistatavate `requestRetry` ja `maxRetryIntervalSec` väärtustega
+- Käituskeskkonna valideerimine Zodi abil käivitamisel
+- Nõuetele vastavuse audit v2 koos lehekülgjaotuse, teenusepakkujate CRUD-sündmuste ja SSRF-i blokeeritud valideerimise logimisega
 
 Peamine käitusmudel:
 
-- Next.js-i rakenduse marsruudid kataloogis `src/app/api/*` rakendavad nii juhtpaneeli API-sid kui ka ühilduvus-API-sid
-- Jagatud SSE- ja marsruutimistuumik kataloogides `src/sse/*` + `open-sse/*` haldab pakkujate käivitamist, teisendamist, voogedastust, varuvalikuid ja kasutust
+- Next.js-i rakenduse marsruudid asukohas `src/app/api/*` rakendavad nii juhtpaneeli API-sid kui ka ühilduvus-API-sid
+- Ühine SSE/marsruutimise tuum asukohtades `src/sse/*` + `open-sse/*` haldab teenusepakkujate käivitamist, teisendamist, voogedastust, varuvalikuid ja kasutust
 
 ## Viitediagrammid
 
@@ -536,16 +536,17 @@ Domeenioleku andmebaas (SQLite):
 - Tabelid (loodud failis `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Läbikirjutava vahemälu (write-through cache) muster: mällu paigutatud Map-id on käitusajal autoriteetsed; muudatused kirjutatakse sünkroonselt SQLite'i; olek taastatakse andmebaasist külmkäivitusel
 
-## 4) Autentimise ja turvalisuse pinnad
+## 4) Autentimine + turbepinnad
 
-- Töölaua küpsisepõhine autentimine: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
-- API-võtme genereerimine/kontrollimine: `src/shared/utils/apiKey.ts`
-- Pakkuja saladused salvestatakse `providerConnections` kirjetesse
-- Väljuva liikluse proksitugi läbi `open-sse/utils/proxyFetch.ts` (keskkonnamuutujad) ja `open-sse/utils/networkProxy.ts` (konfigureeritav pakkuja kaupa või globaalselt)
-- SSRF / väljuva URL-i kaitse: `src/shared/network/outboundUrlGuard.ts` — blokeerib privaatsed/loopback/link-local vahemikud kõikide pakkuja kõnede puhul
-- Käitusaja keskkonnamuutujate valideerimine: `src/lib/env/runtimeEnv.ts` — Zod-skeem kõigi keskkonnamuutujate jaoks, mis kuvatakse käivituse vigade/hoiatustena
-- Sünkroonimistoetused (sync tokens): `src/lib/db/syncTokens.ts` — piiratud ulatusega toetused konfiguratsioonipaketi allalaadimise lõpp-punktide jaoks; toetatud `sync_tokens` SQLite tabeliga (migratsioon `024_create_sync_tokens.sql`)
-- WebSocketi käepigistuse (handshake) autentimine: `src/lib/ws/handshake.ts` — valideerib WS-i uuenduspäringuid API-võtme või seansiküpsise abil
+- Juhtpaneeli küpsisepõhine autentimine: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- API-võtmete genereerimine/kontrollimine: `src/shared/utils/apiKey.ts`
+- Teenusepakkuja saladused talletatakse `providerConnections` kirjetes
+- Väljamineva puhverserveri tugi faili `open-sse/utils/proxyFetch.ts` kaudu (keskkonnamuutujad) ja faili `open-sse/utils/networkProxy.ts` kaudu (seadistatav teenusepakkuja kaupa või globaalselt)
+- SSRF-i / väljaminevate URL-ide kaitse: `src/shared/network/outboundUrlGuard.ts` — hostide kontrollimine teenusepakkuja väljakutsetel ja veebihaagi sihtmärkidel; režiim pärineb failist `src/shared/network/outboundUrlGuardPolicy.ts` (lipud failis `docs/reference/ENVIRONMENT.md`)
+- Käitusaegse keskkonna valideerimine: `src/lib/env/runtimeEnv.ts` — Zodi skeem kõigi keskkonnamuutujate jaoks, mille vead/hoiatused kuvatakse käivitamisel
+- Sünkroonimistõendid: `src/lib/db/syncTokens.ts` — piiratud ulatusega tõendid konfiguratsioonipaketi allalaadimise lõpp-punktide jaoks; aluseks on SQLite'i tabel `sync_tokens` (migratsioon `024_create_sync_tokens.sql`)
+- WebSocketi käepigistuse autentimine: `src/lib/ws/handshake.ts` — valideerib WS-i täiendusnõuded API-võtme või seansiküpsise abil
+- Reaalajas juhtpaneeli WebSocketi autentimine: `src/server/ws/liveServer.ts` — külgprotsess (port `LIVE_WS_PORT`) aktsepteerib juhtpaneeli seansiküpsist või Beareri API-võtit, millel on haldusulatus (`manage`/`admin`); ainult järeldamiseks mõeldud võtmetest keeldutakse. Selle sisemine avaldaja lõpp-punkt `POST /__omniroute_event` aktsepteerib tagasisideahela partnereid ainult juhul, kui puudub puhverserveri hüppe päis (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Pilvesünkroonimine
 

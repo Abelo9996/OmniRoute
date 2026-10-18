@@ -11,76 +11,76 @@ _Päivitetty viimeksi: 2026-06-28_
 ## Yhteenveto
 
 OmniRoute on Next.js:n päälle rakennettu paikallinen tekoälypyyntöjen reititysyhdyskäytävä ja hallintapaneeli.
-Se tarjoaa yhden OpenAI-yhteensopivan päätepisteen (`/v1/*`) ja reitittää liikennettä useiden taustapalveluntarjoajien välillä tukien muunnoksia, varareititystä, tunnisteiden uusimista ja käytön seurantaa.
+Se tarjoaa yhden OpenAI-yhteensopivan päätepisteen (`/v1/*`) ja reitittää liikennettä useille taustapalveluntarjoajille tukien muunnoksia, varajärjestelyjä, tunnusten päivitystä ja käytön seurantaa.
 
 Keskeiset ominaisuudet:
 
-- OpenAI-yhteensopiva API-rajapinta CLI-työkaluille ja muille työkaluille (373 palveluntarjoajaa, 150 suoritusmoduulia)
-- Pyyntöjen ja vastausten muuntaminen palveluntarjoajien eri muotojen välillä
-- Malliyhdistelmien varareititys (usean mallin sarja)
-- Rakenteiset yhdistelmävaiheet (`provider + model + connection`) ja ajonaikainen järjestys `compositeTiers`-arvon perusteella
-- Tilitason varareititys (useita tilejä palveluntarjoajaa kohden)
-- Kiintiön ennakkotarkistus ja kiintiöt huomioiva P2C-tilinvalinta ensisijaisessa keskustelupolussa
-- OAuth- ja API-avainpohjainen palveluntarjoajayhteyksien hallinta (27 OAuth-palveluntarjoajamoduulia)
-- Upotusten luonti päätepisteen `/v1/embeddings` kautta (18 palveluntarjoajaa)
-- Kuvien luonti päätepisteen `/v1/images/generations` kautta (yli 10 palveluntarjoajaa, yli 20 mallia)
-- Äänen litterointi päätepisteen `/v1/audio/transcriptions` kautta (18 palveluntarjoajaa)
-- Tekstistä puheeksi -muunnos päätepisteen `/v1/audio/speech` kautta (24 sisäänrakennettua palveluntarjoajaa)
-- Videoiden luonti päätepisteen `/v1/videos/generations` kautta (ComfyUI + SD WebUI)
-- Musiikin luonti päätepisteen `/v1/music/generations` kautta (ComfyUI)
-- Verkkohaku päätepisteen `/v1/search` kautta (20 palveluntarjoajaa)
-- Sisällön moderointi päätepisteen `/v1/moderations` kautta
-- Uudelleenjärjestely päätepisteen `/v1/rerank` kautta
-- Think-tunnisteiden jäsennys (``) päättelymalleille
-- Vastausten puhdistus tiukkaa OpenAI SDK -yhteensopivuutta varten
-- Roolien normalisointi (developer→system, system→user) palveluntarjoajien välisen yhteensopivuuden takaamiseksi
+- OpenAI-yhteensopiva API-rajapinta CLI-työkaluille ja muille työkaluille (374 palveluntarjoajaa, 150 suoritusmoduulia)
+- Pyyntöjen ja vastausten muuntaminen palveluntarjoajien formaattien välillä
+- Malliyhdistelmien varajärjestely (usean mallin sarja)
+- Rakenteiset yhdistelmävaiheet (`provider + model + connection`), joiden suoritusjärjestys määräytyy ajonaikaisesti `compositeTiers`-arvon perusteella
+- Tilitason varajärjestely (useita tilejä palveluntarjoajaa kohden)
+- Kiintiön ennakkotarkistus ja kiintiöt huomioiva P2C-tilinvalinta pääasiallisessa keskustelupolussa
+- OAuth- ja API-avaimiin perustuva palveluntarjoajayhteyksien hallinta (27 OAuth-palveluntarjoajamoduulia)
+- Upotusten luonti `/v1/embeddings`-päätepisteen kautta (18 palveluntarjoajaa)
+- Kuvien luonti `/v1/images/generations`-päätepisteen kautta (yli 10 palveluntarjoajaa, yli 20 mallia)
+- Äänen litterointi `/v1/audio/transcriptions`-päätepisteen kautta (18 palveluntarjoajaa)
+- Tekstistä puheeksi -muunnos `/v1/audio/speech`-päätepisteen kautta (24 sisäänrakennettua palveluntarjoajaa)
+- Videoiden luonti `/v1/videos/generations`-päätepisteen kautta (ComfyUI + SD WebUI)
+- Musiikin luonti `/v1/music/generations`-päätepisteen kautta (ComfyUI)
+- Verkkohaku `/v1/search`-päätepisteen kautta (20 palveluntarjoajaa)
+- Moderointi `/v1/moderations`-päätepisteen kautta
+- Uudelleenjärjestely `/v1/rerank`-päätepisteen kautta
+- Ajattelutunnisteiden jäsentäminen (``) päättelymalleille
+- Vastausten sanitointi tiukkaa OpenAI SDK -yhteensopivuutta varten
+- Roolien normalisointi (developer→system, system→user) palveluntarjoajien välisen yhteensopivuuden varmistamiseksi
 - Rakenteisen tulosteen muuntaminen (json_schema → Gemini responseSchema)
-- Paikallinen pysyväistallennus palveluntarjoajille, avaimille, aliaksille, yhdistelmille, asetuksille ja hinnoittelulle (122 tietokantamoduulia)
+- Palveluntarjoajien, avainten, aliasten, yhdistelmien, asetusten ja hinnoittelun paikallinen pysyväistallennus (122 tietokantamoduulia)
 - Käytön ja kustannusten seuranta sekä pyyntöjen lokitus
-- Valinnainen pilvisynkronointi useiden laitteiden ja tilojen synkronointia varten
+- Valinnainen pilvisynkronointi useiden laitteiden ja tilan synkronointia varten
 - IP-osoitteiden sallittujen ja estettyjen luettelot API-käytön hallintaan
 - Ajattelubudjetin hallinta (läpivienti/automaattinen/mukautettu/adaptiivinen)
 - Globaalin järjestelmäkehotteen lisääminen
 - Istuntojen seuranta ja sormenjälkien muodostaminen
 - Tilikohtainen tehostettu nopeusrajoitus palveluntarjoajakohtaisilla profiileilla
 - Katkaisijamalli palveluntarjoajien häiriönsietokyvyn parantamiseksi
-- Samanaikaisten kuormituspiikkien esto mutex-lukituksella
-- Allekirjoituspohjainen pyyntöjen deduplikointivälimuisti
-- Toimialuekerros: kustannussäännöt, varareitityskäytäntö ja lukituskäytäntö
-- Context Relay: istunnon siirtoyhteenvedot jatkuvuuden säilyttämiseksi tiliä vaihdettaessa
-- Toimialueen tilan pysyväistallennus (SQLite-läpikirjoitusvälimuisti varareitityksille, budjeteille, lukituksille ja katkaisijoille)
-- Käytäntömoottori keskitettyyn pyyntöjen arviointiin (lukitus → budjetti → varareititys)
-- Pyyntötelemetria sekä p50/p95/p99-viiveiden koostaminen
-- Yhdistelmäkohteiden telemetria ja yhdistelmäkohteiden historiallinen kunto arvojen `combo_execution_key` / `combo_step_id` avulla
-- Korrelaatiotunnus (X-Request-Id) päästä päähän -jäljitykseen
+- Samanaikaisten pyyntöryöppyjen esto mutex-lukituksella
+- Allekirjoitukseen perustuva pyyntöjen kaksoiskappaleet poistava välimuisti
+- Toimialuekerros: kustannussäännöt, varajärjestelykäytäntö ja lukituskäytäntö
+- Context Relay: istunnon siirtoyhteenvedot jatkuvuuden säilyttämiseksi tilien vaihdon aikana
+- Toimialueen tilan pysyväistallennus (SQLite-läpikirjoitusvälimuisti varajärjestelyille, budjeteille, lukituksille ja katkaisijoille)
+- Käytäntömoottori pyyntöjen keskitettyyn arviointiin (lukitus → budjetti → varajärjestely)
+- Pyyntötelemetria p50/p95/p99-viiveiden aggregoinnilla
+- Yhdistelmäkohteiden telemetria ja niiden historiallinen kunto `combo_execution_key`- / `combo_step_id`-arvojen avulla
+- Korrelaatiotunnus (X-Request-Id) päästä päähän -jäljitystä varten
 - Vaatimustenmukaisuuden auditointilokitus, jonka voi poistaa käytöstä API-avainkohtaisesti
-- Arviointikehys LLM-laadunvarmistukseen
-- Kunnonvalvontapaneeli palveluntarjoajien katkaisijoiden reaaliaikaisella tilalla
-- MCP-palvelin (110 työkalua), jossa on 3 siirtotapaa (stdio/SSE/Streamable HTTP)
-- A2A-palvelin (JSON-RPC 2.0 + SSE), joka sisältää taidot ja tehtävien elinkaaren
+- Eval-kehys LLM-mallien laadunvarmistukseen
+- Kunnonvalvontapaneeli, jossa palveluntarjoajien katkaisijoiden reaaliaikainen tila
+- MCP Server (110 työkalua), jossa on 3 siirtotapaa (stdio/SSE/Streamable HTTP)
+- A2A Server (JSON-RPC 2.0 + SSE), jossa on taidot ja tehtävien elinkaaren hallinta
 - Muistijärjestelmä (poiminta, lisääminen, haku, tiivistäminen)
-- Taitojärjestelmä (rekisteri, suorittaja, hiekkalaatikko, sisäänrakennetut taidot)
+- Taitojärjestelmä (rekisteri, suoritin, hiekkalaatikko, sisäänrakennetut taidot)
 - MITM-välityspalvelin varmenteiden hallinnalla ja DNS-käsittelyllä
-- Kehoteinjektioilta suojaava väliohjelmisto
+- Kehotesyötteiden manipulointia torjuva väliohjelmisto
 - Kehotteiden pakkausputki, joka sisältää Cavemanin, RTK:n, pinotut putket, pakkausyhdistelmät, kielipaketit ja analytiikan
 - ACP (Agent Communication Protocol) -rekisteri
 - Modulaariset OAuth-palveluntarjoajat (22 erillistä moduulia hakemistossa `src/lib/oauth/providers/`)
 - Asennuksen poisto- ja täydellisen asennuksen poiston komentosarjat
 - OAuth-ympäristön korjaustoiminto
 - WebSocket-silta OpenAI-yhteensopiville WS-asiakkaille (`/v1/ws`)
-- Synkronointitunnisteiden hallinta (myöntäminen/peruuttaminen, ETag-versioidun määrityspaketin lataus)
-- GLM Thinking (`glmt`) ensiluokkaisena palveluntarjoajan esiasetuksena
-- Hybridimuotoinen tunnisteiden laskenta (palveluntarjoajan `/messages/count_tokens` ja arviointiin perustuva varamenetelmä)
+- Synkronointitunnusten hallinta (myöntäminen/peruuttaminen, ETag-versioidun määrityspaketin lataus)
+- GLM Thinking (`glmt`) ensisijaisena palveluntarjoajaesiasetuksena
+- Hybridinen tunnusten laskenta (palveluntarjoajan `/messages/count_tokens` ja arvioon perustuva varamenetelmä)
 - Mallialiasten automaattinen alustaminen (yli 30 välityspalvelindialektien välistä normalisointia käynnistyksen yhteydessä)
-- Turvallinen lähtevä haku SSRF-suojauksella, yksityisten URL-osoitteiden estolla ja määritettävillä uudelleenyrityksillä
+- Turvalliset lähtevät haut SSRF-suojauksella, yksityisten URL-osoitteiden estolla ja määritettävillä uudelleenyrityksillä
 - Jäähdytysajan huomioivat keskustelupyyntöjen uudelleenyritykset määritettävillä `requestRetry`- ja `maxRetryIntervalSec`-arvoilla
-- Ajoympäristön validointi Zodilla käynnistyksen yhteydessä
-- Vaatimustenmukaisuuden auditointi v2 sivutuksella, palveluntarjoajien CRUD-tapahtumilla ja SSRF-estettyjen validointien lokituksella
+- Ajonaikaisen ympäristön validointi Zodilla käynnistyksen yhteydessä
+- Vaatimustenmukaisuuden auditointi v2 sivutuksella, palveluntarjoajien CRUD-tapahtumilla ja SSRF-estojen validointilokituksella
 
 Ensisijainen ajonaikainen malli:
 
-- Hakemiston `src/app/api/*` Next.js-sovellusreitit toteuttavat sekä hallintapaneelin API:t että yhteensopivuus-API:t
-- Hakemistojen `src/sse/*` + `open-sse/*` yhteinen SSE- ja reititysydin käsittelee palveluntarjoajien suorituksen, muunnokset, suoratoiston, varareitityksen ja käytön
+- Next.js-sovellusreitit hakemistossa `src/app/api/*` toteuttavat sekä hallintapaneelin API:t että yhteensopivuus-API:t
+- Jaettu SSE- ja reititysydin hakemistoissa `src/sse/*` + `open-sse/*` käsittelee palveluntarjoajien suorittamisen, muunnokset, suoratoiston, varajärjestelyt ja käytön seurannan
 
 ## Viitekaaviot
 
@@ -540,13 +540,14 @@ Toimialueen tilatietokanta (SQLite):
 ## 4) Todennus- ja tietoturvarajapinnat
 
 - Hallintapaneelin evästetodennus: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
-- API-avainten luonti ja varmennus: `src/shared/utils/apiKey.ts`
-- Palveluntarjoajien salaisuudet tallennetaan `providerConnections`-merkintöihin
-- Lähtevän liikenteen välityspalvelintuki tiedostojen `open-sse/utils/proxyFetch.ts` (ympäristömuuttujat) ja `open-sse/utils/networkProxy.ts` (määritettävissä palveluntarjoajakohtaisesti tai globaalisti) kautta
-- SSRF- ja lähtevien URL-osoitteiden suojaus: `src/shared/network/outboundUrlGuard.ts` — estää yksityiset, loopback- ja link-local-osoitealueet kaikissa palveluntarjoajakutsuissa
-- Ajonaikainen ympäristön validointi: `src/lib/env/runtimeEnv.ts` — kaikkien ympäristömuuttujien Zod-skeema, jonka virheet ja varoitukset näytetään käynnistyksen yhteydessä
-- Synkronointitunnukset: `src/lib/db/syncTokens.ts` — rajatut tunnukset määrityspakettien latauspäätepisteille; taustalla on SQLiten `sync_tokens`-taulu (migraatio `024_create_sync_tokens.sql`)
-- WebSocket-kättelyn todennus: `src/lib/ws/handshake.ts` — validoi WS-päivityspyynnöt API-avaimen tai istuntoevästeen avulla
+- API-avainten luonti ja vahvistus: `src/shared/utils/apiKey.ts`
+- Palveluntarjoajien salaisuudet tallennetaan `providerConnections`-tietueisiin
+- Lähtevän liikenteen välityspalvelintuki tiedoston `open-sse/utils/proxyFetch.ts` kautta (ympäristömuuttujat) ja tiedoston `open-sse/utils/networkProxy.ts` kautta (määritettävissä palveluntarjoajakohtaisesti tai globaalisti)
+- SSRF-suojaus / lähtevien URL-osoitteiden suojaus: `src/shared/network/outboundUrlGuard.ts` — palveluntarjoajakutsujen ja webhook-kohteiden isäntätarkistukset; tila tulee tiedostosta `src/shared/network/outboundUrlGuardPolicy.ts` (valitsimet tiedostossa `docs/reference/ENVIRONMENT.md`)
+- Suorituksenaikainen ympäristömuuttujien validointi: `src/lib/env/runtimeEnv.ts` — kaikkien ympäristömuuttujien Zod-skeema, jonka virheet ja varoitukset näytetään käynnistyksen yhteydessä
+- Synkronointitunnisteet: `src/lib/db/syncTokens.ts` — rajatut tunnisteet konfiguraatiopakettien latauspäätepisteille; taustalla on SQLiten `sync_tokens`-taulu (migraatio `024_create_sync_tokens.sql`)
+- WebSocket-kättelyn todennus: `src/lib/ws/handshake.ts` — validoi WS-päivityspyynnöt API-avaimella tai istuntoevästeellä
+- Hallintapaneelin reaaliaikainen WebSocket-todennus: `src/server/ws/liveServer.ts` — sivuprosessi (portti `LIVE_WS_PORT`) hyväksyy hallintapaneelin istuntoevästeen tai Bearer API -avaimen, jolla on hallintalaajuus (`manage`/`admin`); pelkästään päättelyyn tarkoitetut avaimet hylätään. Sen sisäinen `POST /__omniroute_event`-julkaisupäätepiste hyväksyy paikalliset vertaisosapuolet vain, kun välityspalvelinhypystä kertovaa otsaketta (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`) ei ole mukana
 
 ## 5) Pilvisynkronointi
 

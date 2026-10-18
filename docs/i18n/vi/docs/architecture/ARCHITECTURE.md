@@ -11,16 +11,16 @@ _Cập nhật lần cuối: 2026-06-28_
 ## Tóm tắt điều hành
 
 OmniRoute là một cổng định tuyến AI cục bộ và bảng điều khiển được xây dựng trên Next.js.
-Nó cung cấp một điểm cuối duy nhất tương thích với OpenAI (`/v1/*`) và định tuyến lưu lượng qua nhiều nhà cung cấp thượng nguồn với khả năng chuyển đổi, dự phòng, làm mới token và theo dõi mức sử dụng.
+Nó cung cấp một endpoint tương thích với OpenAI duy nhất (`/v1/*`) và định tuyến lưu lượng qua nhiều nhà cung cấp thượng nguồn, hỗ trợ chuyển đổi định dạng, dự phòng, làm mới token và theo dõi mức sử dụng.
 
 Các khả năng cốt lõi:
 
-- Bề mặt API tương thích với OpenAI dành cho CLI/công cụ (373 nhà cung cấp, 150 mô-đun thực thi)
+- Bề mặt API tương thích với OpenAI dành cho CLI/công cụ (374 nhà cung cấp, 150 mô-đun thực thi)
 - Chuyển đổi yêu cầu/phản hồi giữa các định dạng của nhà cung cấp
-- Dự phòng tổ hợp mô hình (chuỗi nhiều mô hình)
-- Các bước tổ hợp có cấu trúc (`provider + model + connection`) với thứ tự thực thi theo `compositeTiers`
-- Dự phòng ở cấp tài khoản (nhiều tài khoản cho mỗi nhà cung cấp)
-- Kiểm tra trước hạn ngạch và lựa chọn tài khoản P2C có xét hạn ngạch trong luồng trò chuyện chính
+- Dự phòng theo tổ hợp mô hình (chuỗi nhiều mô hình)
+- Các bước tổ hợp có cấu trúc (`provider + model + connection`) với thứ tự thời gian chạy dựa trên `compositeTiers`
+- Dự phòng cấp tài khoản (nhiều tài khoản cho mỗi nhà cung cấp)
+- Kiểm tra hạn ngạch trước khi thực thi và lựa chọn tài khoản P2C có xét hạn ngạch trong luồng trò chuyện chính
 - Quản lý kết nối nhà cung cấp bằng OAuth + khóa API (27 mô-đun nhà cung cấp OAuth)
 - Tạo embedding qua `/v1/embeddings` (18 nhà cung cấp)
 - Tạo hình ảnh qua `/v1/images/generations` (hơn 10 nhà cung cấp, hơn 20 mô hình)
@@ -32,48 +32,48 @@ Các khả năng cốt lõi:
 - Kiểm duyệt qua `/v1/moderations`
 - Xếp hạng lại qua `/v1/rerank`
 - Phân tích thẻ suy luận (``) cho các mô hình lập luận
-- Làm sạch phản hồi để tương thích nghiêm ngặt với OpenAI SDK
+- Làm sạch phản hồi để bảo đảm khả năng tương thích nghiêm ngặt với OpenAI SDK
 - Chuẩn hóa vai trò (developer→system, system→user) để tương thích giữa các nhà cung cấp
 - Chuyển đổi đầu ra có cấu trúc (json_schema → Gemini responseSchema)
-- Lưu trữ cục bộ cho nhà cung cấp, khóa, bí danh, tổ hợp, cài đặt và giá (122 mô-đun DB)
+- Lưu trữ cục bộ cho nhà cung cấp, khóa, bí danh, tổ hợp, cài đặt và bảng giá (122 mô-đun DB)
 - Theo dõi mức sử dụng/chi phí và ghi nhật ký yêu cầu
 - Đồng bộ đám mây tùy chọn để đồng bộ trạng thái trên nhiều thiết bị
-- Danh sách IP cho phép/chặn để kiểm soát quyền truy cập API
-- Quản lý ngân sách suy luận (truyền nguyên trạng/tự động/tùy chỉnh/thích ứng)
-- Chèn lời nhắc hệ thống toàn cục
-- Theo dõi và lấy dấu vân tay phiên
+- Danh sách cho phép/chặn IP để kiểm soát quyền truy cập API
+- Quản lý ngân sách suy luận (chuyển tiếp nguyên trạng/tự động/tùy chỉnh/thích ứng)
+- Chèn prompt hệ thống toàn cục
+- Theo dõi phiên và tạo dấu vân tay
 - Giới hạn tốc độ nâng cao theo từng tài khoản với hồ sơ riêng cho từng nhà cung cấp
-- Mẫu circuit breaker nhằm tăng khả năng phục hồi của nhà cung cấp
-- Bảo vệ chống hiệu ứng thundering herd bằng khóa mutex
+- Mẫu circuit breaker để tăng khả năng phục hồi của nhà cung cấp
+- Chống hiệu ứng thundering herd bằng khóa mutex
 - Bộ nhớ đệm loại bỏ yêu cầu trùng lặp dựa trên chữ ký
-- Lớp miền: quy tắc chi phí, chính sách dự phòng, chính sách khóa
-- Context Relay: bản tóm tắt bàn giao phiên để duy trì tính liên tục khi xoay vòng tài khoản
-- Duy trì trạng thái miền (bộ nhớ đệm ghi xuyên SQLite cho dự phòng, ngân sách, trạng thái khóa và circuit breaker)
-- Công cụ chính sách để đánh giá yêu cầu tập trung (khóa → ngân sách → dự phòng)
+- Lớp miền: quy tắc chi phí, chính sách dự phòng, chính sách khóa truy cập
+- Context Relay: bản tóm tắt bàn giao phiên để duy trì tính liên tục khi luân chuyển tài khoản
+- Lưu trữ trạng thái miền (bộ nhớ đệm SQLite ghi xuyên cho trạng thái dự phòng, ngân sách, khóa truy cập và circuit breaker)
+- Công cụ chính sách để đánh giá yêu cầu tập trung (khóa truy cập → ngân sách → dự phòng)
 - Dữ liệu đo từ xa của yêu cầu với tổng hợp độ trễ p50/p95/p99
-- Dữ liệu đo từ xa của đích tổ hợp và tình trạng lịch sử của đích tổ hợp qua `combo_execution_key` / `combo_step_id`
-- ID tương quan (X-Request-Id) để theo dõi từ đầu đến cuối
-- Ghi nhật ký kiểm toán tuân thủ với tùy chọn từ chối cho từng khóa API
-- Khung đánh giá để đảm bảo chất lượng LLM
+- Dữ liệu đo từ xa của đích tổ hợp và lịch sử tình trạng đích tổ hợp qua `combo_execution_key` / `combo_step_id`
+- ID tương quan (X-Request-Id) để truy vết đầu cuối
+- Ghi nhật ký kiểm toán tuân thủ với tùy chọn từ chối theo từng khóa API
+- Khung đánh giá để bảo đảm chất lượng LLM
 - Bảng điều khiển tình trạng với trạng thái circuit breaker của nhà cung cấp theo thời gian thực
-- Máy chủ MCP (110 công cụ) với 3 phương thức truyền tải (stdio/SSE/Streamable HTTP)
-- Máy chủ A2A (JSON-RPC 2.0 + SSE) với các kỹ năng và vòng đời tác vụ
+- MCP Server (110 công cụ) với 3 phương thức truyền tải (stdio/SSE/Streamable HTTP)
+- A2A Server (JSON-RPC 2.0 + SSE) với các kỹ năng và vòng đời tác vụ
 - Hệ thống bộ nhớ (trích xuất, chèn, truy xuất, tóm tắt)
-- Hệ thống kỹ năng (sổ đăng ký, trình thực thi, sandbox, kỹ năng tích hợp sẵn)
-- Proxy MITM với tính năng quản lý chứng chỉ và xử lý DNS
-- Middleware bảo vệ chống chèn lời nhắc
-- Quy trình nén lời nhắc với Caveman, RTK, các pipeline xếp chồng, tổ hợp nén, gói ngôn ngữ và phân tích
-- Sổ đăng ký ACP (Agent Communication Protocol)
+- Hệ thống kỹ năng (registry, executor, sandbox, các kỹ năng tích hợp sẵn)
+- Proxy MITM với quản lý chứng chỉ và xử lý DNS
+- Middleware bảo vệ khỏi tấn công chèn prompt
+- Quy trình nén prompt với Caveman, RTK, các quy trình xếp chồng, tổ hợp nén, gói ngôn ngữ và phân tích
+- Registry ACP (Agent Communication Protocol)
 - Các nhà cung cấp OAuth dạng mô-đun (22 mô-đun riêng lẻ trong `src/lib/oauth/providers/`)
 - Các tập lệnh gỡ cài đặt/gỡ cài đặt hoàn toàn
-- Hành động sửa chữa môi trường OAuth
+- Tác vụ sửa chữa môi trường OAuth
 - Cầu nối WebSocket cho các máy khách WS tương thích với OpenAI (`/v1/ws`)
-- Quản lý token đồng bộ (cấp/thu hồi, tải xuống gói cấu hình được quản lý phiên bản bằng ETag)
-- Thiết lập sẵn nhà cung cấp hạng nhất GLM Thinking (`glmt`)
-- Đếm token kết hợp (`/messages/count_tokens` phía nhà cung cấp với phương án dự phòng bằng ước tính)
-- Tự động khởi tạo bí danh mô hình (hơn 30 chuẩn hóa phương ngữ liên proxy khi khởi động)
+- Quản lý token đồng bộ (phát hành/thu hồi, tải xuống gói cấu hình được lập phiên bản bằng ETag)
+- Preset nhà cung cấp hạng nhất GLM Thinking (`glmt`)
+- Đếm token kết hợp (`/messages/count_tokens` phía nhà cung cấp với cơ chế ước tính dự phòng)
+- Tự động khởi tạo bí danh mô hình (hơn 30 phép chuẩn hóa phương ngữ giữa các proxy khi khởi động)
 - Tìm nạp ra ngoài an toàn với cơ chế bảo vệ SSRF, chặn URL riêng tư và khả năng thử lại có thể cấu hình
-- Thử lại trò chuyện có xét thời gian hồi với `requestRetry` và `maxRetryIntervalSec` có thể cấu hình
+- Thử lại cuộc trò chuyện có xét thời gian hồi với `requestRetry` và `maxRetryIntervalSec` có thể cấu hình
 - Xác thực môi trường thời gian chạy bằng Zod khi khởi động
 - Kiểm toán tuân thủ v2 với phân trang, sự kiện CRUD của nhà cung cấp và ghi nhật ký xác thực bị SSRF chặn
 
@@ -534,16 +534,17 @@ CSDL trạng thái miền (SQLite):
 - Các bảng (được tạo trong `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Mẫu bộ nhớ đệm ghi xuyên: các Map trong bộ nhớ là nguồn dữ liệu có thẩm quyền trong thời gian chạy; các thay đổi được ghi đồng bộ vào SQLite; trạng thái được khôi phục từ CSDL khi khởi động nguội
 
-## 4) Các bề mặt xác thực + bảo mật
+## 4) Bề mặt xác thực + bảo mật
 
-- Xác thực bảng điều khiển bằng cookie: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Xác thực bằng cookie cho bảng điều khiển: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - Tạo/xác minh khóa API: `src/shared/utils/apiKey.ts`
-- Thông tin bí mật của nhà cung cấp được lưu trữ trong các mục `providerConnections`
-- Hỗ trợ proxy gửi đi thông qua `open-sse/utils/proxyFetch.ts` (biến môi trường) và `open-sse/utils/networkProxy.ts` (có thể cấu hình theo từng nhà cung cấp hoặc trên toàn cục)
-- Cơ chế bảo vệ SSRF / URL gửi đi: `src/shared/network/outboundUrlGuard.ts` — chặn các dải địa chỉ riêng/loopback/link-local cho tất cả lệnh gọi đến nhà cung cấp
-- Xác thực môi trường thời gian chạy: `src/lib/env/runtimeEnv.ts` — lược đồ Zod cho tất cả các biến môi trường, hiển thị dưới dạng lỗi/cảnh báo khi khởi động
-- Token đồng bộ: `src/lib/db/syncTokens.ts` — các token có phạm vi dành cho endpoint tải xuống gói cấu hình; được hỗ trợ bởi bảng SQLite `sync_tokens` (migration `024_create_sync_tokens.sql`)
+- Các thông tin bí mật của nhà cung cấp được lưu trong các mục `providerConnections`
+- Hỗ trợ proxy đi ra thông qua `open-sse/utils/proxyFetch.ts` (biến môi trường) và `open-sse/utils/networkProxy.ts` (có thể cấu hình theo từng nhà cung cấp hoặc toàn cục)
+- Cơ chế bảo vệ SSRF / URL đi ra: `src/shared/network/outboundUrlGuard.ts` — kiểm tra máy chủ trong các lệnh gọi đến nhà cung cấp và đích webhook; chế độ được lấy từ `src/shared/network/outboundUrlGuardPolicy.ts` (các cờ trong `docs/reference/ENVIRONMENT.md`)
+- Xác thực môi trường lúc chạy: `src/lib/env/runtimeEnv.ts` — lược đồ Zod cho tất cả biến môi trường, với lỗi/cảnh báo được hiển thị khi khởi động
+- Token đồng bộ: `src/lib/db/syncTokens.ts` — các token có phạm vi dành cho endpoint tải xuống gói cấu hình; được hỗ trợ bởi bảng SQLite `sync_tokens` (bản di chuyển `024_create_sync_tokens.sql`)
 - Xác thực bắt tay WebSocket: `src/lib/ws/handshake.ts` — xác thực các yêu cầu nâng cấp WS bằng khóa API hoặc cookie phiên
+- Xác thực WebSocket trực tiếp của bảng điều khiển: `src/server/ws/liveServer.ts` — sidecar (cổng `LIVE_WS_PORT`) chấp nhận cookie phiên của bảng điều khiển hoặc khóa API Bearer có phạm vi quản lý (`manage`/`admin`); các khóa chỉ dành cho suy luận sẽ bị từ chối. Endpoint phát hành nội bộ `POST /__omniroute_event` chỉ chấp nhận các máy ngang hàng loopback khi không có tiêu đề bước nhảy proxy (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`)
 
 ## 5) Đồng bộ đám mây
 

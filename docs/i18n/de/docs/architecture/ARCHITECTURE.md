@@ -11,71 +11,71 @@ _Zuletzt aktualisiert: 2026-06-28_
 ## Zusammenfassung
 
 OmniRoute ist ein lokales KI-Routing-Gateway mit Dashboard, das auf Next.js basiert.
-Es stellt einen einzigen OpenAI-kompatiblen Endpunkt (`/v1/*`) bereit und leitet Datenverkehr mit Übersetzung, Fallback, Token-Aktualisierung und Nutzungsverfolgung an mehrere Upstream-Anbieter weiter.
+Es stellt einen einzelnen OpenAI-kompatiblen Endpunkt (`/v1/*`) bereit und leitet Datenverkehr mit Übersetzung, Fallback, Token-Aktualisierung und Nutzungsverfolgung an mehrere Upstream-Anbieter weiter.
 
 Kernfunktionen:
 
-- OpenAI-kompatible API-Oberfläche für CLI/Tools (373 Anbieter, 150 Executor-Module)
-- Übersetzung von Anfragen und Antworten zwischen verschiedenen Anbieterformaten
-- Modellkombinations-Fallback (Sequenz aus mehreren Modellen)
+- OpenAI-kompatible API-Oberfläche für CLI/Tools (374 Anbieter, 150 Executor-Module)
+- Übersetzung von Anfragen und Antworten zwischen Anbieterformaten
+- Modellkombinations-Fallback (Sequenz mehrerer Modelle)
 - Strukturierte Kombinationsschritte (`provider + model + connection`) mit Laufzeitsortierung nach `compositeTiers`
 - Fallback auf Kontoebene (mehrere Konten pro Anbieter)
-- Vorabprüfung des Kontingents und kontingentbewusste P2C-Kontoauswahl im zentralen Chat-Ablauf
-- Verwaltung von OAuth- und API-Schlüssel-Anbieterverbindungen (27 OAuth-Anbietermodule)
-- Erstellung von Embeddings über `/v1/embeddings` (18 Anbieter)
-- Bilderzeugung über `/v1/images/generations` (mehr als 10 Anbieter, mehr als 20 Modelle)
+- Vorabprüfung von Kontingenten und kontingentabhängige P2C-Kontoauswahl im primären Chat-Pfad
+- Verwaltung von Anbieterverbindungen über OAuth und API-Schlüssel (27 OAuth-Anbietermodule)
+- Generierung von Embeddings über `/v1/embeddings` (18 Anbieter)
+- Bildgenerierung über `/v1/images/generations` (mehr als 10 Anbieter, mehr als 20 Modelle)
 - Audiotranskription über `/v1/audio/transcriptions` (18 Anbieter)
 - Text-zu-Sprache über `/v1/audio/speech` (24 integrierte Anbieter)
-- Videoerzeugung über `/v1/videos/generations` (ComfyUI + SD WebUI)
-- Musikerzeugung über `/v1/music/generations` (ComfyUI)
+- Videogenerierung über `/v1/videos/generations` (ComfyUI + SD WebUI)
+- Musikgenerierung über `/v1/music/generations` (ComfyUI)
 - Websuche über `/v1/search` (20 Anbieter)
 - Moderation über `/v1/moderations`
 - Neusortierung über `/v1/rerank`
-- Parsing von Think-Tags (``) für Reasoning-Modelle
-- Bereinigung von Antworten zur strikten Kompatibilität mit dem OpenAI SDK
+- Analyse von Think-Tags (``) für Reasoning-Modelle
+- Antwortbereinigung für strikte Kompatibilität mit dem OpenAI SDK
 - Rollennormalisierung (developer→system, system→user) für anbieterübergreifende Kompatibilität
 - Konvertierung strukturierter Ausgaben (json_schema → Gemini responseSchema)
-- Lokale Persistenz für Anbieter, Schlüssel, Aliasse, Kombinationen, Einstellungen und Preise (122 DB-Module)
-- Verfolgung von Nutzung und Kosten sowie Protokollierung von Anfragen
-- Optionale Cloud-Synchronisierung für die geräteübergreifende Synchronisierung von Zuständen
-- IP-Zulassungs- und Sperrlisten für die API-Zugriffskontrolle
-- Verwaltung des Thinking-Budgets (Passthrough/automatisch/benutzerdefiniert/adaptiv)
-- Globale Einbindung von System-Prompts
+- Lokale Persistenz für Anbieter, Schlüssel, Aliase, Kombinationen, Einstellungen und Preise (122 DB-Module)
+- Nutzungs- und Kostenverfolgung sowie Anfrageprotokollierung
+- Optionale Cloud-Synchronisierung für die Synchronisierung zwischen mehreren Geräten und von Zuständen
+- IP-Zulassungs- und Sperrliste für die API-Zugriffssteuerung
+- Verwaltung des Thinking-Budgets (passthrough/auto/custom/adaptive)
+- Globale Einbindung eines System-Prompts
 - Sitzungsverfolgung und Fingerprinting
 - Erweiterte Ratenbegrenzung pro Konto mit anbieterspezifischen Profilen
-- Circuit-Breaker-Muster für höhere Ausfallsicherheit der Anbieter
-- Schutz vor dem Thundering-Herd-Problem durch Mutex-Sperren
+- Circuit-Breaker-Muster zur Ausfallsicherheit von Anbietern
+- Schutz vor Thundering-Herd-Problemen durch Mutex-Sperren
 - Signaturbasierter Cache zur Deduplizierung von Anfragen
 - Domänenschicht: Kostenregeln, Fallback-Richtlinie, Sperrrichtlinie
-- Context Relay: Zusammenfassungen zur Sitzungsübergabe, um bei Kontorotationen die Kontinuität zu gewährleisten
-- Persistenz des Domänenzustands (SQLite-Write-Through-Cache für Fallbacks, Budgets, Sperren und Circuit Breaker)
+- Context Relay: Zusammenfassungen zur Sitzungsübergabe für Kontinuität bei Kontowechseln
+- Persistenz des Domänenzustands (SQLite-Write-through-Cache für Fallbacks, Budgets, Sperren und Circuit Breaker)
 - Richtlinien-Engine zur zentralisierten Auswertung von Anfragen (Sperre → Budget → Fallback)
 - Anfragetelemetrie mit Aggregation der Latenzen p50/p95/p99
 - Telemetrie für Kombinationsziele und historischer Zustand von Kombinationszielen über `combo_execution_key` / `combo_step_id`
 - Korrelations-ID (X-Request-Id) für End-to-End-Tracing
-- Compliance-Audit-Protokollierung mit Opt-out pro API-Schlüssel
-- Evaluierungs-Framework zur Qualitätssicherung von LLMs
+- Compliance-Audit-Protokollierung mit Deaktivierungsoption pro API-Schlüssel
+- Evaluierungsframework zur Qualitätssicherung von LLMs
 - Zustands-Dashboard mit Echtzeitstatus der Anbieter-Circuit-Breaker
-- MCP-Server (110 Tools) mit 3 Transportmechanismen (stdio/SSE/Streamable HTTP)
-- A2A-Server (JSON-RPC 2.0 + SSE) mit Fähigkeiten und Aufgabenlebenszyklus
+- MCP-Server (110 Tools) mit 3 Transportarten (stdio/SSE/Streamable HTTP)
+- A2A-Server (JSON-RPC 2.0 + SSE) mit Skills und Aufgabenlebenszyklus
 - Speichersystem (Extraktion, Einbindung, Abruf, Zusammenfassung)
-- Fähigkeitensystem (Registry, Executor, Sandbox, integrierte Fähigkeiten)
+- Skill-System (Registry, Executor, Sandbox, integrierte Skills)
 - MITM-Proxy mit Zertifikatsverwaltung und DNS-Verarbeitung
 - Middleware zum Schutz vor Prompt-Injection
 - Pipeline zur Prompt-Komprimierung mit Caveman, RTK, gestapelten Pipelines, Komprimierungskombinationen, Sprachpaketen und Analysen
 - ACP-Registry (Agent Communication Protocol)
 - Modulare OAuth-Anbieter (22 einzelne Module unter `src/lib/oauth/providers/`)
-- Skripte zur Deinstallation und vollständigen Deinstallation
+- Skripte für Deinstallation und vollständige Deinstallation
 - Aktion zur Reparatur der OAuth-Umgebung
 - WebSocket-Bridge für OpenAI-kompatible WS-Clients (`/v1/ws`)
-- Verwaltung von Synchronisierungs-Token (Ausstellung/Widerruf, Download ETag-versionierter Konfigurationspakete)
+- Verwaltung von Synchronisierungstokens (Ausstellung/Widerruf, Download von ETag-versionierten Konfigurationspaketen)
 - GLM Thinking (`glmt`) als vollwertige Anbietervoreinstellung
-- Hybride Token-Zählung (anbieterseitiges `/messages/count_tokens` mit Schätzungs-Fallback)
-- Automatische Initialisierung von Modellaliasen (mehr als 30 Normalisierungen zwischen Proxy-Dialekten beim Start)
+- Hybride Token-Zählung (anbieterseitiges `/messages/count_tokens` mit Schätzung als Fallback)
+- Automatische Initialisierung von Modellaliasen (mehr als 30 Normalisierungen proxyübergreifender Dialekte beim Start)
 - Sicherer ausgehender Abruf mit SSRF-Schutz, Blockierung privater URLs und konfigurierbaren Wiederholungsversuchen
-- Cooldown-bewusste Wiederholungsversuche für Chats mit konfigurierbarem `requestRetry` und `maxRetryIntervalSec`
+- Cooldown-abhängige Wiederholungsversuche für Chats mit konfigurierbarem `requestRetry` und `maxRetryIntervalSec`
 - Validierung der Laufzeitumgebung mit Zod beim Start
-- Compliance-Audit v2 mit Paginierung, CRUD-Ereignissen für Anbieter und Protokollierung von Validierungen, die durch den SSRF-Schutz blockiert wurden
+- Compliance-Audit v2 mit Paginierung, CRUD-Ereignissen für Anbieter und Protokollierung von durch SSRF blockierten Validierungen
 
 Primäres Laufzeitmodell:
 
@@ -495,16 +495,17 @@ Domänenzustandsdatenbank (SQLite):
 - Tabellen (erstellt in `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Write-through-Cache-Muster: Im Arbeitsspeicher befindliche Maps sind zur Laufzeit maßgeblich; Änderungen werden synchron in SQLite geschrieben; bei einem Kaltstart wird der Zustand aus der DB wiederhergestellt
 
-## 4) Authentifizierungs- und Sicherheitsoberflächen
+## 4) Authentifizierungs- und Sicherheitsbereiche
 
 - Dashboard-Cookie-Authentifizierung: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - Generierung/Überprüfung von API-Schlüsseln: `src/shared/utils/apiKey.ts`
-- Anbieter-Zugangsdaten werden in `providerConnections`-Einträgen persistiert
+- Anbieterzugangsdaten werden in `providerConnections`-Einträgen gespeichert
 - Unterstützung für ausgehende Proxys über `open-sse/utils/proxyFetch.ts` (Umgebungsvariablen) und `open-sse/utils/networkProxy.ts` (pro Anbieter oder global konfigurierbar)
-- SSRF-/URL-Schutz für ausgehende Verbindungen: `src/shared/network/outboundUrlGuard.ts` — blockiert private, Loopback- und Link-Local-Adressbereiche für alle Anbieteraufrufe
-- Validierung der Laufzeitumgebung: `src/lib/env/runtimeEnv.ts` — Zod-Schema für alle Umgebungsvariablen; Fehler und Warnungen werden beim Start ausgegeben
-- Synchronisierungstoken: `src/lib/db/syncTokens.ts` — bereichsgebundene Token für Endpunkte zum Herunterladen von Konfigurationspaketen; basieren auf der SQLite-Tabelle `sync_tokens` (Migration `024_create_sync_tokens.sql`)
-- Authentifizierung beim WebSocket-Handshake: `src/lib/ws/handshake.ts` — validiert WS-Upgrade-Anfragen mittels API-Schlüssel oder Sitzungscookie
+- SSRF-/Schutzmechanismus für ausgehende URLs: `src/shared/network/outboundUrlGuard.ts` — Host-Prüfungen bei Anbieteraufrufen und Webhook-Zielen; der Modus stammt aus `src/shared/network/outboundUrlGuardPolicy.ts` (Flags in `docs/reference/ENVIRONMENT.md`)
+- Validierung der Laufzeit-Umgebung: `src/lib/env/runtimeEnv.ts` — Zod-Schema für alle Umgebungsvariablen; Fehler und Warnungen werden beim Start ausgegeben
+- Synchronisierungstoken: `src/lib/db/syncTokens.ts` — bereichsgebundene Token für Endpunkte zum Herunterladen von Konfigurationspaketen; gestützt durch die SQLite-Tabelle `sync_tokens` (Migration `024_create_sync_tokens.sql`)
+- Authentifizierung beim WebSocket-Handshake: `src/lib/ws/handshake.ts` — validiert WS-Upgrade-Anfragen über einen API-Schlüssel oder ein Sitzungs-Cookie
+- WebSocket-Authentifizierung für das Live-Dashboard: `src/server/ws/liveServer.ts` — der Sidecar-Dienst (Port `LIVE_WS_PORT`) akzeptiert ein Dashboard-Sitzungs-Cookie oder einen Bearer-API-Schlüssel mit einem Verwaltungsbereich (`manage`/`admin`); reine Inferenzschlüssel werden abgelehnt. Sein interner Publisher-Endpunkt `POST /__omniroute_event` akzeptiert Loopback-Peers nur, wenn kein Proxy-Hop-Header (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`) vorhanden ist
 
 ## 5) Cloud-Synchronisierung
 

@@ -10,77 +10,77 @@ _අවසන් වරට යාවත්කාලීන කළේ: 2026-06-28_
 
 ## විධායක සාරාංශය
 
-OmniRoute යනු Next.js මත ගොඩනගා ඇති දේශීය AI මාර්ගගත කිරීමේ ද්වාරයක් සහ උපකරණ පුවරුවකි.
-එය තනි OpenAI-අනුකූල අන්ත ලක්ෂ්යයක් (`/v1/*`) සපයන අතර, පරිවර්තනය, විකල්ප මාර්ගගත කිරීම, ටෝකන නැවුම් කිරීම සහ භාවිතය හඹා යාම සමඟ බහු upstream සපයන්නන් හරහා ගමනාගමනය මාර්ගගත කරයි.
+OmniRoute යනු Next.js මත ගොඩනඟා ඇති දේශීය AI මාර්ගගත කිරීමේ ද්වාරයක් සහ උපකරණ පුවරුවකි.
+එය OpenAI සමඟ අනුකූල තනි අන්ත ලක්ෂ්යයක් (`/v1/*`) සපයන අතර, පරිවර්තනය, අසාර්ථක අවස්ථාවක විකල්ප භාවිතය, ටෝකන නැවුම් කිරීම සහ භාවිත නිරීක්ෂණය සමඟ බහු උඩුගං සැපයුම්කරුවන් හරහා ගමනාගමනය මාර්ගගත කරයි.
 
 මූලික හැකියාවන්:
 
-- CLI/මෙවලම් සඳහා OpenAI-අනුකූල API මතුපිටක් (සපයන්නන් 373ක්, executor මොඩියුල 150ක්)
-- සපයන්නන්ගේ ආකෘති අතර ඉල්ලීම්/ප්රතිචාර පරිවර්තනය
-- ආකෘති සංයෝජන විකල්ප මාර්ගගත කිරීම (බහු-ආකෘති අනුක්රමය)
-- `compositeTiers` අනුව runtime අනුපිළිවෙළ සහිත ව්යුහගත සංයෝජන පියවර (`provider + model + connection`)
-- ගිණුම් මට්ටමේ විකල්ප මාර්ගගත කිරීම (එක් සපයන්නෙකුට ගිණුම් කිහිපයක්)
-- ප්රධාන කතාබස් මාර්ගය තුළ කෝටා පූර්ව පරීක්ෂාව සහ කෝටා-සැලකිලිමත් P2C ගිණුම් තේරීම
-- OAuth + API-key සපයන්නන්ගේ සම්බන්ධතා කළමනාකරණය (OAuth සපයන්නන්ගේ මොඩියුල 27ක්)
-- `/v1/embeddings` හරහා embedding ජනනය (සපයන්නන් 18ක්)
-- `/v1/images/generations` හරහා රූප ජනනය (සපයන්නන් 10කට වැඩි සංඛ්යාවක්, ආකෘති 20කට වැඩි සංඛ්යාවක්)
-- `/v1/audio/transcriptions` හරහා ශ්රව්ය පිටපත්කරණය (සපයන්නන් 18ක්)
-- `/v1/audio/speech` හරහා පෙළ-සිට-කථනය (අන්තර්ගත සපයන්නන් 24ක්)
-- `/v1/videos/generations` හරහා වීඩියෝ ජනනය (ComfyUI + SD WebUI)
-- `/v1/music/generations` හරහා සංගීත ජනනය (ComfyUI)
-- `/v1/search` හරහා වෙබ් සෙවුම (සපයන්නන් 20ක්)
+- CLI/මෙවලම් සඳහා OpenAI සමඟ අනුකූල API අතුරුමුහුණතක් (සැපයුම්කරුවන් 374ක්, ක්රියාත්මකකාරක මොඩියුල 150ක්)
+- සැපයුම්කරු ආකෘති අතර ඉල්ලීම්/ප්රතිචාර පරිවර්තනය
+- මාදිලි සංයෝජන විකල්ප භාවිතය (බහු-මාදිලි අනුක්රමය)
+- `compositeTiers` අනුව ධාවන කාලයේ අනුපිළිවෙළ සකස් කරන ව්යූහගත සංයෝජන පියවර (`provider + model + connection`)
+- ගිණුම්-මට්ටමේ විකල්ප භාවිතය (එක් සැපයුම්කරුවෙකුට ගිණුම් කිහිපයක්)
+- ප්රධාන කතාබස් මාර්ගයේ කෝටා පූර්ව පරීක්ෂාව සහ කෝටාව සැලකිල්ලට ගන්නා P2C ගිණුම් තේරීම
+- OAuth + API-key සැපයුම්කරු සම්බන්ධතා කළමනාකරණය (OAuth සැපයුම්කරු මොඩියුල 27ක්)
+- `/v1/embeddings` හරහා embedding උත්පාදනය (සැපයුම්කරුවන් 18ක්)
+- `/v1/images/generations` හරහා රූප උත්පාදනය (සැපයුම්කරුවන් 10කට වැඩි, මාදිලි 20කට වැඩි)
+- `/v1/audio/transcriptions` හරහා ශ්රව්ය පිටපත් කිරීම (සැපයුම්කරුවන් 18ක්)
+- `/v1/audio/speech` හරහා පෙළ-සිට-කථනය දක්වා පරිවර්තනය (අන්තර්ගත සැපයුම්කරුවන් 24ක්)
+- `/v1/videos/generations` හරහා වීඩියෝ උත්පාදනය (ComfyUI + SD WebUI)
+- `/v1/music/generations` හරහා සංගීත උත්පාදනය (ComfyUI)
+- `/v1/search` හරහා වෙබ් සෙවීම (සැපයුම්කරුවන් 20ක්)
 - `/v1/moderations` හරහා අන්තර්ගත පාලනය
 - `/v1/rerank` හරහා නැවත ශ්රේණිගත කිරීම
-- තර්කන ආකෘති සඳහා Think tag විග්රහ කිරීම (``)
+- තර්කන මාදිලි සඳහා think ටැග් විග්රහ කිරීම (``)
 - දැඩි OpenAI SDK අනුකූලතාව සඳහා ප්රතිචාර පිරිසිදු කිරීම
-- සපයන්නන් අතර අනුකූලතාව සඳහා භූමිකා සාමාන්යකරණය (developer→system, system→user)
-- ව්යුහගත ප්රතිදාන පරිවර්තනය (json_schema → Gemini responseSchema)
-- සපයන්නන්, යතුරු, අන්වර්ථ නාම, සංයෝජන, සැකසුම් සහ මිලකරණය සඳහා දේශීය ස්ථායී ගබඩාකරණය (DB මොඩියුල 122ක්)
-- භාවිතය/පිරිවැය හඹා යාම සහ ඉල්ලීම් ලොග් කිරීම
-- බහු උපාංග/තත්ත්ව සමමුහුර්තකරණය සඳහා විකල්ප cloud සමමුහුර්තකරණය
+- සැපයුම්කරුවන් අතර අනුකූලතාව සඳහා භූමිකා සාමාන්යකරණය (developer→system, system→user)
+- ව්යූහගත ප්රතිදාන පරිවර්තනය (json_schema → Gemini responseSchema)
+- සැපයුම්කරුවන්, යතුරු, අන්වර්ථ, සංයෝජන, සැකසුම් සහ මිලකරණය සඳහා දේශීය ස්ථායී ගබඩාකරණය (DB මොඩියුල 122ක්)
+- භාවිත/පිරිවැය නිරීක්ෂණය සහ ඉල්ලීම් ලොග් කිරීම
+- බහු-උපාංග/තත්ත්ව සමමුහුර්තකරණය සඳහා විකල්ප ක්ලවුඩ් සමමුහුර්තකරණය
 - API ප්රවේශ පාලනය සඳහා IP අවසර ලැයිස්තුව/අවහිර ලැයිස්තුව
-- Thinking budget කළමනාකරණය (passthrough/auto/custom/adaptive)
-- ගෝලීය system prompt ඇතුළත් කිරීම
-- සැසි හඹා යාම සහ ඇඟිලි සලකුණුකරණය
-- සපයන්නාට විශේෂිත පැතිකඩ සහිත එක් එක් ගිණුම සඳහා වැඩිදියුණු කළ වේග සීමාකරණය
-- සපයන්නන්ගේ ප්රත්යස්ථතාව සඳහා circuit breaker රටාව
-- mutex අගුලු දැමීම සහිත anti-thundering herd ආරක්ෂාව
-- අත්සන-පදනම් වූ ඉල්ලීම් අනුපිටපත් ඉවත් කිරීමේ cache
-- Domain ස්තරය: පිරිවැය රීති, විකල්ප මාර්ගගත කිරීමේ ප්රතිපත්තිය, lockout ප්රතිපත්තිය
+- සිතීමේ අයවැය කළමනාකරණය (සෘජු යැවීම/ස්වයංක්රීය/අභිරුචි/අනුවර්තී)
+- ගෝලීය පද්ධති ප්රේරක ඇතුළත් කිරීම
+- සැසි නිරීක්ෂණය සහ ඇඟිලි සලකුණුකරණය
+- සැපයුම්කරු-විශේෂිත පැතිකඩ සමඟ එක් එක් ගිණුම සඳහා වැඩිදියුණු කළ වේග සීමාකරණය
+- සැපයුම්කරු ඔරොත්තු දීමේ හැකියාව සඳහා circuit breaker රටාව
+- mutex අගුලු දැමීම සමඟ anti-thundering herd ආරක්ෂාව
+- අත්සන-පදනම් වූ ඉල්ලීම් අනුපිටපත් ඉවත් කිරීමේ හැඹිලිය
+- වසම් ස්තරය: පිරිවැය රීති, විකල්ප භාවිත ප්රතිපත්තිය, අගුළු දැමීමේ ප්රතිපත්තිය
 - Context Relay: ගිණුම් මාරු කිරීමේ අඛණ්ඩතාව සඳහා සැසි භාරදීමේ සාරාංශ
-- Domain තත්ත්ව ස්ථායී ගබඩාකරණය (fallbacks, budgets, lockouts සහ circuit breakers සඳහා SQLite write-through cache)
-- මධ්යගත ඉල්ලීම් ඇගයීම සඳහා ප්රතිපත්ති එන්ජිම (lockout → budget → fallback)
-- p50/p95/p99 latency එකතුව සමඟ ඉල්ලීම් telemetry
-- `combo_execution_key` / `combo_step_id` හරහා සංයෝජන ඉලක්ක telemetry සහ ඓතිහාසික සංයෝජන ඉලක්ක සෞඛ්යය
-- අන්තයේ සිට අන්තය දක්වා tracing සඳහා Correlation ID (X-Request-Id)
-- එක් එක් API key සඳහා ඉවත් වීමේ විකල්පය සහිත අනුකූලතා විගණන ලොග්කරණය
-- LLM තත්ත්ව සහතිකකරණය සඳහා Eval රාමුව
-- තත්ය කාලීන සපයන්නන්ගේ circuit breaker තත්ත්වය සහිත සෞඛ්ය උපකරණ පුවරුව
+- වසම් තත්ත්ව ස්ථායී ගබඩාකරණය (විකල්ප භාවිත, අයවැය, අගුළු දැමීම් සහ circuit breaker සඳහා SQLite write-through හැඹිලිය)
+- මධ්යගත ඉල්ලීම් ඇගයීම සඳහා ප්රතිපත්ති එන්ජිම (අගුළු දැමීම → අයවැය → විකල්ප භාවිතය)
+- p50/p95/p99 ප්රමාද එකතුකිරීම් සහිත ඉල්ලීම් දුරමිතික
+- `combo_execution_key` / `combo_step_id` හරහා සංයෝජන ඉලක්ක දුරමිතික සහ ඓතිහාසික සංයෝජන ඉලක්ක සෞඛ්යය
+- අන්තයේ සිට අන්තය දක්වා ලුහුබැඳීම සඳහා සහසම්බන්ධතා ID (X-Request-Id)
+- එක් එක් API යතුර අනුව ඉවත් වීමේ විකල්පය සහිත අනුකූලතා විගණන ලොග් කිරීම
+- LLM තත්ත්ව සහතික කිරීම සඳහා ඇගයීම් රාමුව
+- සැපයුම්කරු circuit breaker තත්ත්වය තත්ය කාලීනව පෙන්වන සෞඛ්ය උපකරණ පුවරුව
 - ප්රවාහන ක්රම 3ක් (stdio/SSE/Streamable HTTP) සහිත MCP Server (මෙවලම් 110ක්)
 - කුසලතා සහ කාර්ය ජීවන චක්රය සහිත A2A Server (JSON-RPC 2.0 + SSE)
-- මතක පද්ධතිය (උකහා ගැනීම, ඇතුළත් කිරීම, නැවත ලබා ගැනීම, සාරාංශකරණය)
-- කුසලතා පද්ධතිය (registry, executor, sandbox, අන්තර්ගත කුසලතා)
-- සහතික කළමනාකරණය සහ DNS හැසිරවීම සහිත MITM proxy
-- Prompt injection guard middleware
-- Caveman, RTK, stacked pipelines, compression combos, language packs සහ analytics සහිත prompt compression pipeline
-- ACP (Agent Communication Protocol) registry
-- මොඩියුලීය OAuth සපයන්නන් (`src/lib/oauth/providers/` යටතේ තනි මොඩියුල 22ක්)
-- Uninstall/full-uninstall scripts
+- මතක පද්ධතිය (උකහා ගැනීම, ඇතුළත් කිරීම, ලබා ගැනීම, සාරාංශකරණය)
+- කුසලතා පද්ධතිය (ලේඛනාගාරය, ක්රියාත්මකකාරකය, sandbox, අන්තර්ගත කුසලතා)
+- සහතික කළමනාකරණය සහ DNS හැසිරවීම සහිත MITM ප්රොක්සිය
+- ප්රේරක ඇතුළත් කිරීමේ ප්රහාර වැළැක්වීමේ middleware
+- Caveman, RTK, ස්තරගත pipeline, සම්පීඩන සංයෝජන, භාෂා ඇසුරුම් සහ විශ්ලේෂණ සහිත ප්රේරක සම්පීඩන pipeline එක
+- ACP (Agent Communication Protocol) ලේඛනාගාරය
+- මොඩියුලර් OAuth සැපයුම්කරුවන් (`src/lib/oauth/providers/` යටතේ තනි මොඩියුල 22ක්)
+- අස්ථාපන/පූර්ණ-අස්ථාපන ස්ක්රිප්ට්
 - OAuth පරිසරය අලුත්වැඩියා කිරීමේ ක්රියාව
-- OpenAI-අනුකූල WS clients සඳහා WebSocket bridge (`/v1/ws`)
-- සමමුහුර්ත ටෝකන කළමනාකරණය (නිකුත් කිරීම/අවලංගු කිරීම, ETag-versioned config bundle බාගැනීම)
-- GLM Thinking (`glmt`) පළමු පන්තියේ සපයන්නන්ගේ preset
-- දෙමුහුන් ටෝකන ගණනය (ඇස්තමේන්තු fallback එකක් සහිත සපයන්නාගේ `/messages/count_tokens`)
-- ආකෘති අන්වර්ථ නාම ස්වයංක්රීයව මූලික දත්ත ලෙස ඇතුළත් කිරීම (ආරම්භයේදී cross-proxy dialect සාමාන්යකරණ 30කට වැඩි සංඛ්යාවක්)
-- SSRF guard, පෞද්ගලික URL අවහිර කිරීම සහ වින්යාස කළ හැකි retry සහිත ආරක්ෂිත outbound fetch
-- වින්යාස කළ හැකි `requestRetry` සහ `maxRetryIntervalSec` සහිත cooldown-සැලකිලිමත් කතාබස් නැවත උත්සාහ
-- ආරම්භයේදී Zod සමඟ runtime පරිසර වලංගුකරණය
-- pagination, provider CRUD events සහ SSRF-blocked වලංගුකරණ ලොග්කරණය සහිත compliance audit v2
+- OpenAI සමඟ අනුකූල WS සේවාලාභීන් සඳහා WebSocket පාලම (`/v1/ws`)
+- සමමුහුර්ත ටෝකන කළමනාකරණය (නිකුත් කිරීම/අවලංගු කිරීම, ETag-අනුවාදිත වින්යාස bundle බාගැනීම)
+- පළමු පන්තියේ සැපයුම්කරු පෙරසැකසුමක් ලෙස GLM Thinking (`glmt`)
+- දෙමුහුන් ටෝකන ගණනය (ඇස්තමේන්තුකරණ විකල්පයක් සහිත සැපයුම්කරු-පාර්ශ්වීය `/messages/count_tokens`)
+- මාදිලි අන්වර්ථ ස්වයංක්රීයව මූලිකකරණය කිරීම (ආරම්භයේදී cross-proxy උපභාෂා සාමාන්යකරණ 30කට වැඩි)
+- SSRF ආරක්ෂාව, පුද්ගලික URL අවහිර කිරීම සහ වින්යාස කළ හැකි නැවත උත්සාහ කිරීම සහිත ආරක්ෂිත පිටතට යන fetch
+- වින්යාස කළ හැකි `requestRetry` සහ `maxRetryIntervalSec` සහිත cooldown-දැනුවත් කතාබස් නැවත උත්සාහ
+- ආරම්භයේදී Zod සමඟ ධාවන කාල පරිසර සත්යාපනය
+- පිටුකරණය, සැපයුම්කරු CRUD සිදුවීම් සහ SSRF-අවහිර කළ සත්යාපන ලොග් කිරීම සහිත අනුකූලතා විගණන v2
 
-ප්රධාන runtime ආකෘතිය:
+ප්රාථමික ධාවන කාල මාදිලිය:
 
-- `src/app/api/*` යටතේ ඇති Next.js app routes මඟින් උපකරණ පුවරු API සහ අනුකූලතා API යන දෙකම ක්රියාත්මක කරයි
-- `src/sse/*` + `open-sse/*` හි ඇති බෙදාගත් SSE/routing core එකක් සපයන්නන්ගේ ක්රියාත්මක කිරීම, පරිවර්තනය, streaming, fallback සහ භාවිතය හසුරුවයි
+- `src/app/api/*` යටතේ ඇති Next.js යෙදුම් මාර්ග උපකරණ පුවරු API සහ අනුකූලතා API යන දෙකම ක්රියාත්මක කරයි
+- `src/sse/*` + `open-sse/*` තුළ ඇති හවුල් SSE/මාර්ගගත කිරීමේ හරය සැපයුම්කරු ක්රියාත්මක කිරීම, පරිවර්තනය, ප්රවාහනය, විකල්ප භාවිතය සහ භාවිතය හසුරුවයි
 
 ## යොමු රූප සටහන්
 
@@ -534,16 +534,17 @@ FSM සංක්රාන්ති Auto Combo හි ලකුණුකරණය
 - වගු (`src/lib/db/core.ts` තුළ සාදනු ලැබේ): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Write-through cache රටාව: ධාවන වේලාවේදී මතකයේ ඇති Maps ප්රාමාණික වේ; වෙනස්කම් SQLite වෙත සමකාලීනව ලියනු ලැබේ; cold start අවස්ථාවේදී තත්ත්වය DB වෙතින් ප්රතිසාධනය කෙරේ
 
-## 4) සත්යාපනය + ආරක්ෂක මතුපිට
+## 4) සත්යාපනය + ආරක්ෂක පෘෂ්ඨ
 
-- උපකරණ පුවරුවේ cookie සත්යාපනය: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
-- API key ජනනය/සත්යාපනය: `src/shared/utils/apiKey.ts`
-- සැපයුම්කරුගේ රහස් `providerConnections` ඇතුළත් කිරීම් තුළ ස්ථායීව ගබඩා කෙරේ
-- `open-sse/utils/proxyFetch.ts` (env vars) හරහා සහ `open-sse/utils/networkProxy.ts` (එක් එක් සැපයුම්කරු සඳහා හෝ ගෝලීයව වින්යාස කළ හැකි) හරහා පිටතට යන proxy සහාය
-- SSRF / පිටතට යන URL ආරක්ෂකය: `src/shared/network/outboundUrlGuard.ts` — සියලු සැපයුම්කරු ඇමතුම් සඳහා private/loopback/link-local පරාස අවහිර කරයි
-- ධාවනකාල env වලංගුකරණය: `src/lib/env/runtimeEnv.ts` — සියලු environment variables සඳහා Zod schema එකක් වන අතර, ආරම්භක දෝෂ/අනතුරු ඇඟවීම් ලෙස පෙන්වයි
-- සමමුහුර්ත කිරීමේ ටෝකන: `src/lib/db/syncTokens.ts` — config bundle බාගැනීමේ endpoints සඳහා විෂයපථයට සීමා කළ ටෝකන; `sync_tokens` SQLite වගුව මඟින් අනුබල සපයයි (migration `024_create_sync_tokens.sql`)
-- WebSocket handshake සත්යාපනය: `src/lib/ws/handshake.ts` — API key එකක් හෝ session cookie එකක් හරහා WS upgrade ඉල්ලීම් වලංගු කරයි
+- Dashboard cookie සත්යාපනය: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- API යතුරු උත්පාදනය/සත්යාපනය: `src/shared/utils/apiKey.ts`
+- Provider රහස් `providerConnections` ඇතුළත් කිරීම් තුළ ස්ථිරව ගබඩා කෙරේ
+- `open-sse/utils/proxyFetch.ts` (පරිසර විචල්ය) සහ `open-sse/utils/networkProxy.ts` (එක් එක් provider සඳහා හෝ ගෝලීයව වින්යාස කළ හැකි) හරහා පිටතට යන proxy සහාය
+- SSRF / පිටතට යන URL ආරක්ෂකය: `src/shared/network/outboundUrlGuard.ts` — provider ඇමතුම් සහ webhook ඉලක්ක සඳහා host පරීක්ෂා; මාදිලිය ලැබෙන්නේ `src/shared/network/outboundUrlGuardPolicy.ts` වෙතින්ය (`docs/reference/ENVIRONMENT.md` හි flags)
+- Runtime පරිසර සත්යාපනය: `src/lib/env/runtimeEnv.ts` — සියලු පරිසර විචල්ය සඳහා Zod schema එකක්, ආරම්භක දෝෂ/අනතුරු ඇඟවීම් ලෙස පෙන්වයි
+- සමමුහුර්ත ටෝකන: `src/lib/db/syncTokens.ts` — වින්යාස bundle බාගැනීමේ endpoints සඳහා විෂය පථයට සීමා කළ ටෝකන; `sync_tokens` SQLite වගුව මඟින් ආධාර කෙරේ (migration `024_create_sync_tokens.sql`)
+- WebSocket handshake සත්යාපනය: `src/lib/ws/handshake.ts` — API යතුරක් හෝ session cookie එකක් හරහා WS upgrade ඉල්ලීම් සත්යාපනය කරයි
+- සජීවී dashboard WebSocket සත්යාපනය: `src/server/ws/liveServer.ts` — sidecar එක (port `LIVE_WS_PORT`) dashboard session cookie එකක් හෝ කළමනාකරණ විෂය පථයක් (`manage`/`admin`) සහිත Bearer API යතුරක් පිළිගනී; inference සඳහා පමණක් වන යතුරු ප්රතික්ෂේප කෙරේ. එහි අභ්යන්තර `POST /__omniroute_event` publisher endpoint එක proxy-hop header එකක් (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`) නොමැති විට පමණක් loopback peers පිළිගනී
 
 ## 5) Cloud සමමුහුර්තකරණය
 

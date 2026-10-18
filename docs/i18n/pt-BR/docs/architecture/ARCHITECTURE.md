@@ -15,43 +15,43 @@ Ele fornece um único endpoint compatível com a OpenAI (`/v1/*`) e roteia o tr�
 
 Principais recursos:
 
-- Superfície de API compatível com a OpenAI para CLIs/ferramentas (373 provedores, 150 módulos executores)
-- Tradução de requisições/respostas entre formatos de provedores
-- Fallback por combo de modelos (sequência de vários modelos)
-- Etapas estruturadas de combo (`provider + model + connection`) com ordenação em tempo de execução por `compositeTiers`
-- Fallback em nível de conta (várias contas por provedor)
-- Pré-verificação de cota e seleção de conta P2C sensível à cota no fluxo principal de chat
-- Gerenciamento de conexões de provedores via OAuth + chave de API (27 módulos de provedores OAuth)
+- Superfície de API compatível com a OpenAI para CLIs/ferramentas (374 provedores, 150 módulos executores)
+- Tradução de solicitações/respostas entre formatos de provedores
+- Fallback de combos de modelos (sequência de vários modelos)
+- Etapas estruturadas de combos (`provider + model + connection`) com ordenação em tempo de execução por `compositeTiers`
+- Fallback no nível da conta (várias contas por provedor)
+- Verificação prévia de cota e seleção de contas P2C com reconhecimento de cota no fluxo principal de chat
+- Gerenciamento de conexões de provedores por OAuth + chave de API (27 módulos de provedores OAuth)
 - Geração de embeddings via `/v1/embeddings` (18 provedores)
 - Geração de imagens via `/v1/images/generations` (mais de 10 provedores, mais de 20 modelos)
 - Transcrição de áudio via `/v1/audio/transcriptions` (18 provedores)
 - Conversão de texto em fala via `/v1/audio/speech` (24 provedores integrados)
 - Geração de vídeos via `/v1/videos/generations` (ComfyUI + SD WebUI)
-- Geração de música via `/v1/music/generations` (ComfyUI)
+- Geração de músicas via `/v1/music/generations` (ComfyUI)
 - Pesquisa na web via `/v1/search` (20 provedores)
 - Moderações via `/v1/moderations`
 - Reclassificação via `/v1/rerank`
-- Análise de tags de pensamento (``) para modelos de raciocínio
+- Análise de tags de raciocínio (``) para modelos de raciocínio
 - Sanitização de respostas para compatibilidade estrita com o SDK da OpenAI
-- Normalização de papéis (developer→system, system→user) para compatibilidade entre provedores
+- Normalização de funções (developer→system, system→user) para compatibilidade entre provedores
 - Conversão de saída estruturada (json_schema → Gemini responseSchema)
 - Persistência local de provedores, chaves, aliases, combos, configurações e preços (122 módulos de banco de dados)
-- Monitoramento de uso/custos e registro de requisições
-- Sincronização opcional na nuvem para sincronização de estado entre vários dispositivos
-- Lista de permissões/bloqueios de IPs para controle de acesso à API
-- Gerenciamento de orçamento de pensamento (repasse/automático/personalizado/adaptativo)
-- Injeção global de prompt de sistema
-- Monitoramento e identificação por impressão digital de sessões
+- Monitoramento de uso/custos e registro de solicitações
+- Sincronização opcional com a nuvem para sincronização entre vários dispositivos/estados
+- Lista de permissões/bloqueios de IP para controle de acesso à API
+- Gerenciamento de orçamento de raciocínio (passthrough/auto/custom/adaptive)
+- Injeção global de prompt do sistema
+- Monitoramento e identificação de sessões
 - Limitação de taxa aprimorada por conta, com perfis específicos de cada provedor
 - Padrão de circuit breaker para resiliência dos provedores
 - Proteção contra efeito manada com bloqueio por mutex
-- Cache de desduplicação de requisições baseado em assinatura
+- Cache de desduplicação de solicitações baseado em assinatura
 - Camada de domínio: regras de custo, política de fallback e política de bloqueio
-- Context Relay: resumos de transferência de sessão para manter a continuidade durante a alternância de contas
-- Persistência de estado do domínio (cache write-through do SQLite para fallbacks, orçamentos, bloqueios e circuit breakers)
-- Mecanismo de políticas para avaliação centralizada de requisições (bloqueio → orçamento → fallback)
-- Telemetria de requisições com agregação de latência p50/p95/p99
-- Telemetria de alvos de combos e histórico de integridade dos alvos de combos via `combo_execution_key` / `combo_step_id`
+- Context Relay: resumos de transferência de sessão para manter a continuidade durante a rotação de contas
+- Persistência do estado do domínio (cache de gravação simultânea em SQLite para fallbacks, orçamentos, bloqueios e circuit breakers)
+- Mecanismo de políticas para avaliação centralizada de solicitações (bloqueio → orçamento → fallback)
+- Telemetria de solicitações com agregação de latência p50/p95/p99
+- Telemetria de destinos de combos e integridade histórica dos destinos de combos via `combo_execution_key` / `combo_step_id`
 - ID de correlação (X-Request-Id) para rastreamento de ponta a ponta
 - Registro de auditoria de conformidade com opção de desativação por chave de API
 - Framework de avaliação para garantia da qualidade de LLMs
@@ -68,18 +68,18 @@ Principais recursos:
 - Scripts de desinstalação/desinstalação completa
 - Ação de reparo do ambiente OAuth
 - Ponte WebSocket para clientes WS compatíveis com a OpenAI (`/v1/ws`)
-- Gerenciamento de tokens de sincronização (emissão/revogação, download de pacote de configuração versionado por ETag)
-- Predefinição de provedor de primeira classe para GLM Thinking (`glmt`)
+- Gerenciamento de tokens de sincronização (emissão/revogação e download de pacotes de configuração versionados por ETag)
+- Predefinição de provedor de primeira classe GLM Thinking (`glmt`)
 - Contagem híbrida de tokens (`/messages/count_tokens` no lado do provedor, com fallback para estimativa)
-- Inicialização automática de aliases de modelos (mais de 30 normalizações de dialetos entre proxies na inicialização)
-- Requisições de saída seguras com proteção contra SSRF, bloqueio de URLs privadas e novas tentativas configuráveis
-- Novas tentativas de chat sensíveis ao período de espera, com `requestRetry` e `maxRetryIntervalSec` configuráveis
+- Preenchimento automático de aliases de modelos (mais de 30 normalizações entre dialetos de proxies na inicialização)
+- Fetch de saída seguro com proteção contra SSRF, bloqueio de URLs privadas e novas tentativas configuráveis
+- Novas tentativas de chat com reconhecimento de cooldown e `requestRetry` e `maxRetryIntervalSec` configuráveis
 - Validação do ambiente de execução com Zod na inicialização
 - Auditoria de conformidade v2 com paginação, eventos CRUD de provedores e registro de validações bloqueadas por SSRF
 
 Modelo principal de execução:
 
-- As rotas de aplicativo Next.js em `src/app/api/*` implementam tanto as APIs do painel quanto as APIs de compatibilidade
+- As rotas do aplicativo Next.js em `src/app/api/*` implementam tanto as APIs do painel quanto as APIs de compatibilidade
 - Um núcleo compartilhado de SSE/roteamento em `src/sse/*` + `open-sse/*` gerencia a execução dos provedores, tradução, streaming, fallback e uso
 
 ## Diagramas de Referência
@@ -538,16 +538,17 @@ Banco de Dados de Estado do Domínio (SQLite):
 - Tabelas (criadas em `src/lib/db/core.ts`): `domain_fallback_chains`, `domain_budgets`, `domain_cost_history`, `domain_lockout_state`, `domain_circuit_breakers`
 - Padrão de cache write-through: Maps em memória são a fonte autoritativa durante a execução; as mutações são gravadas de forma síncrona no SQLite; o estado é restaurado do banco de dados em uma inicialização a frio
 
-## 4) Superfícies de Autenticação + Segurança
+## 4) Autenticação + Superfícies de Segurança
 
-- Autenticação do painel por cookie: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
+- Autenticação por cookie do dashboard: `src/proxy.ts`, `src/app/api/auth/login/route.ts`
 - Geração/verificação de chaves de API: `src/shared/utils/apiKey.ts`
-- Segredos dos provedores persistidos nas entradas de `providerConnections`
+- Segredos de provedores persistidos em entradas de `providerConnections`
 - Suporte a proxy de saída por meio de `open-sse/utils/proxyFetch.ts` (variáveis de ambiente) e `open-sse/utils/networkProxy.ts` (configurável por provedor ou globalmente)
-- Proteção contra SSRF / URLs de saída: `src/shared/network/outboundUrlGuard.ts` — bloqueia intervalos privados, de loopback e link-local para todas as chamadas aos provedores
-- Validação do ambiente em tempo de execução: `src/lib/env/runtimeEnv.ts` — esquema Zod para todas as variáveis de ambiente, apresentado como erros/avisos de inicialização
-- Tokens de sincronização: `src/lib/db/syncTokens.ts` — tokens com escopo para endpoints de download de pacotes de configuração; respaldados pela tabela SQLite `sync_tokens` (migração `024_create_sync_tokens.sql`)
-- Autenticação do handshake WebSocket: `src/lib/ws/handshake.ts` — valida solicitações de upgrade para WS por meio de uma chave de API ou cookie de sessão
+- Proteção contra SSRF / URLs de saída: `src/shared/network/outboundUrlGuard.ts` — verificações de host em chamadas a provedores e destinos de webhooks; o modo vem de `src/shared/network/outboundUrlGuardPolicy.ts` (flags em `docs/reference/ENVIRONMENT.md`)
+- Validação de variáveis de ambiente em tempo de execução: `src/lib/env/runtimeEnv.ts` — esquema Zod para todas as variáveis de ambiente, apresentadas como erros/avisos de inicialização
+- Tokens de sincronização: `src/lib/db/syncTokens.ts` — tokens com escopo para endpoints de download de pacotes de configuração; armazenados na tabela SQLite `sync_tokens` (migração `024_create_sync_tokens.sql`)
+- Autenticação do handshake WebSocket: `src/lib/ws/handshake.ts` — valida solicitações de upgrade de WS por meio de chave de API ou cookie de sessão
+- Autenticação WebSocket em tempo real do dashboard: `src/server/ws/liveServer.ts` — o sidecar (porta `LIVE_WS_PORT`) aceita um cookie de sessão do dashboard ou uma chave de API Bearer com escopo de gerenciamento (`manage`/`admin`); chaves exclusivas para inferência são recusadas. Seu endpoint publicador interno `POST /__omniroute_event` aceita pares de loopback somente quando nenhum cabeçalho de salto de proxy (`x-forwarded-*`, `x-real-ip`, `forwarded`, `via`) está presente
 
 ## 5) Sincronização com a Nuvem
 
