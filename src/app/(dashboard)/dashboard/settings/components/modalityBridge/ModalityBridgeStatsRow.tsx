@@ -22,10 +22,21 @@ interface ModalityBridgeStatsRowProps {
   kind: BridgeKind;
 }
 
+function parseDrilldownStats(value: unknown): Pick<BridgeStats, "drilldown"> {
+  const drilldown = value as BridgeStats["drilldown"] | undefined;
+  if (
+    typeof drilldown?.retainedEntries !== "number" ||
+    typeof drilldown?.retainedBytes !== "number"
+  ) {
+    return {};
+  }
+  return { drilldown };
+}
+
 function parseStats(value: unknown): BridgeStats | null {
   if (!value || typeof value !== "object") return null;
   const record = value as Record<string, unknown>;
-  const drilldown = record.drilldown as BridgeStats["drilldown"] | undefined;
+  const drilldown = record.drilldown;
   const lastUsedAt = record.lastUsedAt;
   if (lastUsedAt !== null && typeof lastUsedAt !== "string") return null;
   if (
@@ -53,10 +64,7 @@ function parseStats(value: unknown): BridgeStats | null {
           )
         : 0;
   return {
-    ...(typeof drilldown?.retainedEntries === "number" &&
-    typeof drilldown?.retainedBytes === "number"
-      ? { drilldown }
-      : {}),
+    ...parseDrilldownStats(drilldown),
     attempts,
     averageLatencyMs,
     bridged: record.bridged,

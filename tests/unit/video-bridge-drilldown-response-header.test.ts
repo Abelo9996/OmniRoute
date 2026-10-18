@@ -98,3 +98,39 @@ test("versioned handles and legacy handles share the bounded header contract", (
   ]);
   assert.equal(header?.["x-omniroute-video-drilldown"], handles.join(","));
 });
+
+test("handle bounds apply before filtering per result and after deduplication globally", () => {
+  const [first, outsideWindow, second, third, fourth, outsideGlobalCap] = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+  ].map((digit) => digit.repeat(64));
+  const header = buildModalityBridgeResponseHeaders([
+    {
+      guardrail: "video-bridge",
+      meta: {
+        videoDrilldownHandles: [
+          null,
+          { handle: "invalid" },
+          { handle: first },
+          { handle: first },
+          { handle: outsideWindow },
+        ],
+      },
+    },
+    {
+      guardrail: "video-bridge",
+      meta: {
+        videoDrilldownHandles: [first, second, third, fourth].map((handle) => ({ handle })),
+      },
+    },
+    {
+      guardrail: "video-bridge",
+      meta: { videoDrilldownHandles: [{ handle: outsideGlobalCap }] },
+    },
+  ]);
+  assert.equal(header?.["x-omniroute-video-drilldown"], [first, second, third, fourth].join(","));
+});
