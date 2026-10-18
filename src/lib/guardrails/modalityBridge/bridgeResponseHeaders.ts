@@ -5,6 +5,16 @@ export type ModalityBridgeResponseHeaders = Partial<
   Record<"x-omniroute-modality-bridge" | "x-omniroute-video-drilldown", string>
 >;
 
+function appendDrilldownHandles(handles: Set<string>, items: unknown[]): void {
+  for (const item of items.slice(0, 4)) {
+    if (handles.size >= 4) break;
+    const handle =
+      item && typeof item === "object" ? (item as { handle?: unknown }).handle : undefined;
+    if (typeof handle === "string" && VIDEO_DRILLDOWN_HANDLE_PATTERN.test(handle))
+      handles.add(handle);
+  }
+}
+
 export function buildModalityBridgeResponseHeaders(
   results: Array<{
     guardrail: string;
@@ -18,12 +28,7 @@ export function buildModalityBridgeResponseHeaders(
   for (const result of results) {
     if (result.guardrail !== "video-bridge" || !Array.isArray(result.meta?.videoDrilldownHandles))
       continue;
-    for (const item of result.meta.videoDrilldownHandles.slice(0, 4)) {
-      if (handles.size >= 4) break;
-      const handle = item && typeof item === "object" ? item.handle : undefined;
-      if (typeof handle === "string" && VIDEO_DRILLDOWN_HANDLE_PATTERN.test(handle))
-        handles.add(handle);
-    }
+    appendDrilldownHandles(handles, result.meta.videoDrilldownHandles);
   }
   if (handles.size) headers["x-omniroute-video-drilldown"] = [...handles].join(",");
   return Object.keys(headers).length ? headers : null;
