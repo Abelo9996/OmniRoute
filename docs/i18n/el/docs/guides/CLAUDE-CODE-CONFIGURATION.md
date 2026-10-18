@@ -127,7 +127,7 @@ glm/glm-5.2              →  claude/glm/glm-5.2         "GLM 5.2 (OmniRoute)"
 `x-omniroute-connection` μέσω του `ANTHROPIC_CUSTOM_HEADERS` στο ίδιο μπλοκ `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <αναγνωριστικό σύνδεσης>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Αντιγράψτε το αναγνωριστικό από την ένδειξη `xxxxxxxx…` στη γραμμή σύνδεσης της σελίδας του παρόχου. Το καρφίτσωμα

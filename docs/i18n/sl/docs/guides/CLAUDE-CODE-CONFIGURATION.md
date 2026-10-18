@@ -129,7 +129,7 @@ sestavljalnik, pokrit s testi enot), ki ga prikaže `ClaudeGatewayOnboardingBloc
 `x-omniroute-connection` prek `ANTHROPIC_CUSTOM_HEADERS` v istem bloku `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <ID povezave>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 ID kopirajte iz oznake `xxxxxxxx…` v vrstici povezave na strani ponudnika. Pripenjanje velja samo

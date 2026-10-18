@@ -115,7 +115,7 @@ Claude 工具卡片（**儀表板 → CLI Code**）會在探索別名資訊按�
 若要透過某個特定提供者帳戶傳送每個 Claude Code 請求，請在相同的 `env` 區塊中，透過 `ANTHROPIC_CUSTOM_HEADERS` 新增 `x-omniroute-connection` 標頭：
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <連線 id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 請從提供者頁面連線列上的 `xxxxxxxx…` 標籤複製 id。鎖定僅適用於單一模型 id（`provider/model`），不適用於組合。確切的後援行為請參閱[依請求鎖定帳戶](../reference/API_REFERENCE.md#account-pinning-per-request)。

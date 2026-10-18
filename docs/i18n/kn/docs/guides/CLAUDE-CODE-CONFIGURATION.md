@@ -117,7 +117,7 @@ Claude ಟೂಲ್ ಕಾರ್ಡ್ (**Dashboard → CLI Code**) ಈ ಇನ�
 ಪ್ರತಿಯೊಂದು Claude Code ವಿನಂತಿಯನ್ನೂ ಒಂದು ನಿರ್ದಿಷ್ಟ ಪ್ರೊವೈಡರ್ ಖಾತೆಯ ಮೂಲಕ ಕಳುಹಿಸಲು, ಅದೇ `env` ಬ್ಲಾಕ್ನಲ್ಲಿ `ANTHROPIC_CUSTOM_HEADERS` ಮೂಲಕ `x-omniroute-connection` ಹೆಡರ್ ಸೇರಿಸಿ:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <ಕನೆಕ್ಷನ್ id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 ಪ್ರೊವೈಡರ್ ಪುಟದ ಕನೆಕ್ಷನ್ ಸಾಲಿನಲ್ಲಿರುವ `xxxxxxxx…` ಚಿಪ್ನಿಂದ id ಅನ್ನು ನಕಲಿಸಿ. ಪಿನ್ ಏಕ-ಮಾಡೆಲ್ id ಗಳಿಗೆ (`provider/model`) ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತದೆ, ಕಾಂಬೊಗಳಿಗೆ ಅಲ್ಲ. ನಿಖರವಾದ ಫಾಲ್ಬ್ಯಾಕ್ ನಡವಳಿಕೆಗಾಗಿ [ಪ್ರತಿ ವಿನಂತಿಗೆ ಖಾತೆ ಪಿನ್ನಿಂಗ್](../reference/API_REFERENCE.md#account-pinning-per-request) ನೋಡಿ.

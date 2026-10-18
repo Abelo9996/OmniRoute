@@ -121,7 +121,7 @@ Claude ツールカード（**ダッシュボード → CLI Code**）には、�
 すべての Claude Code リクエストを特定のプロバイダーアカウント経由で送信するには、同じ `env` ブロック内の `ANTHROPIC_CUSTOM_HEADERS` を使用して `x-omniroute-connection` ヘッダーを追加します。
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <接続 ID>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 プロバイダーページの接続行にある `xxxxxxxx…` チップから ID をコピーしてください。固定は単一モデル ID（`provider/model`）にのみ適用され、コンボには適用されません。正確なフォールバック動作については、[リクエスト単位のアカウント固定](../reference/API_REFERENCE.md#account-pinning-per-request)を参照してください。

@@ -97,7 +97,7 @@ Claude 도구 카드(**대시보드 → CLI 코드**)는 검색 별칭 정보 �
 모든 Claude Code 요청을 하나의 특정 제공자 계정을 통해 전송하려면 동일한 `env` 블록에서 `ANTHROPIC_CUSTOM_HEADERS`를 통해 `x-omniroute-connection` 헤더를 추가하세요.
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <연결 id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 제공자 페이지의 연결 행에 있는 `xxxxxxxx…` 칩에서 id를 복사하세요. 고정은 단일 모델 id(`provider/model`)에만 적용되며, 콤보에는 적용되지 않습니다. 정확한 폴백 동작은 [요청별 계정 고정](../reference/API_REFERENCE.md#account-pinning-per-request)을 참조하세요.

@@ -127,7 +127,7 @@ Chcete-li odesílat všechny požadavky Claude Code přes jeden konkrétní úč
 hlavičku `x-omniroute-connection` prostřednictvím `ANTHROPIC_CUSTOM_HEADERS` do stejného bloku `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id připojení>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Zkopírujte id z čipu `xxxxxxxx…` na řádku připojení na stránce poskytovatele. Připnutí se vztahuje

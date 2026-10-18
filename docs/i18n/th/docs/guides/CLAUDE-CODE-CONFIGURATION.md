@@ -117,7 +117,7 @@ URL ฐานคือค่าที่การ์ดกำหนดได้ 
 หากต้องการส่งทุกคำขอของ Claude Code ผ่านบัญชีผู้ให้บริการที่ระบุเพียงบัญชีเดียว ให้เพิ่มส่วนหัว `x-omniroute-connection` ผ่าน `ANTHROPIC_CUSTOM_HEADERS` ในบล็อก `env` เดียวกัน:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id การเชื่อมต่อ>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 คัดลอก id จากชิป `xxxxxxxx…` ในแถวการเชื่อมต่อของหน้าผู้ให้บริการ การปักหมุดนี้ใช้ได้เฉพาะกับ id ของโมเดลเดี่ยว (`provider/model`) ไม่ใช่คอมโบ ดูลักษณะการทำงานสำรองโดยละเอียดได้ที่ [การปักหมุดบัญชีต่อคำขอ](../reference/API_REFERENCE.md#account-pinning-per-request)

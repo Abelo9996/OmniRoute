@@ -118,7 +118,7 @@ Bazinis URL yra tas, kurį nustatė kortelė (įskaitant jūsų įvestą pasirin
 Norėdami kiekvieną Claude Code užklausą siųsti per vieną konkrečią teikėjo paskyrą, tame pačiame `env` bloke per `ANTHROPIC_CUSTOM_HEADERS` pridėkite `x-omniroute-connection` antraštę:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <ryšio id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Nukopijuokite id iš teikėjo puslapio ryšio eilutėje esančios `xxxxxxxx…` žymos. Susiejimas taikomas tik vieno modelio id (`provider/model`), o ne deriniams. Tikslus veikimas, kai reikia naudoti atsarginį variantą, aprašytas skyriuje [Paskyros susiejimas kiekvienai užklausai](../reference/API_REFERENCE.md#account-pinning-per-request).

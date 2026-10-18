@@ -117,7 +117,7 @@ Claude టూల్ కార్డ్ (**Dashboard → CLI Code**) ఈ ఇన�
 ప్రతి Claude Code అభ్యర్థనను ఒక నిర్దిష్ట ప్రొవైడర్ ఖాతా ద్వారా పంపడానికి, అదే `env` బ్లాక్లో `ANTHROPIC_CUSTOM_HEADERS` ద్వారా `x-omniroute-connection` హెడర్ను జోడించండి:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <కనెక్షన్ id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 ప్రొవైడర్ పేజీలోని కనెక్షన్ వరుసలో ఉన్న `xxxxxxxx…` చిప్ నుంచి idని కాపీ చేయండి. ఈ పిన్ సింగిల్-మోడల్ idలకు (`provider/model`) మాత్రమే వర్తిస్తుంది, కాంబోలకు కాదు. ఖచ్చితమైన ఫాల్బ్యాక్ ప్రవర్తన కోసం [ప్రతి అభ్యర్థనకు ఖాతా పిన్నింగ్](../reference/API_REFERENCE.md#account-pinning-per-request) చూడండి.

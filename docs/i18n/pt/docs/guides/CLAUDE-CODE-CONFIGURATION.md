@@ -127,7 +127,7 @@ Para enviar todos os pedidos do Claude Code através de uma conta específica do
 cabeçalho `x-omniroute-connection` através de `ANTHROPIC_CUSTOM_HEADERS` no mesmo bloco `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id da ligação>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Copie o id do chip `xxxxxxxx…` na linha da ligação da página do fornecedor. A fixação aplica-se apenas

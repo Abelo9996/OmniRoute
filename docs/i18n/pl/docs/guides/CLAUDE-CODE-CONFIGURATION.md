@@ -134,7 +134,7 @@ Aby wysyłać każde żądanie Claude Code przez jedno konkretne konto dostawcy,
 `x-omniroute-connection` za pośrednictwem `ANTHROPIC_CUSTOM_HEADERS` w tym samym bloku `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <identyfikator połączenia>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Skopiuj identyfikator z etykiety `xxxxxxxx…` w wierszu połączenia na stronie dostawcy. Przypięcie

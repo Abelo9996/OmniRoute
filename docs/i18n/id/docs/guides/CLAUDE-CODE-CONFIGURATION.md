@@ -127,7 +127,7 @@ Untuk mengirim setiap permintaan Claude Code melalui satu akun penyedia tertentu
 `x-omniroute-connection` melalui `ANTHROPIC_CUSTOM_HEADERS` dalam blok `env` yang sama:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id koneksi>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Salin id dari chip `xxxxxxxx…` pada baris koneksi di halaman penyedia. Penyematan hanya

@@ -127,7 +127,7 @@ Nguồn: `src/shared/services/claudeCliConfig.ts::buildClaudeDiscoverySettingsSn
 `x-omniroute-connection` thông qua `ANTHROPIC_CUSTOM_HEADERS` trong cùng khối `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id kết nối>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Sao chép id từ chip `xxxxxxxx…` trên hàng kết nối của trang nhà cung cấp. Việc ghim chỉ

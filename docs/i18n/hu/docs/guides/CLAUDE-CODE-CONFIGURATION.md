@@ -121,7 +121,7 @@ Forrás: `src/shared/services/claudeCliConfig.ts::buildClaudeDiscoverySettingsSn
 Ha minden Claude Code-kérést egy adott szolgáltatói fiókon keresztül szeretne küldeni, adja hozzá az `x-omniroute-connection` fejlécet az `ANTHROPIC_CUSTOM_HEADERS` használatával ugyanabban az `env` blokkban:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <kapcsolatazonosító>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Másolja ki az azonosítót a szolgáltatói oldal kapcsolatának sorában található `xxxxxxxx…` címkéről. A rögzítés csak egyetlen modellhez tartozó azonosítókra (`provider/model`) vonatkozik, kombinációkra nem. A pontos tartalék viselkedést lásd a [Fiók rögzítése kérésenként](../reference/API_REFERENCE.md#account-pinning-per-request) szakaszban.

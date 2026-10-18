@@ -117,7 +117,7 @@ Claude ടൂൾ കാർഡ് (**ഡാഷ്ബോർഡ് → CLI കോ�
 എല്ലാ Claude Code അഭ്യർത്ഥനകളും ഒരു നിർദ്ദിഷ്ട പ്രൊവൈഡർ അക്കൗണ്ടിലൂടെ അയയ്ക്കാൻ, അതേ `env` ബ്ലോക്കിലെ `ANTHROPIC_CUSTOM_HEADERS` വഴി `x-omniroute-connection` ഹെഡർ ചേർക്കുക:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <കണക്ഷൻ id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 പ്രൊവൈഡർ പേജിലെ കണക്ഷൻ വരിയിലുള്ള `xxxxxxxx…` ചിപ്പിൽനിന്ന് id പകർത്തുക. പിൻ സിംഗിൾ-മോഡൽ id-കൾക്ക് (`provider/model`) മാത്രമേ ബാധകമാകൂ, കോംബോകൾക്ക് ബാധകമല്ല. കൃത്യമായ ഫാൾബാക്ക് പ്രവർത്തനരീതിക്കായി [ഓരോ അഭ്യർത്ഥനയ്ക്കുമുള്ള അക്കൗണ്ട് പിന്നിംഗ്](../reference/API_REFERENCE.md#account-pinning-per-request) കാണുക.

@@ -119,7 +119,7 @@ Allikas: `src/shared/services/claudeCliConfig.ts::buildClaudeDiscoverySettingsSn
 Kõigi Claude Code'i päringute saatmiseks ühe kindla teenusepakkuja konto kaudu lisage samasse `env` plokki `x-omniroute-connection` päis muutuja `ANTHROPIC_CUSTOM_HEADERS` kaudu:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <ühenduse ID>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Kopeerige ID teenusepakkuja lehel oleva ühendusrea `xxxxxxxx…` kiibilt. Kinnistamine rakendub ainult ühe mudeli ID-dele (`provider/model`), mitte kombinatsioonidele. Täpse varukäitumise kirjelduse leiate jaotisest [Konto kinnistamine päringu kaupa](../reference/API_REFERENCE.md#account-pinning-per-request).

@@ -129,7 +129,7 @@ Claude Code-ის ყველა მოთხოვნის ერთი კ�
 `ANTHROPIC_CUSTOM_HEADERS`-ის მეშვეობით დაამატეთ `x-omniroute-connection` სათაური:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <კავშირის id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 დააკოპირეთ id პროვაიდერის გვერდზე, კავშირის მწკრივში მდებარე `xxxxxxxx…` ნიშნულიდან. მიბმა

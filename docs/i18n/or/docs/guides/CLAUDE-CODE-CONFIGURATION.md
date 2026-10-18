@@ -109,7 +109,7 @@ Claude ଟୁଲ୍ କାର୍ଡ (**Dashboard → CLI Code**) ଏହି ଇ�
 `ANTHROPIC_CUSTOM_HEADERS` ମାଧ୍ୟମରେ `x-omniroute-connection` ହେଡର୍ ଯୋଡ଼ନ୍ତୁ:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <କନେକ୍ସନ୍ id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 ପ୍ରଦାନକାରୀ ପୃଷ୍ଠାର କନେକ୍ସନ୍ ଧାଡ଼ିରେ ଥିବା `xxxxxxxx…` ଚିପ୍ରୁ id କପି କରନ୍ତୁ। ପିନ୍ କେବଳ

@@ -127,7 +127,7 @@ Per inviare ogni richiesta di Claude Code tramite uno specifico account del prov
 `x-omniroute-connection` tramite `ANTHROPIC_CUSTOM_HEADERS` nello stesso blocco `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id connessione>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Copia l'id dal chip `xxxxxxxx…` nella riga della connessione della pagina del provider. Il vincolo si

@@ -118,7 +118,7 @@ Lähde: `src/shared/services/claudeCliConfig.ts::buildClaudeDiscoverySettingsSni
 Jos haluat lähettää kaikki Claude Code -pyynnöt yhden tietyn palveluntarjoajatilin kautta, lisää `x-omniroute-connection`-otsake `ANTHROPIC_CUSTOM_HEADERS`-muuttujan kautta samaan `env`-lohkoon:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <yhteyden tunniste>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Kopioi tunniste palveluntarjoajasivun yhteysrivillä olevasta `xxxxxxxx…`-tunnisteesta. Kiinnitys koskee vain yksittäisten mallien tunnisteita (`provider/model`), ei yhdistelmiä. Tarkka varatoiminta on kuvattu kohdassa [Tilin kiinnitys pyyntökohtaisesti](../reference/API_REFERENCE.md#account-pinning-per-request).

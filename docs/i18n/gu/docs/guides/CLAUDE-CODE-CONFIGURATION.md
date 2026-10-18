@@ -117,7 +117,7 @@ Claude ટૂલ કાર્ડ (**Dashboard → CLI Code**) આ ઇન્સ�
 દરેક Claude Code રિક્વેસ્ટને કોઈ એક ચોક્કસ પ્રોવાઇડર અકાઉન્ટ મારફતે મોકલવા માટે, એ જ `env` બ્લૉકમાં `ANTHROPIC_CUSTOM_HEADERS` દ્વારા `x-omniroute-connection` હેડર ઉમેરો:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <કનેક્શન id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 પ્રોવાઇડર પેજ પરની કનેક્શન રોમાં રહેલી `xxxxxxxx…` ચિપમાંથી id કૉપી કરો. પિન ફક્ત સિંગલ-મૉડલ ids (`provider/model`) પર લાગુ થાય છે, કૉમ્બોઝ પર નહીં. ચોક્કસ ફૉલબૅક વર્તણૂક માટે [પ્રતિ રિક્વેસ્ટ અકાઉન્ટ પિનિંગ](../reference/API_REFERENCE.md#account-pinning-per-request) જુઓ.

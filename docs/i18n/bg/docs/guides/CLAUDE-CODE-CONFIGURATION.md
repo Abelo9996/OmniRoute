@@ -127,7 +127,7 @@ Claude Code:
 заглавката `x-omniroute-connection` чрез `ANTHROPIC_CUSTOM_HEADERS` в същия блок `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <идентификатор на връзката>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Копирайте идентификатора от етикета `xxxxxxxx…` в реда на връзката на страницата на доставчика. Фиксирането се

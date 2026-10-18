@@ -127,7 +127,7 @@ Pour acheminer chaque requête Claude Code via un compte fournisseur spécifique
 `x-omniroute-connection` au moyen de `ANTHROPIC_CUSTOM_HEADERS` dans le même bloc `env` :
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <identifiant de connexion>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Copiez l’identifiant depuis la puce `xxxxxxxx…` sur la ligne de connexion de la page du fournisseur. L’épinglage ne

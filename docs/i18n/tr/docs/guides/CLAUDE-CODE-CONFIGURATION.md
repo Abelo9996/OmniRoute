@@ -124,7 +124,7 @@ Kaynak: `src/shared/services/claudeCliConfig.ts::buildClaudeDiscoverySettingsSni
 Her Claude Code isteğini belirli bir sağlayıcı hesabı üzerinden göndermek için aynı `env` bloğunda `ANTHROPIC_CUSTOM_HEADERS` aracılığıyla `x-omniroute-connection` üstbilgisini ekleyin:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <bağlantı kimliği>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Kimliği, sağlayıcı sayfasındaki bağlantı satırında bulunan `xxxxxxxx…` çipinden kopyalayın. Sabitleme yalnızca tek modelli kimlikler (`provider/model`) için geçerlidir, kombinasyonlar için geçerli değildir. Tam geri dönüş davranışı için [İstek başına hesap sabitleme](../reference/API_REFERENCE.md#account-pinning-per-request) bölümüne bakın.

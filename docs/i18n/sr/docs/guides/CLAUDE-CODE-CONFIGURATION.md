@@ -127,7 +127,7 @@ prikazuju se samo Kimi modeli.
 заглавље `x-omniroute-connection` путем `ANTHROPIC_CUSTOM_HEADERS` у исти блок `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id везе>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Копирајте id из ознаке `xxxxxxxx…` у реду везе на страници добављача. Закључавање се

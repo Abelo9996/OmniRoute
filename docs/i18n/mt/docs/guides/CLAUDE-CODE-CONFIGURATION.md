@@ -127,7 +127,7 @@ Biex tibgħat kull talba ta’ Claude Code permezz ta’ kont speċifiku wieħed
 `x-omniroute-connection` permezz ta’ `ANTHROPIC_CUSTOM_HEADERS` fl-istess blokka `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id tal-konnessjoni>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Ikkopja l-id miċ-ċippa `xxxxxxxx…` fir-ringiela tal-konnessjoni fil-paġna tal-fornitur. L-iffissar japplika biss

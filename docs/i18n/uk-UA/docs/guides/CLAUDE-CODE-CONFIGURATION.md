@@ -127,7 +127,7 @@ glm/glm-5.2              →  claude/glm/glm-5.2         "GLM 5.2 (OmniRoute)"
 заголовок `x-omniroute-connection` через `ANTHROPIC_CUSTOM_HEADERS` у тому самому блоці `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <ідентифікатор підключення>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Скопіюйте ідентифікатор із мітки `xxxxxxxx…` у рядку підключення на сторінці постачальника. Закріплення

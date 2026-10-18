@@ -126,7 +126,7 @@ Claude ਟੂਲ ਕਾਰਡ (**Dashboard → CLI Code**) ਇਸ ਇੰਸਟ�
 `ANTHROPIC_CUSTOM_HEADERS` ਰਾਹੀਂ `x-omniroute-connection` ਹੈਡਰ ਸ਼ਾਮਲ ਕਰੋ:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <ਕਨੈਕਸ਼ਨ id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 ਪ੍ਰੋਵਾਈਡਰ ਪੰਨੇ ਉੱਤੇ ਕਨੈਕਸ਼ਨ ਕਤਾਰ ਵਿੱਚ ਮੌਜੂਦ `xxxxxxxx…` ਚਿਪ ਤੋਂ id ਕਾਪੀ ਕਰੋ। ਇਹ ਪਿੰਨ ਸਿਰਫ਼

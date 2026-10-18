@@ -130,7 +130,7 @@ Um jede Claude-Code-Anfrage über ein bestimmtes Anbieterkonto zu senden, fügen
 `x-omniroute-connection`-Header über `ANTHROPIC_CUSTOM_HEADERS` demselben `env`-Block hinzu:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <Verbindungs-ID>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Kopieren Sie die ID aus dem `xxxxxxxx…`-Chip in der Verbindungszeile auf der Anbieterseite. Die Festlegung

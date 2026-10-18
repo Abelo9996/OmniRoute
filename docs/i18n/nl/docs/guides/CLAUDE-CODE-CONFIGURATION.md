@@ -131,7 +131,7 @@ Om elk Claude Code-verzoek via één specifiek provideraccount te verzenden, voe
 `x-omniroute-connection`-header via `ANTHROPIC_CUSTOM_HEADERS` toe aan hetzelfde `env`-blok:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <verbindings-id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Kopieer de id van de `xxxxxxxx…`-chip op de verbindingsrij van de providerpagina. De vastzetting is alleen

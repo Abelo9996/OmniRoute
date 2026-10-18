@@ -127,7 +127,7 @@ Claude Code ची प्रत्येक विनंती एका वि�
 `ANTHROPIC_CUSTOM_HEADERS` द्वारे `x-omniroute-connection` हेडर जोडा:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <कनेक्शन आयडी>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 प्रोव्हायडर पृष्ठावरील कनेक्शनच्या ओळीत असलेल्या `xxxxxxxx…` चिपमधून आयडी कॉपी करा. हे पिनिंग केवळ

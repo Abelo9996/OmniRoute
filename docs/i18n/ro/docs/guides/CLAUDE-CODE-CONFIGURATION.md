@@ -127,7 +127,7 @@ Pentru a trimite fiecare solicitare Claude Code printr-un anumit cont de furnizo
 `x-omniroute-connection` prin `ANTHROPIC_CUSTOM_HEADERS` în același bloc `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id-ul conexiunii>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Copiați id-ul din cipul `xxxxxxxx…` de pe rândul conexiunii din pagina furnizorului. Fixarea se

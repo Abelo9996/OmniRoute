@@ -127,7 +127,7 @@ Untuk menghantar setiap permintaan Claude Code melalui satu akaun penyedia terte
 `x-omniroute-connection` melalui `ANTHROPIC_CUSTOM_HEADERS` dalam blok `env` yang sama:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id sambungan>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Salin id daripada cip `xxxxxxxx…` pada baris sambungan di halaman penyedia. Penyematan tersebut hanya

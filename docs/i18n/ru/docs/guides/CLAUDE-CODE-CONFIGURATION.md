@@ -127,7 +127,7 @@ Claude Code:
 заголовок `x-omniroute-connection` посредством `ANTHROPIC_CUSTOM_HEADERS` в тот же блок `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <идентификатор подключения>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Скопируйте идентификатор из элемента `xxxxxxxx…` в строке подключения на странице провайдера. Закрепление

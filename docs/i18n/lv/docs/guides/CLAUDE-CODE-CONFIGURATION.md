@@ -130,7 +130,7 @@ Lai visus Claude Code pieprasījumus nosūtītu caur vienu konkrētu pakalpojumu
 `x-omniroute-connection` galveni, izmantojot `ANTHROPIC_CUSTOM_HEADERS` tajā pašā `env` blokā:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <savienojuma id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Nokopējiet id no `xxxxxxxx…` emblēmas pakalpojumu sniedzēja lapas savienojuma rindā. Piesaiste

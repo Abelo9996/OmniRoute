@@ -127,7 +127,7 @@ Kako biste svaki zahtjev Claude Codea usmjerili kroz jedan određeni račun pru�
 zaglavlje `x-omniroute-connection` putem `ANTHROPIC_CUSTOM_HEADERS` unutar istog bloka `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id veze>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Kopirajte id iz oznake `xxxxxxxx…` u retku veze na stranici pružatelja usluge. Prikvačivanje se

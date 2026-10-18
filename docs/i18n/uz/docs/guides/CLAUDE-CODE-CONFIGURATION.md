@@ -120,7 +120,7 @@ Manba: `src/shared/services/claudeCliConfig.ts::buildClaudeDiscoverySettingsSnip
 Har bir Claude Code so‘rovini muayyan provayder hisobidan yuborish uchun o‘sha `env` blokidagi `ANTHROPIC_CUSTOM_HEADERS` orqali `x-omniroute-connection` sarlavhasini qo‘shing:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <ulanish identifikatori>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Identifikatorni provayder sahifasidagi ulanish qatorida joylashgan `xxxxxxxx…` belgisidan nusxalang. Biriktirish faqat bitta modelli identifikatorlarga (`provider/model`) taalluqli, kombinatsiyalarga emas. Aniq zaxira xatti-harakati uchun [Har bir so‘rov bo‘yicha hisobni biriktirish](../reference/API_REFERENCE.md#account-pinning-per-request) bo‘limiga qarang.

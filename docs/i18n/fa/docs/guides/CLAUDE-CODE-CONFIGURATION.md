@@ -123,7 +123,7 @@ URL پایه همان مقداری است که کارت تشخیص داده اس
 برای ارسال همه درخواستهای Claude Code از طریق یک حساب مشخص ارائهدهنده، هدر `x-omniroute-connection` را با استفاده از `ANTHROPIC_CUSTOM_HEADERS` در همان بلوک `env` اضافه کنید:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <شناسه اتصال>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 شناسه را از نشان `xxxxxxxx…` در ردیف اتصالِ صفحه ارائهدهنده کپی کنید. پین فقط برای شناسههای تکمدلی (`provider/model`) اعمال میشود، نه برای ترکیبها. برای اطلاع از رفتار دقیق در حالت بازگشت، به [پین کردن حساب برای هر درخواست](../reference/API_REFERENCE.md#account-pinning-per-request) مراجعه کنید.

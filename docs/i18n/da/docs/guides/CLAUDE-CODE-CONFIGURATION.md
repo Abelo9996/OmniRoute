@@ -127,7 +127,7 @@ Hvis alle Claude Code-anmodninger skal sendes gennem én bestemt udbyderkonto, s
 `x-omniroute-connection`-headeren via `ANTHROPIC_CUSTOM_HEADERS` i den samme `env`-blok:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <forbindelses-id>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Kopiér id'et fra `xxxxxxxx…`-chippen på forbindelsesrækken på udbydersiden. Fastlåsningen gælder kun

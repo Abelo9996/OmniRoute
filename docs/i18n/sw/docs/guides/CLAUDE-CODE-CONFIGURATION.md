@@ -127,7 +127,7 @@ Ili kutuma kila ombi la Claude Code kupitia akaunti moja mahususi ya mtoa huduma
 `x-omniroute-connection` kupitia `ANTHROPIC_CUSTOM_HEADERS` katika sehemu hiyo hiyo ya `env`:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <kitambulisho cha muunganisho>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Nakili kitambulisho kutoka kwenye chipu ya `xxxxxxxx…` katika safu ya muunganisho kwenye ukurasa wa mtoa huduma. Ubandikaji huo

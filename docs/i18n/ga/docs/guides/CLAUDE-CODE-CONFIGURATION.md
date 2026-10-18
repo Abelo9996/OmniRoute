@@ -132,7 +132,7 @@ Chun gach iarratas Claude Code a sheoladh trí chuntas soláthraí sonrach amhá
 `x-omniroute-connection` leis trí `ANTHROPIC_CUSTOM_HEADERS` sa bhloc `env` céanna:
 
 ```jsonc
-"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <id ceangail>"
+"ANTHROPIC_CUSTOM_HEADERS": "x-omniroute-connection: <connection id>"
 ```
 
 Cóipeáil an id ón tslis `xxxxxxxx…` ar ró an cheangail ar leathanach an tsoláthraí. Ní bhaineann an socrú seasta
