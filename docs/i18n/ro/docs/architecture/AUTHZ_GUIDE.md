@@ -17,17 +17,17 @@ OmniRoute are un pipeline de autorizare conștient de rute, care filtrează fiec
 
 ### 1. Cheie API (Bearer)
 
-Utilizat pentru API-urile client compatibile cu OpenAI/Anthropic/Gemini și pentru câteva rute de administrare atunci când cheia are domeniul de aplicare `manage`.
+Utilizată pentru API-urile client compatibile cu OpenAI/Anthropic/Gemini și pentru câteva rute de administrare atunci când cheia are domeniul de aplicare `manage`.
 
 ```
 Authorization: Bearer <api-key>
 ```
 
-Validat prin `isValidApiKey()` / `extractApiKey()` în `src/sse/services/auth.ts` și reexportat prin `src/shared/utils/apiAuth.ts`. Validatorul acceptă și variabilele de mediu `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` drept chei persistente de tip passthrough (problema #1350).
+Validată prin `isValidApiKey()` / `extractApiKey()` în `src/sse/services/auth.ts` și reexportată prin `src/shared/utils/apiAuth.ts`. Validatorul acceptă, de asemenea, variabilele de mediu `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` drept chei persistente de acces direct (problema #1350).
 
-### 2. Sesiune de panou de control (cookie auth_token)
+### 2. Sesiune de tablou de bord (cookie auth_token)
 
-Pentru paginile panoului de control și operațiunile administrative.
+Pentru paginile tabloului de bord și operațiunile administrative.
 
 ```
 Cookie: auth_token=<JWT semnat cu JWT_SECRET>
@@ -35,87 +35,112 @@ Cookie: auth_token=<JWT semnat cu JWT_SECRET>
 
 Un cookie reprezintă o sesiune numai atunci când JWT-ul este verificat **și** conține `authenticated: true`
 (`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`). Fiecare
-consumator al cookie-ului (mecanismul de protecție a rutelor panoului de control (`isDashboardSessionAuthenticated()`), reîmprospătarea fluxului de autorizare, negocierea WebSocket, serverul
-live, `/api/settings/require-login`, `/api/auth/status`) trece prin acel utilitar.
-Există și alte JWT-uri semnate cu `JWT_SECRET` — mecanismul passthrough pentru Cursor CLI emite
-tokenuri `iss "omniroute" / aud "cursor-cli"` pentru deținătorii de chei — iar acestea nu reprezintă niciodată sesiuni
+consumator al cookie-ului (protecția rutelor tabloului de bord (`isDashboardSessionAuthenticated()`), reîmprospătarea fluxului de autorizare, negocierea WebSocket, serverul
+live, `/api/settings/require-login`, `/api/auth/status`) folosește această funcție auxiliară.
+Există și alte JWT-uri semnate cu `JWT_SECRET` — accesul direct Cursor CLI emite
+tokenuri `iss "omniroute" / aud "cursor-cli"` pentru deținătorii de chei — iar acestea nu sunt niciodată sesiuni
 (#13298).
 
-Verificat prin `isDashboardSessionAuthenticated()` în `src/shared/utils/apiAuth.ts`. Fluxul reîmprospătează automat JWT-ul atunci când mai are mai puțin de 7 zile din durata sa de viață de 30 de zile.
+Verificată prin `isDashboardSessionAuthenticated()` în `src/shared/utils/apiAuth.ts`. Fluxul reîmprospătează automat JWT-ul atunci când au mai rămas mai puțin de 7 zile din durata sa de viață de 30 de zile.
 
-O sesiune se poate încheia și înainte de expirarea celor 30 de zile, deoarece fiecare emitent trece prin `mintDashboardSessionToken` (un moment al emiterii `iat` și un ID `jti`), iar verificatorul controlează două setări: `sessionsValidAfter`, stabilită prin schimbarea parolei, astfel încât fiecare sesiune emisă anterior să nu mai poată fi verificată (browserul în care a fost schimbată parola primește un cookie nou), și `revokedDashboardSessions`, la care `POST /api/auth/logout` adaugă `jti`-ul sesiunii deconectate. Sesiunile emise de o versiune mai veche nu conțin niciuna dintre aceste revendicări și rămân valide până la prima schimbare a parolei. Dacă setările nu pot fi citite, sesiunea nu este considerată de încredere.
+O sesiune se poate încheia și înainte de expirarea celor 30 de zile, deoarece fiecare emițător folosește `mintDashboardSessionToken` (cu momentul emiterii `iat` și un identificator `jti`), iar verificatorul controlează două setări: `sessionsValidAfter`, setată la schimbarea parolei, astfel încât fiecare sesiune emisă anterior să nu mai poată fi verificată (browserul în care a fost schimbată parola primește un cookie nou), și `revokedDashboardSessions`, la care `POST /api/auth/logout` adaugă valoarea `jti` a sesiunii din care s-a făcut deconectarea. Sesiunile emise de o versiune mai veche nu conțin niciuna dintre aceste revendicări și rămân valide până la prima schimbare a parolei. Dacă setările nu pot fi citite, sesiunea nu este considerată de încredere.
 
-Unele rute de administrare acceptă **oricare** dintre moduri: cookie SAU `Bearer <key>` atunci când cheia API are domeniul de aplicare `manage` (sau `admin`). Acest lucru permite fluxul de lucru „configurabil prin apeluri API” adăugat în v3.8.
+Unele rute de administrare acceptă **oricare** dintre moduri: cookie SAU `Bearer <key>` atunci când cheia API are domeniul de aplicare `manage` (sau `admin`). Acest lucru permite fluxul de lucru „configurabil prin apeluri API”, adăugat în v3.8.
 
-#### Poartă opțională de autentificare OIDC (#6973)
+#### Barieră opțională de autentificare OIDC (#6973)
 
-Autentificarea administratorului în panoul de control acceptă și un flux OIDC (OpenID Connect) **opțional**
-pe lângă autentificarea implicită prin parolă — autentificarea prin parolă nu este eliminată niciodată, ci doar
+Autentificarea administratorului în tabloul de bord acceptă și un flux OIDC (OpenID Connect) **opțional**
+alături de autentificarea implicită prin parolă — autentificarea prin parolă nu este eliminată niciodată, ci doar
 completată:
 
-- Este dezactivat dacă `settings.oidcEnabled === true` **și** `oidcIssuer` /
-  `oidcClientId` / `oidcClientSecret` nu sunt toate configurate (Settings → Auth).
-  În caz contrar, `GET /api/auth/oidc/login` returnează `400`.
+- Dezactivat, cu excepția cazului în care `settings.oidcEnabled === true` **și**
+  `oidcIssuer` / `oidcClientId` / `oidcClientSecret` sunt toate configurate
+  (Settings → Auth). În caz contrar, `GET /api/auth/oidc/login` returnează `400`.
 - `GET /api/auth/oidc/login` descoperă `authorization_endpoint` din
   `/.well-known/openid-configuration` al emitentului (cu revenire la
   `<issuer>/authorize`), construiește URI-ul de redirecționare din cererea primită
-  (ținând cont de `x-forwarded-proto`) și redirecționează către IdP cu un `state` aleatoriu
-  stocat într-un cookie `oidc_state` `httpOnly`.
+  (ținând cont de `x-forwarded-proto`) și redirecționează către IdP cu un `state`
+  aleatoriu, stocat într-un cookie `oidc_state` cu atributul `httpOnly`.
 - `GET /api/auth/oidc/callback` validează `state`, schimbă codul de autorizare
   și verifică semnătura tokenului ID prin JWKS-ul emitentului
-  (`createRemoteJWKSet` din `jose`, memorat în cache pentru fiecare URI JWKS), cu verificări
-  pentru `issuer`/`audience`. Lista de permisiuni `oidcAllowedSubjects` este obligatorie: aceasta caută o potrivire cu
-  revendicarea `sub` a tokenului sau cu revendicarea sa `email` — revendicarea de e-mail este luată în considerare numai
-  atunci când `email_verified === true`, astfel încât o adresă de e-mail neverificată la IdP nu poate
-  trece niciodată de poartă — iar fără nicio intrare, callback-ul refuză fiecare autentificare
+  (`createRemoteJWKSet` din `jose`, memorat în cache pentru fiecare URI JWKS), cu
+  verificări pentru `issuer`/`audience`. Lista de permisiuni
+  `oidcAllowedSubjects` este obligatorie: aceasta compară revendicarea `sub` a
+  tokenului sau revendicarea sa `email` — revendicarea de e-mail este luată în
+  considerare numai când `email_verified === true`, astfel încât o adresă de
+  e-mail neverificată la IdP nu poate trece niciodată de acest filtru — iar,
+  dacă nu există nicio intrare, callback-ul refuză fiecare autentificare
   (`not_configured`).
-- La succes, emite **exact același** JWT `auth_token` cu o durată de 30 de zile pe care îl emite autentificarea
-  prin parolă (`src/app/api/auth/login/route.ts`), astfel încât restul
-  fluxului de sesiune al panoului de control (reîmprospătare automată, atributele cookie-ului) rămâne neschimbat —
-  OIDC înlocuiește doar modul în care este emis cookie-ul, nu și ceea ce acordă acesta.
+- La reușită, acesta emite **exact același** JWT `auth_token`, valabil 30 de zile,
+  pe care îl emite autentificarea cu parolă (`src/app/api/auth/login/route.ts`),
+  astfel încât restul fluxului de sesiune al tabloului de bord (reîmprospătare
+  automată, atributele cookie-ului) rămâne neschimbat — OIDC înlocuiește doar
+  modul în care este emis cookie-ul, nu și permisiunile pe care le acordă.
 - Fiecare setare `oidc*` (`oidcEnabled`, `oidcDisablePasswordLogin`,
   `oidcIssuer`, `oidcClientId`, `oidcClientSecret`, `oidcAllowedSubjects`,
-  `oidcRedirectPath`, `oidcScopes`) se află în `SECURITY_IMPACTING_SETTINGS_KEYS`
+  `oidcRedirectPath`, `oidcScopes`) se află în
+  `SECURITY_IMPACTING_SETTINGS_KEYS`
   (`src/shared/constants/securityImpactingSettings.ts`): `PATCH /api/settings`
-  răspunde cu `400 PASSWORD_REQUIRED` dacă corpul cererii nu conține parola de administrare
-  ca `currentPassword` (`401 PASSWORD_MISMATCH` atunci când este greșită).
-  `oidcDisablePasswordLogin` refuză _autentificarea_ prin parolă (`POST /api/auth/login`),
-  dar păstrează hash-ul stocat al parolei, iar reautentificarea continuă să verifice
-  `currentPassword` în raport cu acesta.
-- `POST /api/settings/import-json` omite această reautentificare, astfel că elimină fiecare cheie din
-  `IMPORT_STRIPPED_SETTINGS_KEYS` (același fișier) înainte de scriere: parola și
-  `currentPassword`, fiecare intrare din `SECURITY_IMPACTING_SETTINGS_KEYS` și
-  starea sesiunii panoului de control (`sessionsValidAfter`, `revokedDashboardSessions`).
-  Prin urmare, importarea unei copii de rezervă mai vechi nu poate reactiva o sesiune pe care o schimbare
-  a parolei sau o deconectare a încheiat-o deja.
+  răspunde cu `400 PASSWORD_REQUIRED`, cu excepția cazului în care corpul conține
+  parola de administrare sub forma `currentPassword` (`401 PASSWORD_MISMATCH`
+  când aceasta este greșită). `oidcDisablePasswordLogin` refuză _autentificarea_
+  cu parolă (`POST /api/auth/login`), dar păstrează hash-ul parolei stocate, iar
+  reautentificarea continuă să verifice `currentPassword` în raport cu acesta.
+- `corsOrigins` și `bruteForceProtection` se află, de asemenea, în
+  `SECURITY_IMPACTING_SETTINGS_KEYS`: relaxarea oricăreia dintre ele slăbește
+  mecanismele de apărare ale autentificării, astfel încât necesită aceeași
+  reautentificare prin `currentPassword` (fila Security o solicită), iar importul
+  JSON le elimină.
+- Fiecare cheie a politicii de securitate — intrările din
+  `SECURITY_IMPACTING_SETTINGS_KEYS`, fiecare cheie `oidc*` și starea sesiunii
+  tabloului de bord — este disponibilă **numai operatorului** în
+  `PATCH /api/settings`: o cheie API cu domeniul `manage` sau un token de acces
+  `oma_` este refuzat cu `403` chiar și atunci când trimite valoarea corectă
+  pentru `currentPassword`, iar refuzul este înregistrat în jurnalul de audit ca
+  `settings.update_failed`, cu `reason: OPERATOR_REQUIRED`
+  (`requireOperatorCredential()` în `src/lib/api/operatorCredential.ts`).
+  Setările obișnuite (tema, preferințele de afișare) rămân modificabile cu o cheie
+  `manage` sau un token de acces `admin`. Fiecare modificare a `/api/settings`
+  propriu-zis (și a `/api/settings/require-login`) necesită, de asemenea, domeniul
+  `admin` al tokenului de acces (`ADMIN_MUTATION_EXACT_PATHS` în
+  `src/server/authz/accessScopes.ts`, potrivire exactă a căii); `GET` rămâne
+  `read`, iar celelalte subrute `/api/settings/*` (proxy-uri, valori implicite
+  pentru combinații, aliasuri de modele, compresie, ștergeri…) păstrează domeniul
+  `write` dedus din metodă.
+- `POST /api/settings/import-json` omite această reautentificare, astfel încât
+  elimină fiecare cheie din `IMPORT_STRIPPED_SETTINGS_KEYS` (același fișier)
+  înainte de scriere: parola și `currentPassword`, fiecare intrare din
+  `SECURITY_IMPACTING_SETTINGS_KEYS` și starea sesiunii tabloului de bord
+  (`sessionsValidAfter`, `revokedDashboardSessions`). Prin urmare, importarea
+  unei copii de siguranță mai vechi nu poate reactiva o sesiune pe care o
+  schimbare a parolei sau o deconectare a încheiat-o deja.
 
 ## Clase de rute
 
 `src/server/authz/types.ts` definește trei clase; orice rută care nu poate fi clasificată în mod determinist revine implicit la `MANAGEMENT`.
 
-| Clasă        | Descriere                                                                                                                                                               | Autentificare necesară                                                                         |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `PUBLIC`     | Rute explicit sigure — autentificare, deconectare, stare, inițializare, verificarea stării de funcționare, inițializarea integrării.                                    | Niciuna                                                                                        |
-| `CLIENT_API` | Endpointuri pentru furnizarea modelelor — `/api/v1/*`, `/api/v1beta/*`, plus aliasurile `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`. | Cheie Bearer atunci când indicatorul de funcționalitate efectiv `REQUIRE_API_KEY` este activat |
-| `MANAGEMENT` | Pagini ale panoului de control, setări, furnizori, chei, endpointuri de administrare și diagnosticare.                                                                  | Sesiune în panoul de control SAU Bearer cu domeniul de aplicare `manage`                       |
+| Clasă        | Descriere                                                                                                                                                          | Autentificare necesară                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `PUBLIC`     | Rute explicit sigure — autentificare, deconectare, stare, inițializare, verificarea stării, inițializarea integrării.                                              | Niciuna                                                                                 |
+| `CLIENT_API` | Endpointuri de servire a modelelor — `/api/v1/*`, `/api/v1beta/*`, plus aliasurile `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`. | Cheie Bearer când indicatorul de funcționalitate efectiv `REQUIRE_API_KEY` este activat |
+| `MANAGEMENT` | Pagini ale panoului de control, setări, furnizori, chei, endpointuri de administrare și diagnosticare.                                                             | Sesiune în panoul de control SAU Bearer cu domeniul `manage`                            |
 
-Câteva acțiuni `MANAGEMENT` sunt **doar pentru operatori**: o cheie `manage` nu este suficientă. Exportarea credențialelor
-stocate (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), emiterea unui token de sincronizare (`POST /api/sync/tokens`) și generarea unui
+Câteva acțiuni `MANAGEMENT` sunt **doar pentru operatori**: o cheie `manage` nu este suficientă. Exportarea credențialelor stocate (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
+`GET /api/db-backups/exportAll`), restaurarea unei copii de siguranță peste datele active
+(`POST /api/db-backups/import`, inclusiv `dryRun=true`, restaurarea după id prin `POST /api/db-backups`,
+`POST /api/settings/import-json`), distrugerea punctelor de restaurare (curățarea prin `DELETE /api/db-backups`
+și `PATCH /api/db-backups`, deoarece politica de retenție pe care o persistă determină eliminarea automată după
+fiecare copie de siguranță), emiterea unui token de sincronizare (`POST /api/sync/tokens`) și generarea unui
 token de acces CLI `admin` (`POST /api/cli/tokens`) necesită o sesiune în panoul de control, subiectul CLI local
-sau autentificarea dezactivată; cheile API cu orice domeniu de aplicare și tokenurile de acces `oma_` primesc `403`. Verificarea
+sau autentificarea dezactivată; cheile API cu orice domeniu și tokenurile de acces `oma_` primesc `403`. Verificarea
 se află în `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
-
-A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
-credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), restoring a backup over the live data
-(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
-`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
-`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
-subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
-lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
+`requireOperatorCredential()`). Modificarea setărilor de autentificare este, de asemenea, rezervată operatorilor:
+`POST /api/settings/require-login` (setează parola de administrare / comută `requireLogin`) acceptă
+numai aceste credențiale după ce există o parolă — fereastra de inițializare de la prima rulare (când încă nu există o parolă)
+rămâne neschimbată — iar o sesiune în panoul de control trebuie să trimită `currentPassword` pentru a înlocui parola
+(`403` când lipsește sau este greșită, situație înregistrată în jurnalul de audit ca `settings.update_failed`). CLI-ul local și o
+instanță cu autentificarea dezactivată păstrează calea de recuperare și pot seta o parolă fără aceasta, deoarece ambele
+sunt legate de gazda care deține directorul de date.
 
 ## Flux de procesare
 

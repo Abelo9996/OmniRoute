@@ -23,7 +23,7 @@ Ginagamit para sa mga client API na compatible sa OpenAI/Anthropic/Gemini at ila
 Authorization: Bearer <api-key>
 ```
 
-Bine-validate ng `isValidApiKey()` / `extractApiKey()` sa `src/sse/services/auth.ts` at muling ine-export sa pamamagitan ng `src/shared/utils/apiAuth.ts`. Tinatanggap din ng validator ang mga env var na `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` bilang mga persistent passthrough key (isyu #1350).
+Bine-validate ng `isValidApiKey()` / `extractApiKey()` sa `src/sse/services/auth.ts` at muling ine-export sa pamamagitan ng `src/shared/utils/apiAuth.ts`. Tinatanggap din ng validator ang mga env var na `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` bilang mga persistent passthrough key (issue #1350).
 
 ### 2. Dashboard Session (auth_token cookie)
 
@@ -33,89 +33,106 @@ Para sa mga dashboard page at operasyong pang-admin.
 Cookie: auth_token=<JWT na nilagdaan gamit ang JWT_SECRET>
 ```
 
-Itinuturing lamang na session ang isang cookie kapag na-verify ang JWT **at** naglalaman ito ng `authenticated: true`
+Itinuturing lamang na session ang isang cookie kapag na-verify ang JWT **at** taglay nito ang `authenticated: true`
 (`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`). Ang bawat
 gumagamit ng cookie (dashboard route guard (`isDashboardSessionAuthenticated()`), authz pipeline refresh, WebSocket handshake, live
-server, `/api/settings/require-login`, `/api/auth/status`) ay dumadaan sa helper na iyon.
-Mayroon ding ibang JWT na nilagdaan gamit ang `JWT_SECRET` — ang Cursor CLI passthrough ay gumagawa ng
-mga token na `iss "omniroute" / aud "cursor-cli"` para sa mga may hawak ng key — at hindi kailanman itinuturing na mga session
+server, `/api/settings/require-login`, `/api/auth/status`) ay dumaraan sa helper na iyon.
+Mayroon ding iba pang JWT na nilagdaan gamit ang `JWT_SECRET` — ang Cursor CLI passthrough ay gumagawa ng
+mga token na `iss "omniroute" / aud "cursor-cli"` para sa mga may hawak ng key — at hindi kailanman itinuturing ang mga ito bilang mga session
 (#13298).
 
-Bine-verify ng `isDashboardSessionAuthenticated()` sa `src/shared/utils/apiAuth.ts`. Awtomatikong nire-refresh ng pipeline ang JWT kapag wala nang 7 araw ang natitira sa 30-araw nitong bisa.
+Vine-verify ng `isDashboardSessionAuthenticated()` sa `src/shared/utils/apiAuth.ts`. Awtomatikong nire-refresh ng pipeline ang JWT kapag wala pang 7 araw ang natitira sa 30-araw na lifetime nito.
 
-Maaari ring magwakas ang isang session bago matapos ang 30 araw nito, dahil dumadaan ang bawat tagagawa ng token sa `mintDashboardSessionToken` (isang oras ng pag-isyu na `iat` at isang id na `jti`) at sinusuri ng verifier ang dalawang setting: `sessionsValidAfter`, na itinatakda kapag nagpapalit ng password upang hindi na ma-verify ang bawat session na na-isyu bago ito (makakakuha ng bagong cookie ang browser na ginamit sa pagpapalit ng password), at `revokedDashboardSessions`, kung saan idinaragdag ng `POST /api/auth/logout` ang `jti` ng session na nag-sign out. Ang mga session na ginawa ng mas lumang release ay walang alinman sa dalawang claim at mananatiling valid hanggang sa unang pagpapalit ng password. Kung hindi mabasa ang mga setting, hindi pinagkakatiwalaan ang session.
+Maaari ring matapos ang isang session bago lumipas ang 30 araw nito, dahil dumaraan ang bawat minter sa `mintDashboardSessionToken` (isang issue time na `iat` at isang id na `jti`) at sinusuri ng verifier ang dalawang setting: `sessionsValidAfter`, na itinatakda kapag nagpalit ng password upang hindi na ma-verify ang lahat ng session na inisyu bago iyon (makakatanggap ng bagong cookie ang browser na ginamit sa pagpapalit ng password), at `revokedDashboardSessions`, kung saan idinaragdag ng `POST /api/auth/logout` ang `jti` ng session na nag-sign out. Ang mga session na ginawa ng mas lumang release ay walang alinman sa mga claim na ito at mananatiling valid hanggang sa unang pagpapalit ng password. Kung hindi mabasa ang mga setting, hindi pagkakatiwalaan ang session.
 
-Tinatanggap ng ilang management route ang **alinman** sa dalawang mode: cookie O `Bearer <key>` kapag may `manage` (o `admin`) scope ang API key. Ito ang nagbibigay-daan sa workflow na "nako-configure sa pamamagitan ng mga API call" na idinagdag sa v3.8.
+Tumatanggap ang ilang management route ng **alinman** sa dalawang mode: cookie O `Bearer <key>` kapag may `manage` (o `admin`) scope ang API key. Ito ang nagbibigay-daan sa workflow na "nako-configure sa pamamagitan ng mga API call" na idinagdag sa v3.8.
 
 #### Opsyonal na OIDC login gate (#6973)
 
 Sinusuportahan din ng dashboard admin login ang isang **opt-in** na OIDC (OpenID Connect) flow
-kasabay ng default na password login — hindi kailanman inaalis ang password login,
-dinadagdagan lamang ito:
+kasabay ng default na password login — hindi kailanman inaalis ang password login, dinaragdagan lamang
+ito:
 
-- Naka-disable maliban kung `settings.oidcEnabled === true` **at** naka-configure
-  ang lahat ng `oidcIssuer` / `oidcClientId` / `oidcClientSecret` (Settings → Auth).
+- Hindi pinagana maliban kung `settings.oidcEnabled === true` **at** naka-configure
+  ang lahat ng `oidcIssuer` / `oidcClientId` / `oidcClientSecret` (Mga Setting → Auth).
   Kung hindi, nagbabalik ang `GET /api/auth/oidc/login` ng `400`.
-- Kinukuha ng `GET /api/auth/oidc/login` ang `authorization_endpoint` mula sa
+- Tinutuklas ng `GET /api/auth/oidc/login` ang `authorization_endpoint` mula sa
   `/.well-known/openid-configuration` ng issuer (bumabalik sa
-  `<issuer>/authorize` kapag hindi ito available), binubuo ang redirect URI mula sa papasok na request
-  (isinasaalang-alang ang `x-forwarded-proto`), at nagre-redirect sa IdP gamit ang random na `state`
-  na naka-store sa isang `httpOnly` na `oidc_state` cookie.
+  `<issuer>/authorize` bilang fallback), binubuo ang redirect URI mula sa papasok na request
+  (isinasaalang-alang ang `x-forwarded-proto`), at nagre-redirect sa IdP na may random na `state`
+  na nakaimbak sa isang `httpOnly` na `oidc_state` cookie.
 - Bine-validate ng `GET /api/auth/oidc/callback` ang `state`, ipinagpapalit ang authorization
-  code, at bine-verify ang signature ng ID token sa pamamagitan ng JWKS ng issuer
-  (`createRemoteJWKSet` ng `jose`, naka-cache ayon sa JWKS URI) kasama ang mga pagsusuri sa `issuer`/`audience`.
-  Kinakailangan ang allowlist na `oidcAllowedSubjects`: itinutugma nito ang
-  `sub` claim o `email` claim ng token — kinikilala lamang ang email claim
-  kapag `email_verified === true`, kaya hindi kailanman makakalampas sa
-  gate ang isang hindi na-verify na email sa IdP — at kapag walang entry, tinatanggihan ng callback ang bawat login
+  code, at vine-verify ang signature ng ID token sa pamamagitan ng JWKS ng issuer
+  (`createRemoteJWKSet` ng `jose`, naka-cache ayon sa bawat JWKS URI), kasama ang mga pagsusuri sa
+  `issuer`/`audience`. Kinakailangan ang allowlist na `oidcAllowedSubjects`: itinutugma nito ang
+  `sub` claim ng token o ang `email` claim nito — kinikilala lamang ang email claim
+  kapag `email_verified === true`, kaya ang isang hindi na-verify na email sa IdP ay hindi kailanman
+  makakalampas sa gate — at kapag walang entry, tinatanggihan ng callback ang bawat pag-login
   (`not_configured`).
-- Kapag matagumpay, gumagawa ito ng **eksaktong kaparehong** 30-araw na `auth_token` JWT na ini-isyu ng password
+- Kapag matagumpay, gumagawa ito ng **eksaktong kaparehong** 30-araw na `auth_token` JWT na ibinibigay ng password
   login (`src/app/api/auth/login/route.ts`), kaya hindi nagbabago ang natitirang bahagi ng
-  dashboard session pipeline (auto-refresh, mga flag ng cookie) —
+  dashboard session pipeline (awtomatikong pag-refresh, mga flag ng cookie) —
   pinapalitan lamang ng OIDC kung paano ginagawa ang cookie, hindi kung ano ang mga pahintulot nito.
-- Ang bawat `oidc*` setting (`oidcEnabled`, `oidcDisablePasswordLogin`,
+- Ang bawat setting na `oidc*` (`oidcEnabled`, `oidcDisablePasswordLogin`,
   `oidcIssuer`, `oidcClientId`, `oidcClientSecret`, `oidcAllowedSubjects`,
   `oidcRedirectPath`, `oidcScopes`) ay nasa `SECURITY_IMPACTING_SETTINGS_KEYS`
-  (`src/shared/constants/securityImpactingSettings.ts`): sumasagot ang `PATCH /api/settings`
+  (`src/shared/constants/securityImpactingSettings.ts`): tumutugon ang `PATCH /api/settings`
   ng `400 PASSWORD_REQUIRED` maliban kung kasama sa body ang management
   password bilang `currentPassword` (`401 PASSWORD_MISMATCH` kapag mali ito).
-  Tinatanggihan ng `oidcDisablePasswordLogin` ang _pag-login_ gamit ang password (`POST /api/auth/login`)
-  ngunit pinapanatili ang naka-store na password hash, at sinusuri pa rin ng muling pag-authenticate ang
+  Tinatanggihan ng `oidcDisablePasswordLogin` ang password _login_ (`POST /api/auth/login`)
+  ngunit pinananatili ang nakaimbak na password hash, at sinusuri pa rin ng muling pagpapatotoo ang
   `currentPassword` laban dito.
-- Nilalaktawan ng `POST /api/settings/import-json` ang muling pag-authenticate na iyon, kaya inaalis nito ang bawat key sa
+- Nasa `SECURITY_IMPACTING_SETTINGS_KEYS` din ang `corsOrigins` at `bruteForceProtection`:
+  pinahihina ng pagluwag sa alinman ang mga depensa sa pag-login, kaya nangangailangan ang mga ito ng parehong
+  muling pagpapatotoo gamit ang `currentPassword` (hinihingi ito ng tab na Security), at inaalis
+  ang mga ito ng JSON import.
+- Ang bawat security-policy key — ang mga entry ng `SECURITY_IMPACTING_SETTINGS_KEYS`,
+  bawat `oidc*` key, at ang dashboard session state — ay **para lamang sa operator** sa
+  `PATCH /api/settings`: tinatanggihan nang may `403` ang isang manage-scoped API key o isang `oma_` access token
+  kahit ipadala nito ang tamang `currentPassword`, at itinatala sa audit ang
+  pagtanggi bilang `settings.update_failed` na may `reason: OPERATOR_REQUIRED`
+  (`requireOperatorCredential()` sa `src/lib/api/operatorCredential.ts`).
+  Nananatiling maaaring baguhin gamit ang isang `manage` key o isang `admin` access token ang mga ordinaryong setting
+  (tema, mga kagustuhan sa display). Nangangailangan din ang bawat pagbabago sa mismong `/api/settings` (at sa
+  `/api/settings/require-login`) ng scope na `admin` ng access token
+  (`ADMIN_MUTATION_EXACT_PATHS` sa `src/server/authz/accessScopes.ts`, eksaktong-path
+  na pagtutugma); nananatiling `read` ang `GET`, at pinananatili ng iba pang `/api/settings/*` sub-route (mga proxy,
+  default ng combo, alias ng modelo, compression, mga purge…) ang scope na `write` na tinutukoy
+  mula sa method.
+- Nilalaktawan ng `POST /api/settings/import-json` ang muling pagpapatotoong iyon, kaya inaalis nito ang bawat key sa
   `IMPORT_STRIPPED_SETTINGS_KEYS` (parehong file) bago magsulat: ang password at
-  `currentPassword`, ang bawat entry ng `SECURITY_IMPACTING_SETTINGS_KEYS`, at ang
+  `currentPassword`, bawat entry ng `SECURITY_IMPACTING_SETTINGS_KEYS`, at ang
   dashboard session state (`sessionsValidAfter`, `revokedDashboardSessions`).
-  Samakatuwid, hindi muling mapapagana ng pag-import ng mas lumang backup ang isang session na
-  winakasan na ng pagpapalit ng password o pag-sign out.
+  Samakatuwid, hindi muling mabubuhay ng pag-import ng mas lumang backup ang isang session na tinapos na ng pagbabago
+  ng password o pag-sign out.
 
 ## Mga Klase ng Route
 
-Tinutukoy ng `src/server/authz/types.ts` ang tatlong klase; ang anumang route na hindi tiyak na mauuri ay awtomatikong napapabilang sa `MANAGEMENT`.
+Tinutukoy ng `src/server/authz/types.ts` ang tatlong klase; ang anumang route na hindi matukoy nang tiyak ang klasipikasyon ay awtomatikong itinuturing na `MANAGEMENT`.
 
-| Klase        | Paglalarawan                                                                                                                                                                      | Kinakailangang awtorisasyon                                                   |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `PUBLIC`     | Mga route na tahasang ligtas — pag-login, pag-logout, status, init, health, onboarding bootstrap.                                                                                 | Wala                                                                          |
-| `CLIENT_API` | Mga endpoint para sa paghahatid ng modelo — `/api/v1/*`, `/api/v1beta/*`, kasama ang mga alias na `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`. | Bearer key kapag naka-enable ang epektibong feature flag na `REQUIRE_API_KEY` |
-| `MANAGEMENT` | Mga page ng dashboard, setting, provider, key, admin, at mga endpoint ng diagnostic.                                                                                              | Session sa dashboard O Bearer na may scope na `manage`                        |
+| Klase        | Paglalarawan                                                                                                                                                                      | Kinakailangang awtentikasyon                                               |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `PUBLIC`     | Mga route na tahasang ligtas — pag-login, pag-logout, status, init, health, bootstrap ng onboarding.                                                                              | Wala                                                                       |
+| `CLIENT_API` | Mga endpoint para sa paghahatid ng modelo — `/api/v1/*`, `/api/v1beta/*`, kasama ang mga alias na `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`. | Bearer key kapag naka-enable ang aktuwal na `REQUIRE_API_KEY` feature flag |
+| `MANAGEMENT` | Mga pahina ng dashboard, setting, provider, key, at mga endpoint para sa admin at diagnostic.                                                                                     | Session ng dashboard O Bearer na may saklaw na `manage`                    |
 
-Ang ilang pagkilos sa `MANAGEMENT` ay **para lamang sa operator**: hindi sapat ang isang `manage` key. Ang pag-export ng mga nakaimbak na
+Ang ilang pagkilos na `MANAGEMENT` ay **para lamang sa operator**: hindi sapat ang isang `manage` key. Ang pag-export ng mga nakaimbak na
 credential (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), pag-isyu ng sync token (`POST /api/sync/tokens`), at paglikha ng
-`admin` CLI access token (`POST /api/cli/tokens`) ay nangangailangan ng session sa dashboard, lokal na CLI
-subject, o naka-disable na login; makakatanggap ng `403` ang mga API key na may anumang scope at mga `oma_` access token. Ang pagsusuri ay
-nasa `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
-
-A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
-credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), restoring a backup over the live data
-(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
-`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
-`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
-subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
-lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
+`GET /api/db-backups/exportAll`), pag-restore ng backup sa aktuwal na data
+(`POST /api/db-backups/import` kasama ang `dryRun=true`, `POST /api/db-backups` na pag-restore ayon sa id,
+`POST /api/settings/import-json`), pagsira sa mga restore point (`DELETE /api/db-backups` na paglilinis,
+at `PATCH /api/db-backups` dahil ang retention na pinapanatili nito ang nagpapatakbo sa awtomatikong pruning pagkatapos ng
+bawat backup), pag-isyu ng sync token (`POST /api/sync/tokens`), at paglikha ng
+`admin` CLI access token (`POST /api/cli/tokens`) ay nangangailangan ng session ng dashboard, lokal na CLI
+subject, o naka-disable na pag-login; makakatanggap ng `403` ang mga API key sa anumang saklaw at mga `oma_` access token. Matatagpuan ang pagsusuri
+sa `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
+`requireOperatorCredential()`). Para lamang din sa operator ang pagbabago ng mga setting sa pag-login:
+ang `POST /api/settings/require-login` (pagtatakda ng password sa pamamahala / pag-toggle sa `requireLogin`) ay tumatanggap
+lamang ng mga credential na iyon kapag mayroon nang password — hindi nagbabago ang first-run bootstrap window (wala pang password)
+— at kailangang ipadala ng session ng dashboard ang `currentPassword` upang palitan ang password
+(`403` kapag nawawala o mali ito, at itinatala sa audit bilang `settings.update_failed`). Nananatili sa lokal na CLI at sa
+instance na naka-disable ang pag-login ang paraan ng pag-recover at maaari silang magtakda ng password nang wala nito, dahil pareho silang
+nakaugnay sa host na nagmamay-ari sa direktoryo ng data.
 
 ## Pipeline
 

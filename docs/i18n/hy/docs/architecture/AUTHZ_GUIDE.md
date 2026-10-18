@@ -17,104 +17,125 @@ OmniRoute-ն ունի երթուղիներին տեղյակ թույլտվութ
 
 ### 1. API բանալի (Bearer)
 
-Օգտագործվում է OpenAI/Anthropic/Gemini-ի հետ համատեղելի հաճախորդային API-ների և կառավարման մի քանի երթուղիների համար, երբ բանալին ունի `manage` տիրույթը։
+Օգտագործվում է OpenAI/Anthropic/Gemini-ի հետ համատեղելի հաճախորդի API-ների և կառավարման մի քանի երթուղիների համար, երբ բանալին ունի `manage` թույլտվության տիրույթը։
 
 ```
 Authorization: Bearer <api-key>
 ```
 
-Ստուգվում է `src/sse/services/auth.ts`-ում գտնվող `isValidApiKey()` / `extractApiKey()` գործառույթներով և վերաարտահանվում է `src/shared/utils/apiAuth.ts`-ի միջոցով։ Վավերացուցիչը նաև ընդունում է `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` միջավայրի փոփոխականները՝ որպես մշտական միջանցիկ բանալիներ (խնդիր #1350)։
+Վավերացվում է `src/sse/services/auth.ts`-ում գտնվող `isValidApiKey()` / `extractApiKey()` գործառույթների միջոցով և վերաարտահանվում է `src/shared/utils/apiAuth.ts`-ի միջոցով։ Վավերացուցիչը նաև ընդունում է `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` միջավայրի փոփոխականները՝ որպես մշտական միջանցիկ բանալիներ (խնդիր #1350)։
 
-### 2. Կառավարման վահանակի աշխատաշրջան (auth_token cookie)
+### 2. Վահանակի աշխատաշրջան (auth_token cookie)
 
-Կառավարման վահանակի էջերի և ադմինիստրատիվ գործողությունների համար։
+Վահանակի էջերի և ադմինիստրատիվ գործողությունների համար։
 
 ```
 Cookie: auth_token=<JWT signed with JWT_SECRET>
 ```
 
-Cookie-ն համարվում է աշխատաշրջան միայն այն դեպքում, երբ JWT-ն անցնում է վավերացումը **և** պարունակում է `authenticated: true`
+Cookie-ն աշխատաշրջան է միայն այն դեպքում, երբ JWT-ն անցնում է ստուգումը **և** պարունակում է `authenticated: true`
 (`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`)։ Cookie-ի յուրաքանչյուր
-օգտագործող (կառավարման վահանակի երթուղու պահակ (`isDashboardSessionAuthenticated()`), թույլտվությունների հոսքաշարի թարմացում, WebSocket-ի սկզբնական կապակցում, ուղիղ
-սերվեր, `/api/settings/require-login`, `/api/auth/status`) անցնում է այդ օգնական գործառույթի միջով։
-Գոյություն ունեն նաև `JWT_SECRET`-ով ստորագրված այլ JWT-ներ. Cursor CLI-ի միջանցիկ մեխանիզմը բանալի ունեցողների համար ստեղծում է
-`iss "omniroute" / aud "cursor-cli"` նշաններ, և դրանք երբեք աշխատաշրջաններ չեն համարվում
+սպառող (վահանակի երթուղու պաշտպանիչ (`isDashboardSessionAuthenticated()`), լիազորումների pipeline-ի թարմացում, WebSocket-ի կապի հաստատում, live
+server, `/api/settings/require-login`, `/api/auth/status`) անցնում է այդ օժանդակ գործառույթի միջոցով։
+Գոյություն ունեն `JWT_SECRET`-ով ստորագրված այլ JWT-ներ ևս. Cursor CLI-ի միջանցիկ մեխանիզմը բանալի ունեցողների համար ստեղծում է
+`iss "omniroute" / aud "cursor-cli"` թոքեններ, որոնք երբեք աշխատաշրջաններ չեն
 (#13298)։
 
-Ստուգվում է `src/shared/utils/apiAuth.ts`-ում գտնվող `isDashboardSessionAuthenticated()` գործառույթով։ Հոսքաշարն ավտոմատ թարմացնում է JWT-ն, երբ դրա 30-օրյա գործողության ժամկետից մնացել է 7 օրից պակաս։
+Ստուգվում է `src/shared/utils/apiAuth.ts`-ում գտնվող `isDashboardSessionAuthenticated()`-ի միջոցով։ Pipeline-ը ավտոմատ թարմացնում է JWT-ն, երբ դրա 30-օրյա վավերականության ժամկետից մնացել է 7 օրից պակաս։
 
-Աշխատաշրջանը կարող է նաև ավարտվել մինչև իր 30-օրյա ժամկետի լրանալը, քանի որ յուրաքանչյուր ստեղծող օգտագործում է `mintDashboardSessionToken`-ը (թողարկման ժամանակ՝ `iat`, և նույնացուցիչ՝ `jti`), իսկ վավերացուցիչը ստուգում է երկու կարգավորում՝ `sessionsValidAfter`, որը սահմանվում է գաղտնաբառի փոփոխությամբ, որպեսզի դրանից առաջ թողարկված բոլոր աշխատաշրջանները դադարեն վավեր համարվել (գաղտնաբառը փոխած դիտարկիչը ստանում է թարմ cookie), և `revokedDashboardSessions`, որին `POST /api/auth/logout`-ը ավելացնում է ավարտված աշխատաշրջանի `jti`-ն։ Ավելի հին թողարկմամբ ստեղծված աշխատաշրջանները չեն պարունակում այս պնդումներից ոչ մեկը և վավեր են մնում մինչև գաղտնաբառի առաջին փոփոխությունը։ Եթե կարգավորումները հնարավոր չէ կարդալ, աշխատաշրջանը վստահելի չի համարվում։
+Աշխատաշրջանը կարող է ավարտվել նաև մինչև իր 30 օրվա լրանալը, քանի որ յուրաքանչյուր ստեղծող անցնում է `mintDashboardSessionToken`-ի միջոցով (թողարկման ժամանակ՝ `iat`, և նույնացուցիչ՝ `jti`), իսկ ստուգողը ստուգում է երկու կարգավորում՝ `sessionsValidAfter`, որը սահմանվում է գաղտնաբառը փոխելիս, որպեսզի դրանից առաջ թողարկված յուրաքանչյուր աշխատաշրջան դադարի վավերացվել (գաղտնաբառը փոխած դիտարկիչը ստանում է նոր cookie), և `revokedDashboardSessions`, որին `POST /api/auth/logout`-ը ավելացնում է դուրս եկած աշխատաշրջանի `jti`-ն։ Ավելի հին թողարկմամբ ստեղծված աշխատաշրջանները չեն պարունակում այս պնդումներից ոչ մեկը և մնում են վավեր մինչև գաղտնաբառի առաջին փոփոխությունը։ Եթե կարգավորումները հնարավոր չէ կարդալ, աշխատաշրջանը վստահելի չի համարվում։
 
-Կառավարման որոշ երթուղիներ ընդունում են **ցանկացած** ռեժիմ՝ cookie ԿԱՄ `Bearer <key>`, երբ API բանալին ունի `manage` (կամ `admin`) տիրույթը։ Հենց սա է հնարավոր դարձնում v3.8-ում ավելացված «կարգավորվում է API կանչերի միջոցով» աշխատանքային ընթացքը։
+Կառավարման որոշ երթուղիներ ընդունում են **ցանկացած** ռեժիմ՝ cookie ԿԱՄ `Bearer <key>`, երբ API բանալին ունի `manage` (կամ `admin`) թույլտվության տիրույթը։ Հենց սա է հնարավոր դարձնում v3.8-ում ավելացված «կարգավորելի API կանչերի միջոցով» աշխատանքային հոսքը։
 
-#### Ընտրովի OIDC մուտքի սահմանափակում (#6973)
+#### OIDC մուտքի ընտրովի սահմանափակում (#6973)
 
-Կառավարման վահանակի ադմինիստրատիվ մուտքը նաև աջակցում է **ըստ ցանկության միացվող** OIDC (OpenID Connect) հոսքին՝
-կանխադրված գաղտնաբառային մուտքի հետ մեկտեղ. գաղտնաբառային մուտքը երբեք չի հեռացվում, այլ միայն
-լրացվում է.
+Վահանակի ադմինիստրատորի մուտքը նաև աջակցում է **ըստ ցանկության միացվող** OIDC (OpenID Connect) հոսքին՝
+կանխադրված գաղտնաբառով մուտքին զուգահեռ. գաղտնաբառով մուտքը երբեք չի հեռացվում, այլ միայն
+լրացվում է դրանով.
 
-- Անջատված է, եթե `settings.oidcEnabled === true` չէ **կամ** `oidcIssuer` /
-  `oidcClientId` / `oidcClientSecret` պարամետրերից որևէ մեկը կարգավորված չէ (Settings → Auth)։
+- Անջատված է, եթե `settings.oidcEnabled === true` չէ **և** `oidcIssuer` /
+  `oidcClientId` / `oidcClientSecret` բոլորն էլ կարգավորված չեն (Կարգավորումներ → Նույնականացում)։
   Հակառակ դեպքում `GET /api/auth/oidc/login`-ը վերադարձնում է `400`։
 - `GET /api/auth/oidc/login`-ը թողարկողի
-  `/.well-known/openid-configuration`-ից հայտնաբերում է `authorization_endpoint`-ը (անհաջողության դեպքում օգտագործում է
-  `<issuer>/authorize`-ը), մուտքային հարցումից կազմում է վերահղման URI-ն
-  (`x-forwarded-proto`-ն հաշվի առնելով) և վերահղում է դեպի IdP՝ պատահական `state`-ով,
-  որը պահվում է `httpOnly` հատկանիշով `oidc_state` cookie-ում։
-- `GET /api/auth/oidc/callback`-ը վավերացնում է `state`-ը, փոխանակում է թույլտվության
-  կոդը և թողարկողի JWKS-ի միջոցով ստուգում ID նշանի ստորագրությունը
-  (`jose`-ի `createRemoteJWKSet`, որը պահվում է քեշում յուրաքանչյուր JWKS URI-ի համար)՝ կատարելով `issuer`/`audience`
-  ստուգումներ։ `oidcAllowedSubjects` թույլատրելի արժեքների ցանկը պարտադիր է. այն համադրում է
-  նշանի `sub` պնդումը կամ դրա `email` պնդումը. email պնդումը հաշվի է առնվում միայն
-  այն դեպքում, երբ `email_verified === true`, ուստի IdP-ում չվավերացված email-ը երբեք չի կարող
-  անցնել սահմանափակումը, իսկ դատարկ ցանկի դեպքում հետադարձ կանչը մերժում է յուրաքանչյուր մուտք
+  `/.well-known/openid-configuration`-ից հայտնաբերում է `authorization_endpoint`-ը (անհաջողության դեպքում
+  օգտագործում է `<issuer>/authorize`-ը), մուտքային հարցումից կազմում է վերահղման URI-ն
+  (հաշվի առնելով `x-forwarded-proto`-ն) և վերահղում է դեպի IdP՝ պատահական `state`-ով,
+  որը պահվում է `httpOnly` `oidc_state` cookie-ում։
+- `GET /api/auth/oidc/callback`-ը վավերացնում է `state`-ը, փոխանակում թույլտվության
+  կոդը և թողարկողի JWKS-ի միջոցով ստուգում ID token-ի ստորագրությունը
+  (`jose`-ի `createRemoteJWKSet`, քեշավորվում է ըստ JWKS URI-ի)՝ կատարելով `issuer`/`audience`
+  ստուգումներ։ `oidcAllowedSubjects` թույլատրացանկը պարտադիր է․ այն համեմատվում է
+  token-ի `sub` claim-ի կամ դրա `email` claim-ի հետ — email claim-ը հաշվի է առնվում միայն
+  երբ `email_verified === true`, ուստի IdP-ում չստուգված email-ը երբեք չի կարող
+  անցնել ստուգումը — իսկ դատարկ ցանկի դեպքում callback-ը մերժում է յուրաքանչյուր մուտք
   (`not_configured`)։
-- Հաջողության դեպքում այն ստեղծում է **ճիշտ նույն** 30-օրյա `auth_token` JWT-ն, որը թողարկում է գաղտնաբառային
-  մուտքը (`src/app/api/auth/login/route.ts`), ուստի կառավարման վահանակի
-  աշխատաշրջանի հոսքաշարի մնացած մասը (ավտոմատ թարմացում, cookie-ի դրոշներ) մնում է անփոփոխ.
-  OIDC-ն միայն փոխարինում է cookie-ի ստեղծման եղանակը, ոչ թե դրա տրամադրած իրավունքները։
+- Հաջողության դեպքում այն ստեղծում է **ճիշտ նույն** 30-օրյա `auth_token` JWT-ն, որը տրամադրում է
+  գաղտնաբառով մուտքը (`src/app/api/auth/login/route.ts`), ուստի կառավարման վահանակի
+  session-ի մնացած հոսքը (ինքնաթարմացում, cookie-ի դրոշներ) մնում է անփոփոխ —
+  OIDC-ը փոխարինում է միայն cookie-ի ստեղծման եղանակը, ոչ թե դրա տրամադրած իրավունքները։
 - Յուրաքանչյուր `oidc*` կարգավորում (`oidcEnabled`, `oidcDisablePasswordLogin`,
   `oidcIssuer`, `oidcClientId`, `oidcClientSecret`, `oidcAllowedSubjects`,
-  `oidcRedirectPath`, `oidcScopes`) ընդգրկված է `SECURITY_IMPACTING_SETTINGS_KEYS`-ում
-  (`src/shared/constants/securityImpactingSettings.ts`). `PATCH /api/settings`-ը
-  պատասխանում է `400 PASSWORD_REQUIRED`, եթե հարցման մարմինը չի պարունակում կառավարման
-  գաղտնաբառը որպես `currentPassword` (եթե այն սխալ է՝ `401 PASSWORD_MISMATCH`)։
+  `oidcRedirectPath`, `oidcScopes`) ներառված է `SECURITY_IMPACTING_SETTINGS_KEYS`-ում
+  (`src/shared/constants/securityImpactingSettings.ts`)․ `PATCH /api/settings`-ը
+  պատասխանում է `400 PASSWORD_REQUIRED`, եթե body-ն չի պարունակում կառավարման
+  գաղտնաբառը որպես `currentPassword` (`401 PASSWORD_MISMATCH`, երբ այն սխալ է)։
   `oidcDisablePasswordLogin`-ը մերժում է գաղտնաբառով _մուտքը_ (`POST /api/auth/login`),
-  սակայն պահպանում է գաղտնաբառի պահված հեշը, իսկ կրկնակի նույնականացումը շարունակում է
+  բայց պահպանում է գաղտնաբառի պահված hash-ը, իսկ կրկնակի նույնականացումը շարունակում է
   `currentPassword`-ը համեմատել դրա հետ։
-- `POST /api/settings/import-json`-ը բաց է թողնում այդ կրկնակի նույնականացումը, ուստի գրելուց առաջ հեռացնում է
-  `IMPORT_STRIPPED_SETTINGS_KEYS`-ում (նույն ֆայլում) ընդգրկված բոլոր բանալիները՝ գաղտնաբառն ու
-  `currentPassword`-ը, `SECURITY_IMPACTING_SETTINGS_KEYS`-ի յուրաքանչյուր տարր և
-  կառավարման վահանակի աշխատաշրջանի վիճակը (`sessionsValidAfter`, `revokedDashboardSessions`)։
-  Հետևաբար, ավելի հին պահուստային պատճենի ներմուծումը չի կարող վերականգնել այն աշխատաշրջանը, որն արդեն ավարտվել է
-  գաղտնաբառի փոփոխությամբ կամ համակարգից դուրս գալով։
+- `corsOrigins`-ը և `bruteForceProtection`-ը նույնպես ներառված են `SECURITY_IMPACTING_SETTINGS_KEYS`-ում․
+  դրանցից որևէ մեկի թուլացումը թուլացնում է մուտքի պաշտպանության միջոցները, ուստի դրանք պահանջում են նույն
+  `currentPassword`-ով կրկնակի նույնականացումը (Անվտանգություն ներդիրը պահանջում է այն), իսկ JSON ներմուծումը
+  հեռացնում է դրանք։
+- Անվտանգության քաղաքականության յուրաքանչյուր բանալի՝ `SECURITY_IMPACTING_SETTINGS_KEYS`-ի տարրերը,
+  յուրաքանչյուր `oidc*` բանալի և կառավարման վահանակի session-ի վիճակը, `PATCH /api/settings`-ում
+  հասանելի է **միայն օպերատորին**․ `manage` scope-ով API key-ն կամ `oma_` access token-ը
+  մերժվում է `403`-ով, նույնիսկ երբ ուղարկում է ճիշտ `currentPassword`-ը, իսկ
+  մերժումը գրանցվում է audit log-ում որպես `settings.update_failed`՝ `reason: OPERATOR_REQUIRED`
+  (`requireOperatorCredential()`՝ `src/lib/api/operatorCredential.ts`-ում)։
+  Սովորական կարգավորումները (թեմա, ցուցադրման նախընտրություններ) շարունակում են փոփոխելի մնալ `manage` key-ի
+  կամ `admin` access token-ի միջոցով։ `/api/settings`-ի յուրաքանչյուր փոփոխություն (ինչպես նաև
+  `/api/settings/require-login`-ինը) նույնպես պահանջում է access token-ի `admin` scope
+  (`ADMIN_MUTATION_EXACT_PATHS`՝ `src/server/authz/accessScopes.ts`-ում, ճշգրիտ path-ի
+  համընկնում)․ `GET`-ը մնում է `read`, իսկ մյուս `/api/settings/*` ենթաերթուղիները (proxy-ներ,
+  combo-ի լռելյայն արժեքներ, model alias-ներ, սեղմում, մաքրումներ…) պահպանում են մեթոդից որոշվող
+  `write` scope-ը։
+- `POST /api/settings/import-json`-ը բաց է թողնում այդ կրկնակի նույնականացումը, ուստի գրելուց առաջ
+  հեռացնում է `IMPORT_STRIPPED_SETTINGS_KEYS`-ի (նույն ֆայլը) յուրաքանչյուր բանալի՝ գաղտնաբառը և
+  `currentPassword`-ը, `SECURITY_IMPACTING_SETTINGS_KEYS`-ի յուրաքանչյուր տարր, ինչպես նաև
+  կառավարման վահանակի session-ի վիճակը (`sessionsValidAfter`, `revokedDashboardSessions`)։
+  Հետևաբար ավելի հին պահուստային պատճենի ներմուծումը չի կարող վերականգնել այն session-ը, որն արդեն
+  ավարտվել է գաղտնաբառի փոփոխությամբ կամ դուրս գալով։
 
 ## Երթուղիների դասեր
 
-`src/server/authz/types.ts`-ը սահմանում է երեք դաս․ ցանկացած երթուղի, որը հնարավոր չէ միանշանակ դասակարգել, լռելյայն դասվում է `MANAGEMENT`-ին։
+`src/server/authz/types.ts`-ը սահմանում է երեք դաս․ ցանկացած երթուղի, որը հնարավոր չէ միանշանակ դասակարգել, լռելյայն վերագրվում է `MANAGEMENT` դասին։
 
-| Դաս          | Նկարագրություն                                                                                                                                                          | Պահանջվող նույնականացում                                                        |
+| Դաս          | Նկարագրություն                                                                                                                                                          | Պահանջվող վավերացում                                                            |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `PUBLIC`     | Բացահայտ անվտանգ երթուղիներ՝ մուտք, ելք, կարգավիճակ, սկզբնավորում, աշխատունակության ստուգում, սկզբնական կարգաբերում։                                                    | Չի պահանջվում                                                                   |
+| `PUBLIC`     | Հստակ անվտանգ երթուղիներ՝ մուտք, ելք, կարգավիճակ, սկզբնավորում, համակարգի առողջության ստուգում, նախնական ներգրանցման մեկնարկ։                                           | Չի պահանջվում                                                                   |
 | `CLIENT_API` | Մոդելների սպասարկման վերջնակետեր՝ `/api/v1/*`, `/api/v1beta/*`, ինչպես նաև `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*` այլանունները։ | Bearer բանալի, երբ արդյունավետ `REQUIRE_API_KEY` հնարավորության դրոշը միացված է |
 | `MANAGEMENT` | Կառավարման վահանակի էջեր, կարգավորումներ, մատակարարներ, բանալիներ, ադմինիստրատիվ և ախտորոշիչ վերջնակետեր։                                                               | Կառավարման վահանակի աշխատաշրջան ԿԱՄ `manage` շրջանակով Bearer                   |
 
-Որոշ `MANAGEMENT` գործողություններ հասանելի են **միայն օպերատորին**․ `manage` բանալին բավարար չէ։ Պահված հավատարմագրերի արտահանումը (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), համաժամացման թոքենի տրամադրումը (`POST /api/sync/tokens`) և
-`admin` CLI հասանելիության թոքենի ստեղծումը (`POST /api/cli/tokens`) պահանջում են կառավարման վահանակի աշխատաշրջան, տեղային CLI
-սուբյեկտ կամ անջատված մուտք․ ցանկացած շրջանակի API բանալիները և `oma_` հասանելիության թոքենները ստանում են `403`։ Ստուգումը
-գտնվում է `src/lib/api/operatorCredential.ts`-ում (`resolveOperatorCredential()` /
-`requireOperatorCredential()`)։
-
-A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
-credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), restoring a backup over the live data
-(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
-`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
-`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
-subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
-lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
+`MANAGEMENT`-ի որոշ գործողություններ հասանելի են **միայն օպերատորին**․ `manage` բանալին բավարար չէ։ Պահված
+մուտքային տվյալների արտահանումը (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
+`GET /api/db-backups/exportAll`), պահուստային պատճենի վերականգնումը գործող տվյալների վրա
+(`POST /api/db-backups/import`, ներառյալ `dryRun=true`, `POST /api/db-backups`՝ վերականգնում ըստ id-ի,
+`POST /api/settings/import-json`), վերականգնման կետերի ոչնչացումը (`DELETE /api/db-backups`՝ մաքրում,
+և `PATCH /api/db-backups`, քանի որ դրա պահպանած պահման կարգավորումը կառավարում է յուրաքանչյուր
+պահուստավորումից հետո կատարվող ավտոմատ մաքրումը), համաժամացման նշանի թողարկումը
+(`POST /api/sync/tokens`) և CLI-ի համար `admin` հասանելիության նշանի ստեղծումը
+(`POST /api/cli/tokens`) պահանջում են կառավարման վահանակի աշխատաշրջան, տեղային CLI սուբյեկտ կամ
+անջատված մուտք․ ցանկացած շրջանակի API բանալիները և `oma_` հասանելիության նշանները ստանում են `403`։
+Ստուգումը գտնվում է `src/lib/api/operatorCredential.ts`-ում (`resolveOperatorCredential()` /
+`requireOperatorCredential()`)։ Մուտքի կարգավորումների փոփոխությունը նույնպես հասանելի է միայն
+օպերատորին․ `POST /api/settings/require-login`-ը (կառավարման գաղտնաբառի սահմանում /
+`requireLogin`-ի փոխարկում) գաղտնաբառի առկայությունից հետո ընդունում է միայն այդ մուտքային տվյալները․
+առաջին գործարկման սկզբնավորման պատուհանը (երբ գաղտնաբառ դեռ չկա) մնում է անփոփոխ, իսկ կառավարման
+վահանակի աշխատաշրջանը գաղտնաբառը փոխարինելու համար պետք է ուղարկի `currentPassword`
+(եթե այն բացակայում է կամ սխալ է՝ `403`, որը աուդիտի մատյանում գրանցվում է որպես
+`settings.update_failed`)։ Տեղային CLI-ն և անջատված մուտքով օրինակը պահպանում են վերականգնման
+հնարավորությունը և կարող են գաղտնաբառ սահմանել առանց դրա, քանի որ երկուսն էլ կապված են տվյալների
+գրացուցակը պարունակող հոսթին։
 
 ## Խողովակաշար
 

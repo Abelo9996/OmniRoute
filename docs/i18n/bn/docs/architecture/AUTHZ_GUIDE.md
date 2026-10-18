@@ -17,105 +17,125 @@ OmniRoute-এ একটি রুট-সচেতন অথরাইজেশন
 
 ### 1. API Key (Bearer)
 
-OpenAI/Anthropic/Gemini-সামঞ্জস্যপূর্ণ ক্লায়েন্ট API এবং `manage` scope-যুক্ত key ব্যবহারকারী কয়েকটি ম্যানেজমেন্ট route-এর জন্য ব্যবহৃত হয়।
+OpenAI/Anthropic/Gemini-সামঞ্জস্যপূর্ণ ক্লায়েন্ট API এবং কয়েকটি ম্যানেজমেন্ট রুটে ব্যবহৃত হয়, যখন কীটির `manage` স্কোপ থাকে।
 
 ```
 Authorization: Bearer <api-key>
 ```
 
-`src/sse/services/auth.ts`-এ থাকা `isValidApiKey()` / `extractApiKey()` দ্বারা যাচাই করা হয় এবং `src/shared/utils/apiAuth.ts`-এর মাধ্যমে পুনরায় export করা হয়। Validator স্থায়ী passthrough key হিসেবে `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` env var-ও গ্রহণ করে (issue #1350)।
+`src/sse/services/auth.ts`-এর `isValidApiKey()` / `extractApiKey()` দ্বারা যাচাই করা হয় এবং `src/shared/utils/apiAuth.ts`-এর মাধ্যমে পুনরায় export করা হয়। ভ্যালিডেটরটি স্থায়ী passthrough কী হিসেবে `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` env var-ও গ্রহণ করে (ইস্যু #1350)।
 
 ### 2. Dashboard Session (auth_token cookie)
 
-Dashboard page এবং admin operation-এর জন্য।
+ড্যাশবোর্ড পেজ এবং অ্যাডমিন অপারেশনের জন্য।
 
 ```
 Cookie: auth_token=<JWT signed with JWT_SECRET>
 ```
 
-কোনো cookie কেবল তখনই session হিসেবে গণ্য হয়, যখন JWT যাচাইকৃত **এবং** তাতে `authenticated: true` থাকে
-(`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`)। Cookie-র প্রতিটি
-consumer (dashboard route guard (`isDashboardSessionAuthenticated()`), authz pipeline refresh, WebSocket handshake, live
-server, `/api/settings/require-login`, `/api/auth/status`) ওই helper-এর মধ্য দিয়ে যায়।
-`JWT_SECRET` দিয়ে স্বাক্ষরিত অন্যান্য JWT-ও আছে — Cursor CLI passthrough key holder-দের জন্য
-`iss "omniroute" / aud "cursor-cli"` token mint করে — এবং সেগুলো কখনোই session নয়
+একটি cookie কেবল তখনই session হিসেবে গণ্য হয়, যখন JWT যাচাইয়ে উত্তীর্ণ হয় **এবং** এতে `authenticated: true` থাকে
+(`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`)। cookie-টির প্রতিটি
+ব্যবহারকারী (dashboard route guard (`isDashboardSessionAuthenticated()`), authz pipeline refresh, WebSocket handshake, live
+server, `/api/settings/require-login`, `/api/auth/status`) ওই helper-এর মাধ্যমে যায়।
+`JWT_SECRET` দিয়ে স্বাক্ষরিত অন্যান্য JWT-ও রয়েছে — Cursor CLI passthrough কীধারীদের জন্য
+`iss "omniroute" / aud "cursor-cli"` token তৈরি করে — এবং সেগুলো কখনোই session নয়
 (#13298)।
 
-`src/shared/utils/apiAuth.ts`-এর `isDashboardSessionAuthenticated()` দ্বারা যাচাই করা হয়। JWT-র 30 দিনের মেয়াদের মধ্যে 7 দিনের কম সময় বাকি থাকলে pipeline সেটি স্বয়ংক্রিয়ভাবে refresh করে।
+`src/shared/utils/apiAuth.ts`-এর `isDashboardSessionAuthenticated()` দ্বারা যাচাই করা হয়। JWT-এর 30 দিনের মেয়াদের মধ্যে 7 দিনের কম সময় অবশিষ্ট থাকলে pipeline স্বয়ংক্রিয়ভাবে সেটি refresh করে।
 
-কোনো session-এর 30 দিন পূর্ণ হওয়ার আগেও সেটি শেষ হতে পারে, কারণ প্রতিটি minter `mintDashboardSessionToken`-এর মধ্য দিয়ে যায় (একটি issue time `iat` এবং একটি id `jti`) এবং verifier দুটি setting পরীক্ষা করে: `sessionsValidAfter`, যা password পরিবর্তনের সময় সেট করা হয়, ফলে তার আগে issue করা প্রতিটি session আর যাচাই হয় না (যে browser থেকে password পরিবর্তন করা হয়েছে সেটি একটি নতুন cookie পায়), এবং `revokedDashboardSessions`, যেখানে `POST /api/auth/logout` sign-out করা session-এর `jti` যোগ করে। পুরোনো release দিয়ে mint করা session-এ কোনো claim-ই থাকে না এবং প্রথম password পরিবর্তন পর্যন্ত সেগুলো বৈধ থাকে। Setting পড়া না গেলে session-টিকে বিশ্বস্ত হিসেবে গণ্য করা হয় না।
+একটি session-এর 30 দিন পূর্ণ হওয়ার আগেও সেটি শেষ হতে পারে, কারণ প্রতিটি minter `mintDashboardSessionToken`-এর মাধ্যমে যায় (একটি issue time `iat` এবং একটি id `jti`) এবং verifier দুটি setting পরীক্ষা করে: `sessionsValidAfter`, যা password পরিবর্তনের সময় সেট করা হয়, ফলে তার আগে ইস্যু করা প্রতিটি session-এর verification বন্ধ হয়ে যায় (যে browser থেকে password পরিবর্তন করা হয়েছে, সেটি একটি নতুন cookie পায়); এবং `revokedDashboardSessions`, যেখানে `POST /api/auth/logout` sign-out করা session-এর `jti` যোগ করে। পুরোনো release দ্বারা তৈরি session-এ এই claim দুটির কোনোটিই থাকে না এবং প্রথম password পরিবর্তন পর্যন্ত সেগুলো বৈধ থাকে। setting পড়া না গেলে session-টিকে বিশ্বস্ত হিসেবে গণ্য করা হয় না।
 
-কিছু management route **যেকোনো একটি** মোড গ্রহণ করে: cookie অথবা `Bearer <key>`, যখন API key-তে `manage` (বা `admin`) scope থাকে। এটিই v3.8-এ যোগ করা "API call-এর মাধ্যমে configurable" workflow-কে সম্ভব করে।
+কিছু management route **যেকোনো একটি** mode গ্রহণ করে: cookie অথবা `Bearer <key>`, যখন API key-টির `manage` (বা `admin`) scope থাকে। এটিই v3.8-এ যোগ করা "API call-এর মাধ্যমে configurable" workflow-কে সম্ভব করে।
 
 #### ঐচ্ছিক OIDC login gate (#6973)
 
-Dashboard admin login ডিফল্ট password login-এর পাশাপাশি একটি **opt-in** OIDC (OpenID Connect) flow-ও
-সমর্থন করে — password login কখনো সরানো হয় না, কেবল
-এর সঙ্গে এটি যোগ করা হয়:
+Dashboard admin login, default password login-এর পাশাপাশি একটি **opt-in** OIDC (OpenID Connect) flow-ও সমর্থন করে — password login কখনো সরানো হয় না, কেবল
+এর সঙ্গে অতিরিক্ত বিকল্প যোগ করা হয়:
 
 - `settings.oidcEnabled === true` **এবং** `oidcIssuer` /
-  `oidcClientId` / `oidcClientSecret` সবগুলো configure করা না থাকলে এটি disabled থাকে (Settings → Auth)।
-  অন্যথায় `GET /api/auth/oidc/login` `400` return করে।
-- `GET /api/auth/oidc/login`, issuer-এর
-  `/.well-known/openid-configuration` থেকে `authorization_endpoint` আবিষ্কার করে (`<issuer>/authorize`-এ
-  fallback করে), incoming request থেকে redirect URI তৈরি করে
-  (`x-forwarded-proto`-aware), এবং একটি random `state`
-  `httpOnly` `oidc_state` cookie-তে সংরক্ষণ করে IdP-তে redirect করে।
-- `GET /api/auth/oidc/callback`, `state` validate করে, authorization
-  code exchange করে এবং issuer-এর JWKS-এর মাধ্যমে ID token-এর signature যাচাই করে
-  (`jose`-এর `createRemoteJWKSet`, প্রতি JWKS URI অনুযায়ী cached), সঙ্গে `issuer`/`audience`
-  check করে। `oidcAllowedSubjects` allowlist আবশ্যক: এটি
-  token-এর `sub` claim অথবা তার `email` claim-এর সঙ্গে মিল খোঁজে — email claim কেবল তখনই গ্রহণ করা হয়,
-  যখন `email_verified === true`, ফলে IdP-তে থাকা কোনো unverified email কখনোই
-  gate অতিক্রম করতে পারে না — এবং কোনো entry না থাকলে callback প্রতিটি login প্রত্যাখ্যান করে
-  (`not_configured`)।
-- সফল হলে এটি password login-এর issue করা **ঠিক একই** 30 দিনের `auth_token` JWT mint করে
-  (`src/app/api/auth/login/route.ts`), ফলে dashboard session pipeline-এর বাকি অংশ
-  (auto-refresh, cookie flag) অপরিবর্তিত থাকে —
-  OIDC শুধু cookie কীভাবে mint করা হয় সেটি প্রতিস্থাপন করে, cookie কী permission দেয় সেটি নয়।
-- প্রতিটি `oidc*` setting (`oidcEnabled`, `oidcDisablePasswordLogin`,
+  `oidcClientId` / `oidcClientSecret`—সবগুলো কনফিগার করা না থাকলে এটি নিষ্ক্রিয় থাকে (Settings → Auth)।
+  অন্যথায় `GET /api/auth/oidc/login` `400` ফেরত দেয়।
+- `GET /api/auth/oidc/login` ইস্যুয়ারের
+  `/.well-known/openid-configuration` থেকে `authorization_endpoint` আবিষ্কার করে (`<issuer>/authorize`
+  ফলব্যাক হিসেবে ব্যবহৃত হয়), আগত অনুরোধ থেকে রিডাইরেক্ট URI তৈরি করে
+  (`x-forwarded-proto`-সচেতন), এবং একটি এলোমেলো `state`-সহ IdP-তে রিডাইরেক্ট করে,
+  যা একটি `httpOnly` `oidc_state` কুকিতে সংরক্ষিত থাকে।
+- `GET /api/auth/oidc/callback` `state` যাচাই করে, অথরাইজেশন
+  কোড বিনিময় করে এবং ইস্যুয়ারের JWKS-এর মাধ্যমে ID টোকেনের স্বাক্ষর যাচাই করে
+  (`jose`-এর `createRemoteJWKSet`, প্রতি JWKS URI অনুযায়ী ক্যাশ করা) এবং
+  `issuer`/`audience` পরীক্ষা করে। `oidcAllowedSubjects` অ্যালাউলিস্ট আবশ্যক: এটি
+  টোকেনের `sub` ক্লেইম অথবা এর `email` ক্লেইমের সঙ্গে মেলে—ইমেইল ক্লেইমটি কেবল
+  `email_verified === true` হলে গ্রহণ করা হয়, ফলে IdP-তে থাকা কোনো অযাচাইকৃত
+  ইমেইল কখনোই এই যাচাই পেরোতে পারে না—এবং কোনো এন্ট্রি না থাকলে কলব্যাক প্রতিটি
+  লগইন প্রত্যাখ্যান করে (`not_configured`)।
+- সফল হলে এটি পাসওয়ার্ড লগইনে ইস্যু করা **হুবহু একই** ৩০ দিনের `auth_token` JWT
+  তৈরি করে (`src/app/api/auth/login/route.ts`), ফলে ড্যাশবোর্ড সেশনের বাকি
+  পাইপলাইন (স্বয়ংক্রিয় রিফ্রেশ, কুকি ফ্ল্যাগ) অপরিবর্তিত থাকে—OIDC শুধু কুকি
+  কীভাবে তৈরি হয় তা প্রতিস্থাপন করে, কুকিটি কী অনুমতি দেয় তা নয়।
+- প্রতিটি `oidc*` সেটিং (`oidcEnabled`, `oidcDisablePasswordLogin`,
   `oidcIssuer`, `oidcClientId`, `oidcClientSecret`, `oidcAllowedSubjects`,
   `oidcRedirectPath`, `oidcScopes`) `SECURITY_IMPACTING_SETTINGS_KEYS`-এ রয়েছে
-  (`src/shared/constants/securityImpactingSettings.ts`): body-তে management
-  password-টি `currentPassword` হিসেবে না থাকলে `PATCH /api/settings`
-  `400 PASSWORD_REQUIRED` response দেয় (ভুল হলে `401 PASSWORD_MISMATCH`)।
-  `oidcDisablePasswordLogin`, password _login_ (`POST /api/auth/login`) প্রত্যাখ্যান করে,
-  কিন্তু সংরক্ষিত password hash অক্ষুণ্ণ রাখে এবং re-auth তখনও
-  সেটির বিপরীতে `currentPassword` যাচাই করে।
-- `POST /api/settings/import-json` ওই re-auth এড়িয়ে যায়, তাই write করার আগে এটি
-  `IMPORT_STRIPPED_SETTINGS_KEYS`-এর (একই file) প্রতিটি key বাদ দেয়: password এবং
-  `currentPassword`, প্রতিটি `SECURITY_IMPACTING_SETTINGS_KEYS` entry এবং
-  dashboard session state (`sessionsValidAfter`, `revokedDashboardSessions`)।
-  তাই পুরোনো backup import করলে password
-  পরিবর্তন বা sign-out-এর মাধ্যমে ইতিমধ্যে শেষ করা কোনো session পুনরুজ্জীবিত হতে পারে না।
+  (`src/shared/constants/securityImpactingSettings.ts`): বডিতে ম্যানেজমেন্ট
+  পাসওয়ার্ডটি `currentPassword` হিসেবে না থাকলে `PATCH /api/settings`
+  `400 PASSWORD_REQUIRED` দিয়ে সাড়া দেয় (ভুল হলে `401 PASSWORD_MISMATCH`)।
+  `oidcDisablePasswordLogin` পাসওয়ার্ড দিয়ে _লগইন_ (`POST /api/auth/login`)
+  প্রত্যাখ্যান করে, কিন্তু সংরক্ষিত পাসওয়ার্ড হ্যাশ রেখে দেয় এবং পুনঃপ্রমাণীকরণে
+  এখনও সেটির বিপরীতে `currentPassword` যাচাই করা হয়।
+- `corsOrigins` এবং `bruteForceProtection`-ও `SECURITY_IMPACTING_SETTINGS_KEYS`-এ
+  রয়েছে: যেকোনো একটিকে শিথিল করলে লগইন প্রতিরক্ষা দুর্বল হয়, তাই এগুলোর জন্যও
+  একই `currentPassword` পুনঃপ্রমাণীকরণ প্রয়োজন (Security ট্যাব এটি চায়) এবং JSON
+  ইমপোর্ট এগুলো বাদ দেয়।
+- প্রতিটি নিরাপত্তা-নীতি কী—`SECURITY_IMPACTING_SETTINGS_KEYS`-এর এন্ট্রিগুলো,
+  প্রতিটি `oidc*` কী এবং ড্যাশবোর্ড সেশনের অবস্থা—`PATCH /api/settings`-এ
+  **শুধু অপারেটরের জন্য**: একটি manage-স্কোপযুক্ত API কী বা একটি `oma_` অ্যাক্সেস
+  টোকেন সঠিক `currentPassword` পাঠালেও `403` দিয়ে প্রত্যাখ্যাত হয় এবং সেই
+  প্রত্যাখ্যানটি `settings.update_failed` হিসেবে `reason: OPERATOR_REQUIRED`-সহ
+  অডিট করা হয় (`src/lib/api/operatorCredential.ts`-এর
+  `requireOperatorCredential()`)। সাধারণ সেটিংস (থিম, প্রদর্শন পছন্দসমূহ) একটি
+  `manage` কী বা একটি `admin` অ্যাক্সেস টোকেন দিয়ে পরিবর্তনযোগ্য থাকে।
+  `/api/settings`-এর প্রতিটি পরিবর্তনের (এবং `/api/settings/require-login`-এরও)
+  জন্য `admin` অ্যাক্সেস-টোকেন স্কোপ প্রয়োজন
+  (`src/server/authz/accessScopes.ts`-এর `ADMIN_MUTATION_EXACT_PATHS`, সঠিক-পাথ
+  মিল); `GET`-এর স্কোপ `read`-ই থাকে এবং অন্যান্য `/api/settings/*` সাব-রুট
+  (প্রক্সি, কম্বো ডিফল্ট, মডেল অ্যালিয়াস, কম্প্রেশন, পার্জ…) পদ্ধতি থেকে অনুমিত
+  `write` স্কোপ বজায় রাখে।
+- `POST /api/settings/import-json` ওই পুনঃপ্রমাণীকরণ এড়িয়ে যায়, তাই লেখার আগে
+  এটি `IMPORT_STRIPPED_SETTINGS_KEYS`-এর (একই ফাইল) প্রতিটি কী বাদ দেয়:
+  পাসওয়ার্ড ও `currentPassword`, প্রতিটি `SECURITY_IMPACTING_SETTINGS_KEYS`
+  এন্ট্রি এবং ড্যাশবোর্ড সেশনের অবস্থা (`sessionsValidAfter`,
+  `revokedDashboardSessions`)। ফলে কোনো পুরোনো ব্যাকআপ ইমপোর্ট করলে পাসওয়ার্ড
+  পরিবর্তন বা সাইন-আউটের মাধ্যমে ইতিমধ্যে শেষ করা কোনো সেশন পুনরুজ্জীবিত হতে
+  পারে না।
 
-## রুট ক্লাসসমূহ
+## রুট শ্রেণিসমূহ
 
-`src/server/authz/types.ts` তিনটি ক্লাস সংজ্ঞায়িত করে; নির্ধারিতভাবে শ্রেণিবদ্ধ করা যায় না এমন যেকোনো রুট ডিফল্টভাবে `MANAGEMENT` হিসেবে গণ্য হয়।
+`src/server/authz/types.ts` তিনটি শ্রেণি নির্ধারণ করে; নির্ধারকভাবে শ্রেণিবদ্ধ করা যায় না এমন যেকোনো রুট ডিফল্টভাবে `MANAGEMENT`-এ পড়ে।
 
-| ক্লাস        | বিবরণ                                                                                                                                                     | প্রয়োজনীয় প্রমাণীকরণ                                          |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `PUBLIC`     | সুস্পষ্টভাবে নিরাপদ রুট — লগইন, লগআউট, স্ট্যাটাস, ইনিশিয়ালাইজেশন, স্বাস্থ্য পরীক্ষা, অনবোর্ডিং বুটস্ট্র্যাপ।                                             | কোনোটি নয়                                                      |
-| `CLIENT_API` | মডেল পরিবেশনের এন্ডপয়েন্ট — `/api/v1/*`, `/api/v1beta/*`, এবং অ্যালিয়াস `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`। | কার্যকর `REQUIRE_API_KEY` ফিচার ফ্ল্যাগ সক্রিয় থাকলে Bearer কী |
-| `MANAGEMENT` | ড্যাশবোর্ড পৃষ্ঠা, সেটিংস, প্রোভাইডার, কী, অ্যাডমিন ও ডায়াগনস্টিকস এন্ডপয়েন্ট।                                                                          | ড্যাশবোর্ড সেশন অথবা `manage` স্কোপসহ Bearer                    |
+| শ্রেণি       | বিবরণ                                                                                                                                                   | প্রয়োজনীয় প্রমাণীকরণ                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `PUBLIC`     | সুস্পষ্টভাবে নিরাপদ রুট — লগইন, লগআউট, স্ট্যাটাস, ইনিশিয়ালাইজেশন, হেলথ ও অনবোর্ডিং বুটস্ট্র্যাপ।                                                       | কোনোটি নয়                                                      |
+| `CLIENT_API` | মডেল-সার্ভিং এন্ডপয়েন্ট — `/api/v1/*`, `/api/v1beta/*`, এবং অ্যালিয়াস `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`। | কার্যকর `REQUIRE_API_KEY` ফিচার ফ্ল্যাগ সক্রিয় থাকলে Bearer কী |
+| `MANAGEMENT` | ড্যাশবোর্ড পৃষ্ঠা, সেটিংস, প্রোভাইডার, কী, অ্যাডমিন ও ডায়াগনস্টিকস এন্ডপয়েন্ট।                                                                        | ড্যাশবোর্ড সেশন অথবা `manage` স্কোপসহ Bearer                    |
 
 কয়েকটি `MANAGEMENT` অ্যাকশন **শুধু অপারেটরের জন্য**: একটি `manage` কী যথেষ্ট নয়। সংরক্ষিত
 ক্রেডেনশিয়াল এক্সপোর্ট করা (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), একটি সিঙ্ক টোকেন ইস্যু করা (`POST /api/sync/tokens`) এবং একটি
-`admin` CLI অ্যাক্সেস টোকেন তৈরি করতে (`POST /api/cli/tokens`) একটি ড্যাশবোর্ড সেশন, লোকাল CLI
-সাবজেক্ট অথবা লগইন নিষ্ক্রিয় থাকা প্রয়োজন; যেকোনো স্কোপের API কী এবং `oma_` অ্যাক্সেস টোকেন `403` পায়। এই যাচাইটি
+`GET /api/db-backups/exportAll`), লাইভ ডেটার ওপর ব্যাকআপ পুনরুদ্ধার করা
+(`POST /api/db-backups/import`, যার মধ্যে `dryRun=true` অন্তর্ভুক্ত; id অনুযায়ী
+`POST /api/db-backups` পুনরুদ্ধার; `POST /api/settings/import-json`), রিস্টোর পয়েন্ট ধ্বংস করা
+(`DELETE /api/db-backups` ক্লিনআপ এবং `PATCH /api/db-backups`, কারণ এটি যে রিটেনশন সংরক্ষণ করে
+তা প্রতিটি ব্যাকআপের পর স্বয়ংক্রিয় প্রুনিং পরিচালনা করে), একটি সিঙ্ক টোকেন ইস্যু করা
+(`POST /api/sync/tokens`) এবং একটি `admin` CLI অ্যাক্সেস টোকেন তৈরি করা
+(`POST /api/cli/tokens`)-এর জন্য একটি ড্যাশবোর্ড সেশন, লোকাল CLI সাবজেক্ট, অথবা লগইন নিষ্ক্রিয়
+থাকা আবশ্যক; যেকোনো স্কোপের API কী এবং `oma_` অ্যাক্সেস টোকেন `403` পায়। যাচাইটি
 `src/lib/api/operatorCredential.ts`-এ (`resolveOperatorCredential()` /
-`requireOperatorCredential()`) অবস্থিত।
-
-A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
-credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), restoring a backup over the live data
-(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
-`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
-`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
-subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
-lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
+`requireOperatorCredential()`) রয়েছে। লগইন সেটিংস পরিবর্তন করাও শুধু অপারেটরের জন্য:
+`POST /api/settings/require-login` (ম্যানেজমেন্ট পাসওয়ার্ড সেট করা / `requireLogin` টগল করা)
+একটি পাসওয়ার্ড বিদ্যমান হওয়ার পর কেবল ওই ক্রেডেনশিয়ালগুলোই গ্রহণ করে — প্রথমবার চালুর
+বুটস্ট্র্যাপ উইন্ডোটি (যখন এখনো কোনো পাসওয়ার্ড নেই) অপরিবর্তিত থাকে — এবং পাসওয়ার্ড
+প্রতিস্থাপন করতে একটি ড্যাশবোর্ড সেশনকে অবশ্যই `currentPassword` পাঠাতে হবে (এটি অনুপস্থিত
+বা ভুল হলে `403`, যা `settings.update_failed` হিসেবে অডিট করা হয়)। লোকাল CLI এবং লগইন
+নিষ্ক্রিয় থাকা ইনস্ট্যান্স রিকভারি পথটি বজায় রাখে এবং এটি ছাড়াই পাসওয়ার্ড সেট করতে পারে,
+কারণ উভয়ই ডেটা ডিরেক্টরির মালিক হোস্টের সঙ্গে আবদ্ধ।
 
 ## পাইপলাইন
 

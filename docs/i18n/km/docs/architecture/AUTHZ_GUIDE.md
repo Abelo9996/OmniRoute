@@ -17,105 +17,122 @@ OmniRoute មានបំពង់បង្ហូរការអនុញ្ញ�
 
 ### 1. API Key (Bearer)
 
-ប្រើសម្រាប់ API របស់ client ដែលឆបគ្នាជាមួយ OpenAI/Anthropic/Gemini និង route គ្រប់គ្រងមួយចំនួន នៅពេល key មាន scope `manage`។
+ប្រើសម្រាប់ client APIs ដែលឆបគ្នាជាមួយ OpenAI/Anthropic/Gemini និង management routes មួយចំនួន នៅពេល key មាន scope `manage`។
 
 ```
 Authorization: Bearer <api-key>
 ```
 
-ត្រូវបានផ្ទៀងផ្ទាត់ដោយ `isValidApiKey()` / `extractApiKey()` នៅក្នុង `src/sse/services/auth.ts` ហើយត្រូវបាន re-export តាមរយៈ `src/shared/utils/apiAuth.ts`។ Validator ក៏ទទួលយក env vars `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` ជា passthrough keys អចិន្ត្រៃយ៍ផងដែរ (issue #1350)។
+ត្រូវបានផ្ទៀងផ្ទាត់ដោយ `isValidApiKey()` / `extractApiKey()` នៅក្នុង `src/sse/services/auth.ts` និងត្រូវបាន re-export តាមរយៈ `src/shared/utils/apiAuth.ts`។ validator ក៏ទទួលយក env vars `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` ជា passthrough keys អចិន្ត្រៃយ៍ផងដែរ (បញ្ហា #1350)។
 
-### 2. សម័យ Dashboard (cookie auth_token)
+### 2. Dashboard Session (auth_token cookie)
 
-សម្រាប់ទំព័រ dashboard និងប្រតិបត្តិការរដ្ឋបាល។
+សម្រាប់ទំព័រ dashboard និងប្រតិបត្តិការរបស់ admin។
 
 ```
-Cookie: auth_token=<JWT ដែលបានចុះហត្ថលេខាដោយ JWT_SECRET>
+Cookie: auth_token=<JWT signed with JWT_SECRET>
 ```
 
-Cookie មួយត្រូវបានចាត់ទុកជា session លុះត្រាតែ JWT ត្រូវបានផ្ទៀងផ្ទាត់ជោគជ័យ **និង** មាន `authenticated: true`
+cookie មួយត្រូវបានចាត់ទុកជា session លុះត្រាតែ JWT ផ្ទៀងផ្ទាត់បាន **ហើយ** មាន `authenticated: true`
 (`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`)។ រាល់
-consumer របស់ cookie (dashboard route guard (`isDashboardSessionAuthenticated()`), ការធ្វើឱ្យ authz pipeline ស្រស់ឡើងវិញ, WebSocket handshake, live
+ផ្នែកដែលប្រើ cookie នេះ (dashboard route guard (`isDashboardSessionAuthenticated()`), authz pipeline refresh, WebSocket handshake, live
 server, `/api/settings/require-login`, `/api/auth/status`) សុទ្ធតែឆ្លងកាត់ helper នោះ។
-មាន JWT ផ្សេងទៀតដែលបានចុះហត្ថលេខាដោយ `JWT_SECRET` — Cursor CLI passthrough បង្កើត
-token ដែលមាន `iss "omniroute" / aud "cursor-cli"` សម្រាប់អ្នកកាន់ key — ហើយ token ទាំងនេះមិនត្រូវបានចាត់ទុកជា session ឡើយ
+ក៏មាន JWT ផ្សេងទៀតដែលបានចុះហត្ថលេខាជាមួយ `JWT_SECRET` ដែរ — Cursor CLI passthrough បង្កើត
+tokens `iss "omniroute" / aud "cursor-cli"` សម្រាប់អ្នកកាន់ key — ហើយ tokens ទាំងនេះមិនត្រូវបានចាត់ទុកជា sessions ឡើយ
 (#13298)។
 
-ត្រូវបានផ្ទៀងផ្ទាត់ដោយ `isDashboardSessionAuthenticated()` នៅក្នុង `src/shared/utils/apiAuth.ts`។ Pipeline ធ្វើឱ្យ JWT ស្រស់ឡើងវិញដោយស្វ័យប្រវត្តិ នៅពេលវានៅសល់តិចជាង 7 ថ្ងៃក្នុងអាយុកាល 30 ថ្ងៃរបស់វា។
+ត្រូវបានផ្ទៀងផ្ទាត់ដោយ `isDashboardSessionAuthenticated()` នៅក្នុង `src/shared/utils/apiAuth.ts`។ pipeline នឹង refresh JWT ដោយស្វ័យប្រវត្តិ នៅពេលវានៅសល់តិចជាង 7 ថ្ងៃក្នុងអាយុកាល 30 ថ្ងៃរបស់វា។
 
-Session មួយក៏អាចបញ្ចប់មុនពេលគ្រប់ 30 ថ្ងៃផងដែរ ពីព្រោះរាល់ minter ឆ្លងកាត់ `mintDashboardSessionToken` (មានពេលចេញ `iat` និង ID `jti`) ហើយ verifier ពិនិត្យ setting ពីរ៖ `sessionsValidAfter` ដែលត្រូវបានកំណត់ដោយការផ្លាស់ប្តូរពាក្យសម្ងាត់ ដើម្បីឱ្យរាល់ session ដែលបានចេញមុនពេលនោះឈប់ផ្ទៀងផ្ទាត់បាន (browser ដែលបានផ្លាស់ប្តូរពាក្យសម្ងាត់នឹងទទួលបាន cookie ថ្មី) និង `revokedDashboardSessions` ដែល `POST /api/auth/logout` បន្ថែម `jti` របស់ session ដែលបាន sign out ទៅក្នុងនោះ។ Session ដែលបានបង្កើតដោយ release ចាស់ជាងនេះមិនមាន claim ទាំងពីរទេ ហើយនៅតែមានសុពលភាពរហូតដល់ការផ្លាស់ប្តូរពាក្យសម្ងាត់លើកដំបូង។ ប្រសិនបើមិនអាចអាន settings បានទេ នោះ session នឹងមិនត្រូវបានទុកចិត្តឡើយ។
+session មួយក៏អាចបញ្ចប់មុនពេលគ្រប់ 30 ថ្ងៃផងដែរ ពីព្រោះរាល់ minter ទាំងអស់ឆ្លងកាត់ `mintDashboardSessionToken` (មានពេលវេលាចេញ `iat` និង id `jti`) ហើយ verifier ពិនិត្យការកំណត់ពីរ៖ `sessionsValidAfter` ដែលត្រូវបានកំណត់នៅពេលប្តូរពាក្យសម្ងាត់ ដើម្បីឱ្យរាល់ session ដែលបានចេញមុនពេលនោះឈប់ផ្ទៀងផ្ទាត់បាន (browser ដែលបានប្តូរពាក្យសម្ងាត់នឹងទទួលបាន cookie ថ្មី) និង `revokedDashboardSessions` ដែល `POST /api/auth/logout` បន្ថែម `jti` របស់ session ដែលបាន sign out ទៅក្នុងនោះ។ Sessions ដែលត្រូវបានបង្កើតដោយ release ចាស់មិនមាន claim ណាមួយក្នុងចំណោមទាំងពីរនេះទេ ហើយនៅតែមានសុពលភាពរហូតដល់ការប្តូរពាក្យសម្ងាត់លើកដំបូង។ ប្រសិនបើមិនអាចអានការកំណត់បានទេ session នោះមិនត្រូវបានទុកចិត្តឡើយ។
 
-Route គ្រប់គ្រងមួយចំនួនទទួលយករបៀប **មួយក្នុងចំណោមរបៀបទាំងពីរ**៖ cookie ឬ `Bearer <key>` នៅពេល API key មាន scope `manage` (ឬ `admin`)។ នេះជាអ្វីដែលអនុញ្ញាតឱ្យមាន workflow "អាចកំណត់រចនាសម្ព័ន្ធតាមរយៈការហៅ API" ដែលត្រូវបានបន្ថែមនៅក្នុង v3.8។
+management routes មួយចំនួនទទួលយករបៀប **មួយណាក៏បាន**៖ cookie ឬ `Bearer <key>` នៅពេល API key មាន scope `manage` (ឬ `admin`)។ នេះជាអ្វីដែលធ្វើឱ្យ workflow "អាចកំណត់រចនាសម្ព័ន្ធតាមរយៈ API calls" ដែលបានបន្ថែមក្នុង v3.8 អាចដំណើរការបាន។
 
 #### ច្រកចូល OIDC ជាជម្រើស (#6973)
 
-ការចូលជាអ្នកគ្រប់គ្រង dashboard ក៏គាំទ្រ flow OIDC (OpenID Connect) ដែលត្រូវតែ **ជ្រើសរើសបើកប្រើ**
-រួមជាមួយការចូលដោយពាក្យសម្ងាត់លំនាំដើមផងដែរ — ការចូលដោយពាក្យសម្ងាត់មិនត្រូវបានដកចេញឡើយ គឺគ្រាន់តែ
-បំពេញបន្ថែមប៉ុណ្ណោះ៖
+ការចូលជាអ្នកគ្រប់គ្រង dashboard ក៏គាំទ្រ flow OIDC (OpenID Connect) ដែលត្រូវ **ជ្រើសរើសបើកប្រើ** ផងដែរ
+ស្របគ្នាជាមួយការចូលដោយពាក្យសម្ងាត់លំនាំដើម — ការចូលដោយពាក្យសម្ងាត់មិនដែលត្រូវបានលុបចេញទេ គ្រាន់តែ
+ត្រូវបានបំពេញបន្ថែមប៉ុណ្ណោះ៖
 
 - ត្រូវបានបិទ លុះត្រាតែ `settings.oidcEnabled === true` **និង** `oidcIssuer` /
   `oidcClientId` / `oidcClientSecret` ត្រូវបានកំណត់រចនាសម្ព័ន្ធទាំងអស់ (Settings → Auth)។
-  បើមិនដូច្នោះទេ `GET /api/auth/oidc/login` ត្រឡប់ `400`។
+  បើមិនដូច្នោះទេ `GET /api/auth/oidc/login` នឹងត្រឡប់ `400`។
 - `GET /api/auth/oidc/login` ស្វែងរក `authorization_endpoint` ពី
-  `/.well-known/openid-configuration` របស់ issuer (ប្រើ
-  `<issuer>/authorize` ជាជម្រើសបម្រុង) បង្កើត redirect URI ពី request ដែលចូលមក
-  (គាំទ្រ `x-forwarded-proto`) ហើយ redirect ទៅ IdP ជាមួយ `state` ចៃដន្យ
-  ដែលរក្សាទុកក្នុង cookie `oidc_state` ប្រភេទ `httpOnly`។
-- `GET /api/auth/oidc/callback` ផ្ទៀងផ្ទាត់ `state` ប្តូរ authorization
+  `/.well-known/openid-configuration` របស់ issuer (បើរកមិនឃើញ នឹងប្រើ
+  `<issuer>/authorize`) បង្កើត redirect URI ពីសំណើដែលបានទទួល
+  (គាំទ្រ `x-forwarded-proto`) ហើយបញ្ជូនបន្តទៅកាន់ IdP ជាមួយ `state`
+  ចៃដន្យដែលត្រូវបានរក្សាទុកក្នុង cookie `oidc_state` ប្រភេទ `httpOnly`។
+- `GET /api/auth/oidc/callback` ផ្ទៀងផ្ទាត់ `state` ប្ដូរ authorization
   code និងផ្ទៀងផ្ទាត់ហត្ថលេខារបស់ ID token តាមរយៈ JWKS របស់ issuer
   (`createRemoteJWKSet` របស់ `jose` ដែលត្រូវបាន cache តាម JWKS URI នីមួយៗ) ជាមួយការត្រួតពិនិត្យ `issuer`/`audience`។
-  បញ្ជីអនុញ្ញាត `oidcAllowedSubjects` គឺចាំបាច់៖ វាផ្គូផ្គង
-  claim `sub` របស់ token ឬ claim `email` របស់វា — claim email ត្រូវបានទទួលស្គាល់
-  តែនៅពេល `email_verified === true` ប៉ុណ្ណោះ ដូច្នេះ email ដែលមិនបានផ្ទៀងផ្ទាត់នៅ IdP មិនអាច
-  ឆ្លងកាត់ច្រកនេះបានឡើយ — ហើយនៅពេលគ្មាន entry នោះ callback នឹងបដិសេធរាល់ការចូល
+  បញ្ជីអនុញ្ញាត `oidcAllowedSubjects` គឺចាំបាច់៖ វាផ្គូផ្គងនឹង
+  claim `sub` របស់ token ឬ claim `email` របស់វា — claim អ៊ីមែលត្រូវបានទទួលស្គាល់តែនៅពេល
+  `email_verified === true` ប៉ុណ្ណោះ ដូច្នេះអ៊ីមែលដែលមិនបានផ្ទៀងផ្ទាត់នៅ IdP មិនអាច
+  ឆ្លងកាត់ច្រកនេះបានឡើយ — ហើយប្រសិនបើគ្មានធាតុណាមួយ callback នឹងបដិសេធរាល់ការចូល
   (`not_configured`)។
-- នៅពេលជោគជ័យ វាបង្កើត JWT `auth_token` អាយុកាល 30 ថ្ងៃ **ដូចគ្នាបេះបិទ** នឹងអ្វីដែលការចូលដោយពាក្យសម្ងាត់
-  ចេញឱ្យ (`src/app/api/auth/login/route.ts`) ដូច្នេះផ្នែកផ្សេងទៀតនៃ
-  dashboard session pipeline (ការធ្វើឱ្យស្រស់ដោយស្វ័យប្រវត្តិ, cookie flags) នៅដដែល —
-  OIDC គ្រាន់តែជំនួសរបៀបដែល cookie ត្រូវបានបង្កើត មិនមែនអ្វីដែលវាផ្តល់សិទ្ធិឱ្យនោះទេ។
-- រាល់ setting `oidc*` (`oidcEnabled`, `oidcDisablePasswordLogin`,
+- នៅពេលជោគជ័យ វាបង្កើត JWT `auth_token` ដែលមានសុពលភាព 30 ថ្ងៃ **ដូចគ្នាបេះបិទ** នឹង JWT ដែលការចូលដោយពាក្យសម្ងាត់
+  ចេញឱ្យ (`src/app/api/auth/login/route.ts`) ដូច្នេះដំណើរការ
+  session របស់ dashboard ដែលនៅសល់ (ការធ្វើឱ្យស្រស់ដោយស្វ័យប្រវត្តិ និង flag របស់ cookie) មិនមានការផ្លាស់ប្ដូរ —
+  OIDC គ្រាន់តែជំនួសរបៀបដែល cookie ត្រូវបានបង្កើតប៉ុណ្ណោះ មិនមែនសិទ្ធិដែលវាផ្ដល់ឱ្យទេ។
+- រាល់ការកំណត់ `oidc*` (`oidcEnabled`, `oidcDisablePasswordLogin`,
   `oidcIssuer`, `oidcClientId`, `oidcClientSecret`, `oidcAllowedSubjects`,
-  `oidcRedirectPath`, `oidcScopes`) មាននៅក្នុង `SECURITY_IMPACTING_SETTINGS_KEYS`
+  `oidcRedirectPath`, `oidcScopes`) ស្ថិតក្នុង `SECURITY_IMPACTING_SETTINGS_KEYS`
   (`src/shared/constants/securityImpactingSettings.ts`)៖ `PATCH /api/settings`
-  ឆ្លើយតប `400 PASSWORD_REQUIRED` លុះត្រាតែ body មានពាក្យសម្ងាត់គ្រប់គ្រងជា
-  `currentPassword` (`401 PASSWORD_MISMATCH` នៅពេលវាមិនត្រឹមត្រូវ)។
-  `oidcDisablePasswordLogin` បដិសេធការចូលដោយពាក្យសម្ងាត់ (`POST /api/auth/login`)
-  ប៉ុន្តែរក្សាទុក hash ពាក្យសម្ងាត់ ហើយការផ្ទៀងផ្ទាត់អត្តសញ្ញាណឡើងវិញនៅតែផ្ទៀងផ្ទាត់
-  `currentPassword` ជាមួយវា។
-- `POST /api/settings/import-json` រំលងការផ្ទៀងផ្ទាត់អត្តសញ្ញាណឡើងវិញនោះ ដូច្នេះវាលុបរាល់ key នៅក្នុង
-  `IMPORT_STRIPPED_SETTINGS_KEYS` (file ដូចគ្នា) មុនពេលសរសេរ៖ ពាក្យសម្ងាត់ និង
-  `currentPassword`, រាល់ entry ក្នុង `SECURITY_IMPACTING_SETTINGS_KEYS` និង
-  ស្ថានភាព dashboard session (`sessionsValidAfter`, `revokedDashboardSessions`)។
-  ដូច្នេះ ការនាំចូល backup ចាស់មិនអាចធ្វើឱ្យ session ដែលការផ្លាស់ប្តូរពាក្យសម្ងាត់
-  ឬការចាកចេញបានបញ្ចប់រួចហើយ មានសុពលភាពឡើងវិញបានទេ។
+  ឆ្លើយតបដោយ `400 PASSWORD_REQUIRED` លុះត្រាតែ body មានពាក្យសម្ងាត់គ្រប់គ្រង
+  ជា `currentPassword` (`401 PASSWORD_MISMATCH` នៅពេលវាមិនត្រឹមត្រូវ)។
+  `oidcDisablePasswordLogin` បដិសេធ _ការចូល_ ដោយពាក្យសម្ងាត់ (`POST /api/auth/login`)
+  ប៉ុន្តែរក្សាទុក password hash ហើយការផ្ទៀងផ្ទាត់អត្តសញ្ញាណឡើងវិញនៅតែពិនិត្យ
+  `currentPassword` ផ្ទៀងនឹងវា។
+- `corsOrigins` និង `bruteForceProtection` ក៏ស្ថិតក្នុង `SECURITY_IMPACTING_SETTINGS_KEYS`
+  ផងដែរ៖ ការបន្ធូរបន្ថយណាមួយក្នុងចំណោមទាំងពីរនេះធ្វើឱ្យការការពារការចូលចុះខ្សោយ ដូច្នេះពួកវាតម្រូវឱ្យមានការផ្ទៀងផ្ទាត់អត្តសញ្ញាណឡើងវិញដោយ
+  `currentPassword` ដូចគ្នា (ផ្ទាំង Security ស្នើសុំវា) ហើយការនាំចូល JSON
+  នឹងលុបពួកវាចេញ។
+- រាល់ key នៃគោលការណ៍សុវត្ថិភាព — ធាតុក្នុង `SECURITY_IMPACTING_SETTINGS_KEYS`,
+  រាល់ key `oidc*` និងស្ថានភាព session របស់ dashboard — គឺសម្រាប់ **operator តែប៉ុណ្ណោះ** នៅលើ
+  `PATCH /api/settings`៖ API key ដែលមាន scope `manage` ឬ access token `oma_`
+  ត្រូវបានបដិសេធដោយ `403` ទោះបីជាវាផ្ញើ `currentPassword` ត្រឹមត្រូវក៏ដោយ ហើយការ
+  បដិសេធនេះត្រូវបានកត់ត្រា audit ជា `settings.update_failed` ជាមួយ `reason: OPERATOR_REQUIRED`
+  (`requireOperatorCredential()` ក្នុង `src/lib/api/operatorCredential.ts`)។
+  ការកំណត់ធម្មតា (theme និងចំណូលចិត្តនៃការបង្ហាញ) នៅតែអាចកែសម្រួលបានដោយ key ដែលមាន scope `manage`
+  ឬ access token `admin`។ រាល់ mutation លើ `/api/settings` ផ្ទាល់ (និងលើ
+  `/api/settings/require-login`) ក៏ត្រូវការ scope `admin` របស់ access token ផងដែរ
+  (`ADMIN_MUTATION_EXACT_PATHS` ក្នុង `src/server/authz/accessScopes.ts` ដែលផ្គូផ្គង
+  path ជាក់លាក់)។ `GET` នៅតែប្រើ `read` ហើយ sub-route `/api/settings/*` ផ្សេងទៀត (proxies,
+  combo defaults, model aliases, compression, purges…) បន្តប្រើ
+  scope `write` ដែលសន្និដ្ឋានតាម method។
+- `POST /api/settings/import-json` រំលងការផ្ទៀងផ្ទាត់អត្តសញ្ញាណឡើងវិញនោះ ដូច្នេះវាលុបរាល់ key ក្នុង
+  `IMPORT_STRIPPED_SETTINGS_KEYS` (ឯកសារដដែល) មុនពេលសរសេរ៖ ពាក្យសម្ងាត់ និង
+  `currentPassword`, រាល់ធាតុក្នុង `SECURITY_IMPACTING_SETTINGS_KEYS` និង
+  ស្ថានភាព session របស់ dashboard (`sessionsValidAfter`, `revokedDashboardSessions`)។
+  ដូច្នេះ ការនាំចូល backup ចាស់មិនអាចធ្វើឱ្យ session ដែលការផ្លាស់ប្ដូរពាក្យសម្ងាត់
+  ឬការចាកចេញបានបញ្ចប់រួចហើយ ដំណើរការឡើងវិញបានទេ។
 
 ## ថ្នាក់ Route
 
-`src/server/authz/types.ts` កំណត់ថ្នាក់ចំនួនបី។ Route ណាមួយដែលមិនអាចចាត់ថ្នាក់បានយ៉ាងច្បាស់លាស់ នឹងត្រូវចាត់ទុកជា `MANAGEMENT` តាមលំនាំដើម។
+`src/server/authz/types.ts` កំណត់ថ្នាក់ចំនួនបី; route ណាមួយដែលមិនអាចចាត់ថ្នាក់បានយ៉ាងច្បាស់លាស់ នឹងត្រូវកំណត់ជា `MANAGEMENT` តាមលំនាំដើម។
 
-| ថ្នាក់       | ការពិពណ៌នា                                                                                                                                                   | តម្រូវឱ្យផ្ទៀងផ្ទាត់អត្តសញ្ញាណ                                               |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| `PUBLIC`     | Route ដែលមានសុវត្ថិភាពយ៉ាងច្បាស់លាស់ — ការចូល ការចាកចេញ ស្ថានភាព ការចាប់ផ្ដើម សុខភាពប្រព័ន្ធ និងការរៀបចំដំបូងសម្រាប់អ្នកប្រើថ្មី។                            | មិនត្រូវការ                                                                  |
-| `CLIENT_API` | Endpoint សម្រាប់បម្រើម៉ូដែល — `/api/v1/*`, `/api/v1beta/*` រួមទាំងឈ្មោះជំនួស `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`។ | Bearer key នៅពេល feature flag `REQUIRE_API_KEY` ដែលមានប្រសិទ្ធភាពត្រូវបានបើក |
-| `MANAGEMENT` | ទំព័រ Dashboard ការកំណត់ អ្នកផ្តល់សេវា សោ Endpoint សម្រាប់អ្នកគ្រប់គ្រង និងការធ្វើរោគវិនិច្ឆ័យ។                                                              | Session របស់ Dashboard ឬ Bearer ដែលមាន scope `manage`                        |
+| ថ្នាក់       | សេចក្ដីពិពណ៌នា                                                                                                                                                 | តម្រូវឱ្យផ្ទៀងផ្ទាត់អត្តសញ្ញាណ                                               |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `PUBLIC`     | Route ដែលមានសុវត្ថិភាពយ៉ាងច្បាស់លាស់ — ការចូល ការចេញ ស្ថានភាព ការចាប់ផ្ដើម សុខភាព និងការរៀបចំដំបូងសម្រាប់ការប្រើប្រាស់។                                        | មិនតម្រូវ                                                                    |
+| `CLIENT_API` | Endpoint សម្រាប់បម្រើម៉ូដែល — `/api/v1/*`, `/api/v1beta/*` ព្រមទាំងឈ្មោះហៅក្រៅ `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`។ | Bearer key នៅពេល feature flag `REQUIRE_API_KEY` ដែលមានប្រសិទ្ធភាពត្រូវបានបើក |
+| `MANAGEMENT` | ទំព័រ dashboard ការកំណត់ អ្នកផ្ដល់សេវា key និង endpoint សម្រាប់អ្នកគ្រប់គ្រង និងការវិនិច្ឆ័យ។                                                                  | Session របស់ dashboard ឬ Bearer ដែលមាន scope `manage`                        |
 
-សកម្មភាព `MANAGEMENT` មួយចំនួនគឺ **សម្រាប់តែប្រតិបត្តិករប៉ុណ្ណោះ**៖ សោដែលមាន `manage` គឺមិនគ្រប់គ្រាន់ទេ។ ការនាំចេញព័ត៌មានសម្ងាត់ដែលបានរក្សាទុក
-(`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), ការចេញ sync token (`POST /api/sync/tokens`) និងការបង្កើត
-CLI access token ប្រភេទ `admin` (`POST /api/cli/tokens`) តម្រូវឱ្យមាន Session របស់ Dashboard, subject របស់ CLI មូលដ្ឋាន
-ឬបានបិទការចូល។ API key គ្រប់ scope និង `oma_` access token នឹងទទួលបាន `403`។ ការត្រួតពិនិត្យនេះ
+សកម្មភាព `MANAGEMENT` មួយចំនួនគឺសម្រាប់ **ប្រតិបត្តិករតែប៉ុណ្ណោះ**៖ key ដែលមាន `manage` មិនគ្រប់គ្រាន់ទេ។ ការនាំចេញ
+ព័ត៌មានសម្ងាត់ដែលបានរក្សាទុក (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
+`GET /api/db-backups/exportAll`), ការស្ដារការបម្រុងទុកពីលើទិន្នន័យកំពុងប្រើប្រាស់
+(`POST /api/db-backups/import` រួមទាំង `dryRun=true`, `POST /api/db-backups` ស្ដារតាម id,
+`POST /api/settings/import-json`), ការបំផ្លាញចំណុចស្ដារ (`DELETE /api/db-backups` សម្រាប់សម្អាត,
+និង `PATCH /api/db-backups` ព្រោះគោលការណ៍រក្សាទុកដែលវារក្សាទុក ជំរុញការលុបស្វ័យប្រវត្តិបន្ទាប់ពី
+ការបម្រុងទុកនីមួយៗ), ការចេញ sync token (`POST /api/sync/tokens`) និងការបង្កើត
+CLI access token `admin` (`POST /api/cli/tokens`) តម្រូវឱ្យមាន session របស់ dashboard, subject របស់ CLI មូលដ្ឋាន
+ឬការបិទមុខងារចូលប្រើ; API key គ្រប់ scope និង access token `oma_` នឹងទទួលបាន `403`។ ការត្រួតពិនិត្យនេះ
 ស្ថិតនៅក្នុង `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`)។
-
-A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
-credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), restoring a backup over the live data
-(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
-`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
-`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
-subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
-lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
+`requireOperatorCredential()`)។ ការផ្លាស់ប្ដូរការកំណត់សម្រាប់ការចូលប្រើក៏សម្រាប់ប្រតិបត្តិករតែប៉ុណ្ណោះដែរ៖
+`POST /api/settings/require-login` (កំណត់ពាក្យសម្ងាត់សម្រាប់ការគ្រប់គ្រង / បិទបើក `requireLogin`) ទទួលយក
+តែព័ត៌មានសម្គាល់អត្តសញ្ញាណទាំងនោះប៉ុណ្ណោះ នៅពេលមានពាក្យសម្ងាត់រួចហើយ — ចន្លោះពេលរៀបចំប្រើប្រាស់លើកដំបូង (មិនទាន់មានពាក្យសម្ងាត់)
+នៅតែមិនផ្លាស់ប្ដូរ — ហើយ session របស់ dashboard ត្រូវតែផ្ញើ `currentPassword` ដើម្បីជំនួសពាក្យសម្ងាត់
+(`403` នៅពេលវាបាត់ ឬមិនត្រឹមត្រូវ ហើយត្រូវបានកត់ត្រាសវនកម្មជា `settings.update_failed`)។ CLI មូលដ្ឋាន និង
+instance ដែលបានបិទមុខងារចូលប្រើ នៅតែរក្សាផ្លូវសង្គ្រោះ ហើយអាចកំណត់ពាក្យសម្ងាត់ដោយមិនត្រូវការវា ព្រោះទាំងពីរ
+ត្រូវបានចងភ្ជាប់ទៅនឹង host ដែលកាន់កាប់ថតទិន្នន័យ។
 
 ## Pipeline
 

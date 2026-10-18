@@ -17,7 +17,7 @@ OmniRoute heeft een route-bewuste autorisatiepipeline die elke API-aanvraag afsc
 
 ### 1. API-sleutel (Bearer)
 
-Wordt gebruikt voor de OpenAI/Anthropic/Gemini-compatibele client-API's en enkele beheerroutes wanneer de sleutel het bereik `manage` heeft.
+Wordt gebruikt voor de OpenAI-/Anthropic-/Gemini-compatibele client-API's en enkele beheerroutes wanneer de sleutel het bereik `manage` heeft.
 
 ```
 Authorization: Bearer <api-key>
@@ -25,97 +25,113 @@ Authorization: Bearer <api-key>
 
 Gevalideerd door `isValidApiKey()` / `extractApiKey()` in `src/sse/services/auth.ts` en opnieuw geëxporteerd via `src/shared/utils/apiAuth.ts`. De validator accepteert ook de omgevingsvariabelen `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` als permanente passthrough-sleutels (issue #1350).
 
-### 2. Dashboardsessie (auth_token-cookie)
+### 2. Dashboardsessie (`auth_token`-cookie)
 
 Voor dashboardpagina's en beheerdersbewerkingen.
 
 ```
-Cookie: auth_token=<JWT ondertekend met JWT_SECRET>
+Cookie: auth_token=<JWT signed with JWT_SECRET>
 ```
 
 Een cookie is alleen een sessie wanneer de JWT is geverifieerd **en** `authenticated: true` bevat
 (`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`). Elke
-gebruiker van de cookie (dashboardroutebeveiliging (`isDashboardSessionAuthenticated()`), vernieuwing van de autorisatiepipeline, WebSocket-handshake, live
+gebruiker van de cookie (dashboardroutebeveiliging (`isDashboardSessionAuthenticated()`), vernieuwing van de authz-pijplijn, WebSocket-handshake, live
 server, `/api/settings/require-login`, `/api/auth/status`) gebruikt die helper.
 Er bestaan andere JWT's die met `JWT_SECRET` zijn ondertekend — de Cursor CLI-passthrough maakt
-tokens met `iss "omniroute" / aud "cursor-cli"` aan voor sleutelhouders — en deze zijn nooit sessies
+tokens met `iss "omniroute" / aud "cursor-cli"` aan voor sleutelhouders — en deze gelden nooit als sessies
 (#13298).
 
-Geverifieerd door `isDashboardSessionAuthenticated()` in `src/shared/utils/apiAuth.ts`. De pipeline vernieuwt de JWT automatisch wanneer er minder dan 7 dagen resteren van de geldigheidsduur van 30 dagen.
+Geverifieerd door `isDashboardSessionAuthenticated()` in `src/shared/utils/apiAuth.ts`. De pijplijn vernieuwt de JWT automatisch wanneer deze minder dan 7 dagen van zijn levensduur van 30 dagen over heeft.
 
-Een sessie kan ook eindigen voordat de 30 dagen verstreken zijn, omdat elke uitgever `mintDashboardSessionToken` gebruikt (met een uitgiftetijd `iat` en een id `jti`) en de verifier twee instellingen controleert: `sessionsValidAfter`, die bij een wachtwoordwijziging wordt ingesteld zodat elke eerder uitgegeven sessie niet langer wordt geverifieerd (de browser waarin het wachtwoord is gewijzigd, krijgt een nieuwe cookie), en `revokedDashboardSessions`, waaraan `POST /api/auth/logout` de `jti` van de afgemelde sessie toevoegt. Sessies die door een oudere release zijn aangemaakt, bevatten geen van beide claims en blijven geldig tot de eerste wachtwoordwijziging. Als de instellingen niet kunnen worden gelezen, wordt de sessie niet vertrouwd.
+Een sessie kan ook eindigen voordat de 30 dagen zijn verstreken, omdat elk proces dat tokens aanmaakt via `mintDashboardSessionToken` verloopt (met een uitgiftetijd `iat` en een id `jti`) en de verifier twee instellingen controleert: `sessionsValidAfter`, die bij een wachtwoordwijziging wordt ingesteld zodat elke eerder uitgegeven sessie niet langer kan worden geverifieerd (de browser waarin het wachtwoord is gewijzigd, krijgt een nieuwe cookie), en `revokedDashboardSessions`, waaraan `POST /api/auth/logout` de `jti` van de afgemelde sessie toevoegt. Sessies die door een oudere release zijn aangemaakt, bevatten geen van beide claims en blijven geldig tot de eerste wachtwoordwijziging. Als de instellingen niet kunnen worden gelezen, wordt de sessie niet vertrouwd.
 
-Sommige beheerroutes accepteren **beide** modi: cookie OF `Bearer <key>` wanneer de API-sleutel het bereik `manage` (of `admin`) heeft. Dit maakt de in v3.8 toegevoegde workflow voor „configuratie via API-aanroepen” mogelijk.
+Sommige beheerroutes accepteren **beide** modi: een cookie OF `Bearer <key>` wanneer de API-sleutel het bereik `manage` (of `admin`) heeft. Dit maakt de in v3.8 toegevoegde workflow voor "configuratie via API-aanroepen" mogelijk.
 
-#### Optionele OIDC-aanmeldingsbeveiliging (#6973)
+#### Optionele OIDC-inlogpoort (#6973)
 
-De beheerdersaanmelding voor het dashboard ondersteunt ook een **optionele** OIDC-flow (OpenID Connect)
-naast de standaardaanmelding met een wachtwoord — aanmelden met een wachtwoord wordt nooit verwijderd, maar alleen
+De beheerderslogin van het dashboard ondersteunt naast de standaardlogin met wachtwoord ook een **optionele** OIDC-flow (OpenID Connect) — inloggen met een wachtwoord wordt nooit verwijderd, maar alleen
 aangevuld:
 
 - Uitgeschakeld tenzij `settings.oidcEnabled === true` **en** `oidcIssuer` /
-  `oidcClientId` / `oidcClientSecret` allemaal zijn geconfigureerd (Instellingen → Auth).
-  Anders retourneert `GET /api/auth/oidc/login` een `400`.
-- `GET /api/auth/oidc/login` haalt het `authorization_endpoint` op via
+  `oidcClientId` / `oidcClientSecret` allemaal zijn geconfigureerd (Instellingen → Authenticatie).
+  Anders retourneert `GET /api/auth/oidc/login` de status `400`.
+- `GET /api/auth/oidc/login` detecteert het `authorization_endpoint` via de
   `/.well-known/openid-configuration` van de uitgever (met
-  `<issuer>/authorize` als fallback), bouwt de omleidings-URI op basis van de inkomende aanvraag
-  (met ondersteuning voor `x-forwarded-proto`) en leidt om naar de IdP met een willekeurige `state`
-  die wordt opgeslagen in een `httpOnly` `oidc_state`-cookie.
+  `<issuer>/authorize` als terugvaloptie), stelt de omleidings-URI samen op basis van het inkomende verzoek
+  (met ondersteuning voor `x-forwarded-proto`) en leidt met een willekeurige `state` om naar de IdP,
+  waarbij deze wordt opgeslagen in een `httpOnly` `oidc_state`-cookie.
 - `GET /api/auth/oidc/callback` valideert `state`, wisselt de autorisatiecode
   in en verifieert de handtekening van het ID-token via de JWKS van de uitgever
   (`createRemoteJWKSet` van `jose`, gecachet per JWKS-URI), met controles voor `issuer`/`audience`.
-  De acceptatielijst `oidcAllowedSubjects` is vereist: deze wordt vergeleken met de
+  De acceptatielijst `oidcAllowedSubjects` is verplicht: deze vergelijkt de
   `sub`-claim of de `email`-claim van het token — de e-mailclaim wordt alleen geaccepteerd
   wanneer `email_verified === true`, zodat een niet-geverifieerd e-mailadres bij de IdP nooit
-  door de beveiliging komt — en zonder vermeldingen weigert de callback elke aanmelding
+  door de controle kan komen — en zonder vermeldingen weigert de callback elke aanmelding
   (`not_configured`).
-- Bij succes wordt **exact dezelfde** `auth_token`-JWT met een geldigheidsduur van 30 dagen aangemaakt als bij
-  aanmelden met een wachtwoord (`src/app/api/auth/login/route.ts`), zodat de rest van de
-  dashboardsessiepipeline (automatische vernieuwing, cookiekenmerken) ongewijzigd blijft —
-  OIDC vervangt alleen de manier waarop de cookie wordt aangemaakt, niet welke rechten deze verleent.
+- Bij succes wordt **exact hetzelfde** `auth_token`-JWT met een geldigheidsduur van 30 dagen uitgegeven als bij
+  aanmelding met een wachtwoord (`src/app/api/auth/login/route.ts`), zodat de rest van de
+  sessiepijplijn van het dashboard (automatisch vernieuwen, cookie-instellingen) ongewijzigd blijft —
+  OIDC vervangt alleen de manier waarop de cookie wordt uitgegeven, niet welke rechten deze verleent.
 - Elke `oidc*`-instelling (`oidcEnabled`, `oidcDisablePasswordLogin`,
   `oidcIssuer`, `oidcClientId`, `oidcClientSecret`, `oidcAllowedSubjects`,
   `oidcRedirectPath`, `oidcScopes`) staat in `SECURITY_IMPACTING_SETTINGS_KEYS`
   (`src/shared/constants/securityImpactingSettings.ts`): `PATCH /api/settings`
-  antwoordt met `400 PASSWORD_REQUIRED`, tenzij de body het beheerwachtwoord
+  antwoordt met `400 PASSWORD_REQUIRED`, tenzij de aanvraagbody het beheerwachtwoord
   als `currentPassword` bevat (`401 PASSWORD_MISMATCH` wanneer dit onjuist is).
-  `oidcDisablePasswordLogin` weigert _aanmelden_ met een wachtwoord (`POST /api/auth/login`),
+  `oidcDisablePasswordLogin` weigert _aanmelding_ met een wachtwoord (`POST /api/auth/login`),
   maar behoudt de opgeslagen wachtwoordhash, en herauthenticatie controleert
   `currentPassword` nog steeds aan de hand daarvan.
-- `POST /api/settings/import-json` slaat die herauthenticatie over en verwijdert daarom elke sleutel in
-  `IMPORT_STRIPPED_SETTINGS_KEYS` (hetzelfde bestand) voordat er wordt geschreven: het wachtwoord en
+- `corsOrigins` en `bruteForceProtection` staan eveneens in `SECURITY_IMPACTING_SETTINGS_KEYS`:
+  het versoepelen van een van beide verzwakt de aanmeldbeveiliging, zodat hiervoor dezelfde
+  herauthenticatie via `currentPassword` nodig is (het tabblad Beveiliging vraagt hierom) en de JSON-import
+  deze waarden weglaat.
+- Elke sleutel voor het beveiligingsbeleid — de vermeldingen in `SECURITY_IMPACTING_SETTINGS_KEYS`,
+  elke `oidc*`-sleutel en de dashboardsessiestatus — is **uitsluitend voor operators** bij
+  `PATCH /api/settings`: een API-sleutel met het bereik `manage` of een `oma_`-toegangstoken wordt
+  geweigerd met `403`, zelfs wanneer deze het juiste `currentPassword` verstuurt, en de
+  weigering wordt in het auditlog vastgelegd als `settings.update_failed` met `reason: OPERATOR_REQUIRED`
+  (`requireOperatorCredential()` in `src/lib/api/operatorCredential.ts`).
+  Gewone instellingen (thema, weergavevoorkeuren) blijven schrijfbaar voor een `manage`-sleutel
+  of een `admin`-toegangstoken. Elke wijziging van `/api/settings` zelf (en van
+  `/api/settings/require-login`) vereist ook het toegangstokenbereik `admin`
+  (`ADMIN_MUTATION_EXACT_PATHS` in `src/server/authz/accessScopes.ts`, overeenkomst
+  met het exacte pad); `GET` blijft `read`, en de andere `/api/settings/*`-subroutes (proxy's,
+  combostandaarden, modelaliassen, compressie, opschoonacties…) behouden het op basis van de methode afgeleide
+  `write`-bereik.
+- `POST /api/settings/import-json` slaat die herauthenticatie over en verwijdert daarom vóór het
+  schrijven elke sleutel in `IMPORT_STRIPPED_SETTINGS_KEYS` (hetzelfde bestand): het wachtwoord en
   `currentPassword`, elke vermelding in `SECURITY_IMPACTING_SETTINGS_KEYS` en de
   dashboardsessiestatus (`sessionsValidAfter`, `revokedDashboardSessions`).
-  Het importeren van een oudere back-up kan daarom geen sessie herstellen die al door een
-  wachtwoordwijziging of afmelding is beëindigd.
+  Het importeren van een oudere back-up kan daardoor geen sessie herstellen die al door een wachtwoordwijziging
+  of afmelding was beëindigd.
 
 ## Routeklassen
 
 `src/server/authz/types.ts` definieert drie klassen; elke route die niet deterministisch kan worden geclassificeerd, valt terug op `MANAGEMENT`.
 
-| Klasse       | Beschrijving                                                                                                                                                 | Authenticatie vereist                                                              |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| `PUBLIC`     | Expliciet veilige routes — inloggen, uitloggen, status, initialisatie, statuscontrole, onboarding-bootstrap.                                                 | Geen                                                                               |
-| `CLIENT_API` | Eindpunten voor modelaanroepen — `/api/v1/*`, `/api/v1beta/*`, plus aliassen `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`. | Bearer-sleutel wanneer de effectieve featureflag `REQUIRE_API_KEY` is ingeschakeld |
-| `MANAGEMENT` | Dashboardpagina's, instellingen, providers, sleutels, beheer- en diagnostische eindpunten.                                                                   | Dashboardsessie OF Bearer met `manage`-scope                                       |
+| Klasse       | Beschrijving                                                                                                                                                | Authenticatie vereist                                                              |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `PUBLIC`     | Expliciet veilige routes — inloggen, uitloggen, status, initialisatie, statuscontrole, onboarding-bootstrap.                                                | Geen                                                                               |
+| `CLIENT_API` | Endpoints voor modelaanroepen — `/api/v1/*`, `/api/v1beta/*`, plus aliassen `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`. | Bearer-sleutel wanneer de effectieve featureflag `REQUIRE_API_KEY` is ingeschakeld |
+| `MANAGEMENT` | Dashboardpagina's, instellingen, providers, sleutels en endpoints voor beheer en diagnostiek.                                                               | Dashboardsessie OF Bearer met het bereik `manage`                                  |
 
 Enkele `MANAGEMENT`-acties zijn **uitsluitend voor operators**: een `manage`-sleutel is niet voldoende. Het exporteren van opgeslagen
-referenties (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), het uitgeven van een synchronisatietoken (`POST /api/sync/tokens`) en het aanmaken van een
-`admin`-toegangstoken voor de CLI (`POST /api/cli/tokens`) vereisen een dashboardsessie, het lokale CLI-
-subject of uitgeschakelde aanmelding; API-sleutels met om het even welke scope en `oma_`-toegangstokens krijgen `403`. De controle
+inloggegevens (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
+`GET /api/db-backups/exportAll`), het herstellen van een back-up over de livegegevens
+(`POST /api/db-backups/import`, inclusief `dryRun=true`, `POST /api/db-backups` voor herstel op id,
+`POST /api/settings/import-json`), het vernietigen van herstelpunten (`DELETE /api/db-backups` voor opschoning,
+en `PATCH /api/db-backups` omdat het opgeslagen retentiebeleid de automatische opschoning na
+elke back-up aanstuurt), het uitgeven van een synchronisatietoken (`POST /api/sync/tokens`) en het aanmaken van een
+`admin`-toegangstoken voor de CLI (`POST /api/cli/tokens`) vereisen een dashboardsessie, het lokale CLI-subject
+of uitgeschakelde aanmelding; API-sleutels met eender welk bereik en `oma_`-toegangstokens krijgen `403`. De controle
 bevindt zich in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
-
-A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
-credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), restoring a backup over the live data
-(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
-`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
-`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
-subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
-lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
+`requireOperatorCredential()`). Het wijzigen van de aanmeldingsinstellingen is eveneens uitsluitend voor operators:
+`POST /api/settings/require-login` (het beheerwachtwoord instellen / `requireLogin` in- of uitschakelen) accepteert
+alleen die inloggegevens zodra er een wachtwoord bestaat — het bootstrapvenster bij de eerste uitvoering (wanneer er nog geen wachtwoord is)
+blijft ongewijzigd — en een dashboardsessie moet `currentPassword` meesturen om het wachtwoord te vervangen
+(`403` wanneer dit ontbreekt of onjuist is, vastgelegd in het auditlogboek als `settings.update_failed`). De lokale CLI en een
+instantie waarvoor aanmelding is uitgeschakeld, behouden het herstelpad en mogen zonder dit veld een wachtwoord instellen, omdat beide
+gebonden zijn aan de host die eigenaar is van de gegevensmap.
 
 ## Pipeline
 

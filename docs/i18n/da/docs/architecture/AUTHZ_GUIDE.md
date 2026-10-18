@@ -17,105 +17,122 @@ OmniRoute har en rutebevidst autorisationspipeline, der beskytter hver API-anmod
 
 ### 1. API-nøgle (Bearer)
 
-Bruges til de OpenAI-/Anthropic-/Gemini-kompatible klient-API'er og enkelte administrationsruter, når nøglen har `manage`-omfanget.
+Bruges til de OpenAI-/Anthropic-/Gemini-kompatible klient-API'er og enkelte administrationsruter, når nøglen har `manage`-rettigheden.
 
 ```
 Authorization: Bearer <api-key>
 ```
 
-Valideres af `isValidApiKey()` / `extractApiKey()` i `src/sse/services/auth.ts` og geneksporteres via `src/shared/utils/apiAuth.ts`. Validatoren accepterer også miljøvariablerne `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` som vedvarende passthrough-nøgler (problem #1350).
+Valideres af `isValidApiKey()` / `extractApiKey()` i `src/sse/services/auth.ts` og reeksporteres via `src/shared/utils/apiAuth.ts`. Validatoren accepterer også miljøvariablerne `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` som permanente passthrough-nøgler (problem #1350).
 
 ### 2. Dashboardsession (auth_token-cookie)
 
 Til dashboardsider og administratorhandlinger.
 
 ```
-Cookie: auth_token=<JWT signeret med JWT_SECRET>
+Cookie: auth_token=<JWT signed with JWT_SECRET>
 ```
 
-En cookie er kun en session, når JWT'en verificeres **og** indeholder `authenticated: true`
+En cookie er kun en session, når JWT'en kan verificeres **og** indeholder `authenticated: true`
 (`src/shared/utils/dashboardSessionToken.ts` → `verifyDashboardSessionToken`). Alle
-forbrugere af cookien (dashboardets rutebeskyttelse (`isDashboardSessionAuthenticated()`), opdatering i authz-pipelinen, WebSocket-håndtryk, live-
-server, `/api/settings/require-login`, `/api/auth/status`) går gennem denne hjælpefunktion.
-Der findes andre JWT'er signeret med `JWT_SECRET` — Cursor CLI-passthrough udsteder
+forbrugere af cookien (dashboardets rutebeskyttelse (`isDashboardSessionAuthenticated()`), opdatering af authz-pipelinen, WebSocket-handshake, live-
+server, `/api/settings/require-login`, `/api/auth/status`) bruger denne hjælpefunktion.
+Der findes andre JWT'er, som er signeret med `JWT_SECRET` — Cursor CLI-passthrough udsteder
 tokens med `iss "omniroute" / aud "cursor-cli"` til nøgleindehavere — og de er aldrig sessioner
 (#13298).
 
-Verificeres af `isDashboardSessionAuthenticated()` i `src/shared/utils/apiAuth.ts`. Pipelinen opdaterer automatisk JWT'en, når der er færre end 7 dage tilbage af dens levetid på 30 dage.
+Verificeres af `isDashboardSessionAuthenticated()` i `src/shared/utils/apiAuth.ts`. Pipelinen opdaterer automatisk JWT'en, når der er mindre end 7 dage tilbage af dens levetid på 30 dage.
 
-En session kan også ophøre, før dens 30 dage er gået, fordi alle udstedere går gennem `mintDashboardSessionToken` (et udstedelsestidspunkt `iat` og et id `jti`), og verifikatoren kontrollerer to indstillinger: `sessionsValidAfter`, som angives ved en adgangskodeændring, så alle sessioner, der er udstedt før den, ikke længere kan verificeres (browseren, der ændrede adgangskoden, får en ny cookie), og `revokedDashboardSessions`, som `POST /api/auth/logout` føjer den loggede sessions `jti` til. Sessioner udstedt af en ældre version indeholder ingen af disse claims og forbliver gyldige indtil den første adgangskodeændring. Hvis indstillingerne ikke kan læses, anses sessionen ikke for pålidelig.
+En session kan også ophøre, før dens 30 dage er gået, fordi alle udstedere bruger `mintDashboardSessionToken` (et udstedelsestidspunkt `iat` og et id `jti`), og verifikatoren kontrollerer to indstillinger: `sessionsValidAfter`, som angives ved en ændring af adgangskoden, så alle sessioner udstedt før dette tidspunkt ikke længere kan verificeres (browseren, der ændrede adgangskoden, får en ny cookie), og `revokedDashboardSessions`, hvortil `POST /api/auth/logout` føjer den afmeldte sessions `jti`. Sessioner, der er udstedt af en ældre version, indeholder ingen af disse claims og forbliver gyldige indtil den første ændring af adgangskoden. Hvis indstillingerne ikke kan læses, betragtes sessionen ikke som pålidelig.
 
-Nogle administrationsruter accepterer **begge** tilstande: cookie ELLER `Bearer <key>`, når API-nøglen har `manage`-omfanget (eller `admin`-omfanget). Det er dette, der muliggør arbejdsgangen "kan konfigureres via API-kald", som blev tilføjet i v3.8.
+Nogle administrationsruter accepterer **enten** den ene eller den anden tilstand: cookie ELLER `Bearer <key>`, når API-nøglen har `manage`- (eller `admin`-)rettigheden. Det er dette, der muliggør arbejdsgangen "kan konfigureres via API-kald", som blev tilføjet i v3.8.
 
-#### Valgfri OIDC-loginadgangskontrol (#6973)
+#### Valgfri OIDC-loginbegrænsning (#6973)
 
 Dashboardets administratorlogin understøtter også et **tilvalgt** OIDC-flow (OpenID Connect)
 sideløbende med standardlogin med adgangskode — login med adgangskode fjernes aldrig, men
-suppleres blot:
+suppleres kun:
 
 - Deaktiveret, medmindre `settings.oidcEnabled === true` **og** `oidcIssuer` /
   `oidcClientId` / `oidcClientSecret` alle er konfigureret (Indstillinger → Godkendelse).
-  `GET /api/auth/oidc/login` returnerer ellers `400`.
-- `GET /api/auth/oidc/login` finder `authorization_endpoint` fra
-  udstederens `/.well-known/openid-configuration` (falder tilbage til
-  `<issuer>/authorize`), opbygger omdirigerings-URI'en ud fra den indgående anmodning
+  Ellers returnerer `GET /api/auth/oidc/login` `400`.
+- `GET /api/auth/oidc/login` finder `authorization_endpoint` fra udstederens
+  `/.well-known/openid-configuration` (med fallback til
+  `<issuer>/authorize`), bygger omdirigerings-URI'en ud fra den indgående anmodning
   (med understøttelse af `x-forwarded-proto`) og omdirigerer til IdP'en med en tilfældig `state`,
-  der er gemt i en `httpOnly`-`oidc_state`-cookie.
-- `GET /api/auth/oidc/callback` validerer `state`, udveksler godkendelses-
-  koden og verificerer ID-tokenets signatur via udstederens JWKS
-  (`jose`'s `createRemoteJWKSet`, cachelagret pr. JWKS-URI) med kontrol af `issuer`/`audience`.
-  Tilladelseslisten `oidcAllowedSubjects` er påkrævet: den matcher tokenets
-  `sub`-claim eller dets `email`-claim — e-mailclaimet accepteres kun,
+  der gemmes i en `httpOnly`-`oidc_state`-cookie.
+- `GET /api/auth/oidc/callback` validerer `state`, udveksler autorisationskoden
+  og verificerer ID-tokenets signatur via udstederens JWKS
+  (`jose`'s `createRemoteJWKSet`, cachelagret pr. JWKS-URI) med kontrol af
+  `issuer`/`audience`. Tilladelseslisten `oidcAllowedSubjects` er påkrævet: den matcher
+  tokenets `sub`-claim eller dets `email`-claim — e-mailclaimet accepteres kun,
   når `email_verified === true`, så en ubekræftet e-mail hos IdP'en aldrig kan
-  passere adgangskontrollen — og uden poster afviser callbacket ethvert login
+  passere kontrollen — og uden nogen poster afviser callbacket alle loginforsøg
   (`not_configured`).
-- Ved gennemført login udsteder den **præcis den samme** 30-dages `auth_token`-JWT, som login med
-  adgangskode udsteder (`src/app/api/auth/login/route.ts`), så resten af
-  dashboardsessionens pipeline (automatisk opdatering, cookieflag) er uændret —
-  OIDC erstatter kun, hvordan cookien udstedes, ikke hvad den giver adgang til.
+- Ved succes udsteder den **præcis det samme** `auth_token`-JWT med 30 dages gyldighed, som
+  adgangskodelogin udsteder (`src/app/api/auth/login/route.ts`), så resten af
+  dashboardets sessionspipeline (automatisk opdatering, cookieflag) er uændret —
+  OIDC erstatter kun den måde, cookien udstedes på, ikke de rettigheder, den giver.
 - Alle `oidc*`-indstillinger (`oidcEnabled`, `oidcDisablePasswordLogin`,
   `oidcIssuer`, `oidcClientId`, `oidcClientSecret`, `oidcAllowedSubjects`,
   `oidcRedirectPath`, `oidcScopes`) findes i `SECURITY_IMPACTING_SETTINGS_KEYS`
   (`src/shared/constants/securityImpactingSettings.ts`): `PATCH /api/settings`
-  svarer med `400 PASSWORD_REQUIRED`, medmindre bodyen indeholder administrations-
-  adgangskoden som `currentPassword` (`401 PASSWORD_MISMATCH`, når den er forkert).
+  svarer med `400 PASSWORD_REQUIRED`, medmindre bodyen indeholder administrationsadgangskoden
+  som `currentPassword` (`401 PASSWORD_MISMATCH`, hvis den er forkert).
   `oidcDisablePasswordLogin` afviser _login_ med adgangskode (`POST /api/auth/login`),
   men beholder den gemte adgangskodehash, og gengodkendelse kontrollerer stadig
   `currentPassword` mod den.
-- `POST /api/settings/import-json` springer denne gengodkendelse over, så den fjerner alle nøgler i
+- `corsOrigins` og `bruteForceProtection` findes også i `SECURITY_IMPACTING_SETTINGS_KEYS`:
+  En lempelse af en af dem svækker loginbeskyttelsen, så de kræver den samme
+  gengodkendelse med `currentPassword` (fanen Sikkerhed beder om den), og JSON-importen
+  udelader dem.
+- Alle sikkerhedspolitiknøgler — posterne i `SECURITY_IMPACTING_SETTINGS_KEYS`,
+  alle `oidc*`-nøgler og dashboardets sessionstilstand — er **kun for operatører** ved
+  `PATCH /api/settings`: En API-nøgle med `manage`-scope eller et `oma_`-adgangstoken
+  afvises med `403`, selv når den sender den korrekte `currentPassword`, og
+  afvisningen logges i revisionsloggen som `settings.update_failed` med `reason: OPERATOR_REQUIRED`
+  (`requireOperatorCredential()` i `src/lib/api/operatorCredential.ts`).
+  Almindelige indstillinger (tema, visningspræferencer) kan fortsat ændres med en `manage`-nøgle
+  eller et `admin`-adgangstoken. Enhver ændring af selve `/api/settings` (og af
+  `/api/settings/require-login`) kræver også adgangstokenscopet `admin`
+  (`ADMIN_MUTATION_EXACT_PATHS` i `src/server/authz/accessScopes.ts`, eksakt
+  match af sti); `GET` forbliver `read`, og de øvrige `/api/settings/*`-underruter (proxyer,
+  kombinationsstandarder, modelaliasser, komprimering, sletninger …) beholder det metodeafledte
+  `write`-scope.
+- `POST /api/settings/import-json` springer denne gengodkendelse over og udelader derfor alle nøgler i
   `IMPORT_STRIPPED_SETTINGS_KEYS` (samme fil), før der skrives: adgangskoden og
-  `currentPassword`, alle poster i `SECURITY_IMPACTING_SETTINGS_KEYS` og
-  dashboardsessionens tilstand (`sessionsValidAfter`, `revokedDashboardSessions`).
+  `currentPassword`, alle poster i `SECURITY_IMPACTING_SETTINGS_KEYS` samt
+  dashboardets sessionstilstand (`sessionsValidAfter`, `revokedDashboardSessions`).
   Import af en ældre sikkerhedskopi kan derfor ikke genaktivere en session, som en ændring af
-  adgangskoden eller et log ud allerede har afsluttet.
+  adgangskoden eller en udlogning allerede har afsluttet.
 
 ## Ruteklasser
 
-`src/server/authz/types.ts` definerer tre klasser; enhver rute, der ikke kan klassificeres entydigt, falder tilbage til `MANAGEMENT`.
+`src/server/authz/types.ts` definerer tre klasser; enhver rute, der ikke kan klassificeres deterministisk, falder tilbage til `MANAGEMENT`.
 
 | Klasse       | Beskrivelse                                                                                                                                                   | Godkendelse påkrævet                                                         |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `PUBLIC`     | Eksplicit sikre ruter — login, logout, status, initialisering, sundhedstjek og onboarding-bootstrap.                                                          | Ingen                                                                        |
 | `CLIENT_API` | Endepunkter til modelbetjening — `/api/v1/*`, `/api/v1beta/*` samt aliasserne `/v1/*`, `/v1beta/*`, `/chat/completions`, `/responses`, `/models`, `/codex/*`. | Bearer-nøgle, når det effektive `REQUIRE_API_KEY`-funktionsflag er aktiveret |
-| `MANAGEMENT` | Dashboardsider, indstillinger, udbydere, nøgler samt administrator- og diagnosticeringsendepunkter.                                                           | Dashboardsession ELLER Bearer med `manage`-omfang                            |
+| `MANAGEMENT` | Dashboardsider, indstillinger, udbydere, nøgler samt administrations- og diagnosticeringsendepunkter.                                                         | Dashboardsession ELLER Bearer med `manage`-scope                             |
 
-Nogle få `MANAGEMENT`-handlinger er **kun for operatører**: En `manage`-nøgle er ikke tilstrækkelig. Eksport af gemte
+Nogle få `MANAGEMENT`-handlinger er **forbeholdt operatører**: En `manage`-nøgle er ikke tilstrækkelig. Eksport af gemte
 legitimationsoplysninger (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), udstedelse af et synkroniseringstoken (`POST /api/sync/tokens`) og oprettelse af et
-`admin`-adgangstoken til CLI'en (`POST /api/cli/tokens`) kræver en dashboardsession, det lokale CLI-
-subjekt eller deaktiveret login; API-nøgler uanset omfang og `oma_`-adgangstokens får `403`. Kontrollen
+`GET /api/db-backups/exportAll`), gendannelse af en sikkerhedskopi oven på de aktive data
+(`POST /api/db-backups/import`, inklusive `dryRun=true`, `POST /api/db-backups`-gendannelse efter id,
+`POST /api/settings/import-json`), sletning af gendannelsespunkter (`DELETE /api/db-backups`-oprydning
+og `PATCH /api/db-backups`, fordi den gemte opbevaringspolitik styrer den automatiske beskæring efter
+hver sikkerhedskopiering), udstedelse af et synkroniseringstoken (`POST /api/sync/tokens`) og oprettelse af et
+`admin`-CLI-adgangstoken (`POST /api/cli/tokens`) kræver en dashboardsession, det lokale CLI-
+subjekt eller deaktiveret login; API-nøgler uanset scope og `oma_`-adgangstokens får `403`. Kontrollen
 findes i `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
-
-A few `MANAGEMENT` actions are **operator-only**: a `manage` key is not enough. Exporting stored
-credentials (`GET /api/settings/export-json`, `GET /api/db-backups/export`,
-`GET /api/db-backups/exportAll`), restoring a backup over the live data
-(`POST /api/db-backups/import` including `dryRun=true`, `POST /api/db-backups` restore by id,
-`POST /api/settings/import-json`), issuing a sync token (`POST /api/sync/tokens`) and minting an
-`admin` CLI access token (`POST /api/cli/tokens`) require a dashboard session, the local CLI
-subject, or login disabled; API keys of any scope and `oma_` access tokens get `403`. The check
-lives in `src/lib/api/operatorCredential.ts` (`resolveOperatorCredential()` /
-`requireOperatorCredential()`).
+`requireOperatorCredential()`). Ændring af loginindstillingerne er også forbeholdt operatører:
+`POST /api/settings/require-login` (angiv administrationsadgangskoden / slå `requireLogin` til eller fra) accepterer
+kun disse legitimationsoplysninger, når der allerede findes en adgangskode — bootstrap-vinduet ved første kørsel (hvor der endnu ikke er nogen adgangskode)
+er uændret — og en dashboardsession skal sende `currentPassword` for at erstatte adgangskoden
+(`403`, når den mangler eller er forkert, logget i revisionsloggen som `settings.update_failed`). Den lokale CLI og en
+instans med deaktiveret login bevarer gendannelsesmuligheden og kan angive en adgangskode uden den, eftersom begge
+er bundet til værten, der ejer datamappen.
 
 ## Pipeline
 
