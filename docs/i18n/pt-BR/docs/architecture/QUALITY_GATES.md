@@ -345,7 +345,7 @@ na base. Portanto, um arquivo que já apresentava desvio na base nunca deixa ver
 gates rápidos de `quality.yml` quanto o job de lint de `ci.yml` passam o SHA base do PR, o commit
 base é medido a partir de uma exportação de `git archive`, e o PR falha somente quando sua contagem
 de arestas `open-sse → src` excede o maior valor entre `metrics.boundaryOpenSseToSrc` e a contagem
-na base. Um desvio da base acima do teto é reportado (`desvio herdado da base`), mas nunca faz um
+na base. Um desvio da base acima do teto é reportado (`base drift herdado`), mas nunca faz um
 PR inocente ficar vermelho; push → main mantém o teto absoluto, e um SHA base que não possa ser
 resolvido recorre a esse teto com um aviso.
 

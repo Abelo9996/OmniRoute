@@ -342,7 +342,7 @@ Tiedosto, joka oli jo poikennut base-versiossa, ei näin ollen koskaan aiheuta s
 `quality.yml`:n pikaportit että `ci.yml`:n lint-työ välittävät PR:n pohjan SHA:n, pohjacommit
 mitataan `git archive` -viennistä, ja PR epäonnistuu vain, kun sen `open-sse → src` -reunojen
 määrä ylittää arvon `metrics.boundaryOpenSseToSrc` ja pohjan määrän välisistä suuremman. Rajan
-ylittävä pohjan ajautuminen raportoidaan (`peritty pohjan ajautuminen`), mutta se ei koskaan
+ylittävä pohjan ajautuminen raportoidaan (`base drift herdado`), mutta se ei koskaan
 aiheuta syyttömän PR:n epäonnistumista; push → main säilyttää absoluuttisen rajan, ja pohjan
 SHA:n ratkaisemisen epäonnistuessa siihen palataan varoituksen kera.
 

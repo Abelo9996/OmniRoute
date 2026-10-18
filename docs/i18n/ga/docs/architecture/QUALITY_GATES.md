@@ -339,7 +339,7 @@ Cuireann `check:boundary:ratchet` an riail chéanna i bhfeidhm ar a aon uimhir a
 `quality.yml` agus jab lint `ci.yml` araon SHA bhonn an PR, tomhaistear an tiomantas bonn
 ó easpórtáil `git archive`, agus ní theipeann ar an PR ach amháin nuair a sháraíonn líon a nasc
 `open-sse → src` an ceann is mó idir `metrics.boundaryOpenSseToSrc` agus an líon ar an mbonn. Tuairiscítear
-imeacht an bhoinn os cionn na huasteorann (`imeacht oidhreachtúil an bhoinn`) ach ní chuireann sé PR
+imeacht an bhoinn os cionn na huasteorann (`base drift herdado`) ach ní chuireann sé PR
 neamhchiontach ar dearg riamh; coimeádann push → main an uasteorainn absalóideach, agus má bhíonn SHA
 boinn dothuaslagtha ann, téitear ar ais chuici le rabhadh.
 

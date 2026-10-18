@@ -360,7 +360,7 @@ hiçbir zaman başarısız kılmaz.
 `quality.yml` hızlı kontrolleri hem de `ci.yml` lint işi PR taban SHA'sını iletir, taban commit'i
 bir `git archive` dışa aktarımından ölçülür ve PR yalnızca kendi `open-sse → src` kenar
 sayısı `metrics.boundaryOpenSseToSrc` ile tabandaki sayının büyük olanını aştığında başarısız olur. Tavanın
-üzerindeki taban sapması bildirilir (`devralınan taban sapması`), ancak masum bir PR'ı asla başarısız kılmaz; push → main
+üzerindeki taban sapması bildirilir (`base drift herdado`), ancak masum bir PR'ı asla başarısız kılmaz; push → main
 mutlak tavanı korur ve çözümlenemeyen bir taban SHA'sı, bir uyarıyla bu tavana geri döner.
 
 `workflow_dispatch` çalıştırmaları, sürüm yeşil durum taraması ve gecelik boşluk işi bir PR tabanına

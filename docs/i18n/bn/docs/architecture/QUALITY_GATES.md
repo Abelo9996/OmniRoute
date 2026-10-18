@@ -343,7 +343,7 @@ docs/env চুক্তি, i18n সামঞ্জস্য, ইউনিট �
 `quality.yml`-এর ফাস্ট-গেট এবং `ci.yml`-এর lint জব—উভয়ই PR-এর base SHA পাস করে, base commit-টি
 একটি `git archive` এক্সপোর্ট থেকে পরিমাপ করা হয়, এবং PR কেবল তখনই ব্যর্থ হয় যখন এর `open-sse → src` edge-এর
 সংখ্যা `metrics.boundaryOpenSseToSrc` এবং base-এর সংখ্যার মধ্যে বৃহত্তরটিকে অতিক্রম করে। ceiling-এর
-উপরের base drift রিপোর্ট করা হয় (`উত্তরাধিকারসূত্রে পাওয়া base drift`), কিন্তু এর কারণে কোনো নির্দোষ PR কখনো ব্যর্থ হয় না; push → main
+উপরের base drift রিপোর্ট করা হয় (`base drift herdado`), কিন্তু এর কারণে কোনো নির্দোষ PR কখনো ব্যর্থ হয় না; push → main
 পরম ceiling বজায় রাখে, এবং সমাধান-অযোগ্য কোনো base SHA সতর্কবার্তাসহ সেটিতেই fallback করে।
 
 `workflow_dispatch` রান, release-green sweep এবং nightly headroom জবের কোনো PR base

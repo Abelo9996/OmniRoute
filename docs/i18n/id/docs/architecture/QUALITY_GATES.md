@@ -344,7 +344,7 @@ Dengan demikian, berkas yang sudah mengalami drift pada dasar tidak akan pernah 
 `quality.yml` maupun job lint `ci.yml` meneruskan SHA basis PR, commit basis diukur dari hasil ekspor
 `git archive`, dan PR hanya gagal ketika jumlah edge `open-sse → src` melampaui nilai yang lebih
 besar antara `metrics.boundaryOpenSseToSrc` dan jumlah pada basis. Drift basis di atas batas maksimum
-dilaporkan (`drift basis yang diwarisi`), tetapi tidak pernah menggagalkan PR yang tidak bersalah;
+dilaporkan (`base drift herdado`), tetapi tidak pernah menggagalkan PR yang tidak bersalah;
 push → main tetap menggunakan batas maksimum absolut, dan SHA basis yang tidak dapat di-resolve
 akan kembali menggunakannya dengan sebuah peringatan.
 

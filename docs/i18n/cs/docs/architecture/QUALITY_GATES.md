@@ -345,7 +345,7 @@ Soubor, který se již v základu odchýlil, proto nikdy nezpůsobí zamítnutí
 rychlé kontroly v `quality.yml`, tak úloha lint v `ci.yml` základní SHA PR, základní commit se
 měří z exportu `git archive` a PR selže pouze tehdy, když počet jeho hran `open-sse → src`
 překročí vyšší z hodnot `metrics.boundaryOpenSseToSrc` a počtu na základu. Posun základu
-nad strop je nahlášen (`zděděný posun základu`), ale nikdy nezpůsobí selhání nevinného PR; push → main
+nad strop je nahlášen (`base drift herdado`), ale nikdy nezpůsobí selhání nevinného PR; push → main
 nadále používá absolutní strop a nerozpoznatelné základní SHA se s varováním vrátí k jeho použití.
 
 Spuštění `workflow_dispatch`, závěrečná kontrola zeleného releasu a noční úloha pro rezervu nemají
