@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { buildVideoBridgePromotionReport } from "../../../scripts/perf/video-bridge-promotion-eval.ts";
+import { validatePromotionEvidence } from "../../../src/lib/guardrails/videoBridgePromotionEvidence.ts";
 import {
   VIDEO_BRIDGE_PROMOTION_CASE_KINDS,
   VIDEO_BRIDGE_PROMOTION_METRIC_NAMES,
@@ -105,6 +106,22 @@ test("unbound legacy observations cannot establish a real independent execution"
   assert.ok(report.fu07.reasons.includes("EXECUTION_RECEIPT_MISSING"));
   assert.ok(report.fu09.reasons.includes("EXECUTION_RECEIPT_MISSING"));
   assert.ok(report.fu07.reasons.includes("COMPARISON_NOT_DECLARED"));
+});
+
+test("legacy evidence keeps ordered blockers without repeating per-case failures", () => {
+  const { manifest, runFile } = evidence();
+  assert.deepEqual(validatePromotionEvidence(manifest, runFile), [
+    "INPUT_DIGEST_BINDING_MISSING",
+    "RESOURCE_CAPS_MISSING",
+    "COMPARISON_NOT_DECLARED",
+    "MODEL_REVISION_MISSING",
+    "EXECUTION_RECEIPT_MISSING",
+    "REAL_SANITIZED_CASE_MISSING",
+    "FIXTURE_DIGEST_BINDING_MISSING",
+    "PRE_ANALYSIS_METRIC_MISSING_OR_INVALID",
+    "OBSERVATION_IDENTITY_INVALID",
+    "REPETITION_BINDING_INVALID",
+  ]);
 });
 
 test("promotion requires a hashed sanitized real clip in addition to synthetic coverage", () => {
