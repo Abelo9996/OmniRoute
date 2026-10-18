@@ -96,7 +96,7 @@ tilinvalintastrategiansa avulla. Pyynnön voi sen sijaan kiinnittää tiettyyn y
 curl http://localhost:20128/v1/chat/completions \
   -H "Authorization: Bearer <OmniRoute-API-avaimesi>" \
   -H "Content-Type: application/json" \
-  -H "x-omniroute-connection: <yhteyden tunnus>" \
+  -H "x-omniroute-connection: <connection id>" \
   -d '{"model": "codex/gpt-5.5", "messages": [{"role": "user", "content": "hei"}]}'
 ```
 

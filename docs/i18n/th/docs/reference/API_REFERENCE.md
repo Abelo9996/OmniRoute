@@ -96,7 +96,7 @@ Content-Type: application/json
 curl http://localhost:20128/v1/chat/completions \
   -H "Authorization: Bearer <คีย์ API ของ OmniRoute ของคุณ>" \
   -H "Content-Type: application/json" \
-  -H "x-omniroute-connection: <id การเชื่อมต่อ>" \
+  -H "x-omniroute-connection: <connection id>" \
   -d '{"model": "codex/gpt-5.5", "messages": [{"role": "user", "content": "สวัสดี"}]}'
 ```
 

@@ -96,7 +96,7 @@ med headern `x-omniroute-connection`:
 curl http://localhost:20128/v1/chat/completions \
   -H "Authorization: Bearer <din OmniRoute-API-nyckel>" \
   -H "Content-Type: application/json" \
-  -H "x-omniroute-connection: <anslutnings-id>" \
+  -H "x-omniroute-connection: <connection id>" \
   -d '{"model": "codex/gpt-5.5", "messages": [{"role": "user", "content": "hej"}]}'
 ```
 

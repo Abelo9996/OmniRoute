@@ -96,7 +96,7 @@ bằng header `x-omniroute-connection`:
 curl http://localhost:20128/v1/chat/completions \
   -H "Authorization: Bearer <khóa API OmniRoute của bạn>" \
   -H "Content-Type: application/json" \
-  -H "x-omniroute-connection: <id kết nối>" \
+  -H "x-omniroute-connection: <connection id>" \
   -d '{"model": "codex/gpt-5.5", "messages": [{"role": "user", "content": "xin chào"}]}'
 ```
 

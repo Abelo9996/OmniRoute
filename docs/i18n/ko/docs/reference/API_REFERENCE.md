@@ -96,7 +96,7 @@ Content-Type: application/json
 curl http://localhost:20128/v1/chat/completions \
   -H "Authorization: Bearer <OmniRoute API 키>" \
   -H "Content-Type: application/json" \
-  -H "x-omniroute-connection: <연결 ID>" \
+  -H "x-omniroute-connection: <connection id>" \
   -d '{"model": "codex/gpt-5.5", "messages": [{"role": "user", "content": "안녕하세요"}]}'
 ```
 
