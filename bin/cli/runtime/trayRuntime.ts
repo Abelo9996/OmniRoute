@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, writeFileSync, chmodSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { execSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
 const RUNTIME_DIR = join(homedir(), ".omniroute", "runtime");
@@ -17,14 +18,34 @@ export const SYSTRAY_PACKAGE = "systray2";
 export const SYSTRAY_VERSION = "2.1.4";
 const SYSTRAY_SPEC = `${SYSTRAY_PACKAGE}@${SYSTRAY_VERSION}`;
 
-// Dynamic `import()` resolves its specifier as a URL, not a filesystem path.
-// On Windows the lazily-installed systray2 lives at an absolute path whose
-// leading drive letter the ESM loader parses as an unsupported URL scheme
-// (e.g. `c:`) and rejects. Build a file:// URL so the tray import works on
-// Windows too. Same defect fixed for the CLI db-fallback imports in #11238,
-// missed at this call site.
+// Resolve the package entry first: native ESM cannot import a directory URL.
+// Convert that file path to a URL so Windows drive letters and special path
+// characters are also accepted by import().
 export function systrayModuleSpecifier(runtimeDir: string): string {
-  return pathToFileURL(join(runtimeDir, "node_modules", SYSTRAY_PACKAGE)).href;
+  const runtimeRequire = createRequire(join(runtimeDir, "package.json"));
+  return pathToFileURL(runtimeRequire.resolve(SYSTRAY_PACKAGE)).href;
+}
+
+type SystrayConstructor = new (...args: unknown[]) => unknown;
+
+function resolveSystrayConstructor(mod: {
+  default?: unknown;
+  SysTray?: unknown;
+}): SystrayConstructor | null {
+  const exported = mod.default ?? mod.SysTray ?? mod;
+  // systray2's transpiled CJS module adds another default inside the namespace.
+  const candidate =
+    typeof exported === "object" && exported !== null && "default" in exported
+      ? exported.default
+      : exported;
+  if (typeof candidate !== "function") return null;
+  try {
+    // Check [[Construct]] without invoking the tray constructor/native binary.
+    Reflect.construct(Object, [], candidate);
+    return candidate as SystrayConstructor;
+  } catch {
+    return null;
+  }
 }
 
 export function resolveSystrayBinName(platform: NodeJS.Platform): string | null {
@@ -55,7 +76,7 @@ export function chmodSystrayBinAt(runtimeRoot: string, platform: NodeJS.Platform
   }
 }
 
-export async function loadSystray(): Promise<(new (...args: unknown[]) => unknown) | null> {
+export async function loadSystray(): Promise<SystrayConstructor | null> {
   ensureRuntimeDir();
   if (!isInstalled()) {
     try {
@@ -72,7 +93,7 @@ export async function loadSystray(): Promise<(new (...args: unknown[]) => unknow
   chmodSystrayBinAt(RUNTIME_DIR, process.platform);
   try {
     const mod = await import(systrayModuleSpecifier(RUNTIME_DIR));
-    return (mod.default ?? mod.SysTray ?? mod) as (new (...args: unknown[]) => unknown) | null;
+    return resolveSystrayConstructor(mod);
   } catch (err) {
     console.warn(`[omniroute] tray runtime import failed: ${(err as Error).message}`);
     return null;

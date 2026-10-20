@@ -1,0 +1,1 @@
+- **fix(cli):** Resolve the cached tray package's entry file before importing it and unwrap its CommonJS constructor correctly, preventing tray startup from failing during module loading (#17315 — thanks @phoriah).
