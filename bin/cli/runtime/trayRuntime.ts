@@ -4,6 +4,7 @@ import { homedir } from "node:os";
 import { execSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
+import { persistTrayFailure } from "./processSupervisor.mjs";
 
 const RUNTIME_DIR = join(homedir(), ".omniroute", "runtime");
 // systray2 is a maintained fork with prebuilt binaries — installed lazily at runtime,
@@ -82,9 +83,8 @@ export async function loadSystray(): Promise<SystrayConstructor | null> {
     try {
       installSystray();
     } catch (err) {
-      // Surface failures to stderr instead of staying silent — anyone hitting
-      // a tray problem otherwise has zero diagnostic. (PR #1080)
-      console.warn(`[omniroute] tray runtime install failed: ${(err as Error).message}`);
+      persistTrayFailure("install", err);
+      console.warn("[omniroute] tray runtime install failed; run omniroute doctor for details");
       return null;
     }
   }
@@ -93,9 +93,12 @@ export async function loadSystray(): Promise<SystrayConstructor | null> {
   chmodSystrayBinAt(RUNTIME_DIR, process.platform);
   try {
     const mod = await import(systrayModuleSpecifier(RUNTIME_DIR));
-    return resolveSystrayConstructor(mod);
+    const constructor = resolveSystrayConstructor(mod);
+    if (!constructor) persistTrayFailure("constructor", new TypeError("Invalid tray export"));
+    return constructor;
   } catch (err) {
-    console.warn(`[omniroute] tray runtime import failed: ${(err as Error).message}`);
+    persistTrayFailure("import", err);
+    console.warn("[omniroute] tray runtime import failed; run omniroute doctor for details");
     return null;
   }
 }
