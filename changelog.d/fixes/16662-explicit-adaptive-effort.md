@@ -1,0 +1,1 @@
+- fix(sse): preserve explicit client reasoning effort in adaptive mode while retaining automatic budget scaling and provider capability sanitization (refs #16662).

@@ -8,7 +8,7 @@
  * - passthrough: leave client fields unchanged (required for Codex visible thinking)
  * - auto: STRIP all thinking/reasoning fields before upstream (not “auto-show thinking”)
  * - custom: force a fixed token budget on every request
- * - adaptive: scale budget from a base effort by request complexity
+ * - adaptive: preserve explicit effort; otherwise scale budget by request complexity
  *
  * Independent of compression, prompt cache, combo routing, and API-key token limits.
  * Does **not** decrypt OpenAI/Codex `encrypted_content` reasoning blobs.
@@ -307,7 +307,9 @@ export function applyThinkingBudget(
       return setCustomBudget(processed, cfg.customBudget ?? DEFAULT_THINKING_CONFIG.customBudget);
 
     case ThinkingMode.ADAPTIVE:
-      return applyAdaptiveBudget(processed, cfg);
+      return hasExplicitReasoningEffort(processed)
+        ? processed
+        : applyAdaptiveBudget(processed, cfg);
 
     default:
       return processed;
@@ -395,9 +397,17 @@ function setCustomBudget(body: unknown, budget: number) {
   return result;
 }
 
-/**
- * ADAPTIVE mode: scale budget based on request complexity
- */
+// Explicit request effort is final for adaptive allocation; provider capability
+// validation and normalization still happen at the executor boundary.
+function hasExplicitReasoningEffort(body: unknown): boolean {
+  const record = toRecord(body);
+  return (
+    typeof record.reasoning_effort === "string" ||
+    typeof toRecord(record.reasoning).effort === "string"
+  );
+}
+
+/** ADAPTIVE mode without explicit effort: scale budget by request complexity. */
 function applyAdaptiveBudget(body: unknown, cfg: Partial<ThinkingBudgetConfig>) {
   const bodyRecord = toRecord(body);
   const messages = Array.isArray(bodyRecord.messages)
@@ -439,9 +449,8 @@ function applyAdaptiveBudget(body: unknown, cfg: Partial<ThinkingBudgetConfig>) 
 
   // The effort→budget table collapses high, xhigh and max onto the same number,
   // and setCustomBudget then reads any budget at that ceiling back as xhigh.
-  // Adaptive only scales a budget. Keep the selected effort when the multiplier
-  // itself did not raise the budget, so a client "high" is not promoted to an
-  // "xhigh" the upstream rejects (#16662). Compare the pre-cap value: a model
+  // Keep the configured effort when the multiplier did not raise the budget.
+  // Compare the pre-cap value: a model
   // cap that pulls a genuinely scaled budget back under the ceiling is not the
   // same as "the request was not complex". Only pin efforts below the ceiling:
   // "max"/"xhigh" already read back as "xhigh", and writing "max" verbatim as

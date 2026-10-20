@@ -130,10 +130,8 @@ test("CUSTOM: budget 0 disables Claude thinking", () => {
 });
 
 test("ADAPTIVE: a short request keeps the client's high effort", () => {
-  // #16662: effortLevel high maps to 131072, and setCustomBudget writes xhigh
-  // for any budget that is not strictly below that. Agnes accepts high and
-  // rejects xhigh, so a request the client already marked high must stay high
-  // when the adaptive multiplier does not raise the budget.
+  // #16662: adaptive allocation must preserve the explicit client effort.
+  // Capability sanitization still belongs to the executor boundary.
   setThinkingBudgetConfig({ mode: ThinkingMode.ADAPTIVE, effortLevel: "high" });
   const body = {
     model: "agnes/agnes-2.5-flash",
@@ -145,7 +143,7 @@ test("ADAPTIVE: a short request keeps the client's high effort", () => {
   setThinkingBudgetConfig(DEFAULT_THINKING_CONFIG);
 });
 
-test("ADAPTIVE: a short request with effortLevel max stays xhigh, never max", () => {
+test("ADAPTIVE: an automatic short request with effortLevel max stays xhigh, never max", () => {
   // effortLevel "max" is a valid setting, but "max" is not a reasoning_effort
   // value OpenAI/Codex accept. The high-pin for #16662 must not write the raw
   // selected level back: the ceiling budget keeps reading back as xhigh.
@@ -153,14 +151,14 @@ test("ADAPTIVE: a short request with effortLevel max stays xhigh, never max", ()
   const body = {
     model: "agnes/agnes-2.5-flash",
     messages: [{ role: "user", content: "say pong" }],
-    reasoning_effort: "high",
+    reasoning: {},
   };
   const result = applyThinkingBudget(body);
   assert.equal(result.reasoning_effort, "xhigh");
   setThinkingBudgetConfig(DEFAULT_THINKING_CONFIG);
 });
 
-test("ADAPTIVE: a complex request still raises a collapsed high ceiling", () => {
+test("ADAPTIVE: an automatic complex request still raises a collapsed high ceiling", () => {
   // Counter-case: many messages and tools push the multiplier past 1, so the
   // scaled budget exceeds the selected effort's own budget and the ceiling
   // write to xhigh must stand. A guard that always pins the selected effort
@@ -172,14 +170,14 @@ test("ADAPTIVE: a complex request still raises a collapsed high ceiling", () => 
     model: "agnes/agnes-2.5-flash",
     messages,
     tools,
-    reasoning_effort: "high",
+    reasoning: {},
   };
   const result = applyThinkingBudget(body);
   assert.equal(result.reasoning_effort, "xhigh");
   setThinkingBudgetConfig(DEFAULT_THINKING_CONFIG);
 });
 
-test("ADAPTIVE: a long last message raises a collapsed high ceiling", () => {
+test("ADAPTIVE: an automatic long last message raises a collapsed high ceiling", () => {
   // The +0.3 branch (last user message over 2000 chars) alone takes the
   // multiplier to 1.3. 131072 × 1.3 exceeds the selected budget, so the
   // ceiling write to xhigh must stand. One message and no tools, so the
@@ -188,7 +186,7 @@ test("ADAPTIVE: a long last message raises a collapsed high ceiling", () => {
   const body = {
     model: "agnes/agnes-2.5-flash",
     messages: [{ role: "user", content: "x".repeat(2001) }],
-    reasoning_effort: "high",
+    reasoning: {},
   };
   const result = applyThinkingBudget(body);
   assert.equal(result.reasoning_effort, "xhigh");
