@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { callChat as callDocumentChat } from "../../scripts/i18n/run-translation.mjs";
 
 import {
   callChat,
@@ -157,3 +158,40 @@ test("callChat without fallbacks behaves as before (one model, one transient ret
     }
   );
 });
+
+for (const [name, request] of [
+  ["shared", callChat],
+  ["document", callDocumentChat],
+] as const) {
+  test(`${name} fallback telemetry reports attempts and success without model ids or upstream body`, async () => {
+    const warnings: string[] = [];
+    const originalWarn = console.warn;
+    console.warn = (...parts: unknown[]) => {
+      warnings.push(parts.map(String).join(" "));
+    };
+    try {
+      await withFetch(
+        {
+          "primary/model": [{ status: 401, body: "private-upstream-body" }],
+          "fallback/one": [{ status: 200, body: "translated" }],
+        },
+        async () => {
+          assert.equal(await request([{ role: "user", content: "hello" }], backend), "translated");
+        }
+      );
+      assert.equal(
+        warnings.filter((line) => line.includes("[i18n-fallback] attempt index=1")).length,
+        1
+      );
+      assert.equal(
+        warnings.filter((line) => line.includes("[i18n-fallback] success index=1")).length,
+        1
+      );
+      assert.ok(
+        warnings.every((line) => !/private-upstream-body|primary\/model|fallback\/one/.test(line))
+      );
+    } finally {
+      console.warn = originalWarn;
+    }
+  });
+}

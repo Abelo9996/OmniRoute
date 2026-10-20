@@ -97,13 +97,13 @@ export async function callChat(messages, backend, retry = 0) {
   let lastErr;
   for (let i = 0; i < chain.length; i++) {
     try {
-      return await callChatOnce(messages, { ...backend, model: chain[i] }, retry);
+      const content = await callChatOnce(messages, { ...backend, model: chain[i] }, retry);
+      if (i > 0) console.warn(`[i18n-fallback] success index=${i}`);
+      return content;
     } catch (err) {
       lastErr = err;
       if (i < chain.length - 1 && isFallbackWorthy(err)) {
-        logWarn(
-          `model ${chain[i]} failed (${String(err?.message ?? err).slice(0, 120)}) — falling back to ${chain[i + 1]}`
-        );
+        console.warn(`[i18n-fallback] attempt index=${i + 1}`);
         continue;
       }
       throw err;
