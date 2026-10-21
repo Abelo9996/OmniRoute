@@ -29,7 +29,6 @@ import {
   Braces,
   Brain,
   BrainCircuit,
-  BrushCleaning,
   Bug,
   Building2,
   Calendar,
@@ -171,7 +170,6 @@ import {
   MoveRight,
   Music,
   Network,
-  NotebookPen,
   OctagonAlert,
   Orbit,
   Package,
@@ -292,7 +290,7 @@ import {
 } from "lucide-react";
 // Cache, runtime, chaos, profile, conversations, webhooks (KEA-7886, lote 8).
 // Gift, Heart, ArrowDownToLine, CircleMinus, Flame and Rss are imported by the blocks above.
-import { Merge, Shapes, Snowflake } from "lucide-react";
+import { BrushCleaning, Merge, NotebookPen, Shapes, Snowflake } from "lucide-react";
 // Lote 9 — tools, system, resilience, rankings, changelog, provider-stats (KEA-7886).
 import { BadgePlus, BellOff, PartyPopper, Radio, SquareCode, Stethoscope } from "lucide-react";
 
