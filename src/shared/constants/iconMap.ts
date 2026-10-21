@@ -273,6 +273,9 @@ import {
   Tally3,
   Target,
 } from "lucide-react";
+// Cache, runtime, chaos, profile, conversations, webhooks (KEA-7886, lote 8).
+// Gift and Heart are imported by the base blocks above.
+import { ArrowDownToLine, CircleMinus, Flame, Merge, Rss, Shapes, Snowflake } from "lucide-react";
 // Lote 9 — tools, system, resilience, rankings, changelog, provider-stats (KEA-7886).
 import {
   BadgePlus,
@@ -442,7 +445,7 @@ export const ICON_MAP: Record<string, LucideIcon | null> = {
   // names the scanner finds in icon slots that still render through the Material fallback.
   // null until the owning screen's lote maps it; the generator validates every name against
   // the Material Symbols vocabulary, so nothing here is a non-icon string. ──
-  ac_unit: null,
+  ac_unit: Snowflake,
   account_balance: Landmark,
   account_circle: CircleUserRound,
   add_circle: CirclePlus,
@@ -471,9 +474,9 @@ export const ICON_MAP: Record<string, LucideIcon | null> = {
   business: Building2,
   business_center: null,
   cable: Cable,
-  call_split: null,
+  call_split: Split,
   casino: Dices,
-  category: null,
+  category: Shapes,
   celebration: PartyPopper,
   chat: MessageSquare,
   chat_bubble: MessageSquare,
@@ -503,7 +506,7 @@ export const ICON_MAP: Record<string, LucideIcon | null> = {
   diamond: null,
   diversity_3: null,
   do_not_disturb: null,
-  do_not_disturb_on: null,
+  do_not_disturb_on: CircleMinus,
   done_all: null,
   download_done: HardDriveDownload,
   downloading: CloudDownload,
@@ -576,7 +579,7 @@ export const ICON_MAP: Record<string, LucideIcon | null> = {
   low_priority: ListEnd,
   manage_accounts: UserCog,
   manage_history: ClockArrowUp,
-  merge: null,
+  merge: Merge,
   mic: Mic,
   minimize: null,
   model_training: BrainCircuit,
@@ -620,7 +623,7 @@ export const ICON_MAP: Record<string, LucideIcon | null> = {
   restore: RotateCcw,
   rocket_launch: Rocket,
   router: null,
-  rss_feed: null,
+  rss_feed: Rss,
   rule: ListChecks,
   scatter_plot: ChartScatter,
   schema: Workflow,

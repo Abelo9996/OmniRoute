@@ -1491,7 +1491,11 @@
       "chatIdPlaceholder": "-100123456789 hoặc @channelname",
       "chatIdHint": "Mã định danh số duy nhất hoặc tên người dùng công khai của cuộc trò chuyện/kênh.",
       "tutorial": "Cách cấu hình webhook Telegram:"
-    }
+    },
+    "copy": "Sao chép",
+    "copied": "Đã sao chép!",
+    "expandDetails": "Hiện chi tiết",
+    "collapseDetails": "Ẩn chi tiết"
   },
   "compliance": {
     "auditTitle": "Kiểm toán",
@@ -2617,7 +2621,9 @@
     "imageToTextBridgeCta": "Cấu hình cầu Hình Ảnh→Văn Bản trong cài đặt Cầu Modality",
     "sttBridgeCta": "Cấu hình cầu Nói→Văn bản trong cài đặt Cầu Modality",
     "existingConnection": "Kết nối hiện có",
-    "openrouterSttDescription": "Mô hình chuyển đổi giọng nói thành văn bản của OpenRouter sử dụng kết nối OpenRouter đã được cấu hình của bạn. Không cần thông tin xác thực riêng biệt."
+    "openrouterSttDescription": "Mô hình chuyển đổi giọng nói thành văn bản của OpenRouter sử dụng kết nối OpenRouter đã được cấu hình của bạn. Không cần thông tin xác thực riêng biệt.",
+    "modalityTabsAria": "Loại phương tiện",
+    "serviceKindsAria": "Loại dịch vụ"
   },
   "search": {
     "searchQuery": "Truy vấn tìm kiếm",
@@ -11282,7 +11288,8 @@
     "minutesAgo": "{minutes} phút trước",
     "hoursAgo": "{hours} giờ trước",
     "daysAgo": "{days} ngày trước",
-    "entries": "Mục"
+    "entries": "Mục",
+    "viewSwitcherAria": "Chế độ xem bộ nhớ đệm"
   },
   "proxyConfigModal": {
     "levelGlobal": "Toàn cầu",
@@ -11904,7 +11911,8 @@
     "assistant": "Trợ lý",
     "errorLabel": "Lỗi",
     "requestFailed": "Yêu cầu thất bại",
-    "stop": "Dừng"
+    "stop": "Dừng",
+    "messageInputAria": "Tin nhắn"
   },
   "requestLogger": {
     "recording": "Đang ghi",
@@ -12233,7 +12241,8 @@
     "statusExhausted": "ĐÃ CẠN KIỆT",
     "statusAlerting": "ĐANG CẢNH BÁO",
     "statusError": "LỖI",
-    "moreSuffix": "+{count} nữa"
+    "moreSuffix": "+{count} nữa",
+    "feedFilterLabel": "Lọc sự kiện"
   },
   "quotaShare": {
     "weightPercent": "Trọng số %",
@@ -13400,7 +13409,11 @@
     "method": "Phương thức",
     "auth": "Xác thực",
     "feasibility": "Tính khả thi",
-    "models": "Mô hình"
+    "models": "Mô hình",
+    "provider": "Nhà cung cấp",
+    "status": "Trạng thái",
+    "endpoint": "Điểm cuối",
+    "actions": "Hành động"
   },
   "noAuthProvider": {
     "title": "Không cần xác thực",
