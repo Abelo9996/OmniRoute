@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Writes the result of one hosted Release-Green suite job (a `suites` matrix leg of
 // nightly-release-green.yml) for the validator's --suites-from reader.
-// Usage: node scripts/ci/release-green-suite.mjs <name> <exitCode> <logFile> <outDir>
+// Usage: node scripts/ci/release-green-suite.mjs <name> <exitCode> <logFile> <outDir> <workflowSha> <script> [shard]
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
@@ -26,7 +26,7 @@ export function suiteResult(name, exitCode, log) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const [name, exitCode, logFile, outDir] = process.argv.slice(2);
+  const [name, exitCode, logFile, outDir, workflowSha, script, shard = ""] = process.argv.slice(2);
   let log = "";
   try {
     log = readFileSync(logFile, "utf8");
@@ -34,13 +34,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     log = "";
   }
   if (!log.trim()) throw new Error("missing or empty hosted suite log");
-  const identity = hostedSuiteIdentity(process.cwd());
+  const identity = hostedSuiteIdentity(process.cwd(), workflowSha);
   if (!identity) throw new Error("missing hosted suite execution identity");
   const result = {
     ...suiteResult(name, exitCode, log),
     ...identity,
-    script: name === "vitest" ? "test:vitest+test:vitest:ui" : process.env.SUITE,
-    shard: process.env.TEST_SHARD ?? "",
+    script: name === "vitest" ? "test:vitest+test:vitest:ui" : script,
+    shard,
     logSha256: createHash("sha256").update(log).digest("hex"),
   };
   mkdirSync(outDir, { recursive: true });

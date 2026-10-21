@@ -89,6 +89,7 @@ test("the slot validation waits for the suites, reads their results and still ru
     "release-green-suite-${{ github.run_attempt }}-${{ matrix.name }}"
   );
   const validate = steps.find((s) => s.run?.includes("validate-release-green.mjs"));
+  assert.match(validate?.run ?? "", /--suites-workflow-sha "\$GITHUB_WORKFLOW_SHA"/);
   assert.match(validate?.run ?? "", /MODE="--with-build --full-ci --suites-from suite-results"/);
   assert.match(validate?.run ?? "", /MODE="--quick"/, "push keeps the quick profile");
   const checkout = steps.find((s) => s.run?.includes("SWEEP_SHA"));

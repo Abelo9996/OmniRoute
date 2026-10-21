@@ -44,6 +44,8 @@
 //     --hermetic    scrub OMNIROUTE_API_KEY/OMNIROUTE_URL from gate env so live
 //                   tests self-skip exactly like CI (dev machines otherwise run
 //                   them against localhost and produce false-positive reds)
+//     --suites-from <dir>  consume hosted receipts instead of local suite execution;
+//                   requires --suites-workflow-sha <sha> from the producing workflow.
 //
 // Per-gate output is saved to _artifacts/release-green/<gate>.log (gitignored) —
 // diagnose a red from the file instead of re-running the gate.
@@ -533,12 +535,12 @@ export function hostedSuiteNames(unitShards, integrationShards) {
 }
 
 /** Exact execution identity shared by hosted writers and their consuming observer. */
-export function hostedSuiteIdentity(cwd = ROOT) {
+export function hostedSuiteIdentity(cwd, workflowSha) {
   try {
     const identity = {
       schemaVersion: 1,
       candidateSha: execFileSync("git", ["rev-parse", "HEAD"], { cwd, encoding: "utf8" }).trim(),
-      workflowSha: process.env.RELEASE_GREEN_WORKFLOW_SHA,
+      workflowSha,
       runId: process.env.GITHUB_RUN_ID,
       runAttempt: process.env.GITHUB_RUN_ATTEMPT,
       nodeVersion: process.version,
@@ -776,6 +778,10 @@ async function main() {
   // workflow's `suites` matrix); read their results instead of running them on this slot.
   const suitesFromIndex = process.argv.indexOf("--suites-from");
   const SUITES_FROM = suitesFromIndex >= 0 ? process.argv[suitesFromIndex + 1] : null;
+  // Explicit workflow identity accompanies hosted receipts; it is not application .env config.
+  const suitesWorkflowIndex = process.argv.indexOf("--suites-workflow-sha");
+  const SUITES_WORKFLOW_SHA =
+    suitesWorkflowIndex >= 0 ? process.argv[suitesWorkflowIndex + 1] : null;
 
   const results = [];
   const record = (r) => {
@@ -1013,7 +1019,7 @@ async function main() {
         } catch {
           files = [];
         }
-        const expected = hostedSuiteIdentity();
+        const expected = hostedSuiteIdentity(ROOT, SUITES_WORKFLOW_SHA);
         const names = hostedSuiteNames(unitShards, integrationShards);
         const results = files.map((f) => {
           try {

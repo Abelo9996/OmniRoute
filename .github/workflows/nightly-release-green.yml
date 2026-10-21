@@ -64,7 +64,6 @@ concurrency:
 
 env:
   OMNIROUTE_SKIP_SYSTEM_TRUST: "1"
-  RELEASE_GREEN_WORKFLOW_SHA: ${{ github.workflow_sha }}
 
 jobs:
   # Schedule/dispatch only: the commit the hosted suites and the slot validation share.
@@ -166,7 +165,8 @@ jobs:
             fi
           ) 2>&1 | tee suite.log
           code=${PIPESTATUS[0]}
-          node scripts/ci/release-green-suite.mjs "$NAME" "$code" suite.log suite-results
+          node scripts/ci/release-green-suite.mjs "$NAME" "$code" suite.log suite-results \
+            "$GITHUB_WORKFLOW_SHA" "$SUITE" "$TEST_SHARD" || exit "$?"
           exit "$code"
       - name: Upload the suite result
         if: always()
@@ -305,6 +305,7 @@ jobs:
           # MODE is an intentional flag list, so word-splitting is wanted here
           # shellcheck disable=SC2086
           node scripts/quality/validate-release-green.mjs --json --hermetic $MODE \
+            --suites-workflow-sha "$GITHUB_WORKFLOW_SHA" \
             1> release-green.json 2> release-green.log
           validation_exit=$?
           node scripts/ci/release-green-result.mjs release-green.json "$validation_exit" "$VALIDATED_SHA" "$EVENT_NAME" >> release-green.log

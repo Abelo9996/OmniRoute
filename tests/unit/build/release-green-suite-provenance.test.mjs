@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { load as parseYaml } from "js-yaml";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const sha = "1".repeat(40);
@@ -23,7 +24,7 @@ const command = (name) => ({
 });
 
 // Public observer JSON + exit, with only unrelated external commands substituted.
-function observe(mutate = () => {}, { extra = false } = {}) {
+function observe(mutate = () => {}, { extra = false, workflow = workflowSha } = {}) {
   mkdirSync(join(root, "_artifacts"), { recursive: true });
   const dir = mkdtempSync(join(root, "_artifacts/suite-provenance-"));
   try {
@@ -101,6 +102,8 @@ function observe(mutate = () => {}, { extra = false } = {}) {
         "--json",
         "--suites-from",
         join(dir, "suites"),
+        "--suites-workflow-sha",
+        workflow,
       ],
       {
         cwd: dir,
@@ -111,7 +114,6 @@ function observe(mutate = () => {}, { extra = false } = {}) {
           PATH: join(dir, "bin"),
           GITHUB_RUN_ID: "101",
           GITHUB_RUN_ATTEMPT: "2",
-          RELEASE_GREEN_WORKFLOW_SHA: workflowSha,
           GITHUB_OUTPUT: "",
         },
       }
@@ -208,7 +210,16 @@ function writeReceipt({ code = "0", missingLog = false, context = true } = {}) {
     if (!missingLog) writeFileSync(join(dir, "suite.log"), log);
     const result = spawnSync(
       process.execPath,
-      [join(root, "scripts/ci/release-green-suite.mjs"), "unit-1", code, "suite.log", "out"],
+      [
+        join(root, "scripts/ci/release-green-suite.mjs"),
+        "unit-1",
+        code,
+        "suite.log",
+        "out",
+        workflowSha,
+        "test:unit:ci:shard",
+        "1/2",
+      ],
       {
         cwd: dir,
         encoding: "utf8",
@@ -218,9 +229,6 @@ function writeReceipt({ code = "0", missingLog = false, context = true } = {}) {
           PATH: join(dir, "bin"),
           GITHUB_RUN_ID: context ? "101" : "",
           GITHUB_RUN_ATTEMPT: "2",
-          RELEASE_GREEN_WORKFLOW_SHA: workflowSha,
-          SUITE: "test:unit:ci:shard",
-          TEST_SHARD: "1/2",
         },
       }
     );
@@ -263,6 +271,55 @@ test(
     const result = observe();
     assert.equal(result.status, 0);
     assert.equal(result.report.releaseGreen, true);
+  }
+);
+
+test(
+  "the public observer requires the workflow commit argument for hosted receipts",
+  { skip: process.platform === "win32" },
+  () => {
+    const result = observe(() => {}, { workflow: "" });
+    assert.equal(result.status, 1);
+    assert.equal(result.report.releaseGreen, false);
+  }
+);
+
+test(
+  "the hosted job fails when its receipt writer cannot persist evidence",
+  { skip: process.platform === "win32" },
+  () => {
+    const dir = mkdtempSync(join(tmpdir(), "hosted-suite-shell-"));
+    try {
+      for (const [name, body] of [
+        ["npm", 'console.log("test passed");'],
+        ["node", "process.exit(23);"],
+      ]) {
+        writeFileSync(join(dir, name), `#!${process.execPath}\n${body}`, { mode: 0o755 });
+      }
+      const workflow = parseYaml(
+        readFileSync(join(root, ".github/workflows/nightly-release-green.yml"), "utf8")
+      );
+      const step = workflow.jobs.suites.steps.find((item) =>
+        item.run?.includes("scripts/ci/release-green-suite.mjs")
+      );
+      const result = spawnSync("bash", ["-c", step.run], {
+        cwd: dir,
+        encoding: "utf8",
+        timeout: 10000,
+        env: {
+          ...process.env,
+          PATH: `${dir}:${process.env.PATH}`,
+          NAME: "unit-1",
+          SUITE: "test:unit:ci:shard",
+          TEST_SHARD: "1/8",
+          GITHUB_WORKFLOW_SHA: workflowSha,
+        },
+      });
+      assert.equal(result.error, undefined);
+      assert.equal(result.status, 23, result.stdout + result.stderr);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   }
 );
 
