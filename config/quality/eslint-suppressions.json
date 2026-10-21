@@ -860,7 +860,7 @@
   },
   "src/app/(dashboard)/dashboard/settings/components/ProxyRegistryManager.tsx": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 3
+      "count": 2
     }
   },
   "src/app/(dashboard)/dashboard/settings/components/ResponsesStatePolicyTab.tsx": {

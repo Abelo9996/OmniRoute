@@ -1003,7 +1003,8 @@
     "batchFileDownloadFull": "Tải xuống toàn bộ tệp",
     "tokensPageTitle": "Token",
     "tokensPageDescription": "Gửi token giữa các khóa API, chia sẻ mã mời và kết nối máy chủ cộng đồng.",
-    "tokensServerUrlLabel": "URL máy chủ"
+    "tokensServerUrlLabel": "URL máy chủ",
+    "pagination": "Phân trang"
   },
   "disabled": "Đã tắt",
   "featureFlagOmnirouteEmergencyFallbackDescription": "Định tuyến các yêu cầu đã hết ngân sách đến nhà cung cấp/mô hình dự phòng khẩn cấp miễn phí.",
@@ -11633,7 +11634,8 @@
     "notMeasured": "Chưa đo",
     "upstream4xx": "{count} lỗi phía client",
     "upstream5xx": "{count} lỗi máy chủ",
-    "uniformEgressLine": "{affected} trên {exits} exit cùng lỗi trên {provider} (trong {hours} giờ qua) — không phải vấn đề exit"
+    "uniformEgressLine": "{affected} trên {exits} exit cùng lỗi trên {provider} (trong {hours} giờ qua) — không phải vấn đề exit",
+    "moreActions": "Thêm thao tác"
   },
   "playground": {
     "title": "Khu thử nghiệm mô hình",

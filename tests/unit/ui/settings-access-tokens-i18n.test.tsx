@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import AccessTokensTab from "@/app/(dashboard)/dashboard/settings/components/AccessTokensTab";
 import zh from "@/i18n/messages/zh-CN.json";
 // The shared Select renders the kit (Radix) Select for `options` since KEA-7886: no DOM
@@ -20,6 +20,15 @@ const token = {
 };
 // Exercise the real catalog and formatter, not the global key-only test mock.
 vi.unmock("next-intl");
+
+// The kit Table measures itself with ResizeObserver (persistent scrollbar); jsdom lacks it.
+beforeAll(() => {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+});
 
 const reply = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status });
 const fetchMock = vi.fn<typeof fetch>();

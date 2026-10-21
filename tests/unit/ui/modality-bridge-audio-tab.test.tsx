@@ -12,6 +12,17 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
+// KEA-7886: the advanced numeric fields live in the kit Accordion (Collapsible adapter), which
+// mounts its body only while open — expand "modalityBridgeAdvanced" before querying them.
+function openAdvanced(root: HTMLElement): void {
+  const trigger = Array.from(
+    root.querySelectorAll<HTMLButtonElement>("[data-slot=accordion-trigger]")
+  ).find((button) => button.textContent?.includes("modalityBridgeAdvanced"));
+  if (trigger && trigger.getAttribute("aria-expanded") !== "true") {
+    act(() => trigger.click());
+  }
+}
+
 const roots: Array<{ root: Root; el: HTMLDivElement }> = [];
 
 async function waitFor(predicate: () => boolean, label: string): Promise<void> {
@@ -97,6 +108,8 @@ describe("ModalityBridgeAudioTab", () => {
       root.render(<ModalityBridgeAudioTab />);
     });
     roots.push({ root, el });
+    await waitFor(() => el.querySelector('[role="switch"]') !== null, "audio card");
+    openAdvanced(el);
     await waitFor(
       () => el.querySelector('[data-testid="modality-bridge-audio-timeout"]') !== null,
       "audio settings"

@@ -1,9 +1,19 @@
 // @vitest-environment jsdom
 import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const translate = (key: string) => key;
+
+// The registry table is the kit Table since KEA-7886: it measures itself with ResizeObserver
+// (persistent scrollbar), which jsdom lacks.
+beforeAll(() => {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+});
 
 vi.mock("next-intl", () => ({
   useTranslations: () => translate,

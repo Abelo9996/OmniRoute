@@ -14,6 +14,17 @@ vi.mock("next-intl", () => ({
 
 type MountedRoot = { root: Root; el: HTMLDivElement };
 
+// KEA-7886: the advanced numeric fields live in the kit Accordion (Collapsible adapter), which
+// mounts its body only while open — expand "modalityBridgeAdvanced" before querying them.
+function openAdvanced(root: HTMLElement): void {
+  const trigger = Array.from(
+    root.querySelectorAll<HTMLButtonElement>("[data-slot=accordion-trigger]")
+  ).find((button) => button.textContent?.includes("modalityBridgeAdvanced"));
+  if (trigger && trigger.getAttribute("aria-expanded") !== "true") {
+    act(() => trigger.click());
+  }
+}
+
 const roots: MountedRoot[] = [];
 
 async function waitFor(predicate: () => boolean, label: string): Promise<void> {
@@ -189,6 +200,7 @@ describe("ModalityBridgeVisionTab", () => {
 
   it("clamps advanced numeric settings to the schema bounds before PATCHing", async () => {
     const el = await render();
+    openAdvanced(el);
     const timeout = el.querySelector(
       '[data-testid="modality-bridge-timeout"]'
     ) as HTMLInputElement | null;
@@ -220,6 +232,7 @@ describe("ModalityBridgeVisionTab", () => {
 
   it("renders the max description characters field, accepts a value, and PATCHes it", async () => {
     const el = await render();
+    openAdvanced(el);
     const maxChars = el.querySelector(
       '[data-testid="modality-bridge-max-chars"]'
     ) as HTMLInputElement | null;

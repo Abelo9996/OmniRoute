@@ -15,6 +15,17 @@ vi.mock("next-intl", () => ({
       : key,
 }));
 
+// KEA-7886: the advanced numeric fields live in the kit Accordion (Collapsible adapter), which
+// mounts its body only while open — expand "modalityBridgeAdvanced" before querying them.
+function openAdvanced(root: HTMLElement): void {
+  const trigger = Array.from(
+    root.querySelectorAll<HTMLButtonElement>("[data-slot=accordion-trigger]")
+  ).find((button) => button.textContent?.includes("modalityBridgeAdvanced"));
+  if (trigger && trigger.getAttribute("aria-expanded") !== "true") {
+    act(() => trigger.click());
+  }
+}
+
 const roots: Array<{ root: Root; element: HTMLDivElement }> = [];
 
 async function waitFor(predicate: () => boolean, label: string): Promise<void> {
@@ -108,6 +119,8 @@ describe("ModalityBridgeVideoTab", () => {
     const root = createRoot(element);
     await act(async () => root.render(<ModalityBridgeVideoTab {...props} />));
     roots.push({ root, element });
+    await waitFor(() => element.querySelector('[role="switch"]') !== null, "Video Bridge card");
+    openAdvanced(element);
     await waitFor(
       () => element.querySelector('[data-testid="modality-bridge-video-frame-count"]') !== null,
       "Video Bridge settings"
@@ -231,7 +244,10 @@ describe("ModalityBridgeVideoTab", () => {
       "health.degradationFull",
       "modalityBridgeTaskAware",
     ]);
-    const description = element.querySelector("#modality-bridge-video-analysis-mode-description");
+    // KEA-7886: the description is the Select adapter's hint, wired through aria-describedby.
+    const describedBy = analysisMode?.getAttribute("aria-describedby") ?? "";
+    expect(describedBy).toBe("modality-bridge-video-analysis-mode-hint");
+    const description = element.querySelector(`#${describedBy}`);
     expect(description?.textContent).toBe("modalityBridgeVideoDesc");
     await act(async () => {
       if (!analysisMode) return;
