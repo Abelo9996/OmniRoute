@@ -291,8 +291,8 @@ import {
   Target,
 } from "lucide-react";
 // Cache, runtime, chaos, profile, conversations, webhooks (KEA-7886, lote 8).
-// Gift and Heart are imported by the base blocks above.
-import { ArrowDownToLine, CircleMinus, Flame, Merge, Rss, Shapes, Snowflake } from "lucide-react";
+// Gift, Heart, ArrowDownToLine, CircleMinus, Flame and Rss are imported by the blocks above.
+import { Merge, Shapes, Snowflake } from "lucide-react";
 // Lote 9 — tools, system, resilience, rankings, changelog, provider-stats (KEA-7886).
 import { BadgePlus, BellOff, PartyPopper, Radio, SquareCode, Stethoscope } from "lucide-react";
 
