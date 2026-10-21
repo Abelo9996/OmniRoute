@@ -1,0 +1,1 @@
+- Bind hosted Release-Green suite receipts to their exact commit, workflow, run/attempt, Node patch, lockfile, command/shard and retained log hash; reject stale, malformed, unexpected or duplicate evidence. Artifacts are attempt-scoped, so partial reruns require rerunning all suite jobs before a complete verdict.

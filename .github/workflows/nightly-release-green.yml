@@ -64,6 +64,7 @@ concurrency:
 
 env:
   OMNIROUTE_SKIP_SYSTEM_TRUST: "1"
+  RELEASE_GREEN_WORKFLOW_SHA: ${{ github.workflow_sha }}
 
 jobs:
   # Schedule/dispatch only: the commit the hosted suites and the slot validation share.
@@ -76,7 +77,13 @@ jobs:
     outputs:
       target: ${{ steps.resolve.outputs.target }}
       sha: ${{ steps.resolve.outputs.sha }}
+      node-version: ${{ steps.runtime.outputs.node-version }}
     steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        id: runtime
+        with:
+          node-version: "24"
+          package-manager-cache: false
       - name: Resolve the active release branch and its tip
         id: resolve
         env:
@@ -135,7 +142,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: "24"
+          node-version: ${{ needs.resolve-target.outputs.node-version }}
           cache: npm
       - uses: ./.github/actions/npm-ci-retry
       - name: Run the suite and record its result
@@ -165,7 +172,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: release-green-suite-${{ matrix.name }}
+          name: release-green-suite-${{ github.run_attempt }}-${{ matrix.name }}
           path: suite-results/
           if-no-files-found: ignore
           retention-days: 7
@@ -256,7 +263,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: "24"
+          node-version: ${{ needs.resolve-target.outputs.node-version || '24' }}
           cache: npm
 
       - uses: ./.github/actions/npm-ci-retry
@@ -266,7 +273,9 @@ jobs:
         continue-on-error: true
         uses: actions/download-artifact@v8
         with:
-          pattern: release-green-suite-*
+          # A partial re-run cannot reuse receipts from an earlier attempt;
+          # rerun all suite jobs for a new complete observation of the same tip.
+          pattern: release-green-suite-${{ github.run_attempt }}-*
           path: suite-results
           merge-multiple: true
 
@@ -390,6 +399,7 @@ jobs:
           path: |
             release-green.json
             release-green.log
+            suite-results/
             _artifacts/release-green/
           if-no-files-found: error
           retention-days: 14
