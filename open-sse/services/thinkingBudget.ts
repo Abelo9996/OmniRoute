@@ -307,9 +307,7 @@ export function applyThinkingBudget(
       return setCustomBudget(processed, cfg.customBudget ?? DEFAULT_THINKING_CONFIG.customBudget);
 
     case ThinkingMode.ADAPTIVE:
-      return hasExplicitReasoningEffort(processed)
-        ? processed
-        : applyAdaptiveBudget(processed, cfg);
+      return hasExplicitReasoningEffort(body) ? processed : applyAdaptiveBudget(processed, cfg);
 
     default:
       return processed;
@@ -397,13 +395,25 @@ function setCustomBudget(body: unknown, budget: number) {
   return result;
 }
 
-// Explicit request effort is final for adaptive allocation; provider capability
-// validation and normalization still happen at the executor boundary.
+// Inspect original carriers before normalizeThinkingLevel converts discrete levels
+// into numeric budgets. Provider capability validation remains at the executor.
 function hasExplicitReasoningEffort(body: unknown): boolean {
   const record = toRecord(body);
+  const generationConfig = toRecord(record.generationConfig);
+  const nativeEffort = toRecord(record.output_config).effort;
+  // Match the normalizer's precedence: a shadowed alias is not the chosen level.
+  const levels = [
+    record.thinkingLevel || record.thinking_level,
+    toRecord(generationConfig.thinkingConfig).thinkingLevel ||
+      toRecord(generationConfig.thinking_config).thinkingLevel,
+  ];
   return (
     typeof record.reasoning_effort === "string" ||
-    typeof toRecord(record.reasoning).effort === "string"
+    typeof toRecord(record.reasoning).effort === "string" ||
+    (typeof nativeEffort === "string" && nativeEffort.length > 0) ||
+    levels.some(
+      (level) => typeof level === "string" && Object.hasOwn(THINKING_LEVEL_MAP, level.toLowerCase())
+    )
   );
 }
 
