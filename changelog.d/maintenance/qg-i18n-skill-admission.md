@@ -1,1 +1,0 @@
-- **fix(quality):** Include translation-wave instructions in the versioned quality contract and require exact-candidate admission without inherited-red or failed-listing merge fallbacks.
