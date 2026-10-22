@@ -327,13 +327,14 @@ export default function CompressionPanel() {
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<"" | "saved" | "error">("");
   const saveGenRef = useRef(0);
-  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const statusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(false);
   useEffect(() => {
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
-      if (savedTimerRef.current !== null) clearTimeout(savedTimerRef.current);
+      if (statusTimerRef.current !== null) clearTimeout(statusTimerRef.current);
+      saveGenRef.current++;
     };
   }, []);
   // The last config the server confirmed.
@@ -460,7 +461,7 @@ export default function CompressionPanel() {
   // error or the timeout) may still have been stored — the re-read below picks that up.
   const save = async (updates: Partial<CompressionConfig>) => {
     saveGenRef.current += 1;
-    if (savedTimerRef.current !== null) clearTimeout(savedTimerRef.current);
+    if (statusTimerRef.current !== null) clearTimeout(statusTimerRef.current);
     if (pendingRef.current.length === 0) {
       batchFailedRef.current = false;
       setStatus("");
@@ -499,8 +500,9 @@ export default function CompressionPanel() {
     if (batchFailedRef.current) return;
     setStatus("saved");
     const latestGen = saveGenRef.current;
-    savedTimerRef.current = setTimeout(() => {
-      savedTimerRef.current = null;
+    if (statusTimerRef.current !== null) clearTimeout(statusTimerRef.current);
+    statusTimerRef.current = setTimeout(() => {
+      statusTimerRef.current = null;
       if (latestGen === saveGenRef.current) setStatus("");
     }, SAVED_STATUS_CLEAR_MS);
   };
@@ -592,7 +594,7 @@ export default function CompressionPanel() {
             <h3 className="text-lg font-semibold">{t("compressionTitle")}</h3>
             <p className="text-sm text-text-muted">{t("compressionDesc")}</p>
             <a
-              href="https://github.com/diegosouzapw/OmniRoute/blob/main/docs/compression/COMPRESSION_GUIDE.md"
+              href="https://github.com/cheaper-inference/OmniRoute/blob/main/docs/compression/COMPRESSION_GUIDE.md"
               target="_blank"
               rel="noopener noreferrer"
               data-testid="compression-guide-link"
