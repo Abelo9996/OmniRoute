@@ -34,39 +34,69 @@ export async function GET(request: NextRequest) {
     ? (rawScope as LeaderboardScope)
     : "global";
 
+  let cleanup = () => {};
+
   const stream = new ReadableStream({
     start(controller) {
       const encoder = new TextEncoder();
+      let closed = false;
+
+      // A half-open peer never fires "abort", so every exit path (abort,
+      // cancel, failed enqueue) funnels through here to stop the timers.
+      cleanup = () => {
+        if (closed) return;
+        closed = true;
+        clearInterval(heartbeat);
+        clearInterval(updater);
+        request.signal.removeEventListener("abort", cleanup);
+        try {
+          controller.close();
+        } catch {
+          /* already closed or cancelled */
+        }
+      };
+
+      const safeEnqueue = (chunk: Uint8Array) => {
+        if (closed) return;
+        try {
+          controller.enqueue(chunk);
+        } catch {
+          cleanup();
+        }
+      };
 
       const sendUpdate = async () => {
         try {
           const entries = await getTopN(scope, 50);
           const data = JSON.stringify({ type: "leaderboard", scope, entries });
-          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          safeEnqueue(encoder.encode(`data: ${data}\n\n`));
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          controller.enqueue(
-            encoder.encode(`event: error\ndata: ${JSON.stringify({ error: msg })}\n\n`)
-          );
+          safeEnqueue(encoder.encode(`event: error\ndata: ${JSON.stringify({ error: msg })}\n\n`));
         }
       };
 
-      // Send initial state
-      sendUpdate();
-
       // Heartbeat every 15s
       const heartbeat = setInterval(() => {
-        controller.enqueue(encoder.encode(`: heartbeat ${Date.now()}\n\n`));
+        safeEnqueue(encoder.encode(`: heartbeat ${Date.now()}\n\n`));
       }, 15_000);
 
       // Update every 5s
       const updater = setInterval(sendUpdate, 5_000);
 
-      request.signal.addEventListener("abort", () => {
-        clearInterval(heartbeat);
-        clearInterval(updater);
-        controller.close();
-      });
+      // A client that disconnects while auth is still being checked arrives
+      // here already aborted, and "abort" will never fire again.
+      if (request.signal.aborted) {
+        cleanup();
+        return;
+      }
+      request.signal.addEventListener("abort", cleanup);
+
+      // Send initial state
+      sendUpdate();
+    },
+    cancel() {
+      cleanup();
     },
   });
 

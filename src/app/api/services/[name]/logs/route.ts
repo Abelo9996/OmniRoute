@@ -83,6 +83,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const buffer = supervisor.getRingBuffer();
   const signal = request.signal;
+  let cleanup = () => {};
 
   const stream = new ReadableStream({
     start(controller) {
@@ -113,20 +114,29 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         try {
           controller.enqueue(sseChunk("heartbeat", {}));
         } catch {
-          clearInterval(heartbeatTimer);
+          cleanup();
         }
       }, HEARTBEAT_MS);
 
-      // Cleanup on client disconnect
-      signal.addEventListener("abort", () => {
+      // Cleanup on client disconnect. A half-open peer never fires "abort",
+      // so cancel() from the runtime must release the subscription too.
+      let closed = false;
+      cleanup = () => {
+        if (closed) return;
+        closed = true;
         clearInterval(heartbeatTimer);
         unsubscribe();
+        signal.removeEventListener("abort", cleanup);
         try {
           controller.close();
         } catch {
           // already closed
         }
-      });
+      };
+      signal.addEventListener("abort", cleanup);
+    },
+    cancel() {
+      cleanup();
     },
   });
 
