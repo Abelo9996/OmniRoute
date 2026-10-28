@@ -6,6 +6,8 @@
  */
 
 import { NextRequest } from "next/server";
+import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { createBoundedEventStream } from "@/lib/api/boundedEventStream";
 import { type LeaderboardScope, getTopN } from "@/lib/gamification/leaderboard";
 import { CORS_HEADERS } from "@/shared/utils/cors";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
@@ -34,70 +36,38 @@ export async function GET(request: NextRequest) {
     ? (rawScope as LeaderboardScope)
     : "global";
 
-  let cleanup = () => {};
-
-  const stream = new ReadableStream({
-    start(controller) {
-      const encoder = new TextEncoder();
-      let closed = false;
-
-      // A half-open peer never fires "abort", so every exit path (abort,
-      // cancel, failed enqueue) funnels through here to stop the timers.
-      cleanup = () => {
-        if (closed) return;
-        closed = true;
-        clearInterval(heartbeat);
-        clearInterval(updater);
-        request.signal.removeEventListener("abort", cleanup);
-        try {
-          controller.close();
-        } catch {
-          /* already closed or cancelled */
-        }
-      };
-
-      const safeEnqueue = (chunk: Uint8Array) => {
-        if (closed) return;
-        try {
-          controller.enqueue(chunk);
-        } catch {
-          cleanup();
-        }
-      };
-
-      const sendUpdate = async () => {
-        try {
-          const entries = await getTopN(scope, 50);
-          const data = JSON.stringify({ type: "leaderboard", scope, entries });
-          safeEnqueue(encoder.encode(`data: ${data}\n\n`));
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : String(err);
-          safeEnqueue(encoder.encode(`event: error\ndata: ${JSON.stringify({ error: msg })}\n\n`));
-        }
-      };
-
-      // Heartbeat every 15s
-      const heartbeat = setInterval(() => {
-        safeEnqueue(encoder.encode(`: heartbeat ${Date.now()}\n\n`));
-      }, 15_000);
-
-      // Update every 5s
-      const updater = setInterval(sendUpdate, 5_000);
-
-      // A client that disconnects while auth is still being checked arrives
-      // here already aborted, and "abort" will never fire again.
-      if (request.signal.aborted) {
-        cleanup();
-        return;
+  const stream = createBoundedEventStream(request.signal, (sink) => {
+    const encoder = new TextEncoder();
+    let updating = false;
+    const sendUpdate = async () => {
+      if (sink.isClosed() || updating) return;
+      updating = true;
+      try {
+        const entries = await getTopN(scope, 50);
+        if (sink.isClosed()) return;
+        const data = JSON.stringify({ type: "leaderboard", scope, entries });
+        sink.send(encoder.encode(`data: ${data}\n\n`));
+      } catch (error) {
+        sink.send(
+          encoder.encode(
+            `event: error\ndata: ${JSON.stringify({ error: sanitizeErrorMessage(error) })}\n\n`
+          )
+        );
+      } finally {
+        updating = false;
       }
-      request.signal.addEventListener("abort", cleanup);
-
-      // Send initial state
-      sendUpdate();
-    },
-    cancel() {
-      cleanup();
-    },
+    };
+    void sendUpdate();
+    const heartbeat = setInterval(() => {
+      sink.send(encoder.encode(`: heartbeat ${Date.now()}\n\n`));
+    }, 15_000);
+    const updater = setInterval(() => {
+      void sendUpdate();
+    }, 5_000);
+    sink.onCleanup(() => {
+      clearInterval(heartbeat);
+      clearInterval(updater);
+    });
   });
 
   return new Response(stream, {
